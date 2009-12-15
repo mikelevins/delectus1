@@ -144,7 +144,6 @@
    message: "Deleting or undeleting a column failed"
    default: (void)))
 
-
 ;;; the row is identified by index into the displayed rows. In other words, the indicated row
 ;;; is looked up in the filtered and sorted rows, not in the DB's list of all rows
 (define (api:toggle-row-deleted! document-id row-index)

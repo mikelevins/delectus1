@@ -235,15 +235,19 @@
 
 (define (document.regenerate-filtered-rows doc)
   (let* ((filter-fn (%make-document-filter-function doc))
-         (sort-fn (%make-document-sort-function doc)))
-    (document.set-filtered-rows! doc (sort-fn (filter-fn (document.rows doc))))
-    (document.validate! doc)
-    doc))
+           (sort-fn (%make-document-sort-function doc)))
+      (document.set-filtered-rows! doc (sort-fn (filter-fn (document.rows doc))))
+      (document.validate! doc)
+      doc))
 
 (define (get-filtered-rows doc)
-  (if (not (document.valid? doc))
-      (document.regenerate-filtered-rows doc))
-  (document.filtered-rows doc))
+  (let ((doc-id (table-search (lambda (k v)
+                                (and (equal? doc v)
+                                     k))
+                              $documents)))
+    (if (not (document.valid? doc))
+        (document.regenerate-filtered-rows doc))
+    (document.filtered-rows doc)))
 
 ;;; ----------------------------------------------------------------------
 ;;; info about documents 
@@ -409,6 +413,11 @@
     (store.set-column-layout! store (filter (lambda (e) (member (car e) live-column-labels))
                                             (store.column-layout store)))
     (store.set-rows! store new-rows)
+    ;; clear the sort, if the sort column has been deleted
+    (if (null? (filter (lambda (col) (string-ci=? (store.sort-column store)
+                                                  (column.label col)))
+                       live-columns))
+        (store.set-sort-column! store #f))
     (document.hide-deleted! doc)
     (document.invalidate! doc)
     doc))

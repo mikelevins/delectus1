@@ -45,8 +45,9 @@
 
 - (void)setupColumns{
     int i;
-    // 1. clear the columns
     NSArray* doc_column_labels = (NSArray*)get_column_labels(documentID);
+
+    // 1. clear the columns
     NSArray* view_columns = [tableView tableColumns];
     NSMutableArray* cols_to_delete = [NSMutableArray arrayWithCapacity:[view_columns count]];
     for(i=0;i<[view_columns count];i++){
@@ -439,8 +440,9 @@
 // Data source methods
 // ----------------------------------------
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView{ 
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView{
     int rowCount = number_of_rows(documentID);
+    return rowCount;
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{

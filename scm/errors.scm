@@ -35,6 +35,8 @@
 ;;; FIFO are accessible from the error UI. Displaying an error in the
 ;;; error UI removes it from the FIFO.
 
+(define $print-errors? #f)
+
 (define next-error-id
   (let ((current-id 0))
     (lambda () 
@@ -57,7 +59,13 @@
 (define (report-error #!key (context "Unknown") (error #f) (message "Error"))
   (let ((e (make-error context: (format "~s"context) error-object: error message: message)))
     (set! $error-queue (cons (cons (error-report-id e) e)
-                             $error-queue))))
+                             $error-queue))
+    (if $print-errors?
+        (display (str
+                  (format "~s: context: ~s~%  error-object: ~s~%"
+                          (error-report-message e)
+                          (error-report-context e)
+                          (error-report-error-object e)))))))
 
 (define (next-error)
   (if (empty? $error-queue)

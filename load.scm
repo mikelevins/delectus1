@@ -10,7 +10,7 @@
 
 ;;; modify if the Delectus sources are at another pathname
 
-(define $root "/Users/mikel/Valise/bywicket/Delectus")
+(define $root "/Users/mikel/Valise/bywicket/repositories/delectus")
 
 ;;; ----------------------------------------------------------------------
 ;;; About

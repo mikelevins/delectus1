@@ -9,6 +9,32 @@
 ;;;; ***********************************************************************
 
 ;;; ======================================================================
+;;; utils
+;;; ======================================================================
+
+(define (%add-columns doc labels)
+  (for-each (lambda (lbl) (add-column! doc lbl))
+            labels))
+
+(define (%add-n-rows! doc n)
+  (let loop ((i n))
+    (if (< i 1)
+        doc
+        (begin
+          (add-row! doc)
+          (loop (- i 1))))))
+
+(define (%fill-row! doc row-index col-alist)
+  (let* ((store (document.store doc))
+         (row (list-ref (store.rows store) row-index))
+         (col-index-alist (map (lambda (entry) (cons (store:column-label->index store (car entry))
+                                                     (cdr entry)))
+                               col-alist)))
+    (for-each (lambda (entry) (field.set-value! (list-ref (row.fields row) (car entry))
+                                                (cdr entry)))
+              col-index-alist)))
+
+;;; ======================================================================
 ;;; Basic data structures
 ;;; ======================================================================
 
@@ -209,6 +235,75 @@
                             (format "Getting a cell value failed. ")
                             (format "value-for-cell returned #f. "))))))))
 
+(define test:empty-trash
+  (unit-test "Empty trash"
+             (lambda ()
+               (let* ((docID (get-new-document!))
+                      (doc (get-document docID)))
+                 ;; build the test doc
+                 (if (zero? (count-filtered-rows doc))
+                     (let ((row-count 11)
+                           (labels (list "Name" "Shape" "Color"))
+                           (names '("Abe" "Beth" "Chuck" "Dan" "Ethan" 
+                                    "Fred" "George" "Henry" "Isabel" "Julie"
+                                    "Ken"))
+                           (shapes '("circle" "triangle" "rectangle" "pentagon" "hexagon"
+                                     "sphere" "tetrahedron" "box" "prism" "diamond"
+                                     "hypercube"))
+                           (colors '("red" "orange" "yellow" "green" "blue"
+                                     "indigo" "violet" "puce" "heliotrope" "chartreuse"
+                                     "ultraviolet")))
+                       ;; add rows and columns
+                       (%add-columns doc labels)
+                       (%add-n-rows! doc row-count)
+                       ;; fill cells
+                       (do ((i 0 (+ i 1)))
+                           ((>= i row-count) #f)
+                         (%fill-row! doc i (list (cons "Name" (list-ref names i))
+                                                 (cons "Shape" (list-ref shapes i))
+                                                 (cons "Color" (list-ref colors i)))))
+                       ;; check the row and column counts
+                       (if (= (count-filtered-rows doc) row-count)
+                           (if (= (length (document.columns doc))
+                                  (length labels))
+                               ;; now delete two rows
+                               (let ((row-delete-count 2))
+                                 ;; mark them deleted
+                                 (do ((j 0 (+ j 1)))
+                                     ((>= j row-delete-count) #f)
+                                   (toggle-row-deleted! doc j))
+                                 ;; empty the trash
+                                 (empty-trash! doc)
+                                 ;; check the new row count
+                                 (if (= (- row-count row-delete-count)
+                                        (count-filtered-rows doc))
+                                     ;; now delete a column
+                                     (let ((col-count (length (document.columns doc)))
+                                           (col-to-delete "Shape"))
+                                       ;; mark it deleted
+                                       (toggle-column-deleted! doc col-to-delete)
+                                       ;; empty the trash
+                                       (empty-trash! doc)
+                                       ;; check the column count
+                                       (if (= (- col-count 1)
+                                              (length (document.columns doc)))
+                                           (succeed #t)
+                                           (fail (str
+                                            (format "Deleted one column from ~a, " col-count)
+                                            (format "but found ~a columns remaining!" (length (document.columns doc)))))))
+                                     (fail (str
+                                            (format "Deleted ~a rows from ~a, " row-delete-count row-count)
+                                            (format "but found ~a rows remaining!" (count-filtered-rows doc))))))
+                               (fail (str
+                                      (format "Added ~a columns, " (length labels))
+                                      (format "but found ~a columns in the document!" (length (document.columns doc))))))
+                           (fail (str
+                                  (format "Added ~a rows, " row-count)
+                                  (format "but found ~a rows in the document!" (count-filtered-rows doc))))))
+                     (fail (str
+                            (format "Created a new empty document, ")
+                            (format "but its reported row count was ~a" (count-filtered-rows doc)))))))))
+
 ;;; ----------------------------------------------------------------------
 ;;; the test suite
 ;;; ----------------------------------------------------------------------
@@ -219,5 +314,6 @@
                                            test:filter-rows
                                            test:get-value
                                            test:set-value
+                                           test:empty-trash
                                            ))
 
