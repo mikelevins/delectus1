@@ -375,6 +375,10 @@
     (if found-column
         (begin
           (column.set-deleted! found-column (not (column.deleted? found-column)))
+          (if (and (column.deleted? found-column)
+                   (string-ci=? (column.label found-column)
+                                (store.sort-column (document.store doc))))
+              (store.set-sort-column! (document.store doc) #f))
           (document.invalidate! doc))
         (report-error context: (format "(toggle-column-deleted! \"~a\" \"~a\")" doc label)
                       message: (format "No such column \"~a\" (when deleting a column)" label)

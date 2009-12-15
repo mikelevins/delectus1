@@ -424,6 +424,7 @@
 
 - (IBAction)emptyTrash:(id)sender{
     empty_trash(documentID);
+    [self updateTrash];
     isPristine=NO;
 }
 
