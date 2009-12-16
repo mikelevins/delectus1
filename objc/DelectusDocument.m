@@ -225,7 +225,7 @@
 
 - (void) showTrashLabel{
     [toggleShownLabel setTextColor: [NSColor redColor]];
-    [toggleShownLabel setStringValue: @"Deleted items are shown."];
+    [toggleShownLabel setStringValue: @"Deleted items are red."];
 }
 
 - (void) showEmptyTrash{

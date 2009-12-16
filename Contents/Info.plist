@@ -37,6 +37,10 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>Delectus</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Delectus.help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>DelectusHelp</string>
 	<key>CFBundleDisplayName</key>
 	<string>Delectus</string>
 	<key>CFBundleIconFile</key>
@@ -52,7 +56,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0b6</string>
+	<string>1.0b7</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
