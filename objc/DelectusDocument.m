@@ -401,6 +401,10 @@
     if(colIndex>=0){
         NSTableColumn* col = (NSTableColumn*)[[tableView tableColumns] objectAtIndex: colIndex];
         NSString* label = (NSString*)[col identifier];
+        // first make the window take over FirstResponder status, to force 
+        // any active cells to end editing
+        [documentWindow makeFirstResponder: nil];
+        // Then mark the column
         toggle_column_deleted(documentID,[label asCString]);
         [self updateChangeCount: NSChangeDone];
         [self reloadData];
@@ -412,6 +416,10 @@
 - (IBAction)toggleRowDeleted:(id)sender{
     int rowIndex=[tableView selectedRow];
     if(rowIndex>=0){
+        // first make the window take over FirstResponder status, to force 
+        // any active cells to end editing
+        [documentWindow makeFirstResponder: nil];
+        // Then mark the row
         toggle_row_deleted(documentID,rowIndex);
         [self updateChangeCount: NSChangeDone];
         [self reloadData];
