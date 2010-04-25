@@ -2,7 +2,6 @@ APPNAME=Delectus
 BUNDLE=${APPNAME}.app
 
 SCHEME_LIBRARY_PATH=/usr/local/slib/
-GAMBIT_IMPLEMENTATION_PATH=/Library/Gambit-C/current/share/
 
 SCM_LIBS=lib/scm/csv.scm lib/scm/Sort.scm lib/srfi/srfi1.scm lib/srfi/srfi13.scm lib/srfi/srfi28.scm
 SCM_LIBS_CFILES=lib/scm/csv.c lib/scm/Sort.c lib/srfi/srfi1.c lib/srfi/srfi13.c lib/srfi/srfi28.c
@@ -17,7 +16,7 @@ OBJC_SRCS= objc/DelectusAppDelegate.m objc/NSString+CString.m objc/DelectusDocum
 
 EXECUTABLE=${APPNAME}.out
 
-CFLAGS= -O2 -x objective-c -framework Cocoa -arch ppc -arch i386
+CFLAGS= -O2 -x objective-c -I/Library/Gambit-C/current/include -L/Library/Gambit-C/current/lib -framework Cocoa -arch ppc -arch i386
 CLIBS= -lgambc
 
 all: bundle
