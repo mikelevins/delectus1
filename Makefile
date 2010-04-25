@@ -1,5 +1,6 @@
 APPNAME=Delectus
 BUNDLE=${APPNAME}.app
+DEMO_BUNDLE=${APPNAME}Demo.app
 
 SCHEME_LIBRARY_PATH=/usr/local/slib/
 
@@ -13,6 +14,8 @@ SCM_CFILES= ${SCM_LIBS_CFILES} ${SCM_SRCS_CFILES}
 
 OBJC_SRCS= objc/DelectusAppDelegate.m objc/NSString+CString.m objc/DelectusDocument.m objc/DelectusCell.m objc/DelectusTableView.m 
 
+OBJC_DEMO_SRCS= objc/DelectusAppDemoDelegate.m objc/NSString+CString.m objc/DelectusDocument.m objc/DelectusCell.m objc/DelectusTableView.m 
+
 
 EXECUTABLE=${APPNAME}.out
 
@@ -20,6 +23,8 @@ CFLAGS= -O2 -x objective-c -I/Library/Gambit-C/current/include -L/Library/Gambit
 CLIBS= -lgambc
 
 all: bundle
+
+demo: demo_bundle
 
 clean:
 	rm -rf ${BUNDLE}
@@ -42,8 +47,20 @@ bundle: cocoa
 	mv ./${EXECUTABLE} ./${BUNDLE}/Contents/MacOS/${APPNAME}
 	rm -f ${SCM_LIBS_CFILES} ${SCM_SRCS_CFILES}
 
+demo_bundle: demo_cocoa
+	mkdir -p ./${DEMO_BUNDLE}/Contents/Resources/English.lproj/
+	mkdir -p ./${DEMO_BUNDLE}/Contents/MacOS
+	ibtool ./Contents/Resources/English.lproj/MainMenu.xib --compile ./${DEMO_BUNDLE}/Contents/Resources/English.lproj/MainMenu.nib
+	ibtool ./Contents/Resources/English.lproj/DelectusDemoDocument.xib --compile ./${DEMO_BUNDLE}/Contents/Resources/English.lproj/DelectusDocument.nib
+	rsync -r --exclude '.svn' --exclude '*.xib' ./Contents ./${DEMO_BUNDLE}
+	mv ./${EXECUTABLE} ./${DEMO_BUNDLE}/Contents/MacOS/${APPNAME}
+	rm -f ${SCM_LIBS_CFILES} ${SCM_SRCS_CFILES}
+
 cocoa: scheme 
 	gcc ${CFLAGS} -o ${EXECUTABLE} ${CLIBS} ${SCM_LIBS_CFILES} ${OBJC_SRCS} ${SCM_SRCS_CFILES}
+
+demo_cocoa: scheme 
+	gcc ${CFLAGS} -o ${EXECUTABLE} ${CLIBS} ${SCM_LIBS_CFILES} ${OBJC_DEMO_SRCS} ${SCM_SRCS_CFILES}
 
 scheme:
 	gsc -link ${SCM_LIBS} ${SCM_SRCS}
