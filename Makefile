@@ -28,6 +28,7 @@ demo: demo_bundle
 
 clean:
 	rm -rf ${BUNDLE}
+	rm -rf ${DEMO_BUNDLE}
 	rm -f ${SCM_LIBS_CFILES} ${SCM_SRCS_CFILES}
 	rm -f ${EXECUTABLE}
 	rm -f *~
