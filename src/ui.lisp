@@ -1,29 +1,24 @@
 (in-package :delectus)
 
 ;;; ---------------------------------------------------------------------
-;;; global parameters
-;;; ---------------------------------------------------------------------
-
-;;; ---------------------------------------------------------------------
 ;;; button utils
 ;;; ---------------------------------------------------------------------
 
 (defparameter $NSMomentaryChangeButton 5)
 (defparameter $NSImageAbove 5)
 
-(defun %button (pane view image &optional altimage)
+(defun trash-button (pane view)
   (setf view (objc:invoke view "init"))
   (objc:invoke view "setBordered:" nil)
   (objc:invoke view "setImage:"
                (objc:invoke (objc:invoke "NSImage" "alloc")
-                            "initByReferencingFile:" (namestring image)))
-  (when altimage 
-    (objc:invoke view "setAlternateImage:"
-                 (objc:invoke (objc:invoke "NSImage" "alloc")
-                              "initByReferencingFile:" (namestring altimage))))
+                            "initByReferencingFile:" (namestring (resource "images/trashempty48.png"))))
+  (objc:invoke view "setAlternateImage:"
+               (objc:invoke (objc:invoke "NSImage" "alloc")
+                            "initByReferencingFile:" (namestring "images/trashfull48.png")))
   view)
 
-(defun %mcbutton (pane view label image &optional altimage)
+(defun top-button (label image altimage pane view)
   (setf view (objc:invoke view "init"))
   (objc:invoke view "setBordered:" nil)
   (objc:invoke view "setTitle:" label)
@@ -31,11 +26,10 @@
   (objc:invoke view "setButtonType:" $NSMomentaryChangeButton)
   (objc:invoke view "setImage:"
                (objc:invoke (objc:invoke "NSImage" "alloc")
-                            "initByReferencingFile:" (namestring image)))
-  (when altimage 
-    (objc:invoke view "setAlternateImage:"
-                 (objc:invoke (objc:invoke "NSImage" "alloc")
-                              "initByReferencingFile:" (namestring altimage))))
+                            "initByReferencingFile:" (namestring (resource image))))
+  (objc:invoke view "setAlternateImage:"
+               (objc:invoke (objc:invoke "NSImage" "alloc")
+                            "initByReferencingFile:" (namestring (resource altimage))))
   view)
 
 ;;; ---------------------------------------------------------------------
@@ -60,30 +54,19 @@
   (:panes
    ;; top row
    (add-row-button cocoa-view-pane :view-class "NSButton" 
-                   :init-function (^ (pane view)(%mcbutton pane view "Add Row"
-                                                           (resource "images/add.png")
-                                                           (resource "images/addhl.png"))))
+                   :init-function (fun:partial 'top-button "Add Row" "images/add.png"  "images/addhl.png"))
    (delete-row-button cocoa-view-pane :view-class "NSButton"
-                      :init-function (^ (pane view)(%mcbutton pane view "Delete Row"
-                                                              (resource "images/del.png")
-                                                              (resource "images/delhl.png"))))
+                      :init-function (fun:partial 'top-button "Delete Row" "images/del.png"  "images/delhl.png"))
    (add-column-button cocoa-view-pane :view-class "NSButton" 
-                      :init-function (^ (pane view)(%mcbutton pane view "Add Column"
-                                                              (resource "images/add.png")
-                                                              (resource "images/addhl.png"))))
+                      :init-function (fun:partial 'top-button "Add Col" "images/add.png"  "images/addhl.png"))
    (delete-column-button cocoa-view-pane :view-class "NSButton" 
-                         :init-function (^ (pane view)(%mcbutton pane view "Delete Column"
-                                                                 (resource "images/del.png")
-                                                                 (resource "images/delhl.png"))))
+                         :init-function (fun:partial 'top-button "Delete Col" "images/del.png" "images/delhl.png"))
    ;; main row
    (row-pane cocoa-view-pane :view-class "NSScrollView" :reader row-pane
              :init-function 'init-row-pane)
    ;; bottom row
    (trash-button cocoa-view-pane :view-class "NSButton"
-                 :init-function (^ (pane view)
-                                  (%button pane view
-                                           (resource "images/trashempty48.png")
-                                           (resource "images/trashfull48.png"))))
+                 :init-function 'trash-button)
    (filter-field cocoa-view-pane :view-class "NSSearchField"))
   ;; layouts
   (:layouts
@@ -103,6 +86,7 @@
    (trash-cluster row-layout '(trash-button) :adjust :center
                   :external-min-width 84 :external-max-width 84))
   ;; defaults
-  (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field))
+  (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
+                     :window-styles '(:internal-borderless :textured-background)))
 
 ;;; (setq $w (contain (make-instance 'delectus-window)))
