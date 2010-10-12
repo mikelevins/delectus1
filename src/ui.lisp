@@ -43,6 +43,7 @@
 
 (defun delete-col-button (pane view)
   (top-button "Del Col" "images/del.png" "images/delhl.png" pane view))
+
 ;;; ---------------------------------------------------------------------
 ;;; view utils
 ;;; ---------------------------------------------------------------------
