@@ -28,6 +28,7 @@
                           :serial t
                           :components ((:file "package")
                                        (:file "model")
+                                       (:file "data-source")
                                        (:file "ui")))))
 
 (in-package :cl-user)

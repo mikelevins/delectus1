@@ -36,32 +36,23 @@
 ;;; view utils
 ;;; ---------------------------------------------------------------------
 
-(define-objc-class data-source ()
-  ((model :accessor model :initarg :model :initform nil))
-  (:objc-class-name "DataSource"))
+(defparameter $table-view nil)
+(defparameter $data-source nil)
 
-(define-objc-method ("numberOfRowsInTableView:" (:unsigned :long))
-    ((self data-source)
-     (table-view objc-object-pointer))
-  5)
-
-(define-objc-method ("tableView:objectValueForTableColumn:row:" objc-object-pointer)
-    ((self data-source)
-     (table-view objc-object-pointer)
-     (column objc-object-pointer)
-     (row (:unsigned :long)))
-  (string-to-ns-string "Hello"))
-
-(defparameter $foo nil)
-
-(defun init-row-pane (pane view)
+(defun init-row-pane (pane scrollview)
   (let* ((table-view (alloc-init-object "NSTableView"))
-         (view (invoke view "init"))
-         (source (retain (alloc-init-object "DataSource"))))
+         (scrollview (invoke scrollview "init"))
+         (source (retain (alloc-init-object "DataSource")))
+         (col (retain (alloc-init-object "NSTableColumn"))))
+    (invoke scrollview "setHasVerticalScroller:" t)
+    (invoke scrollview "setHasHorizontalScroller:" t)
     (invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
-    (invoke view "setDocumentView:" table-view)
+    (invoke scrollview "setDocumentView:" table-view)
     (invoke table-view "setDataSource:" source)
-    view))
+    (invoke table-view "addTableColumn:" col)
+    (setf $table-view table-view)
+    (setf $data-source source)
+    scrollview))
 
 ;;; ---------------------------------------------------------------------
 ;;; main UI
