@@ -36,11 +36,31 @@
 ;;; view utils
 ;;; ---------------------------------------------------------------------
 
+(define-objc-class data-source ()
+  ((model :accessor model :initarg :model :initform nil))
+  (:objc-class-name "DataSource"))
+
+(define-objc-method ("numberOfRowsInTableView:" (:unsigned :long))
+    ((self data-source)
+     (table-view objc-object-pointer))
+  5)
+
+(define-objc-method ("tableView:objectValueForTableColumn:row:" objc-object-pointer)
+    ((self data-source)
+     (table-view objc-object-pointer)
+     (column objc-object-pointer)
+     (row (:unsigned :long)))
+  (string-to-ns-string "Hello"))
+
+(defparameter $foo nil)
+
 (defun init-row-pane (pane view)
-  (let* ((table-view (objc:alloc-init-object "NSTableView"))
-         (view (objc:invoke view "init")))
-    (objc:invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
-    (objc:invoke view "setDocumentView:" table-view)
+  (let* ((table-view (alloc-init-object "NSTableView"))
+         (view (invoke view "init"))
+         (source (retain (alloc-init-object "DataSource"))))
+    (invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
+    (invoke view "setDocumentView:" table-view)
+    (invoke table-view "setDataSource:" source)
     view))
 
 ;;; ---------------------------------------------------------------------
