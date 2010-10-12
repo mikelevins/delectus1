@@ -32,26 +32,48 @@
                             "initByReferencingFile:" (namestring (resource altimage))))
   view)
 
+(defun add-row-button (pane view)
+  (top-button "Add Row" "images/add.png" "images/addhl.png" pane view))
+
+(defun delete-row-button (pane view)
+  (top-button "Del Row" "images/del.png" "images/delhl.png" pane view))
+
+(defun add-col-button (pane view)
+  (top-button "Add Col" "images/add.png" "images/addhl.png" pane view))
+
+(defun delete-col-button (pane view)
+  (top-button "Del Col" "images/del.png" "images/delhl.png" pane view))
 ;;; ---------------------------------------------------------------------
 ;;; view utils
 ;;; ---------------------------------------------------------------------
 
-(defparameter $table-view nil)
-(defparameter $data-source nil)
+;; the test version
+;; (defparameter $table-view nil)
+;; (defparameter $data-source nil)
+;; (defun init-row-pane (pane scrollview)
+;;   (let* ((table-view (alloc-init-object "NSTableView"))
+;;          (scrollview (invoke scrollview "init"))
+;;          (source (retain (alloc-init-object "DataSource")))
+;;          (col (retain (alloc-init-object "NSTableColumn"))))
+;;     (invoke scrollview "setHasVerticalScroller:" t)
+;;     (invoke scrollview "setHasHorizontalScroller:" t)
+;;     (invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
+;;     (invoke scrollview "setDocumentView:" table-view)
+;;     (invoke table-view "setDataSource:" source)
+;;     (invoke table-view "addTableColumn:" col)
+;;     (setf $table-view table-view)
+;;     (setf $data-source source)
+;;     scrollview))
 
 (defun init-row-pane (pane scrollview)
   (let* ((table-view (alloc-init-object "NSTableView"))
          (scrollview (invoke scrollview "init"))
-         (source (retain (alloc-init-object "DataSource")))
-         (col (retain (alloc-init-object "NSTableColumn"))))
+         (source (retain (alloc-init-object "DataSource"))))
     (invoke scrollview "setHasVerticalScroller:" t)
     (invoke scrollview "setHasHorizontalScroller:" t)
     (invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
     (invoke scrollview "setDocumentView:" table-view)
     (invoke table-view "setDataSource:" source)
-    (invoke table-view "addTableColumn:" col)
-    (setf $table-view table-view)
-    (setf $data-source source)
     scrollview))
 
 ;;; ---------------------------------------------------------------------
@@ -64,20 +86,14 @@
   ;; panes
   (:panes
    ;; top row
-   (add-row-button cocoa-view-pane :view-class "NSButton" 
-                   :init-function (fun:partial 'top-button "Add Row" "images/add.png"  "images/addhl.png"))
-   (delete-row-button cocoa-view-pane :view-class "NSButton"
-                      :init-function (fun:partial 'top-button "Delete Row" "images/del.png"  "images/delhl.png"))
-   (add-column-button cocoa-view-pane :view-class "NSButton" 
-                      :init-function (fun:partial 'top-button "Add Col" "images/add.png"  "images/addhl.png"))
-   (delete-column-button cocoa-view-pane :view-class "NSButton" 
-                         :init-function (fun:partial 'top-button "Delete Col" "images/del.png" "images/delhl.png"))
+   (add-row-button cocoa-view-pane :view-class "NSButton":init-function 'add-row-button)
+   (delete-row-button cocoa-view-pane :view-class "NSButton":init-function 'delete-row-button)
+   (add-column-button cocoa-view-pane :view-class "NSButton" :init-function 'add-col-button)
+   (delete-column-button cocoa-view-pane :view-class "NSButton" :init-function 'delete-col-button)
    ;; main row
-   (row-pane cocoa-view-pane :view-class "NSScrollView" :reader row-pane
-             :init-function 'init-row-pane)
+   (row-pane cocoa-view-pane :view-class "NSScrollView" :reader row-pane :init-function 'init-row-pane)
    ;; bottom row
-   (trash-button cocoa-view-pane :view-class "NSButton"
-                 :init-function 'trash-button)
+   (trash-button cocoa-view-pane :view-class "NSButton" :init-function 'trash-button)
    (filter-field cocoa-view-pane :view-class "NSSearchField"))
   ;; layouts
   (:layouts
