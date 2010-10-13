@@ -24,4 +24,11 @@
 (time (seq:element (add-column $test-model "Foo") (random (seq:length $test-model))))
 (time (seq:element (add-column $test-model "foo") 0))
 
+(setq $model (make-instance 'delectus-model :data $test-model))
+(setf (deleted-columns $model) '(1))
+(seq:element $test-model 0)
+(seq:element $test-model 1)
+(time (seq:element (remove-deleted-items $model $test-model) 0))
+
+
 

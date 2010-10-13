@@ -64,12 +64,32 @@
 (defmethod (setf compare-fn) :after (val (m delectus-model))
   (setf (changed? m) t))
 
+(defun indexes->elements (s indexes)
+  (seq:image (fun:partial 'seq:element s) indexes))
+
+(defun indexed-columns-from-rows (rows indexes)
+  (seq:image (fun:partial (fun:flip #'indexes->elements) indexes)
+             rows))
+
+(defmethod remove-deleted-items ((m delectus-model) mdata)
+  (let* ((del-cols (deleted-columns m))
+         (col-indexes (seq:range 0 (seq:length (columns (data m)))))
+         (live-col-indexes (as 'fset:seq (set:difference (as 'fset:set col-indexes)
+                                                         (as 'fset:set del-cols))))
+         (del-rows (deleted-rows m))
+         (row-indexes (seq:range 0 (seq:length (rows (data m)))))
+         (live-row-indexes (as 'fset:seq (set:difference (as 'fset:set row-indexes)
+                                                         (as 'fset:set del-rows))))
+         (new-cols (indexes->elements (columns mdata) live-col-indexes))
+         (new-rows (indexes->elements (indexed-columns-from-rows (rows mdata) live-col-indexes)
+                                      live-row-indexes)))
+    (seq:add-first new-cols new-rows)))
+
 (defmethod update-presentation ((m delectus-model))
   (setf (presentation m)
         (seq:sort (compare-fn m)
                   (seq:filter (filter-fn m)
-                              (remove-deleted-columns m
-                                                      (remove-deleted-rows m (data m))))))
+                              (remove-deleted-items m (data me)))))
   (setf (changed? m) nil))
 
 (defmethod presentation :before ((m delectus-model))
