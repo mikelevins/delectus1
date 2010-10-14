@@ -30,5 +30,5 @@
 (seq:element $test-model 1)
 (time (seq:element (remove-deleted-items $model $test-model) 0))
 
-
+(column-name->index $model "city")
 

@@ -94,5 +94,9 @@
   (when (changed? m)
     (update-presentation m)))
 
+(defmethod column-name->index ((m delectus-model)(name string))
+  (seq:position (^ (u)(equalp name u))
+                (columns (data m))))
+
 ;;; (setf $m (make-instance 'delectus-model))
 ;;; (presentation $m)

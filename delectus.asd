@@ -29,6 +29,7 @@
                           :components ((:file "package")
                                        (:file "model")
                                        (:file "data-source")
+                                       (:file "app-delegate")
                                        (:file "ui")))))
 
 (in-package :cl-user)

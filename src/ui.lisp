@@ -4,18 +4,20 @@
 ;;; button utils
 ;;; ---------------------------------------------------------------------
 
+(defparameter $NSToggleButton 2)
 (defparameter $NSMomentaryChangeButton 5)
 (defparameter $NSImageAbove 5)
 
 (defun trash-button (pane view)
   (setf view (objc:invoke view "init"))
+  (objc:invoke view "setButtonType:" $NSToggleButton)
   (objc:invoke view "setBordered:" nil)
   (objc:invoke view "setImage:"
                (objc:invoke (objc:invoke "NSImage" "alloc")
                             "initByReferencingFile:" (namestring (resource "images/trashempty48.png"))))
   (objc:invoke view "setAlternateImage:"
                (objc:invoke (objc:invoke "NSImage" "alloc")
-                            "initByReferencingFile:" (namestring "images/trashfull48.png")))
+                            "initByReferencingFile:" (namestring (resource "images/trashfull48.png"))))
   view)
 
 (defun top-button (label image altimage pane view)
@@ -48,24 +50,6 @@
 ;;; view utils
 ;;; ---------------------------------------------------------------------
 
-;; the test version
-;; (defparameter $table-view nil)
-;; (defparameter $data-source nil)
-;; (defun init-row-pane (pane scrollview)
-;;   (let* ((table-view (alloc-init-object "NSTableView"))
-;;          (scrollview (invoke scrollview "init"))
-;;          (source (retain (alloc-init-object "DataSource")))
-;;          (col (retain (alloc-init-object "NSTableColumn"))))
-;;     (invoke scrollview "setHasVerticalScroller:" t)
-;;     (invoke scrollview "setHasHorizontalScroller:" t)
-;;     (invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
-;;     (invoke scrollview "setDocumentView:" table-view)
-;;     (invoke table-view "setDataSource:" source)
-;;     (invoke table-view "addTableColumn:" col)
-;;     (setf $table-view table-view)
-;;     (setf $data-source source)
-;;     scrollview))
-
 (defun init-row-pane (pane scrollview)
   (let* ((table-view (alloc-init-object "NSTableView"))
          (scrollview (invoke scrollview "init"))
@@ -80,6 +64,9 @@
 ;;; ---------------------------------------------------------------------
 ;;; main UI
 ;;; ---------------------------------------------------------------------
+
+(defun open-file (intf)
+  (format t "Open selected"))
 
 (define-interface delectus-window ()
   ;; slots
@@ -113,6 +100,50 @@
                    :external-min-width 196 :external-max-width 196)
    (trash-cluster row-layout '(trash-button) :adjust :center
                   :external-min-width 84 :external-max-width 84))
+  ;; menus
+  (:menus
+   (file-menu "File" ()
+              :items-function
+              (lambda (intf)
+                (list
+                 (make-instance 'menu-component
+                                :items (list
+                                        (make-instance 'capi:menu-item
+                                                       :text "New" :callback 'open-file 
+                                                       :callback-type :interface)
+                                        (make-instance 'capi:menu-item
+                                                       :text "Open" :callback 'open-file
+                                                       :callback-type :interface)
+                                        (make-instance 'capi:menu-item
+                                                       :text "Open Recent" :callback 'open-file
+                                                       :callback-type :interface)))
+                 (make-instance 'menu-component
+                                :items (list
+                                        (make-instance 'capi:menu-item
+                                                       :text "Close" :callback 'open-file
+                                                       :callback-type :interface)
+                                        (make-instance 'capi:menu-item
+                                                       :text "Save" :callback 'open-file
+                                                       :callback-type :interface)
+                                        (make-instance 'capi:menu-item
+                                                       :text "Save As" :callback 'open-file
+                                                       :callback-type :interface)
+                                        (make-instance 'capi:menu-item
+                                                       :text "Revert to Saved" :callback 'open-file
+                                                       :callback-type :interface)
+                                        (make-instance 'capi:menu-item
+                                                       :text "Empty Trash" :callback 'open-file
+                                                       :callback-type :interface)))
+                 (make-instance 'menu-component
+                                :items (list
+                                        (make-instance 'capi:menu-item
+                                                       :text "Page Setup" :callback 'open-file
+                                                       :callback-type :interface)
+                                        (make-instance 'capi:menu-item
+                                                       :text "Print" :callback 'open-file
+                                                       :callback-type :interface)))))))
+  ;; menubar
+  (:menu-bar file-menu)
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
                      :window-styles '(:internal-borderless :textured-background)))
