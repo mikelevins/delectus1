@@ -47,6 +47,68 @@
   (top-button "Del Col" "images/del.png" "images/delhl.png" pane view))
 
 ;;; ---------------------------------------------------------------------
+;;; menus
+;;; ---------------------------------------------------------------------
+
+(defun file-menu-items (intf)
+  (list (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "New"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Open"
+                                                   :callback 'open-file :callback-type :interface)))
+        (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "Close"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Save"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Save As"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Revert to Saved"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Empty Trash"
+                                                   :callback 'open-file :callback-type :interface)))
+        (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "Page Setup"
+                                                   :callback 'open-file :callback-type :interface)
+                               (make-instance 'capi:menu-item :text "Print"
+                                              :callback 'open-file :callback-type :interface)))))
+
+(defun edit-menu-items (intf)
+  (list (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "Undo"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Redo"
+                                                   :callback 'open-file :callback-type :interface)))
+        (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "Cut"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Copy"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Paste"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Delete"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Select All"
+                                                   :callback 'open-file :callback-type :interface)))
+        (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "Rename Column"
+                                                   :callback 'open-file :callback-type :interface)))))
+
+(defun windows-menu-items (intf)
+  (list (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "Minimize"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Zoom"
+                                                   :callback 'open-file :callback-type :interface)
+                                    (make-instance 'capi:menu-item :text "Bring All To Front"
+                                                   :callback 'open-file :callback-type :interface)))))
+
+(defun help-menu-items (intf)
+  (list (make-instance 'menu-component
+                       :items (list (make-instance 'capi:menu-item :text "Delectus Help"
+                                                   :callback 'open-file :callback-type :interface)))))
+
+;;; ---------------------------------------------------------------------
 ;;; view utils
 ;;; ---------------------------------------------------------------------
 
@@ -102,48 +164,12 @@
                   :external-min-width 84 :external-max-width 84))
   ;; menus
   (:menus
-   (file-menu "File" ()
-              :items-function
-              (lambda (intf)
-                (list
-                 (make-instance 'menu-component
-                                :items (list
-                                        (make-instance 'capi:menu-item
-                                                       :text "New" :callback 'open-file 
-                                                       :callback-type :interface)
-                                        (make-instance 'capi:menu-item
-                                                       :text "Open" :callback 'open-file
-                                                       :callback-type :interface)
-                                        (make-instance 'capi:menu-item
-                                                       :text "Open Recent" :callback 'open-file
-                                                       :callback-type :interface)))
-                 (make-instance 'menu-component
-                                :items (list
-                                        (make-instance 'capi:menu-item
-                                                       :text "Close" :callback 'open-file
-                                                       :callback-type :interface)
-                                        (make-instance 'capi:menu-item
-                                                       :text "Save" :callback 'open-file
-                                                       :callback-type :interface)
-                                        (make-instance 'capi:menu-item
-                                                       :text "Save As" :callback 'open-file
-                                                       :callback-type :interface)
-                                        (make-instance 'capi:menu-item
-                                                       :text "Revert to Saved" :callback 'open-file
-                                                       :callback-type :interface)
-                                        (make-instance 'capi:menu-item
-                                                       :text "Empty Trash" :callback 'open-file
-                                                       :callback-type :interface)))
-                 (make-instance 'menu-component
-                                :items (list
-                                        (make-instance 'capi:menu-item
-                                                       :text "Page Setup" :callback 'open-file
-                                                       :callback-type :interface)
-                                        (make-instance 'capi:menu-item
-                                                       :text "Print" :callback 'open-file
-                                                       :callback-type :interface)))))))
+   (file-menu "File" () :items-function 'file-menu-items)
+   (edit-menu "Edit" () :items-function 'edit-menu-items)
+   (windows-menu "Window" () :items-function 'windows-menu-items)
+   (help-menu "Help" () :items-function 'help-menu-items))
   ;; menubar
-  (:menu-bar file-menu)
+  (:menu-bar file-menu edit-menu windows-menu help-menu)
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
                      :window-styles '(:internal-borderless :textured-background)))
