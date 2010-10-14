@@ -21,12 +21,12 @@
 (define-objc-method ("numberOfRowsInTableView:" (:unsigned :long))
     ((self data-source)
      (table-view objc-object-pointer))
-  5)
+  5000)
 
 (define-objc-method ("tableView:objectValueForTableColumn:row:" objc-object-pointer)
     ((self data-source)
      (table-view objc-object-pointer)
      (column objc-object-pointer)
      (row (:unsigned :long)))
-  (string-to-ns-string "Hello"))
+  "Hello from Lisp!")
 

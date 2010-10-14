@@ -115,12 +115,14 @@
 (defun init-row-pane (pane scrollview)
   (let* ((table-view (alloc-init-object "NSTableView"))
          (scrollview (invoke scrollview "init"))
-         (source (retain (alloc-init-object "DataSource"))))
+         (source (retain (alloc-init-object "DataSource")))
+         (col (retain (alloc-init-object "NSTableColumn"))))
     (invoke scrollview "setHasVerticalScroller:" t)
     (invoke scrollview "setHasHorizontalScroller:" t)
     (invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
     (invoke scrollview "setDocumentView:" table-view)
     (invoke table-view "setDataSource:" source)
+    (invoke table-view "addTableColumn:" col)
     scrollview))
 
 ;;; ---------------------------------------------------------------------
