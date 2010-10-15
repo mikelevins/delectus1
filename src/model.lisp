@@ -41,7 +41,7 @@
    (deleted-columns :accessor deleted-columns :initform nil)
    (deleted-rows :accessor deleted-rows :initform nil)
    ;; the last-read data
-   (data :accessor data :initarg :data :initform nil)
+   (data :accessor data :initarg :data :initform (seq:make))
    ;; a user-specified function that determines which data to present
    (filter-fn :accessor filter-fn :initarg :filter-fn :initform (function default-filter))
    ;; a user-specified function that determines how to order the data
@@ -87,7 +87,7 @@
   (setf (presentation m)
         (seq:sort (compare-fn m)
                   (seq:filter (filter-fn m)
-                              (remove-deleted-items m (data me)))))
+                              (remove-deleted-items m (data m)))))
   (setf (changed? m) nil))
 
 (defmethod presentation :before ((m delectus-model))
@@ -100,3 +100,4 @@
 
 ;;; (setf $m (make-instance 'delectus-model))
 ;;; (presentation $m)
+;;; (columns (seq:make))

@@ -1,6 +1,13 @@
 (in-package :delectus)
 
 ;;; ---------------------------------------------------------------------
+;;; control utils
+;;; ---------------------------------------------------------------------
+
+(defun tag (ctrl)(invoke ctrl "tag"))
+(defun set-tag (ctrl tag)(invoke ctrl "setTag:" tag))
+
+;;; ---------------------------------------------------------------------
 ;;; button utils
 ;;; ---------------------------------------------------------------------
 
@@ -9,42 +16,62 @@
 (defparameter $NSImageAbove 5)
 
 (defun trash-button (pane view)
-  (setf view (objc:invoke view "init"))
-  (objc:invoke view "setButtonType:" $NSToggleButton)
-  (objc:invoke view "setBordered:" nil)
-  (objc:invoke view "setImage:"
-               (objc:invoke (objc:invoke "NSImage" "alloc")
+  (setf view (invoke view "init"))
+  (set-tag view (next-widget-id))
+  (invoke view "setButtonType:" $NSToggleButton)
+  (invoke view "setBordered:" nil)
+  (invoke view "setTarget:" (objc-object-pointer (app-delegate)))
+  (invoke view "setAction:" (coerce-to-selector "toggleTrash:"))
+  (invoke view "setImage:"
+          (invoke (invoke "NSImage" "alloc")
                             "initByReferencingFile:" (namestring (resource "images/trashempty48.png"))))
-  (objc:invoke view "setAlternateImage:"
-               (objc:invoke (objc:invoke "NSImage" "alloc")
+  (invoke view "setAlternateImage:"
+               (invoke (invoke "NSImage" "alloc")
                             "initByReferencingFile:" (namestring (resource "images/trashfull48.png"))))
   view)
 
 (defun top-button (label image altimage pane view)
-  (setf view (objc:invoke view "init"))
-  (objc:invoke view "setBordered:" nil)
-  (objc:invoke view "setTitle:" label)
-  (objc:invoke view "setImagePosition:" $NSImageAbove)
-  (objc:invoke view "setButtonType:" $NSMomentaryChangeButton)
-  (objc:invoke view "setImage:"
-               (objc:invoke (objc:invoke "NSImage" "alloc")
+  (setf view (invoke view "init"))
+  (set-tag view (next-widget-id))
+  (invoke view "setBordered:" nil)
+  (invoke view "setTitle:" label)
+  (invoke view "setImagePosition:" $NSImageAbove)
+  (invoke view "setButtonType:" $NSMomentaryChangeButton)
+  (invoke view "setImage:"
+               (invoke (invoke "NSImage" "alloc")
                             "initByReferencingFile:" (namestring (resource image))))
-  (objc:invoke view "setAlternateImage:"
-               (objc:invoke (objc:invoke "NSImage" "alloc")
+  (invoke view "setAlternateImage:"
+               (invoke (invoke "NSImage" "alloc")
                             "initByReferencingFile:" (namestring (resource altimage))))
   view)
 
 (defun add-row-button (pane view)
-  (top-button "Add Row" "images/add.png" "images/addhl.png" pane view))
+  (let ((btn (top-button "Add Row" "images/add.png" "images/addhl.png" pane view)))
+    (set-tag btn (next-widget-id))
+    (invoke btn "setTarget:" (objc-object-pointer (app-delegate)))
+    (invoke btn "setAction:" (coerce-to-selector "addRow:"))
+    btn))
 
 (defun delete-row-button (pane view)
-  (top-button "Del Row" "images/del.png" "images/delhl.png" pane view))
+  (let ((btn (top-button "Del Row" "images/del.png" "images/delhl.png" pane view)))
+    (set-tag btn (next-widget-id))
+    (invoke btn "setTarget:" (objc-object-pointer (app-delegate)))
+    (invoke btn "setAction:" (coerce-to-selector "deleteRow:"))
+    btn))
 
 (defun add-col-button (pane view)
-  (top-button "Add Col" "images/add.png" "images/addhl.png" pane view))
+  (let ((btn (top-button "Add Col" "images/add.png" "images/addhl.png" pane view)))
+    (invoke btn "setTag:" (next-widget-id))
+    (invoke btn "setTarget:" (objc-object-pointer (app-delegate)))
+    (invoke btn "setAction:" (coerce-to-selector "addColumn:"))
+    btn))
 
 (defun delete-col-button (pane view)
-  (top-button "Del Col" "images/del.png" "images/delhl.png" pane view))
+  (let ((btn (top-button "Del Col" "images/del.png" "images/delhl.png" pane view)))
+    (set-tag btn (next-widget-id))
+    (invoke btn "setTarget:" (objc-object-pointer (app-delegate)))
+    (invoke btn "setAction:" (coerce-to-selector "deleteColumn:"))
+    btn))
 
 ;;; ---------------------------------------------------------------------
 ;;; menus
@@ -112,18 +139,23 @@
 ;;; view utils
 ;;; ---------------------------------------------------------------------
 
-(defun init-row-pane (pane scrollview)
+(defun init-row-pane (intf pane scrollview)
   (let* ((table-view (alloc-init-object "NSTableView"))
          (scrollview (invoke scrollview "init"))
-         (source (retain (alloc-init-object "DataSource")))
-         (col (retain (alloc-init-object "NSTableColumn"))))
+         (source (source intf)))
     (invoke scrollview "setHasVerticalScroller:" t)
     (invoke scrollview "setHasHorizontalScroller:" t)
     (invoke table-view "setUsesAlternatingRowBackgroundColors:" t)
     (invoke scrollview "setDocumentView:" table-view)
-    (invoke table-view "setDataSource:" source)
-    (invoke table-view "addTableColumn:" col)
+    (invoke table-view "setDataSource:" (objc-object-pointer source))
     scrollview))
+
+(defun add-table-column (intf scrollview column-name)
+  (let ((table-view (invoke (cocoa-view-pane-view scrollview) "documentView"))
+        (table-column (invoke (invoke "NSTableColumn" "alloc") "initWithIdentifier:" column-name)))
+    (invoke (invoke table-column "headerCell") "setStringValue:" column-name)
+    (invoke table-view "addTableColumn:" table-column)
+    (invoke table-view "reloadData")))
 
 ;;; ---------------------------------------------------------------------
 ;;; main UI
@@ -134,16 +166,19 @@
 
 (define-interface delectus-window ()
   ;; slots
-  ((model :reader model :initarg :model :initform nil))
+  ((source :reader source :initarg :source 
+           :initform (make-instance 'data-source :model (make-instance 'delectus-model))))
   ;; panes
   (:panes
    ;; top row
    (add-row-button cocoa-view-pane :view-class "NSButton":init-function 'add-row-button)
    (delete-row-button cocoa-view-pane :view-class "NSButton":init-function 'delete-row-button)
-   (add-column-button cocoa-view-pane :view-class "NSButton" :init-function 'add-col-button)
+   (add-column-button cocoa-view-pane :view-class "NSButton" :init-function 'add-col-button 
+                      :reader add-column-button)
    (delete-column-button cocoa-view-pane :view-class "NSButton" :init-function 'delete-col-button)
    ;; main row
-   (row-pane cocoa-view-pane :view-class "NSScrollView" :reader row-pane :init-function 'init-row-pane)
+   (row-pane cocoa-view-pane :view-class "NSScrollView" :reader row-pane 
+             :init-function (fun:partial 'init-row-pane interface))
    ;; bottom row
    (trash-button cocoa-view-pane :view-class "NSButton" :init-function 'trash-button)
    (filter-field cocoa-view-pane :view-class "NSSearchField"))
@@ -174,6 +209,10 @@
   (:menu-bar file-menu edit-menu windows-menu help-menu)
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
-                     :window-styles '(:internal-borderless :textured-background)))
+                     :window-styles '(:internal-borderless :textured-background)
+                     :create-callback (lambda (intf)
+                                        (register-tag->interface
+                                         (tag (cocoa-view-pane-view (add-column-button intf)))
+                                         intf))))
 
 ;;; (setq $w (contain (make-instance 'delectus-window)))

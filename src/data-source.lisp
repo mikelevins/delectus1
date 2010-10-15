@@ -21,7 +21,7 @@
 (define-objc-method ("numberOfRowsInTableView:" (:unsigned :long))
     ((self data-source)
      (table-view objc-object-pointer))
-  5000)
+  (seq:length (presentation (model self))))
 
 (define-objc-method ("tableView:objectValueForTableColumn:row:" objc-object-pointer)
     ((self data-source)
