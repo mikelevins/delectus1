@@ -14,7 +14,7 @@
                                                                        (:unsigned :long))))
 
 (define-objc-class data-source ()
-  ((model :accessor model :initarg :model :initform nil))
+  ((model :reader model :initarg :model :initform (make-instance 'delectus-model)))
   (:objc-class-name "DataSource")
   (:objc-protocols "NSTableViewDataSource"))
 

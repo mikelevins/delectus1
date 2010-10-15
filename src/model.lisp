@@ -15,10 +15,10 @@
              (format stream "Column '~A' already exists" 
                      (column-name condition)))))
 
-(defmethod columns ((d fset:seq))
+(defmethod columns ((d fset:seq) &key &allow-other-keys)
   (seq:head d))
 
-(defmethod rows ((d fset:seq))
+(defmethod rows ((d fset:seq) &key &allow-other-keys)
   (seq:tail d))
 
 (defmethod add-column ((d fset:seq)(name string))
@@ -97,6 +97,20 @@
 (defmethod column-name->index ((m delectus-model)(name string))
   (seq:position (^ (u)(equalp name u))
                 (columns (data m))))
+
+(defmethod columns ((m delectus-model) &key (include-hidden? nil))
+  (if include-hidden?
+      (columns (data m))
+      (columns (presentation m))))
+
+(defmethod rows ((m delectus-model) &key (include-hidden? nil))
+  (if include-hidden?
+      (rows (data m))
+      (rows (presentation m))))
+
+(defmethod add-column ((m delectus-model)(name string))
+  (setf (data m)
+        (add-column (data m) name)))
 
 ;;; (setf $m (make-instance 'delectus-model))
 ;;; (presentation $m)

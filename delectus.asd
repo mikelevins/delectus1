@@ -30,6 +30,8 @@
                                        (:file "model")
                                        (:file "data-source")
                                        (:file "app-delegate")
+                                       (:file "cocoa-init")
+                                       (:file "button-handlers")
                                        (:file "ui")))))
 
 (in-package :cl-user)
