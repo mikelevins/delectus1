@@ -3,115 +3,117 @@
 ;;; ---------------------------------------------------------------------
 ;;; delectus data
 ;;; ---------------------------------------------------------------------
-;;; an fset:seq of fset:seqs
-;;; the head of the seq is a seq of column headers
-;;; the tail of the seq is the sequence of rows
-;;; each row is the same length as the seq of headers
 
-(define-condition model-error ()())
-(define-condition column-exists-error (model-error)
-  ((column-name :reader column-name :initarg :column-name))
-  (:report (lambda (condition stream)
-             (format stream "Column '~A' already exists" 
-                     (column-name condition)))))
+(defun validate-model-contents (contents)
+  (let ((col-count (length (first contents)))
+        (row-count (length contents)))
+    (assert (every (^ (c)(= col-count (length c))) contents)()
+            "Malformed model contents (rows are different lengths)")
+    (values contents col-count row-count)))
 
-(defmethod columns ((d fset:seq) &key &allow-other-keys)
-  (seq:head d))
+(defun make-model (&optional contents)
+  (if contents
+      (multiple-value-bind (contents column-count row-count)(validate-model-contents contents)
+        (make-array (list row-count column-count) :adjustable t :initial-contents contents))
+      (make-array '(0 0) :adjustable t)))
 
-(defmethod rows ((d fset:seq) &key &allow-other-keys)
-  (seq:tail d))
+(defmethod count-rows ((model array))
+  (first (array-dimensions model)))
 
-(defmethod add-column ((d fset:seq)(name string))
-  (when (seq:find (^ (c)(equalp name c))
-                  (columns d))
-    (error 'column-exists-error :column-name name))
-  (seq:add-first (seq:add-last (columns d) name)
-                 (seq:image (^ (s)(seq:add-last s nil))
-                            (rows d))))
+(defmethod count-columns ((model array))
+  (second (array-dimensions model)))
+
+(defmethod column-index ((model array)(column string))
+  (block searching
+    (dotimes (i (count-columns model))
+      (when (equalp column (aref model 0 i))
+        (return-from searching i)))
+    nil))
+
+(defmethod columns ((model array))
+  (loop for i from 0 upto (1- (count-columns model))
+       do collect (aref model 0 i)))
+
+(defmethod value-at ((model array)(column string)(row integer))
+  (let ((col-pos (column-index model column)))
+    (if col-pos
+        (aref model (1+ row) col-pos)
+        (error "Column '~A' not found" column))))
+
+(defmethod put-value-at ((model fset:map)(column string)(row integer) val)
+  (let ((col-pos (column-index model column)))
+    (if col-pos
+        (setf (aref model (1+ row) col-pos) val)
+        (error "Column '~A' not found" column))))
+
+(defmethod add-column ((model array)(column string))
+  (let ((col-pos (column-index model column)))
+    (if col-pos
+        (error "Column '~A' already exists" column)
+        (let* ((old-dims (array-dimensions model))
+               (new-dims (list (first old-dims)(1+ (second old-dims))))
+               (new-model (adjust-array model new-dims :initial-element nil)))
+          (setf (aref new-model 0 (second old-dims)) column)
+          new-model))))
+
+(defmethod add-row ((model array) &optional before)
+  (let ((before (or before (count-rows model))))
+    (if (> before (count-rows model))
+        (error "Tried to insert a row too far past the last row.")
+        (let* ((old-dims (array-dimensions model))
+               (new-dims (list (1+ (first old-dims))(second old-dims)))
+               (new-model (adjust-array model new-dims :initial-element nil)))
+          (if (= before (first old-dims))
+              new-model
+              (progn
+                (loop for j from (first old-dims) downto (1+ before)
+                     do (loop for i from 0 upto (1- (count-columns model))
+                             do (setf (aref model j i)
+                                      (aref model (1- j) i))))
+                (loop for i from 0 upto (1- (count-columns model))
+                             do (setf (aref model before i) nil))
+                new-model))))))
 
 ;;; ---------------------------------------------------------------------
-;;; delectus model
+;;; NSDataSource API
 ;;; ---------------------------------------------------------------------
 
-(defun default-filter (x) t)
-(defun default-compare (u v) nil)
+(define-objc-protocol "NSTableViewDataSource"
+    :instance-methods (("numberOfRowsInTableView:" (:unsigned :long)
+                                                   objc-object-pointer)
+                       ("tableView:objectValueForTableColumn:row:" objc-object-pointer
+                                                                   objc-object-pointer
+                                                                   objc-object-pointer
+                                                                   (:unsigned :long))
+                       ("tableView:setObjectValue:forTableColumn:row:" :void
+                                                                       objc-object-pointer
+                                                                       objc-object-pointer
+                                                                       objc-object-pointer
+                                                                       (:unsigned :long))))
 
-(defclass delectus-model ()
-  ((changed? :accessor changed? :initform t)
-   (deleted-columns :accessor deleted-columns :initform nil)
-   (deleted-rows :accessor deleted-rows :initform nil)
-   ;; the last-read data
-   (data :accessor data :initarg :data :initform (seq:make))
-   ;; a user-specified function that determines which data to present
-   (filter-fn :accessor filter-fn :initarg :filter-fn :initform (function default-filter))
-   ;; a user-specified function that determines how to order the data
-   (compare-fn :accessor compare-fn :initarg :compare-fn :initform (function default-compare))
-   ;; the data that are to be presented in the UI
-   (presentation :accessor presentation :initform nil)))
+(define-objc-class data-source ()
+  ((model :reader model :initarg :model :initform (map:make)))
+  (:objc-class-name "DataSource")
+  (:objc-protocols "NSTableViewDataSource"))
 
-(defmethod (setf deleted-columns) :after (val (m delectus-model))
-  (setf (changed? m) t))
+(define-objc-method ("numberOfRowsInTableView:" (:unsigned :long))
+    ((self data-source)
+     (table-view objc-object-pointer))
+  (count-rows (model self)))
 
-(defmethod (setf deleted-rows) :after (val (m delectus-model))
-  (setf (changed? m) t))
+(define-objc-method ("tableView:objectValueForTableColumn:row:" objc-object-pointer)
+    ((self data-source)
+     (table-view objc-object-pointer)
+     (column objc-object-pointer)
+     (row (:unsigned :long)))
+  (value-at (model self) (invoke (invoke column "headerCell") "textValue") row))
 
-(defmethod (setf data) :after (val (m delectus-model))
-  (setf (changed? m) t))
-
-(defmethod (setf filter-fn) :after (val (m delectus-model))
-  (setf (changed? m) t))
-
-(defmethod (setf compare-fn) :after (val (m delectus-model))
-  (setf (changed? m) t))
-
-(defun indexes->elements (s indexes)
-  (seq:image (fun:partial 'seq:element s) indexes))
-
-(defun indexed-columns-from-rows (rows indexes)
-  (seq:image (fun:partial (fun:flip #'indexes->elements) indexes)
-             rows))
-
-(defmethod remove-deleted-items ((m delectus-model) mdata)
-  (let* ((del-cols (deleted-columns m))
-         (col-indexes (seq:range 0 (seq:length (columns (data m)))))
-         (live-col-indexes (seq:difference col-indexes del-cols))
-         (del-rows (deleted-rows m))
-         (row-indexes (seq:range 0 (seq:length (rows (data m)))))
-         (live-row-indexes (seq:difference row-indexes del-rows))
-         (new-cols (indexes->elements (columns mdata) live-col-indexes))
-         (new-rows (indexes->elements (indexed-columns-from-rows (rows mdata) live-col-indexes)
-                                      live-row-indexes)))
-    (seq:add-first new-cols new-rows)))
-
-(defmethod update-presentation ((m delectus-model))
-  (setf (presentation m)
-        (seq:sort (compare-fn m)
-                  (seq:filter (filter-fn m)
-                              (remove-deleted-items m (data m)))))
-  (setf (changed? m) nil))
-
-(defmethod presentation :before ((m delectus-model))
-  (when (changed? m)
-    (update-presentation m)))
-
-(defmethod column-name->index ((m delectus-model)(name string))
-  (seq:position (^ (u)(equalp name u))
-                (columns (data m))))
-
-(defmethod columns ((m delectus-model) &key (include-hidden? nil))
-  (if include-hidden?
-      (columns (data m))
-      (columns (presentation m))))
-
-(defmethod rows ((m delectus-model) &key (include-hidden? nil))
-  (if include-hidden?
-      (rows (data m))
-      (rows (presentation m))))
-
-(defmethod add-column ((m delectus-model)(name string))
-  (setf (data m)
-        (add-column (data m) name)))
-
-;;; (setf $m (make-instance 'delectus-model))
-;;; (presentation $m)
-;;; (columns (seq:make))
+(define-objc-method ("tableView:setObjectValue:forTableColumn:row:" objc-object-pointer)
+    ((self data-source)
+     (table-view objc-object-pointer)
+     (object-value objc-object-pointer)
+     (column objc-object-pointer)
+     (row (:unsigned :long)))
+  (put-value-at (model self)
+                (invoke (invoke column "headerCell") "textValue") row
+                (invoke-into 'string object-value "description")))

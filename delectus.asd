@@ -23,16 +23,18 @@
     :author "mikel evins"
     :licence ""
     :description "Delectus 2"
-    :depends-on (:folio.as :folio.functions :folio.collections)
+    :depends-on (:folio.as :folio.functions :folio.collections :fare-csv)
     :components ((:module src
                           :serial t
                           :components ((:file "package")
                                        (:file "model")
-                                       (:file "data-source")
-                                       (:file "app-delegate")
-                                       (:file "cocoa-init")
-                                       (:file "button-handlers")
-                                       (:file "ui")))))
+                                       (:file "csv")
+                                       ;;(:file "data-source")
+                                       ;;(:file "app-delegate")
+                                       ;;(:file "cocoa-init")
+                                       ;;(:file "button-handlers")
+                                       ;;(:file "ui")
+                                       ))))
 
 (in-package :cl-user)
 
