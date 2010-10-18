@@ -50,4 +50,27 @@
 (progn (time (add-row $zips 1)) 'done)
 (count-columns $zips)
 
+(time
+ (progn
+   (setq $col (make-instance 'column :name "zip" :model $zips))
+   'done))
+
+(count-rows $col)
+(elt (rows $zips) 0)
+
+(setf $pres (make-instance 'presentation :model $zips))
+(time (count-rows $pres))
+(time (rows $pres))
+(time (count-columns $pres))
+(time (columns $pres))
+(time (value-at $pres "city" 21345))
+
+(time (value-at $pres "city" 21346))
+(time (put-value-at $pres "city" 21346 "Whoville"))
+(time (value-at $pres "city" 21346))
+
+(time (add-column $pres "color"))
+
+
+
 |#
