@@ -25,11 +25,13 @@
          (row-length (length (first csv-data))))
     (if (every (^ (row) (= row-length (length row)))
                csv-data)
-        (let ((csv (if first-row-headers?
-                       csv-data
-                       (cons (take-letters (length (first csv)))
-                             csv-data))))
-          (make-model csv))
+        (let ((rows (if first-row-headers?
+                        (cdr csv-data)
+                        csv-data))
+              (columns (if first-row-headers?
+                           (car csv-data)
+                           (take-letters (length (first csv-data))))))
+          (make-instance 'model :columns columns :rows rows))
         (error "Malformed CSV data"))))
 
 (defmethod read-csv ((path string) &key (first-row-headers? t))
@@ -42,13 +44,23 @@
    'done))
 
 (type-of $zips)
-(array-dimensions $zips)
-(columns $zips)
-(value-at $zips "zip" 0)
-(count-rows $zips)
-(time (add-column $zips "flavor"))
+(time (columns $zips))
+(time (column-index $zips "city"))
+(time (value-at $zips "city" 21212))
+(time (progn
+        (put-value-at $zips "city" 21212 "Fort Mudge")
+        'done))
+
+(time (count-rows $zips))
+
+(progn (time (add-column $zips "flavor")) 'done)
+(time (value-at $zips "flavor" 21212))
 (progn (time (add-row $zips 1)) 'done)
-(count-columns $zips)
+(progn (time (add-row $zips 43191)) 'done)
+(time (value-at $zips "city" 43191))
+(seq:element (rows $zips) 43191)
+(seq:element (rows $zips) 43190)
+
 
 (time
  (progn
@@ -70,6 +82,8 @@
 (time (value-at $pres "city" 21346))
 
 (time (add-column $pres "color"))
+
+(time (value-at $pres "city" 0))
 
 
 
