@@ -88,3 +88,68 @@
                    (seq:concat (seq:subsequence old-rows 0 before)
                                (seq:add-first new-row
                                               (seq:subsequence old-rows before)))))))))
+
+;;; ---------------------------------------------------------------------
+;;;  data source
+;;; ---------------------------------------------------------------------
+
+(define-objc-protocol "NSTableViewDataSource"
+    :instance-methods (("numberOfRowsInTableView:" (:unsigned :long)
+                                                   objc-object-pointer)
+                       ("tableView:objectValueForTableColumn:row:" objc-object-pointer
+                                                                   objc-object-pointer
+                                                                   (:unsigned :long))
+                       ("tableView:setObjectValue:forTableColumn:row:" :void
+                                                                       objc-object-pointer
+                                                                       objc-object-pointer
+                                                                       objc-object-pointer
+                                                                       (:unsigned :long))))
+
+
+
+(define-objc-class data-source ()
+  ((model :reader model :initarg :model)
+   (deleted-columns :accessor deleted-columns :initform (seq:make))
+   (deleted-rows :accessor deleted-rows :initform (seq:make))
+   (filter-fn :accessor filter-fn :initform (lambda (row) t))
+   (order-fn :accessor order-fn :initform (lambda (u v) nil))
+   (changed? :accessor changed? :initform t)
+   (view :accessor view :initform nil))
+  (:objc-class-name "DataSource")
+  (:objc-protocols "NSTableViewDataSource"))
+
+(defmethod count-rows ((ds data-source))
+  (count-rows (model ds)))
+
+(defmethod value-at ((ds data-source)(column-name string)(row integer))
+  (value-at (model ds) column-name row))
+
+(defmethod put-value-at ((ds data-source)(column-name string)(row integer) val)
+  (put-value-at (model ds) column-name row val))
+
+(define-objc-method ("numberOfRowsInTableView:" (:unsigned :long))
+    ((self data-source)
+     (table-view objc-object-pointer))
+  (count-rows (model self)))
+
+(define-objc-method ("tableView:objectValueForTableColumn:row:" objc-object-pointer)
+    ((self data-source)
+     (table-view objc-object-pointer)
+     (column objc-object-pointer)
+     (row (:unsigned :long)))
+  (value-at self
+            column
+            (invoke (invoke column "headerCell") "stringValue")
+            row))
+
+(define-objc-method ("tableView:setObjectValue:forTableColumn:row:" :void)
+    ((self data-source)
+     (table-view objc-object-pointer)
+     (object-value objc-object-pointer)
+     (column objc-object-pointer)
+     (row (:unsigned :long)))
+  (put-value-at self
+                column
+                (invoke (invoke column "headerCell") "stringValue")
+                row
+                object-value))
