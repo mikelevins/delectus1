@@ -19,9 +19,18 @@
          (doc (make-instance 'document :name document-name)))
     (setf (documents app)
           (cons doc (documents app)))
-    (show doc)))
+    (show doc)
+    doc))
 
 (defun app ()
   (make-instance 'application))
+
+(defmethod find-document ((m model))
+  (seq:find (^ (doc)(equal m (model doc))) 
+            (documents (app))))
+
+(defmethod find-document ((win interface))
+  (seq:find (^ (doc)(equal win (window doc))) 
+            (documents (app))))
 
 ;;; (app)

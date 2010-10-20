@@ -1,3 +1,5 @@
 src/ui.xfasl
 src/app-delegate.lisp~
 src/cocoa-init.lisp~
+delectus.asd~
+src/app.lisp~

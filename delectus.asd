@@ -36,6 +36,7 @@
                           :components ((:file "package")
                                        (:file "singleton")
                                        (:file "model")
+                                       (:file "document")
                                        (:file "csv")
                                        (:file "menus")
                                        (:file "views")
@@ -52,4 +53,5 @@
   (asdf:oos 'asdf:load-op :delectus))
 
 ;;; (load-delectus)
-;;; (delectus::new-untitled-document (delectus::app))
+;;; (setq $doc (delectus::new-untitled-document (delectus::app)))
+;;; (setq $mod (delectus::model $doc))
