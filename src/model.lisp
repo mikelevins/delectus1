@@ -22,13 +22,10 @@
 (defmethod initialize-instance :after ((m model) &rest initargs &key (columns nil)(rows nil)
                                        &allow-other-keys)
   (when (or columns rows)
-    (let* ((column-names (or columns (take-letters (length (first rows)))))
-           (column-indexes (seq:range 0 (seq:length column-names))))
-      (setf (column-name->index m)(map:zipmap column-names column-indexes))
-      (setf (index->column-name m)(map:zipmap column-indexes column-names))
-      (setf (columns m)(as 'fset:seq columns))
+    (let* ((column-names (or columns (take-letters (length (first rows))))))
+      (setf (columns m)(as 'fset:seq (seq:image 'box:make column-names)))
       (setf (rows m)(as 'fset:seq 
-                        (seq:image (^ (row)(as 'fset:seq row)) 
+                        (seq:image (^ (row)(as 'fset:seq (seq:image 'box:make row))) 
                                    rows))))))
 
 (defmethod count-rows ((m model))
@@ -38,24 +35,17 @@
   (seq:length (columns m)))
 
 (defmethod column-index ((m model)(column-name string))
-  (map:get (column-name->index m) column-name :test #'equalp))
+  (seq:position (^ (col)(equalp col column-name)) (columns m)))
 
 (defmethod value-at ((m model)(column-name string)(row integer))
-  (let ((col (column-index m column-name)))
-    (seq:element (seq:element (rows m) row) col)))
-
-(defmethod update-value-at ((seq fset:seq) index val)
-  (assert (< -1 index (seq:length seq))()
-          "Index out of range")
-  (seq:concat (seq:subsequence seq 0 index)
-              (seq:add-first val (seq:subsequence seq (1+ index)))))
+  (let* ((col (column-index m column-name))
+         (box (seq:element (seq:element (rows m) row) col)))
+    (box:get box)))
 
 (defmethod put-value-at ((m model)(column-name string)(row-index integer) val)
-  (let* ((col-index (column-index m column-name))
-         (row (seq:element (rows m) row-index))
-         (new-row (update-value-at row col-index val))
-         (new-rows (update-value-at (rows m) row-index new-row)))
-    (setf (rows m) new-rows)))
+  (let* ((col (column-index m column-name))
+         (box (seq:element (seq:element (rows m) row-index) col)))
+    (box:put val box)))
 
 (defmethod add-column ((m model)(column string))
   (let ((col-pos (column-index m column)))
@@ -76,7 +66,7 @@
   (let ((row-count (count-rows m))
         (before (or before row-count))
         (old-rows (rows m))
-        (new-row (apply 'seq:make (as 'list (seq:repeat (count-columns m) nil)))))
+        (new-row (apply 'seq:make (as 'list (seq:repeat (count-columns m) (box:make nil))))))
     (if (> before row-count)
         (error "Tried to insert a row too far past the last row.")
         (cond
@@ -90,7 +80,7 @@
                                               (seq:subsequence old-rows before)))))))))
 
 ;;; ---------------------------------------------------------------------
-;;;  data source
+;;;  document
 ;;; ---------------------------------------------------------------------
 
 (define-objc-protocol "NSTableViewDataSource"
@@ -105,35 +95,85 @@
                                                                        objc-object-pointer
                                                                        (:unsigned :long))))
 
-
-
-(define-objc-class data-source ()
-  ((model :reader model :initarg :model)
+(define-objc-class document ()
+  ((name :reader name :initarg :name :initform nil)
+   (model :reader model :initarg :model :initform nil)
+   (window :reader window :initarg :window :initform nil)
    (deleted-columns :accessor deleted-columns :initform (seq:make))
    (deleted-rows :accessor deleted-rows :initform (seq:make))
    (filter-fn :accessor filter-fn :initform (lambda (row) t))
    (order-fn :accessor order-fn :initform (lambda (u v) nil))
+   (show-deleted? :accessor show-deleted? :initform nil)
    (changed? :accessor changed? :initform t)
-   (view :accessor view :initform nil))
+   (presented-columns :accessor presented-columns :initform nil)
+   (presented-rows :accessor presented-rows :initform nil))
   (:objc-class-name "DataSource")
   (:objc-protocols "NSTableViewDataSource"))
 
-(defmethod count-rows ((ds data-source))
-  (count-rows (model ds)))
+(defmethod initialize-instance :after ((doc document) &rest initargs &key (name "Untitled") (model nil)
+                                       &allow-other-keys)
+  (let ((m (or model (make-instance 'model))))
+    (setf (slot-value doc 'model)  m)
+    (setf (slot-value doc 'name)  name)
+    (setf (slot-value doc 'window)  (make-instance 'delectus-window :document doc))))
 
-(defmethod value-at ((ds data-source)(column-name string)(row integer))
-  (value-at (model ds) column-name row))
+(defmethod show ((doc document))
+  (display (window doc)))
 
-(defmethod put-value-at ((ds data-source)(column-name string)(row integer) val)
-  (put-value-at (model ds) column-name row val))
+(defmethod update-presentation ((doc document))
+  (when (changed? doc)
+    (let* ((all-columns (columns (model doc)))
+           (all-rows (rows (model doc)))
+           (visible-columns (if (or (show-deleted? doc)
+                                    (seq:empty? (deleted-columns doc)))
+                             all-columns
+                             (seq:difference all-columns (deleted-columns doc) :test #'equalp)))
+           (visible-rows (if (or (show-deleted? doc)
+                                 (seq:empty? (deleted-rows doc)))
+                             all-rows
+                             (seq:difference all-rows
+                                             (seq:image (^ (ri)(seq:element all-rows ri))
+                                                        (deleted-rows doc))
+                                             :test #'equalp)))
+           (filtered-rows (seq:filter (filter-fn doc) visible-rows))           
+           (sorted-rows (seq:sort (order-fn doc) filtered-rows)))
+      (setf (presented-columns doc) visible-columns)
+      (setf (presented-rows doc) sorted-rows)))
+  (setf (changed? doc) nil))
+
+;;; ---------------------------------------------------------------------
+;;;  model methods
+
+(defmethod count-rows ((doc document))
+  (update-presentation doc)
+  (seq:length (presented-rows doc)))
+
+(defmethod column-index ((doc document)(column-name string))
+  (seq:position (^ (col)(equalp col column-name)) (presented-columns doc)))
+
+(defmethod value-at ((doc document)(column-name string)(row integer))
+  (update-presentation doc)
+  (let* ((col (column-index doc column-name))
+         (box (seq:element (seq:element (presented-rows m) row) col)))
+    (box:get box)))
+
+(defmethod put-value-at ((doc document)(column-name string)(row integer) val)
+  (update-presentation doc)
+  (let* ((col (column-index doc column-name))
+         (box (seq:element (seq:element (presented-rows m) row) col)))
+    (box:put val box)
+    (setf (changed? doc) t)))
+
+;;; ---------------------------------------------------------------------
+;;;  NSDataSource methods
 
 (define-objc-method ("numberOfRowsInTableView:" (:unsigned :long))
-    ((self data-source)
+    ((self document)
      (table-view objc-object-pointer))
-  (count-rows (model self)))
+  (count-rows self))
 
 (define-objc-method ("tableView:objectValueForTableColumn:row:" objc-object-pointer)
-    ((self data-source)
+    ((self document)
      (table-view objc-object-pointer)
      (column objc-object-pointer)
      (row (:unsigned :long)))
@@ -143,7 +183,7 @@
             row))
 
 (define-objc-method ("tableView:setObjectValue:forTableColumn:row:" :void)
-    ((self data-source)
+    ((self document)
      (table-view objc-object-pointer)
      (object-value objc-object-pointer)
      (column objc-object-pointer)

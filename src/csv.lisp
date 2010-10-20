@@ -85,6 +85,10 @@
 
 (time (value-at $pres "city" 0))
 
-
+(time
+ (progn
+   (seq:select (rows $zips)
+               (seq:difference (seq:range 0 (count-rows $zips)) '(2 135 1172)))
+   'done))
 
 |#
