@@ -21,18 +21,14 @@
       (take-letters n (append alphabet (extend-alphabet alphabet)))))
 
 (defmethod read-csv ((path pathname) &key (first-row-headers? t))
-  (let* ((csv-data (delete nil (fare-csv:read-csv-file path)))
-         (row-length (length (first csv-data))))
-    (if (every (^ (row) (= row-length (length row)))
-               csv-data)
-        (let ((rows (if first-row-headers?
-                        (cdr csv-data)
-                        csv-data))
-              (columns (if first-row-headers?
-                           (car csv-data)
-                           (take-letters (length (first csv-data))))))
-          (make-instance 'model :columns columns :rows rows))
-        (error "Malformed CSV data"))))
+  (let* ((csv-data (delete nil (fare-csv:read-csv-file path))))
+    (let ((rows (if first-row-headers?
+                    (cdr csv-data)
+                    csv-data))
+          (columns (if first-row-headers?
+                       (car csv-data)
+                       (take-letters (length (first csv-data))))))
+      (model :columns columns :rows rows))))
 
 (defmethod read-csv ((path string) &key (first-row-headers? t))
   (read-csv (pathname path) :first-row-headers? first-row-headers?))
@@ -43,26 +39,19 @@
    (setf $zips (read-csv "/Applications/factor/extra/usa-cities/zipcode.csv"))
    'done))
 
-(type-of $zips)
-(time (columns $zips))
-(time (index (find-column $zips "city")))
-(time (value-at $zips "city" 0))
-(time (value-at $zips "city" 21212))
-(time (progn
-        (put-value-at $zips "city" 21212 "Fort Mudge")
-        'done))
-(time (count-rows $zips))
+(time (value-at $zips "city" 22022))
 
-(setq $pres (make-instance 'presentation :model $zips))
-(time (value-at $pres "city" 21212))
+(setf $pres (make-instance 'presentation :model $zips))
+
+(time (value-at $pres "city" 22022))
 (time (value-at $pres "city" 0))
-(time (count-rows $pres))
-(time (find-column $pres "city"))
-(time (set-sort-column! $pres "city"))
-(time (set-sort-column! $pres "city" :reverse t))
+(time (value-at $pres "city" 286))
+(time (value-at $pres "city" 43190))
 
-(time (progn
-        (put-value-at $pres "city" 21212 "Fort Gratiot")
-        'done))
+(set-sort! $pres "city")
+(set-sort! $pres "city" :reverse t)
+
+(set-filter! $pres "Q")
+(time (count-rows $pres))
 
 |#

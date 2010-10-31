@@ -34,15 +34,15 @@
     :components ((:module src
                           :serial t
                           :components ((:file "package")
-                                       (:file "singleton")
                                        (:file "model")
-                                       (:file "presentation")
-                                       (:file "document")
                                        (:file "csv")
-                                       (:file "menus")
-                                       (:file "views")
-                                       (:file "app")
-                                       (:file "ui")
+                                       (:file "presentation")
+                                       ;;(:file "singleton")
+                                       ;;(:file "document")
+                                       ;;(:file "menus")
+                                       ;;(:file "views")
+                                       ;;(:file "app")
+                                       ;;(:file "ui")
                                        ;;(:file "app-delegate")
                                        ;;(:file "cocoa-init")
                                        ;;(:file "button-handlers")
@@ -54,5 +54,3 @@
   (asdf:oos 'asdf:load-op :delectus))
 
 ;;; (load-delectus)
-;;; (setq $doc (delectus::new-untitled-document (delectus::app)))
-;;; (setq $mod (delectus::model $doc))
