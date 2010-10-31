@@ -8,10 +8,10 @@
   ;;; paths relative to the app bundle
   (defun path-base () project-root))
 
-(pushnew (merge-pathnames "../../xg/folio/as/" (path-base)) asdf:*central-registry* :test 'equalp)
-(pushnew (merge-pathnames "../../xg/folio/boxes/" (path-base)) asdf:*central-registry* :test 'equalp)
-(pushnew (merge-pathnames "../../xg/folio/functions/" (path-base)) asdf:*central-registry* :test 'equalp)
-(pushnew (merge-pathnames "../../xg/folio/collections/" (path-base)) asdf:*central-registry* :test 'equalp)
+(pushnew (truename (merge-pathnames "../../bard/folio/as/" (path-base))) asdf:*central-registry* :test 'equalp)
+(pushnew (truename (merge-pathnames "../../bard/folio/boxes/" (path-base))) asdf:*central-registry* :test 'equalp)
+(pushnew (truename (merge-pathnames "../../bard/folio/functions/" (path-base))) asdf:*central-registry* :test 'equalp)
+(pushnew (truename (merge-pathnames "../../bard/folio/collections/" (path-base))) asdf:*central-registry* :test 'equalp)
 
 (defun path (p)
   (merge-pathnames p (translate-logical-pathname (path-base))))
@@ -36,6 +36,7 @@
                           :components ((:file "package")
                                        (:file "singleton")
                                        (:file "model")
+                                       (:file "presentation")
                                        (:file "document")
                                        (:file "csv")
                                        (:file "menus")

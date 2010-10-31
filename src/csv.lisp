@@ -45,50 +45,21 @@
 
 (type-of $zips)
 (time (columns $zips))
-(time (column-index $zips "city"))
+(time (index (find-column $zips "city")))
+(time (value-at $zips "city" 0))
 (time (value-at $zips "city" 21212))
 (time (progn
         (put-value-at $zips "city" 21212 "Fort Mudge")
         'done))
-
 (time (count-rows $zips))
 
-(progn (time (add-column $zips "flavor")) 'done)
-(time (value-at $zips "flavor" 21212))
-(progn (time (add-row $zips 1)) 'done)
-(progn (time (add-row $zips 43191)) 'done)
-(time (value-at $zips "city" 43191))
-(seq:element (rows $zips) 43191)
-(seq:element (rows $zips) 43190)
-
-
-(time
- (progn
-   (setq $col (make-instance 'column :name "zip" :model $zips))
-   'done))
-
-(count-rows $col)
-(elt (rows $zips) 0)
-
-(setf $pres (make-instance 'presentation :model $zips))
-(time (count-rows $pres))
-(time (rows $pres))
-(time (count-columns $pres))
-(time (columns $pres))
-(time (value-at $pres "city" 21345))
-
-(time (value-at $pres "city" 21346))
-(time (put-value-at $pres "city" 21346 "Whoville"))
-(time (value-at $pres "city" 21346))
-
-(time (add-column $pres "color"))
-
+(setq $pres (make-instance 'presentation :model $zips))
+(time (value-at $pres "city" 21212))
 (time (value-at $pres "city" 0))
-
-(time
- (progn
-   (seq:select (rows $zips)
-               (seq:difference (seq:range 0 (count-rows $zips)) '(2 135 1172)))
-   'done))
-
+(time (count-rows $pres))
+(time (progn
+        (put-value-at $pres "city" 21212 "Fort Gratiot")
+        'done))
+(set-order-function! $pres #'(lambda (u v)(string< (row-element u 1)(row-element v 1))))
+(set-order-function! $pres #'(lambda (u v)(string> (row-element u 1)(row-element v 1))))
 |#

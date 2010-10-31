@@ -4,18 +4,42 @@
 ;;; delectus data model
 ;;; ---------------------------------------------------------------------
 
+(defclass column ()
+  ((label :accessor label :initarg :label)
+   (index :accessor index :initarg :index)))
+
+(defmethod print-object ((col column)(s stream))
+  (print-unreadable-object (col s :type t)
+    (format s "~A" (label col))))
+
+(defclass row ()
+  ((elements :accessor elements)))
+
+(defmethod initialize-instance :after ((r row) &rest initargs &key (elements nil)
+                                       &allow-other-keys)
+  (if elements
+      (setf (elements r)
+            (as 'fset:seq
+                (seq:image (^ (e)(box:make e))
+                           elements)))
+      (setf (elements r)(seq:make))))
+
+(defmethod row-element ((r row)(index integer))
+  (box:get (seq:element (elements r) index)))
+
+(defmethod set-row-element! ((r row)(index integer) val)
+  (box:put val (seq:element (elements r) index)))
+
 (defclass model ()
-  ((column-name->index :accessor column-name->index :initform (map:make))
-   (index->column-name :accessor index->column-name :initform (map:make))
-   (columns :accessor columns :initarg :columns :initform (seq:make))
-   (rows :accessor rows :initarg :rows :initform (seq:make))))
+  ((columns :accessor columns)
+   (rows :accessor rows)))
 
 (defmethod initialize-instance :before ((m model) &rest initargs &key (columns nil)(rows nil)
                                        &allow-other-keys)
-  (assert (and (= (length columns)
-                  (length (first rows)))
-               (every (lambda (r)(= (length r)(length columns)))
-                      rows))
+  (assert (and (= (seq:length columns)
+                  (seq:length (first rows)))
+               (seq:every? (lambda (r)(= (seq:length r)(seq:length columns)))
+                           rows))
           ()
           "Malformed row and column data"))
 
@@ -23,10 +47,13 @@
                                        &allow-other-keys)
   (when (or columns rows)
     (let* ((column-names (or columns (take-letters (length (first rows))))))
-      (setf (columns m)(as 'fset:seq (seq:image 'box:make column-names)))
-      (setf (rows m)(as 'fset:seq 
-                        (seq:image (^ (row)(as 'fset:seq (seq:image 'box:make row))) 
-                                   rows))))))
+      (setf (columns m)(as 'fset:seq (seq:image (^ (cn i) (make-instance 'column :label cn :index i))
+                                                column-names
+                                                (seq:range 0 (seq:length column-names)))))
+      (setf (rows m)
+            (as 'fset:seq 
+                (seq:image (^ (r)(make-instance 'row :elements r)) 
+                           rows))))))
 
 (defmethod count-rows ((m model))
   (seq:length (rows m)))
@@ -34,48 +61,37 @@
 (defmethod count-columns ((m model))
   (seq:length (columns m)))
 
-(defmethod column-index ((m model)(column-name string))
-  (seq:position (^ (col)(equalp col column-name)) (columns m)))
+(defmethod find-column ((m model)(nm string))
+  (seq:find (^ (col)(equalp nm (label col)))
+            (columns m)))
 
 (defmethod value-at ((m model)(column-name string)(row integer))
-  (let* ((col (column-index m column-name))
-         (box (seq:element (seq:element (rows m) row) col)))
-    (box:get box)))
+  (row-element (seq:element (rows m) row) 
+               (index (find-column m column-name))))
 
 (defmethod put-value-at ((m model)(column-name string)(row-index integer) val)
-  (let* ((col (column-index m column-name))
-         (box (seq:element (seq:element (rows m) row-index) col)))
-    (box:put val box)))
+  (set-row-element! (seq:element (rows m) row-index) 
+                    (index (find-column m column-name))
+                    val))
 
-(defmethod add-column ((m model)(column string))
-  (let ((col-pos (column-index m column)))
-    (if col-pos
-        (error "Column '~A' already exists" column)
-        (let* ((last-column-index (column-index m (seq:last (columns m))))
-               (next-column-index (1+ last-column-index)))
-          (setf (columns m)(seq:add-last (columns m) column))
-          (setf (column-name->index m)
-                (map:associate (column-name->index m) column next-column-index))
-          (setf (index->column-name m)
-                (map:associate (index->column-name m) next-column-index column))
-          (setf (rows m)
-                (seq:image (^ (row)(seq:add-last row nil))
-                           (rows m)))))))
+(defmethod add-column ((m model)(column-name string))
+  (if (find-column m column-name)
+      (error "Column '~A' already exists" column)
+      (let* ((last-column (seq:last (columns m)))
+             (new-index (1+ (index last-column))))
+        (setf (columns m)
+              (seq:add-last (columns m)
+                            (make-instance 'column :label column-name :index new-index)))
+        (dotimes (i (count-rows m))
+          (let ((row (seq:element (rows m) i)))
+            (setf (elements row)
+                  (seq:add-last (elements row)
+                                (box:make nil))))))))
 
-(defmethod add-row ((m model) &optional before)
-  (let ((row-count (count-rows m))
-        (before (or before row-count))
-        (old-rows (rows m))
-        (new-row (apply 'seq:make (as 'list (seq:repeat (count-columns m) (box:make nil))))))
-    (if (> before row-count)
-        (error "Tried to insert a row too far past the last row.")
-        (cond
-          ((zerop before)
-           (setf (rows m)(seq:add-first new-row old-rows)))
-          ((= before row-count)
-           (setf (rows m)(seq:add-last old-rows new-row)))
-          (t (setf (rows m)
-                   (seq:concat (seq:subsequence old-rows 0 before)
-                               (seq:add-first new-row
-                                              (seq:subsequence old-rows before)))))))))
+(defmethod add-row ((m model))
+  (let ((old-rows (rows m))
+        (new-row (make-instance 'row :elements (seq:image 'box:make (seq:repeat (count-columns m) nil)))))
+    (seq:add-first new-row old-rows)))
+
+;;; row utils
 
