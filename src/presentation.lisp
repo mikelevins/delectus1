@@ -1,33 +1,64 @@
 (in-package :delectus)
 
-(defun default-order-function (u v) nil)
-(defun default-filter-function (x) t)
-
 (defclass presentation ()
   ((model :reader model :initarg :model :initform (make-instance 'model))
    (changed? :accessor changed? :initform t)
-   (order-function :accessor order-function :initform #'default-order-function)
-   (filter-function :accessor filter-function :initform #'default-filter-function)
+   (sort-column :accessor sort-column :initform nil)
+   (reverse-sort? :accessor reverse-sort? :initform nil)
+   (filter-string :accessor filter-string :initform nil)
    (deleted-columns :accessor deleted-columns :initarg :deleted-columns :initform (seq:make))
    (deleted-rows :accessor deleted-rows :initarg :deleted-rows :initform (seq:make))
    (present-deleted? :accessor present-deleted? :initarg :present-deleted? :initform nil)
    (presented-columns :accessor presented-columns :initarg :presented-columns :initform (seq:make))
    (presented-rows :accessor presented-rows :initarg :presented-rows :initform (seq:make))))
 
+(defmethod remove-deleted-columns ((pres presentation))
+  (seq:difference (columns (model pres))
+                  (deleted-columns pres)))
+
+(defmethod remove-deleted-rows ((pres presentation))
+  (seq:difference (rows (model pres))
+                  (deleted-rows pres)))
+
+(defmethod match-text ((text string) val)
+  nil)
+
+(defmethod match-text ((text string)(val string))
+  (search text val :test #'equalp))
+
+(defmethod find-text ((text string) row)
+  (seq:contains? (elements row) text :test #'match-text))
+
+(defmethod filter-rows ((pres presentation) rows)
+  (if (filter-string pres)
+      (seq:filter (fun:partial #'find-text (filter-string pres))
+                  rows)
+      rows))
+
+(defmethod order< ((v1 integer)(v2 integer))
+  (< v1 v2))
+
+(defmethod order< ((v1 string)(v2 string))
+  (string< v1 v2))
+
+(defmethod order-rows ((column-index integer)(row1 row)(row2 row))
+  (order< (row-element row1 column-index)
+          (row-element row2 column-index)))
+
+(defmethod sort-rows ((pres presentation) rows &key (reverse nil))
+  (if (sort-column pres)
+      (let ((new-rows (seq:sort (fun:partial #'order-rows (index (sort-column pres)))
+                                rows)))
+        (if reverse (seq:reverse new-rows) new-rows))
+      rows))
+
 (defmethod update ((pres presentation))
   (when (changed? pres)
-    (let* ((live-columns (if (present-deleted? pres)
-                             (columns (model pres))
-                             (seq:filter (^ (col)(not (seq:contains? (deleted-columns pres) col :test #'eql)))
-                                         (columns (model pres)))))
-           (live-rows (if (present-deleted? pres)
-                          (rows (model pres))
-                          (seq:filter (^ (row)(not (seq:contains? (deleted-rows pres) row :test #'eql)))
-                                      (rows (model pres)))))
-           (filtered-rows (seq:filter (filter-function pres) live-rows))
-           (sorted-rows (seq:sort (order-function pres) filtered-rows)))
-      (setf (presented-columns pres) live-columns)
-      (setf (presented-rows pres) sorted-rows)))
+    (setf (presented-columns pres)
+          (remove-deleted-columns pres))
+    (setf (presented-rows pres) 
+          (sort-rows pres (filter-rows pres (remove-deleted-rows pres))
+                     :reverse (reverse-sort? pres))))
   (setf (changed? pres) nil))
 
 (defmethod count-rows ((pres presentation))
@@ -48,6 +79,11 @@
                     (index (find-column (model pres) column-name)) val)
   (setf (changed? pres) t))
 
+(defmethod find-column ((pres presentation)(column-name string))
+  (update pres)
+  (seq:find (^ (col)(equalp column-name (label col))) 
+            (presented-columns pres)))
+
 (defmethod add-column ((pres presentation)(column string))
   (update pres)
   (add-column (model pres) column)
@@ -60,20 +96,9 @@
   (add-row (model pres))
   (setf (changed? pres) t))
 
-(defmethod clear-order-function! ((pres presentation))
-  (setf (order-function pres) #'default-order-function)
-  (setf (changed? pres) t))
-
-(defmethod set-order-function! ((pres presentation)(ofn function))
-  (setf (order-function pres) ofn)
-  (setf (changed? pres) t))
-
-(defmethod clear-filter-function! ((pres presentation))
-  (setf (filter-function pres) #'default-filter-function)
-  (setf (changed? pres) t))
-
-(defmethod set-filter-function! ((pres presentation)(ofn function))
-  (setf (filter-function pres) ofn)
+(defmethod set-sort-column! ((pres presentation)(column-name string) &key (reverse nil))
+  (setf (sort-column pres)(find-column pres column-name))
+  (setf (reverse-sort? pres) reverse)
   (setf (changed? pres) t))
 
 (defmethod delete-column! ((pres presentation)(column-name string))

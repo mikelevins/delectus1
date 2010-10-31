@@ -57,9 +57,12 @@
 (time (value-at $pres "city" 21212))
 (time (value-at $pres "city" 0))
 (time (count-rows $pres))
+(time (find-column $pres "city"))
+(time (set-sort-column! $pres "city"))
+(time (set-sort-column! $pres "city" :reverse t))
+
 (time (progn
         (put-value-at $pres "city" 21212 "Fort Gratiot")
         'done))
-(set-order-function! $pres #'(lambda (u v)(string< (row-element u 1)(row-element v 1))))
-(set-order-function! $pres #'(lambda (u v)(string> (row-element u 1)(row-element v 1))))
+
 |#
