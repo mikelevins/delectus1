@@ -18,6 +18,12 @@
 (defun resource (p)
   (merge-pathnames p (path "Contents/Resources/")))
 
+(let ((delivered? nil))
+  (defun set-delivered (y-or-n)
+    (setf delivered? y-or-n))
+  (defun delivered? ()
+    delivered?))
+
 (defpackage #:delectus-asd
   (:use :cl :asdf))
 
@@ -34,19 +40,16 @@
     :components ((:module src
                           :serial t
                           :components ((:file "package")
+                                       (:file "resources")
                                        (:file "model")
                                        (:file "csv")
                                        (:file "presentation")
-                                       ;;(:file "singleton")
-                                       ;;(:file "document")
-                                       ;;(:file "menus")
-                                       ;;(:file "views")
-                                       ;;(:file "app")
-                                       ;;(:file "ui")
-                                       ;;(:file "app-delegate")
-                                       ;;(:file "cocoa-init")
-                                       ;;(:file "button-handlers")
-                                       ))))
+                                       (:file "views")
+                                       (:file "menus")
+                                       (:file "delectus-window")
+                                       (:file "document")
+                                       (:file "singleton")
+                                       (:file "app")))))
 
 (in-package :cl-user)
 
@@ -54,3 +57,5 @@
   (asdf:oos 'asdf:load-op :delectus))
 
 ;;; (load-delectus)
+;;; (delectus::open-document "/Applications/factor/extra/usa-cities/zipcode.csv")
+;;; (delectus::open-document nil)
