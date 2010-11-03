@@ -30,26 +30,28 @@
 (in-package :delectus-asd)
 
 (defsystem delectus
-    :name "delectus"
-    :version "2.0a1"
-    :maintainer ""
-    :author "mikel evins"
-    :licence ""
-    :description "Delectus 2"
-    :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv)
-    :components ((:module src
-                          :serial t
-                          :components ((:file "package")
-                                       (:file "resources")
-                                       (:file "model")
-                                       (:file "csv")
-                                       (:file "presentation")
-                                       (:file "views")
-                                       (:file "menus")
-                                       (:file "delectus-window")
-                                       (:file "document")
-                                       (:file "singleton")
-                                       (:file "app")))))
+  :name "delectus"
+  :version "2.0a1"
+  :maintainer ""
+  :author "mikel evins"
+  :licence ""
+  :description "Delectus 2"
+  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv)
+  :components ((:module src :serial t
+                        :components ((:file "package")
+                                     (:module common :serial t
+                                              :components ((:file "model")
+                                                           (:file "csv")
+                                                           (:file "presentation")
+                                                           (:file "singleton")
+                                                           (:file "menus")
+                                                           (:file "app")))
+                                     (:module cocoa :serial t
+                                              :components ((:file "resources")
+                                                           (:file "views")
+                                                           (:file "delectus-window")
+                                                           (:file "document")
+                                                           ))))))
 
 (in-package :cl-user)
 

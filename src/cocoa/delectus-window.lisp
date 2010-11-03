@@ -1,16 +1,12 @@
 (in-package :delectus)
 
 ;;; ---------------------------------------------------------------------
-;;; delectus ui
-;;; ---------------------------------------------------------------------
-
-;;; ---------------------------------------------------------------------
 ;;; main UI
 ;;; ---------------------------------------------------------------------
 
 (define-interface delectus-window ()
   ;; slots
-  ((document :reader document :initarg :document))
+  ((document :reader document :initarg :document :initform nil))
   ;; panes
   (:panes
    ;; top row
@@ -35,7 +31,7 @@
                                                :altimage (ns-image (resource "images/delhl.png"))
                                                :button-type $NSMomentaryChangeButton))
    ;; main row
-   (row-pane cocoa-view-pane :view-class "NSScrollView"
+   (row-pane cocoa-view-pane :view-class "NSScrollView" :reader row-pane
              :init-function (table-init :data-source (document interface)))
    ;; bottom row
    (trash-button cocoa-view-pane :view-class "NSButton"
@@ -70,6 +66,10 @@
   (:menu-bar file-menu edit-menu windows-menu help-menu)
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
-                     :window-styles '(:internal-borderless :textured-background)))
+                     :window-styles '(:internal-borderless :textured-background)
+                     :create-callback (lambda (intf)
+                                        (let* ((doc (document intf)))
+                                          (when doc
+                                            (setup-columns (row-pane intf) doc))))))
 
 
