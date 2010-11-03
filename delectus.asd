@@ -32,9 +32,7 @@
 (defsystem delectus
   :name "delectus"
   :version "2.0a1"
-  :maintainer ""
   :author "mikel evins"
-  :licence ""
   :description "Delectus 2"
   :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv)
   :components ((:module src :serial t
@@ -50,8 +48,7 @@
                                               :components ((:file "resources")
                                                            (:file "views")
                                                            (:file "delectus-window")
-                                                           (:file "document")
-                                                           ))))))
+                                                           (:file "document")))))))
 
 (in-package :cl-user)
 

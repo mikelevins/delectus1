@@ -43,7 +43,7 @@
   (value-at (presentation doc) column-name row))
 
 (defmethod put-value-at! ((doc document)(column-name string)(row integer) val)
-  (put-value-at (presentation doc) column-name row val))
+  (put-value-at! (presentation doc) column-name row val))
 
 ;;; ---------------------------------------------------------------------
 ;;;  NSDataSource methods
@@ -70,8 +70,9 @@
      (object-value objc-object-pointer)
      (column objc-object-pointer)
      (row (:unsigned :long)))
-  (let* ((col-name (invoke-into 'string (invoke column "headerCell") "stringValue")))
-    (put-value-at! self col-name row object-value)))
+  (let* ((col-name (invoke-into 'string (invoke column "headerCell") "stringValue"))
+         (model-value (invoke-into 'string (invoke "NSString" "alloc") "initWithString:" object-value)))
+    (put-value-at! self col-name row model-value)))
 
 ;;; ---------------------------------------------------------------------
 ;;;  API
