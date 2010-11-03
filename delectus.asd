@@ -2,27 +2,43 @@
 
 (require :asdf)
 
+;;; ---------------------------------------------------------------------
+;;; dev-time path utils
+;;; ---------------------------------------------------------------------
+
 (let* ((path *load-truename*)
        (project-root (make-pathname :directory (pathname-directory path))))
   ;;; when the app is delivered, we redefine path-base to resolve
   ;;; paths relative to the app bundle
   (defun path-base () project-root))
 
-(pushnew (truename (merge-pathnames "../../bard/folio/as/" (path-base))) asdf:*central-registry* :test 'equalp)
-(pushnew (truename (merge-pathnames "../../bard/folio/boxes/" (path-base))) asdf:*central-registry* :test 'equalp)
-(pushnew (truename (merge-pathnames "../../bard/folio/functions/" (path-base))) asdf:*central-registry* :test 'equalp)
-(pushnew (truename (merge-pathnames "../../bard/folio/collections/" (path-base))) asdf:*central-registry* :test 'equalp)
-
 (defun path (p)
   (merge-pathnames p (translate-logical-pathname (path-base))))
 (defun resource (p)
   (merge-pathnames p (path "Contents/Resources/")))
+
+(defun add-to-asdf (path)
+  (pushnew (truename (merge-pathnames path (path-base)))
+           asdf:*central-registry* :test 'equalp))
+
+(add-to-asdf "../../bard/folio/as/")
+(add-to-asdf "../../bard/folio/boxes/")
+(add-to-asdf "../../bard/folio/functions/")
+(add-to-asdf "../../bard/folio/collections/")
+
+;;; ---------------------------------------------------------------------
+;;; whether the running lisp is a delivered app
+;;; ---------------------------------------------------------------------
 
 (let ((delivered? nil))
   (defun set-delivered (y-or-n)
     (setf delivered? y-or-n))
   (defun delivered? ()
     delivered?))
+
+;;; ---------------------------------------------------------------------
+;;; system definition and loader
+;;; ---------------------------------------------------------------------
 
 (defpackage #:delectus-asd
   (:use :cl :asdf))
