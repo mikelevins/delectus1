@@ -21,10 +21,10 @@
   (pushnew (truename (merge-pathnames path (path-base)))
            asdf:*central-registry* :test 'equalp))
 
-(add-to-asdf "../../bard/folio/as/")
-(add-to-asdf "../../bard/folio/boxes/")
-(add-to-asdf "../../bard/folio/functions/")
-(add-to-asdf "../../bard/folio/collections/")
+(add-to-asdf "lib/folio/as/")
+(add-to-asdf "lib/folio/boxes/")
+(add-to-asdf "lib/folio/functions/")
+(add-to-asdf "lib/folio/collections/")
 
 ;;; ---------------------------------------------------------------------
 ;;; whether the running lisp is a delivered app
