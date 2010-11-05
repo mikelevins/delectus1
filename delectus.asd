@@ -66,7 +66,8 @@
                                                            (:file "views")
                                                            (:file "menus")
                                                            (:file "delectus-window")
-                                                           (:file "document")))))))
+                                                           (:file "document")
+                                                           (:file "macos-application-bundle")))))))
 
 (in-package :cl-user)
 
