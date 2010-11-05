@@ -18,7 +18,8 @@
 
 (define-objc-class document ()
   ((name :reader name :initarg :name :initform nil)
-   (pathname :reader pathname :initarg :pathname :initform nil)
+   (changed? :accessor changed? :initform t)
+   (pathname :accessor pathname :initarg :pathname :initform nil)
    (window :reader window :initarg :window :initform nil)
    (presentation :reader presentation :initarg :presentation :initform (make-instance 'presentation)))
   (:objc-class-name "DataSource")
@@ -74,21 +75,3 @@
          (model-value (invoke-into 'string (invoke "NSString" "alloc") "initWithString:" object-value)))
     (put-value-at! self col-name row model-value)))
 
-;;; ---------------------------------------------------------------------
-;;;  API
-;;; ---------------------------------------------------------------------
-
-(defmethod open-document ((path null))
-  (let* ((model (make-instance 'model))
-         (presentation (make-instance 'presentation :model model))
-         (document (make-instance 'document :presentation presentation)))
-    (show document)))
-
-(defmethod open-document ((path pathname))
-  (let* ((model (read-csv path))
-         (presentation (make-instance 'presentation :model model))
-         (document (make-instance 'document :presentation presentation)))
-    (show document)))
-
-(defmethod open-document ((path string))
-  (open-document (pathname path)))
