@@ -7,6 +7,21 @@
 (defun default-menu-selected (intf)
   (warn "Menu selected for ~S" intf))
 
+(defun delectus-about ()
+  (capi:display-message-on-screen (capi:convert-to-screen nil)
+                                  "Delectus(TM) 1.9a"))
+
+(defun delectus-preferences ()
+  (capi:display-message-on-screen (capi:convert-to-screen nil)
+                                  "Soon to be a Preferences window"))
+
+(defun save-menu-selected (intf)
+  (multiple-value-bind (filename successp filter-name)
+      (prompt-for-file "Save in:" :filter "*.delectus" :operation :save)
+    (when successp
+      (save-model (get-model (presentation (document intf))) filename))))
+
+
 (defun file-menu-items (intf)
   (list (make-instance 'menu-component
                        :items (list (make-instance 'capi:menu-item :text "New"
@@ -17,7 +32,7 @@
                        :items (list (make-instance 'capi:menu-item :text "Close"
                                                    :callback 'default-menu-selected :callback-type :interface)
                                     (make-instance 'capi:menu-item :text "Save"
-                                                   :callback 'default-menu-selected :callback-type :interface)
+                                                   :callback 'save-menu-selected :callback-type :interface)
                                     (make-instance 'capi:menu-item :text "Save As"
                                                    :callback 'default-menu-selected :callback-type :interface)
                                     (make-instance 'capi:menu-item :text "Revert to Saved"

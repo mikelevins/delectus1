@@ -33,25 +33,3 @@
 (defmethod read-csv ((path string) &key (first-row-headers? t))
   (read-csv (pathname path) :first-row-headers? first-row-headers?))
 
-#|
-(time
- (progn
-   (setf $zips (read-csv "/Applications/factor/extra/usa-cities/zipcode.csv"))
-   'done))
-
-(time (value-at $zips "city" 22022))
-
-(setf $pres (make-instance 'presentation :model $zips))
-
-(time (value-at $pres "city" 22022))
-(time (value-at $pres "city" 0))
-(time (value-at $pres "city" 286))
-(time (value-at $pres "city" 43190))
-
-(set-sort! $pres "city")
-(set-sort! $pres "city" :reverse t)
-
-(set-filter! $pres "Q")
-(time (count-rows $pres))
-
-|#

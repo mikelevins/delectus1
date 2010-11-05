@@ -5,7 +5,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defclass row ()
-  ((deleted? :accessor deleted? :initform nil)
+  ((deleted? :accessor deleted? :initform nil :initarg :deleted)
    (elements :accessor elements :initarg :elements)))
 
 (defun row (&rest elts)
@@ -24,10 +24,6 @@
         (add-last (elements row)
                   (box:make initial-value))))
 
-;;; (setf $row (row :zero :one :two :three))
-;;; (element $row 2)
-;;; (setf (element $row 2) "Two")
-
 (defmethod row-contains? ((row row) val)
   nil)
 
@@ -43,7 +39,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defclass column ()
-  ((deleted? :accessor deleted? :initform nil)
+  ((deleted? :accessor deleted? :initform nil :initarg :deleted)
    (label :accessor label :initarg :label)))
 
 (defun column (label)
@@ -124,4 +120,5 @@
     (make-instance 'model
                    :columns (apply #'seq:make (seq:image #'column columns))
                    :rows (seq:image (^ (row)(apply #'row row)) rows))))
+
 

@@ -55,14 +55,15 @@
                         :components ((:file "package")
                                      (:module common :serial t
                                               :components ((:file "model")
+                                                           (:file "singleton")
+                                                           (:file "serialization")
                                                            (:file "csv")
                                                            (:file "presentation")
-                                                           (:file "singleton")
-                                                           (:file "menus")
                                                            (:file "app")))
                                      (:module cocoa :serial t
                                               :components ((:file "resources")
                                                            (:file "views")
+                                                           (:file "menus")
                                                            (:file "delectus-window")
                                                            (:file "document")))))))
 
@@ -74,3 +75,4 @@
 ;;; (load-delectus)
 ;;; (delectus::open-document "/Applications/factor/extra/usa-cities/zipcode.csv")
 ;;; (delectus::open-document nil)
+
