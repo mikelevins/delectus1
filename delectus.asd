@@ -12,10 +12,7 @@
   ;;; paths relative to the app bundle
   (defun path-base () project-root))
 
-(defun path (p)
-  (merge-pathnames p (translate-logical-pathname (path-base))))
-(defun resource (p)
-  (merge-pathnames p (path "Contents/Resources/")))
+(defun path (p)(merge-pathnames p (path-base)))
 
 (defun add-to-asdf (path)
   (pushnew (truename (merge-pathnames path (path-base)))
@@ -76,5 +73,5 @@
 
 ;;; (load-delectus)
 ;;; (delectus::open-document "/Applications/factor/extra/usa-cities/zipcode.csv")
-;;; (delectus::open-document nil)
+;;; (delectus::new-untitled-document)
 

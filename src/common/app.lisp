@@ -22,12 +22,12 @@
 
 (defclass application ()
   ((documents :accessor documents :initform nil)
-   (untitled-index :accessor untitled-index :initform 0))
+   (untitled-index :accessor %untitled-index :initform 0))
   (:metaclass singleton-class))
 
 (defmethod untitled-index ((app application))
-  (setf (untitled-index app)(1+ (untitled-index app)))
-  (untitled-index app))
+  (setf (%untitled-index app)(1+ (%untitled-index app)))
+  (%untitled-index app))
 
 (defmethod new-untitled-document ()
   (let* ((document-name (format nil "Untitled ~A" (untitled-index (app))))
@@ -58,3 +58,13 @@
             (documents (app))))
 
 ;;; (app)
+
+;;; ---------------------------------------------------------------------
+;;; application main
+;;; ---------------------------------------------------------------------
+
+(defun delectus ()
+  #+cocoa (objc:ensure-objc-initialized
+           :modules '("/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+                      "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa"))
+  (delectus::new-untitled-document))

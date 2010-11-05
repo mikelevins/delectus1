@@ -7,3 +7,8 @@ src/model.lisp~
 src/csv.lisp~
 src/common/app.lisp~
 src/cocoa/macos-application-bundle.lisp~
+.DS_Store
+lib/folio/boxes/folio.boxes.asd~
+lib/folio/collections/sequences.lisp~
+src/cocoa/resources.lisp~
+template/Delectus.app/Contents/Info.plist~
