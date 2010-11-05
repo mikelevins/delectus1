@@ -60,6 +60,7 @@
                                                            (:file "csv")
                                                            (:file "presentation")
                                                            (:file "app")))
+                                     #+cocoa
                                      (:module cocoa :serial t
                                               :components ((:file "resources")
                                                            (:file "views")
