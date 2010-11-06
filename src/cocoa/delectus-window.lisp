@@ -4,7 +4,7 @@
 ;;; main UI
 ;;; ---------------------------------------------------------------------
 
-(define-interface delectus-window (cocoa-default-application-interface)
+(define-interface delectus-window ()
   ;; slots
   ((document :reader document :initarg :document :initform nil))
   ;; panes
@@ -56,31 +56,8 @@
                    :external-min-width 196 :external-max-width 196)
    (trash-cluster row-layout '(trash-button) :adjust :center
                   :external-min-width 84 :external-max-width 84))
-  ;; menus
-  (:menus
-   (application-menu "Delectus"
-                     ((:component (("About Delectus" :callback 'delectus-about :callback-type :none)))
-                      (:component (("Preferences..." :callback 'delectus-preferences :callback-type :none)))
-                      (:component ()
-                       ;; This is a special named component where the CAPI will
-                       ;; attach the standard Services menu.
-                       :name :application-services)
-                      (:component (("Hide Delectus" :accelerator "accelerator-h" :callback-data :hidden)
-                                   ("Hide Others" :accelerator "accelerator-meta-h" :callback-data :others-hidden)
-                                   ("Show All" :callback-data :all-normal))
-                                  :callback #'(setf capi:top-level-interface-display-state)
-                                  :callback-type :data-interface)
-                      (:component (("Quit Delectus" :accelerator "accelerator-q"
-                                                    :callback 'capi:destroy :callback-type :interface)))))
-   (file-menu "File" () :items-function 'file-menu-items)
-   (edit-menu "Edit" () :items-function 'edit-menu-items)
-   (windows-menu "Window" () :items-function 'windows-menu-items)
-   (help-menu "Help" () :items-function 'help-menu-items))
-  ;; menubar
-  (:menu-bar application-menu file-menu edit-menu windows-menu help-menu)
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
-                     :application-menu 'application-menu
                      :window-styles '(:internal-borderless :textured-background)
                      :create-callback (lambda (intf)
                                         (let* ((doc (document intf)))
