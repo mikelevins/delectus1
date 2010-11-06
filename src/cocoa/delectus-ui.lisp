@@ -55,6 +55,7 @@
 
 (defclass application ()
   ((documents :accessor documents :initform nil)
+   (active-interface :accessor active-interface :initform nil)
    (untitled-index :accessor %untitled-index :initform 0)
    (ui :accessor ui :initform (make-instance 'delectus-ui)))
   (:metaclass singleton-class))

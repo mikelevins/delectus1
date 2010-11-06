@@ -62,6 +62,13 @@
                      :create-callback (lambda (intf)
                                         (let* ((doc (document intf)))
                                           (when doc
-                                            (setup-columns (row-pane intf) doc))))))
+                                            (setup-columns (row-pane intf) doc))))
+                     :activate-callback (lambda (intf activep)
+                                          (when activep
+                                            (unless (eql (active-interface (app)) intf)
+                                              (setf (active-interface (app)) intf))))
+                     :destroy-callback (lambda (intf)
+                                         (when (eql (active-interface (app)) intf)
+                                           (setf (active-interface (app)) nil)))))
 
 

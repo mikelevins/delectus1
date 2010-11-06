@@ -74,4 +74,4 @@
 ;;; (load-delectus)
 ;;; (delectus::open-document "/Applications/factor/extra/usa-cities/zipcode.csv")
 ;;; (delectus::new-untitled-document)
-
+;;; (delectus::active-interface (delectus::app))
