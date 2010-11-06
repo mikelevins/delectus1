@@ -17,13 +17,50 @@
   (read-delectus-data (pathname path)))
 
 ;;; ---------------------------------------------------------------------
+;;; main UI
+;;; ---------------------------------------------------------------------
+
+(define-interface delectus-ui (cocoa-default-application-interface)
+  ;; slots
+  ()
+  ;; menus
+  (:menus
+   (application-menu "Delectus"
+                     ((:component (("About Delectus" :callback 'delectus-about :callback-type :none)))
+                      (:component (("Preferences..." :callback 'delectus-preferences :callback-type :none)))
+                      (:component ()
+                       ;; This is a special named component where the CAPI will
+                       ;; attach the standard Services menu.
+                       :name :application-services)
+                      (:component (("Hide Delectus" :accelerator "accelerator-h" :callback-data :hidden)
+                                   ("Hide Others" :accelerator "accelerator-meta-h" :callback-data :others-hidden)
+                                   ("Show All" :callback-data :all-normal))
+                                  :callback #'(setf capi:top-level-interface-display-state)
+                                  :callback-type :data-interface)
+                      (:component (("Quit Delectus" :accelerator "accelerator-q"
+                                                    :callback 'capi:destroy :callback-type :interface)))))
+   (file-menu "File" () :items-function 'file-menu-items)
+   (edit-menu "Edit" () :items-function 'edit-menu-items)
+   (windows-menu "Window" () :items-function 'windows-menu-items)
+   (help-menu "Help" () :items-function 'help-menu-items))
+  ;; menubar
+  (:menu-bar application-menu file-menu edit-menu windows-menu help-menu)
+  ;; defaults
+  (:default-initargs :title "Delectus" 
+    :application-menu 'application-menu))
+
+;;; ---------------------------------------------------------------------
 ;;; application
 ;;; ---------------------------------------------------------------------
 
 (defclass application ()
   ((documents :accessor documents :initform nil)
-   (untitled-index :accessor %untitled-index :initform 0))
+   (untitled-index :accessor %untitled-index :initform 0)
+   (ui :accessor ui :initform (make-instance 'delectus-ui)))
   (:metaclass singleton-class))
+
+(defun app ()
+  (make-instance 'application))
 
 (defmethod untitled-index ((app application))
   (setf (%untitled-index app)(1+ (%untitled-index app)))
@@ -50,14 +87,9 @@
 (defmethod open-document ((path string))
   (open-document (pathname path)))
 
-(defun app ()
-  (make-instance 'application))
-
 (defmethod find-document ((win interface))
   (seq:find (^ (doc)(equal win (window doc))) 
             (documents (app))))
-
-;;; (app)
 
 ;;; ---------------------------------------------------------------------
 ;;; application main
@@ -67,4 +99,6 @@
   #+cocoa (objc:ensure-objc-initialized
            :modules '("/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
                       "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa"))
-  (delectus::new-untitled-document))
+  (set-application-interface (ui (app)))
+  (convert-to-screen nil))
+

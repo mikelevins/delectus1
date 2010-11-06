@@ -55,8 +55,7 @@
                                                            (:file "singleton")
                                                            (:file "serialization")
                                                            (:file "csv")
-                                                           (:file "presentation")
-                                                           (:file "app")))
+                                                           (:file "presentation")))
                                      #+cocoa
                                      (:module cocoa :serial t
                                               :components ((:file "resources")
@@ -64,6 +63,7 @@
                                                            (:file "menus")
                                                            (:file "delectus-window")
                                                            (:file "document")
+                                                           (:file "delectus-ui")
                                                            (:file "macos-application-bundle")))))))
 
 (in-package :cl-user)

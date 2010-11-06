@@ -4,7 +4,7 @@
 ;;; main UI
 ;;; ---------------------------------------------------------------------
 
-(define-interface delectus-window ()
+(define-interface delectus-window (cocoa-default-application-interface)
   ;; slots
   ((document :reader document :initarg :document :initform nil))
   ;; panes
@@ -80,6 +80,7 @@
   (:menu-bar application-menu file-menu edit-menu windows-menu help-menu)
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
+                     :application-menu 'application-menu
                      :window-styles '(:internal-borderless :textured-background)
                      :create-callback (lambda (intf)
                                         (let* ((doc (document intf)))
