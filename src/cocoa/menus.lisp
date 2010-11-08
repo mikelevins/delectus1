@@ -30,25 +30,25 @@
   (destroy intf))
 
 (defun save-as-menu-selected (intf)
-  (multiple-value-bind (filename successp filter-name)
-      (prompt-for-file "Save as:" :filter "*.delectus" :operation :save)
-    (when successp
-      (let* ((doc (document intf))
-             (pres (presentation doc))
-             (mod (get-model pres)))
-        (save-model mod filename)
-        (setf (changed? doc) nil)
-        (setf (pathname doc) (pathname filename))))))
+  (let* ((intf (active-interface (app))))
+    (when intf
+      (multiple-value-bind (filename successp filter-name)
+          (prompt-for-file "Save as:" :filter "*.delectus" :operation :save)
+        (when successp
+          (let* ((doc (document intf)))
+            (save-document doc filename)
+            (setf (changed? doc) nil)
+            (setf (pathname doc) (pathname filename))))))))
 
 (defun save-menu-selected (intf)
-  (let* ((doc (document intf))
-         (pres (presentation doc))
-         (mod (get-model pres)))
-    (if (pathname doc)
-        (progn
-          (save-model mod (pathname doc))
-          (setf (changed? doc) nil))
-        (save-as-menu-selected intf))))
+  (let ((intf (active-interface (app))))
+    (when intf
+      (let* ((doc (document intf)))
+        (if (pathname doc)
+            (progn
+              (save-document doc (pathname doc))
+              (setf (changed? doc) nil))
+            (save-as-menu-selected intf))))))
 
 (defun file-menu-items (intf)
   (list (make-instance 'menu-component

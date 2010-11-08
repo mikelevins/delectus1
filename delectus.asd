@@ -47,13 +47,12 @@
   :version "2.0a1"
   :author "mikel evins"
   :description "Delectus 2"
-  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv)
+  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv :cl-store)
   :components ((:module src :serial t
                         :components ((:file "package")
                                      (:module common :serial t
                                               :components ((:file "model")
                                                            (:file "singleton")
-                                                           (:file "serialization")
                                                            (:file "csv")
                                                            (:file "presentation")))
                                      #+cocoa
@@ -63,6 +62,7 @@
                                                            (:file "menus")
                                                            (:file "delectus-window")
                                                            (:file "document")
+                                                           (:file "serialization")
                                                            (:file "delectus-ui")
                                                            (:file "macos-application-bundle")))))))
 

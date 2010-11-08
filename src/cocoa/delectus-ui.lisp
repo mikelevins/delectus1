@@ -76,18 +76,6 @@
     (show document)
     document))
 
-(defmethod open-document ((path pathname))
-  (let* ((document-name (pathname-name path))
-         (model (read-delectus-data path))
-         (presentation (make-instance 'presentation :model model))
-         (document (make-instance 'document :presentation presentation :name document-name)))
-    (setf (documents (app))(cons document (documents (app))))
-    (show document)
-    document))
-
-(defmethod open-document ((path string))
-  (open-document (pathname path)))
-
 (defmethod find-document ((win interface))
   (seq:find (^ (doc)(equal win (window doc))) 
             (documents (app))))

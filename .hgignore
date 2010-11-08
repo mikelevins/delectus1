@@ -14,3 +14,5 @@ src/cocoa/resources.lisp~
 template/Delectus.app/Contents/Info.plist~
 build
 src/cocoa/delectus-ui.lisp~
+testing.lisp~
+src/cocoa/serialization.lisp~

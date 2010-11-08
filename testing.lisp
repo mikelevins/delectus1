@@ -8,30 +8,27 @@
    (setf $zips (read-csv "/Applications/factor/extra/usa-cities/zipcode.csv"))
    'done))
 
-(time 
- (progn
-   (save-model $zips "/Users/mikel/Desktop/test.delectus")
+(time (cl-store:store $zips "/tmp/zips.out"))
+(time (setq $restored-zips (cl-store:restore "/tmp/zips.out")))
+(type-of $restored-zips)
+
+(time
+ (progn 
+   (setq $pres (make-instance 'presentation :model $zips))
    'done))
 
-(time 
- (progn
-   (setf $zips1 (load-model "/Users/mikel/Desktop/test.delectus"))
-   'done))
+(time (cl-store:store $pres "/tmp/zips.out"))
+(time (setq $restored-pres (cl-store:restore "/tmp/zips.out")))
+(type-of $restored-pres)
+(value-at $restored-pres "city" 0)
+(presented-columns $restored-pres)
+(count-rows $restored-pres)
 
-(value-at $zips1 "city" 0)
-(value-at $zips1 "city" 22022)
 
-(setq $col1 (make-instance 'column :deleted nil :label "Foo"))
-(setq $col1-data (to-serialized-form $col1))
-(setq $col1a (deserialize-column $col1-data))
-(describe $col1a)
+(setq $doc
+      (make-instance 'document
+                     :presentation
+                     (make-instance 'presentation
+                                    :model (read-csv "/Applications/factor/extra/usa-cities/zipcode.csv"))))
 
-(setq $row1 (make-instance 'row :deleted nil :elements (as 'fset:seq (seq:image #'box:make '(0 1 2 3 4)))))
-(setq $row1-data (to-serialized-form $row1))
-(setq $row1a (deserialize-row $row1-data))
-(describe $row1a)
-
-(time 
- (progn
-   (setq $m1 (to-serialized-form $zips))
-   'done))
+(time (save-document $doc "/tmp/zips.out"))
