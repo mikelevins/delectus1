@@ -12,21 +12,25 @@
    ;; top row
    (add-row-button cocoa-view-pane :view-class "NSButton"
                    :init-function (button-init :target (document interface) :label "Add Row" :bordered nil
+                                               :action "addRow:"
                                                :image (ns-image (resource "add.png"))
                                                :altimage (ns-image (resource "addhl.png"))
                                                :button-type $NSMomentaryChangeButton))
    (delete-row-button cocoa-view-pane :view-class "NSButton"
                    :init-function (button-init :target (document interface) :label "Del Row" :bordered nil
+                                               :action "deleteRow:"
                                                :image (ns-image (resource "del.png"))
                                                :altimage (ns-image (resource "delhl.png"))
                                                :button-type $NSMomentaryChangeButton))
    (add-column-button cocoa-view-pane :view-class "NSButton"
                    :init-function (button-init :target (document interface) :label "Add Col" :bordered nil
+                                               :action "addColumn:"
                                                :image (ns-image (resource "add.png"))
                                                :altimage (ns-image (resource "addhl.png"))
                                                :button-type $NSMomentaryChangeButton))
    (delete-column-button cocoa-view-pane :view-class "NSButton"
                    :init-function (button-init :target (document interface) :label "Del Col" :bordered nil
+                                               :action "deleteColumn:"
                                                :image (ns-image (resource "del.png"))
                                                :altimage (ns-image (resource "delhl.png"))
                                                :button-type $NSMomentaryChangeButton))
@@ -36,6 +40,7 @@
    ;; bottom row
    (trash-button cocoa-view-pane :view-class "NSButton"
                  :init-function (button-init :target (document interface) :label "Trash" :bordered nil
+                                             :action "toggleTrash:"
                                              :image (ns-image (resource "trashempty48.png"))
                                              :image-position $NSImageOnly
                                              :altimage (ns-image (resource "trashfull48.png"))

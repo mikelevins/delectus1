@@ -16,3 +16,6 @@ build
 src/cocoa/delectus-ui.lisp~
 testing.lisp~
 src/cocoa/serialization.lisp~
+src/cocoa/delectus-window.lisp~
+src/cocoa/document.lisp~
+src/cocoa/views.lisp~

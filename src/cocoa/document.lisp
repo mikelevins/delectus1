@@ -75,3 +75,30 @@
          (model-value (invoke-into 'string (invoke "NSString" "alloc") "initWithString:" object-value)))
     (put-value-at! self col-name row model-value)))
 
+;;; ---------------------------------------------------------------------
+;;;  target/action methods
+
+(define-objc-method ("addRow:" :void)
+    ((self document)
+     (sender objc-object-pointer))
+  (display-message "addRow: called"))
+
+(define-objc-method ("deleteRow:" :void)
+    ((self document)
+     (sender objc-object-pointer))
+  (display-message "deleteRow: called"))
+
+(define-objc-method ("addColumn:" :void)
+    ((self document)
+     (sender objc-object-pointer))
+  (display-message "addColumn: called"))
+
+(define-objc-method ("deleteColumn:" :void)
+    ((self document)
+     (sender objc-object-pointer))
+  (display-message "deleteColumn: called"))
+
+(define-objc-method ("toggleTrash:" :void)
+    ((self document)
+     (sender objc-object-pointer))
+  (display-message "toggleTrash: called"))

@@ -14,12 +14,13 @@
 (defparameter $NSImageOnly 1)
 (defparameter $NSImageAbove 5)
 
-(defun button-init (&key (label "") target bordered(button-type $NSMomentaryChangeButton)
-                    image altimage (image-position $NSImageAbove))
+(defun button-init (&key (label "") target action bordered image altimage
+                    (button-type $NSMomentaryChangeButton) (image-position $NSImageAbove))
   (lambda (capi-pane objc-view)
     (setf objc-view (invoke objc-view "init"))
     (setf $last-target target)
     (invoke objc-view "setTarget:" (objc-object-pointer target))
+    (invoke objc-view "setAction:" (coerce-to-selector action))
     (invoke objc-view "setTitle:" label)
     (invoke objc-view "setImage:" image)
     (invoke objc-view "setAlternateImage:" altimage)
