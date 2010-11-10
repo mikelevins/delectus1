@@ -76,4 +76,12 @@
                                          (when (eql (active-interface (app)) intf)
                                            (setf (active-interface (app)) nil)))))
 
+(defmethod get-selected-column ((doc document))
+  (let* ((col-index (invoke (invoke (cocoa-view-pane-view (row-pane (window doc))) "contentView")
+                            "selectedColumn")))
+    (elt (columns (get-model (presentation doc))) col-index)))
 
+(defmethod get-selected-row ((doc document))
+  (let* ((row-index (invoke (invoke (cocoa-view-pane-view (row-pane (window doc))) "contentView")
+                            "selectedRow")))
+    (elt (presented-rows (presentation doc)) row-index)))

@@ -55,4 +55,5 @@
                         (header-cell (invoke table-column "headerCell")))
                    (invoke header-cell "setStringValue:" colname)
                    (invoke table-view "addTableColumn:" table-column)))
-               cols)))
+               cols)
+    (invoke table-view "reloadData")))

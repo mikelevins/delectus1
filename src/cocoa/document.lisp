@@ -25,6 +25,8 @@
   (:objc-class-name "DataSource")
   (:objc-protocols "NSTableViewDataSource"))
 
+(defparameter $NSChangeDone 0)
+
 (defmethod initialize-instance :after ((doc document) &rest initargs &key (name "Untitled") (presentation nil)
                                        &allow-other-keys)
   (let ((pres (or presentation (make-instance 'presentation))))
@@ -33,6 +35,13 @@
 
 (defmethod show ((doc document))
   (display (window doc)))
+
+(defmethod notify-redisplay-document ((doc document))
+  (invoke (invoke (cocoa-view-pane-view (row-pane (window doc))) "documentView")
+          "reloadData"))
+
+(defmethod notify-document-changed! ((doc document))
+  (notify-redisplay-document doc))
 
 ;;; ---------------------------------------------------------------------
 ;;;  model methods
@@ -46,33 +55,38 @@
 (defmethod put-value-at! ((doc document)(column-name string)(row integer) val)
   (put-value-at! (presentation doc) column-name row val))
 
-(defmethod add-row! ((doc document))
+(defmethod document-add-row! ((doc document))
   (clear-sort! (presentation doc))
   (clear-filter! (presentation doc))
   (add-row! (presentation doc))
-  (notify-document-changed! (app) doc))
+  (notify-document-changed! doc))
 
 (defmethod delete-selected-row! ((doc document))
   (let ((row (get-selected-row doc)))
-    (mark-row-deleted! row)
-    (notify-document-changed! (app) doc)))
+    (mark-row-deleted! row t)
+    (notify-document-changed! doc)))
 
-(defmethod add-column! ((doc document))
-  (with-validated-label-from-user (label)
-    (clear-sort! (presentation doc))
-    (clear-filter! (presentation doc))
-    (add-column! (presentation doc) label)
-    (notify-document-changed! (app) doc)))
+(defmethod document-add-column! ((doc document))
+  (let ((label (prompt-for-string "Choose a name for the new column:")))
+    (if (seq:find (^ (c)(equalp label (label c)))
+                  (columns (get-model (presentation doc))))
+        (display-message (format nil "The column '~A' already exists" label))
+        (progn
+          (clear-sort! (presentation doc))
+          (clear-filter! (presentation doc))
+          (add-column! (presentation doc) label)
+          (notify-document-changed! doc)
+          (setup-columns (row-pane (window doc)) doc)))))
 
 (defmethod delete-selected-column! ((doc document))
   (let ((col (get-selected-column doc)))
-    (mark-column-deleted! col)
-    (notify-document-changed! (app) doc)))
+    (mark-column-deleted! col t)
+    (notify-document-changed! doc)))
 
 (defmethod toggle-trash ((doc document))
   (setf (show-deleted? doc)
         (not (show-deleted? doc)))
-  (notify-document-changed! (app) doc))
+  (notify-redisplay-document doc))
 
 ;;; ---------------------------------------------------------------------
 ;;;  NSDataSource methods
@@ -109,7 +123,7 @@
 (define-objc-method ("addRow:" :void)
     ((self document)
      (sender objc-object-pointer))
-  (add-row! self))
+  (document-add-row! self))
 
 (define-objc-method ("deleteRow:" :void)
     ((self document)
@@ -119,7 +133,7 @@
 (define-objc-method ("addColumn:" :void)
     ((self document)
      (sender objc-object-pointer))
-  (add-column! self))
+  (document-add-column! self))
 
 (define-objc-method ("deleteColumn:" :void)
     ((self document)

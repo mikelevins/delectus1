@@ -21,8 +21,8 @@
 
 (defmethod add-element ((row row) &optional initial-value)
   (setf (elements row)
-        (add-last (elements row)
-                  (box:make initial-value))))
+        (seq:add-last (elements row)
+                      (box:make initial-value))))
 
 (defmethod row-contains? ((row row) val)
   nil)
@@ -34,6 +34,9 @@
   (seq:contains? (elements row) val
                  :test (^ (b v) (search v (box:get b) :test #'equalp))))
 
+(defmethod mark-row-deleted! ((row row) deleted?)
+  (setf (deleted? row) deleted?))
+
 ;;; ---------------------------------------------------------------------
 ;;; columns
 ;;; ---------------------------------------------------------------------
@@ -44,6 +47,9 @@
 
 (defun column (label)
   (make-instance 'column :label label))
+
+(defmethod mark-column-deleted! ((col column) deleted?)
+  (setf (deleted? col) deleted?))
 
 ;;; ---------------------------------------------------------------------
 ;;; models
@@ -102,7 +108,7 @@
 
 (defmethod add-column! ((m model)(label string))
   (let ((next-index (count-columns m)))
-    (setf (columns m)(add-last (columns m)(column label)))
+    (setf (columns m)(seq:add-last (columns m)(column label)))
     (setf (gethash label (name->index-table m)) next-index)
     (setf (gethash next-index (index->name-table m)) label)
     (seq:image (^ (row)(add-element row nil)) (rows m))))
@@ -110,7 +116,7 @@
 (defmethod add-row! ((m model))
   (setf (rows m)
         (seq:add-last (rows m)
-                      (apply #'row (seq:repeat (count-columns m) nil)))))
+                      (apply #'row (as 'list (seq:repeat (count-columns m) nil))))))
 
 (defun model (&key rows columns)
   (let ((col-count (seq:length columns)))

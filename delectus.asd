@@ -60,8 +60,8 @@
                                               :components ((:file "resources")
                                                            (:file "views")
                                                            (:file "menus")
-                                                           (:file "delectus-window")
                                                            (:file "document")
+                                                           (:file "delectus-window")
                                                            (:file "serialization")
                                                            (:file "delectus-ui")
                                                            (:file "macos-application-bundle")))))))
@@ -73,5 +73,5 @@
 
 ;;; (load-delectus)
 ;;; (delectus::open-document "/Applications/factor/extra/usa-cities/zipcode.csv")
-;;; (delectus::new-untitled-document)
+;;; (setq $doc (delectus::new-untitled-document))
 ;;; (delectus::active-interface (delectus::app))

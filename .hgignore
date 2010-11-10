@@ -20,3 +20,4 @@ src/cocoa/delectus-window.lisp~
 src/cocoa/document.lisp~
 src/cocoa/views.lisp~
 src/common/presentation.lisp~
+src/common/model.lisp~
