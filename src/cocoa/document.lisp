@@ -46,6 +46,34 @@
 (defmethod put-value-at! ((doc document)(column-name string)(row integer) val)
   (put-value-at! (presentation doc) column-name row val))
 
+(defmethod add-row! ((doc document))
+  (clear-sort! (presentation doc))
+  (clear-filter! (presentation doc))
+  (add-row! (presentation doc))
+  (notify-document-changed! (app) doc))
+
+(defmethod delete-selected-row! ((doc document))
+  (let ((row (get-selected-row doc)))
+    (mark-row-deleted! row)
+    (notify-document-changed! (app) doc)))
+
+(defmethod add-column! ((doc document))
+  (with-validated-label-from-user (label)
+    (clear-sort! (presentation doc))
+    (clear-filter! (presentation doc))
+    (add-column! (presentation doc) label)
+    (notify-document-changed! (app) doc)))
+
+(defmethod delete-selected-column! ((doc document))
+  (let ((col (get-selected-column doc)))
+    (mark-column-deleted! col)
+    (notify-document-changed! (app) doc)))
+
+(defmethod toggle-trash ((doc document))
+  (setf (show-deleted? doc)
+        (not (show-deleted? doc)))
+  (notify-document-changed! (app) doc))
+
 ;;; ---------------------------------------------------------------------
 ;;;  NSDataSource methods
 
@@ -81,24 +109,24 @@
 (define-objc-method ("addRow:" :void)
     ((self document)
      (sender objc-object-pointer))
-  (display-message "addRow: called"))
+  (add-row! self))
 
 (define-objc-method ("deleteRow:" :void)
     ((self document)
      (sender objc-object-pointer))
-  (display-message "deleteRow: called"))
+  (delete-selected-row! self))
 
 (define-objc-method ("addColumn:" :void)
     ((self document)
      (sender objc-object-pointer))
-  (display-message "addColumn: called"))
+  (add-column! self))
 
 (define-objc-method ("deleteColumn:" :void)
     ((self document)
      (sender objc-object-pointer))
-  (display-message "deleteColumn: called"))
+  (delete-selected-column! self))
 
 (define-objc-method ("toggleTrash:" :void)
     ((self document)
      (sender objc-object-pointer))
-  (display-message "toggleTrash: called"))
+  (toggle-trash self))

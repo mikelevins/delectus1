@@ -137,6 +137,9 @@
   (setf (reverse-sort? pres) nil)
   (setf (changed? pres) t))
 
+(defmethod clear-sort! ((pres presentation))
+  (set-sort! pres nil :reverse nil))
+
 (defmethod set-filter! ((pres presentation)(fstr string))
   (update pres)
   (setf (filter-string pres) fstr)
@@ -146,3 +149,6 @@
   (update pres)
   (setf (filter-string pres) nil)
   (setf (changed? pres) t))
+
+(defmethod clear-filter! ((pres presentation))
+  (set-filter! pres nil))
