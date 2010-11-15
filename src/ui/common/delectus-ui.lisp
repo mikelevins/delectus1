@@ -80,14 +80,4 @@
   (seq:find (^ (doc)(equal win (window doc))) 
             (documents (app))))
 
-;;; ---------------------------------------------------------------------
-;;; application main
-;;; ---------------------------------------------------------------------
-
-(defun delectus ()
-  #+cocoa (objc:ensure-objc-initialized
-           :modules '("/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
-                      "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa"))
-  (set-application-interface (ui (app)))
-  (convert-to-screen nil))
 
