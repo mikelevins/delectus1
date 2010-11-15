@@ -58,8 +58,7 @@
                                                            (:module data :serial t
                                                                     :components ((:file "model")
                                                                                  (:file "presentation")
-                                                                                 (:file "csv")
-                                                                                 (:file "serialization")))))
+                                                                                 (:file "csv")))))
                                      (:module platform :serial t
                                               :components (#+cocoa
                                                            (:module cocoa :serial t
