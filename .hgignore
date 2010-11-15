@@ -21,3 +21,4 @@ src/cocoa/document.lisp~
 src/cocoa/views.lisp~
 src/common/presentation.lisp~
 src/common/model.lisp~
+glob:test-data/zips.delectus

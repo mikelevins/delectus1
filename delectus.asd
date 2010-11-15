@@ -18,6 +18,8 @@
   (pushnew (truename (merge-pathnames path (path-base)))
            asdf:*central-registry* :test 'equalp))
 
+(add-to-asdf "lib/folio/lib/misc-extensions_1.2.0/")
+(add-to-asdf "lib/folio/lib/fset_1.2.2/")
 (add-to-asdf "lib/folio/as/")
 (add-to-asdf "lib/folio/boxes/")
 (add-to-asdf "lib/folio/functions/")
@@ -72,6 +74,6 @@
   (asdf:oos 'asdf:load-op :delectus))
 
 ;;; (load-delectus)
-;;; (delectus::open-document "/Applications/factor/extra/usa-cities/zipcode.csv")
+;;; (delectus::open-document (path "test-data/zipcode.csv"))
 ;;; (setq $doc (delectus::new-untitled-document))
 ;;; (delectus::active-interface (delectus::app))

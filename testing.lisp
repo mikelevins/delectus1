@@ -5,7 +5,7 @@
 
 (time
  (progn
-   (setf $zips (read-csv "/Applications/factor/extra/usa-cities/zipcode.csv"))
+   (setf $zips (read-csv (namestring (cl-user::path "test-data/zipcode.csv"))))
    'done))
 
 (time (cl-store:store $zips "/tmp/zips.out"))
@@ -17,8 +17,8 @@
    (setq $pres (make-instance 'presentation :model $zips))
    'done))
 
-(time (cl-store:store $pres "/tmp/zips.out"))
-(time (setq $restored-pres (cl-store:restore "/tmp/zips.out")))
+(time (cl-store:store $pres (namestring (cl-user::path "test-data/zips.delectus"))))
+(time (setq $restored-pres (cl-store:restore (namestring (cl-user::path "test-data/zips.delectus")))))
 (type-of $restored-pres)
 (value-at $restored-pres "city" 0)
 (presented-columns $restored-pres)
