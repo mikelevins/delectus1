@@ -49,22 +49,39 @@
   :description "Delectus 2"
   :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv :cl-store)
   :components ((:module src :serial t
-                        :components ((:file "package")
-                                     (:module common :serial t
-                                              :components ((:file "model")
+                        :components ((:module common :serial t
+                                              :components ((:file "package")
                                                            (:file "singleton")
-                                                           (:file "csv")
-                                                           (:file "presentation")))
-                                     #+cocoa
-                                     (:module cocoa :serial t
-                                              :components ((:file "resources")
-                                                           (:file "views")
-                                                           (:file "menus")
-                                                           (:file "document")
-                                                           (:file "delectus-window")
-                                                           (:file "serialization")
-                                                           (:file "delectus-ui")
-                                                           (:file "macos-application-bundle")))))))
+                                                           (:file "resources")
+                                                           (:module data :serial t
+                                                                    :components ((:file "model")
+                                                                                 (:file "presentation")
+                                                                                 (:file "csv")
+                                                                                 (:file "serialization")))))
+                                     (:module platform :serial t
+                                              :components (#+cocoa
+                                                           (:module cocoa :serial t
+                                                                    :components ((:file "utilities")))
+                                                           #+win32
+                                                           (:module win32 :serial t
+                                                                    :components ((:file "utilities")))))
+                                     #|(:module ui :serial t
+                                              :components (#+cocoa
+                                                           (:module cocoa :serial t
+                                                                    :components 
+                                                                    ((:file "macos-application-bundle")))
+                                                           #+win32
+                                                           (:module win32 :serial t
+                                                                    :components ())
+                                                           (:module common :serial t
+                                                                    :components ((:file "views")
+                                                                                 (:file "menus")
+                                                                                 (:file "document")
+                                                                                 (:file "delectus-window")
+                                                                                 (:file "delectus-ui")
+                                                                                 (:file "application")))))|#
+                                     ))))
+
 
 (in-package :cl-user)
 
