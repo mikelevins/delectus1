@@ -66,21 +66,24 @@
                                                            #+win32
                                                            (:module win32 :serial t
                                                                     :components ((:file "utilities")))))
-                                     #|(:module ui :serial t
+                                     (:module ui :serial t
                                               :components (#+cocoa
                                                            (:module cocoa :serial t
                                                                     :components 
-                                                                    ((:file "macos-application-bundle")))
+                                                                    ((:file "views")
+                                                                     (:file "document")
+                                                                     (:file "macos-application-bundle")))
                                                            #+win32
                                                            (:module win32 :serial t
-                                                                    :components ())
+                                                                    :components ((:file "document")))
                                                            (:module common :serial t
                                                                     :components ((:file "views")
                                                                                  (:file "menus")
                                                                                  (:file "document")
-                                                                                 (:file "delectus-window")
-                                                                                 (:file "delectus-ui")
-                                                                                 (:file "application")))))|#
+                                                                                 ;;(:file "delectus-window")
+                                                                                 ;;(:file "delectus-ui")
+                                                                                 ;;(:file "application")
+                                                                                 ))))
                                      ))))
 
 
@@ -90,6 +93,3 @@
   (asdf:oos 'asdf:load-op :delectus))
 
 ;;; (load-delectus)
-;;; (delectus::open-document (path "test-data/zipcode.csv"))
-;;; (setq $doc (delectus::new-untitled-document))
-;;; (delectus::active-interface (delectus::app))

@@ -16,12 +16,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defun init-platform-libraries ()
-  (objc:ensure-objc-initialized
-   :modules '("/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
-              "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa")))
+  )
 
 (defun init-platform-interface ()
-  (set-application-interface (ui (app))))
+  )
 
 
 

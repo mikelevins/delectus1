@@ -8,8 +8,8 @@
    (setf $zips (read-csv (namestring (cl-user::path "test-data/zipcode.csv"))))
    'done))
 
-(time (cl-store:store $zips "/tmp/zips.out"))
-(time (setq $restored-zips (cl-store:restore "/tmp/zips.out")))
+(time (cl-store:store $zips (cl-user::path "test-data/zipcode.out")))
+(time (setq $restored-zips (cl-store:restore (cl-user::path "test-data/zipcode.out"))))
 (type-of $restored-zips)
 
 (time
@@ -29,6 +29,6 @@
       (make-instance 'document
                      :presentation
                      (make-instance 'presentation
-                                    :model (read-csv "/Applications/factor/extra/usa-cities/zipcode.csv"))))
+                                    :model (read-csv (namestring (cl-user::path "test-data/zipcode.csv"))))))
 
 (time (save-document $doc "/tmp/zips.out"))
