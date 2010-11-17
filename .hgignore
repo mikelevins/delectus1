@@ -22,3 +22,6 @@ src/cocoa/views.lisp~
 src/common/presentation.lisp~
 src/common/model.lisp~
 glob:test-data/zips.delectus
+src/ui/application/application.lisp~
+src/ui/win32/init.lisp~
+old-src

@@ -88,3 +88,4 @@
 
 (defmethod open-document ((path string))
   (open-document (pathname path)))
+

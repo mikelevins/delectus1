@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          views.lisp
+;;;; Name:          init.lisp
 ;;;; Project:       Delectus 2
-;;;; Purpose:       platform-independent view code
+;;;; Purpose:       win32-specific init
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2010 by mikel evins
 ;;;;
@@ -11,3 +11,5 @@
 
 (in-package :delectus)
 
+(defun init-platform-libraries ()
+  )

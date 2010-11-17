@@ -14,7 +14,7 @@
 (defun resource (p)
   (namestring (merge-pathnames p (resource-path))))
 
-(defun ns-image (path)
+(defun nsimage (path)
   (invoke (invoke "NSImage" "alloc") "initByReferencingFile:" path))
 
 ;;;(ns-image (resource "trashempty48.png"))

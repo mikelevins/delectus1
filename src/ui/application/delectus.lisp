@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          application.lisp
+;;;; Name:          delectus.lisp
 ;;;; Project:       Delectus 2
 ;;;; Purpose:       the main Delectus application
 ;;;; Author:        mikel evins
@@ -11,11 +11,12 @@
 
 (in-package :delectus)
 
-;;; ---------------------------------------------------------------------
-;;; application main
-;;; ---------------------------------------------------------------------
+(defun run-delectus ()
+  (new-untitled-document))
 
 (defun delectus ()
   (init-platform-libraries)
   (init-platform-interface)
-  (convert-to-screen nil))
+  (run-delectus))
+
+;;; (delectus)

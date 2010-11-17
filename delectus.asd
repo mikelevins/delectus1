@@ -52,39 +52,39 @@
   :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv :cl-store)
   :components ((:module src :serial t
                         :components ((:module common :serial t
-                                              :components ((:file "package")
-                                                           (:file "singleton")
-                                                           (:file "resources")
-                                                           (:module data :serial t
-                                                                    :components ((:file "model")
-                                                                                 (:file "presentation")
-                                                                                 (:file "csv")))))
-                                     (:module platform :serial t
-                                              :components (#+cocoa
-                                                           (:module cocoa :serial t
-                                                                    :components ((:file "utilities")))
-                                                           #+win32
-                                                           (:module win32 :serial t
-                                                                    :components ((:file "utilities")))))
+                                              :components
+                                              ((:file "package")
+                                               (:file "singleton")
+                                               (:module data :serial t
+                                                        :components
+                                                        ((:file "model")
+                                                         (:file "csv")
+                                                         (:file "presentation")))))
                                      (:module ui :serial t
-                                              :components (#+cocoa
+                                              :components ((:module common :serial t
+                                                                    :components
+                                                                    ())
+                                                           #+cocoa
                                                            (:module cocoa :serial t
-                                                                    :components 
-                                                                    ((:file "views")
-                                                                     (:file "document")
-                                                                     (:file "macos-application-bundle")))
+                                                                    :components
+                                                                    ((:file "init")
+                                                                     (:file "constants")
+                                                                     (:file "resources")
+                                                                     (:file "top-button")
+                                                                     ;;(:file "trash-button")
+                                                                     ;;(:file "model-pane")
+                                                                     (:file "application")
+                                                                     (:file "document")))
                                                            #+win32
                                                            (:module win32 :serial t
-                                                                    :components ((:file "document")))
-                                                           (:module common :serial t
-                                                                    :components ((:file "views")
-                                                                                 (:file "menus")
-                                                                                 (:file "document")
-                                                                                 ;;(:file "delectus-window")
-                                                                                 ;;(:file "delectus-ui")
-                                                                                 ;;(:file "application")
-                                                                                 ))))
-                                     ))))
+                                                                    :components
+                                                                    ((:file "init")))
+                                                           (:module application :serial t
+                                                                    :components
+                                                                    ((:file "delectus-window")
+                                                                     (:file "document")
+                                                                     (:file "application")
+                                                                     (:file "delectus")))))))))
 
 
 (in-package :cl-user)
@@ -93,3 +93,4 @@
   (asdf:oos 'asdf:load-op :delectus))
 
 ;;; (load-delectus)
+;;; (delectus::delectus)

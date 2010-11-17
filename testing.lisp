@@ -20,7 +20,7 @@
 (time (cl-store:store $pres (namestring (cl-user::path "test-data/zips.delectus"))))
 (time (setq $restored-pres (cl-store:restore (namestring (cl-user::path "test-data/zips.delectus")))))
 (type-of $restored-pres)
-(value-at $restored-pres "city" 0)
+(value-at $restored-pres "city" 43190)
 (presented-columns $restored-pres)
 (count-rows $restored-pres)
 
