@@ -11,5 +11,6 @@
 
 (in-package :delectus)
 
-(defun init-platform-libraries ()
-  )
+(defun init-platform-libraries ())
+
+(defun init-platform-interface ())

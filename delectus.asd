@@ -63,7 +63,7 @@
                                      (:module ui :serial t
                                               :components ((:module common :serial t
                                                                     :components
-                                                                    ())
+                                                                    ((:file "resources")))
                                                            #+cocoa
                                                            (:module cocoa :serial t
                                                                     :components
@@ -78,7 +78,10 @@
                                                            #+win32
                                                            (:module win32 :serial t
                                                                     :components
-                                                                    ((:file "init")))
+                                                                    ((:file "init")
+                                                                     (:file "resources")
+                                                                     (:file "top-button")
+                                                                     (:file "document")))
                                                            (:module application :serial t
                                                                     :components
                                                                     ((:file "delectus-window")

@@ -17,14 +17,14 @@
   ;; panes
   (:panes
    ;; top row
-   (add-row-button top-button :target (document interface) :label "Add Row"
-                   :action "addRow:" :image (resource "add.png") :altimage (resource "addhl.png"))
-   (delete-row-button top-button :target (document interface) :label "Del Row"
-                   :action "deleteRow:" :image (resource "del.png") :altimage (resource "delhl.png"))
-   (add-column-button top-button :target (document interface) :label "Add Col"
-                      :action "addColumn:" :image (resource "add.png") :altimage (resource "addhl.png"))
-   (delete-column-button top-button :target (document interface) :label "Del Col"
-                   :action "deleteColumn:" :image (resource "del.png") :altimage (resource "delhl.png"))
+   (add-row-button top-button :target (document interface) :title "Add Row"
+                   :action "addRow:" :image $add-button-image :altimage $add-button-hl-image)
+   (delete-row-button top-button :target (document interface) :title "Del Row"
+                      :action "deleteRow:" :image $delete-button-image :altimage $delete-button-hl-image)
+   (add-column-button top-button :target (document interface) :title "Add Col"
+                      :action "addColumn:" :image $add-button-image :altimage $add-button-hl-image)
+   (delete-column-button top-button :target (document interface) :title "Del Col"
+                         :action "deleteColumn:" :image $delete-button-image :altimage $delete-button-hl-image)
    ;; main row
    ;;(row-pane model-pane :reader model-pane)
    ;; bottom row
@@ -42,7 +42,7 @@
    ;; control clusters
    (row-cluster row-layout '(add-row-button delete-row-button) :adjust :center 
                 :external-min-width 196 :external-max-width 196)
-   (column-cluster row-layout '(add-column-button delete-column-button) :adjust :center
+   (column-cluster row-layout '(nil add-column-button delete-column-button) :adjust :center
                    :external-min-width 196 :external-max-width 196)
    (trash-cluster row-layout '(#+(or)trash-button) :adjust :center
                   :external-min-width 84 :external-max-width 84))

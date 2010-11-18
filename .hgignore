@@ -25,3 +25,4 @@ glob:test-data/zips.delectus
 src/ui/application/application.lisp~
 src/ui/win32/init.lisp~
 old-src
+glob:template/Delectus.app/Contents/Resources/Thumbs.db
