@@ -63,14 +63,14 @@
                                      (:module ui :serial t
                                               :components ((:module common :serial t
                                                                     :components
-                                                                    ((:file "resources")))
+                                                                    ((:file "resources")
+                                                                     (:file "top-button")))
                                                            #+cocoa
                                                            (:module cocoa :serial t
                                                                     :components
                                                                     ((:file "init")
                                                                      (:file "constants")
                                                                      (:file "resources")
-                                                                     (:file "top-button")
                                                                      ;;(:file "trash-button")
                                                                      ;;(:file "model-pane")
                                                                      (:file "application")
@@ -80,7 +80,6 @@
                                                                     :components
                                                                     ((:file "init")
                                                                      (:file "resources")
-                                                                     (:file "top-button")
                                                                      (:file "document")))
                                                            (:module application :serial t
                                                                     :components

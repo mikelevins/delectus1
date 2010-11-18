@@ -26,3 +26,6 @@ src/ui/application/application.lisp~
 src/ui/win32/init.lisp~
 old-src
 glob:template/Delectus.app/Contents/Resources/Thumbs.db
+src/ui/common/top-button.lisp~
+src/ui/application/delectus-window.lisp~
+src/ui/cocoa/resources.lisp~
