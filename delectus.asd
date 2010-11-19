@@ -1,3 +1,14 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          delectus.asd
+;;;; Project:       Delectus 2
+;;;; Purpose:       system definitions
+;;;; Author:        mikel evins
+;;;; Copyright:     2010 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
 (in-package :cl-user)
 
 (require :asdf)
@@ -17,13 +28,6 @@
 (defun add-to-asdf (path)
   (pushnew (truename (merge-pathnames path (path-base)))
            asdf:*central-registry* :test 'equalp))
-
-(add-to-asdf "lib/folio/lib/misc-extensions_1.2.0/")
-(add-to-asdf "lib/folio/lib/fset_1.2.2/")
-(add-to-asdf "lib/folio/as/")
-(add-to-asdf "lib/folio/boxes/")
-(add-to-asdf "lib/folio/functions/")
-(add-to-asdf "lib/folio/collections/")
 
 ;;; ---------------------------------------------------------------------
 ;;; whether the running lisp is a delivered app
@@ -49,44 +53,16 @@
   :version "2.0a1"
   :author "mikel evins"
   :description "Delectus 2"
-  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :fare-csv :cl-store)
-  :components ((:module src :serial t
-                        :components ((:module common :serial t
-                                              :components
-                                              ((:file "package")
-                                               (:file "singleton")
-                                               (:module data :serial t
-                                                        :components
-                                                        ((:file "model")
-                                                         (:file "csv")
-                                                         (:file "presentation")))))
-                                     (:module ui :serial t
-                                              :components ((:module common :serial t
-                                                                    :components
-                                                                    ((:file "resources")
-                                                                     (:file "top-button")))
-                                                           #+cocoa
-                                                           (:module cocoa :serial t
-                                                                    :components
-                                                                    ((:file "init")
-                                                                     (:file "constants")
-                                                                     (:file "resources")
-                                                                     ;;(:file "trash-button")
-                                                                     ;;(:file "model-pane")
-                                                                     (:file "application")
-                                                                     (:file "document")))
-                                                           #+win32
-                                                           (:module win32 :serial t
-                                                                    :components
-                                                                    ((:file "init")
-                                                                     (:file "resources")
-                                                                     (:file "document")))
-                                                           (:module application :serial t
-                                                                    :components
-                                                                    ((:file "delectus-window")
-                                                                     (:file "document")
-                                                                     (:file "application")
-                                                                     (:file "delectus")))))))))
+  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :cl-store)
+  :serial t
+  :components ((:module lib :serial t
+                        :components ((:file "parse-number")
+                                     (:file "csv-parser")))
+               (:module src :serial t
+                        :components
+                        ((:file "package")
+                         (:file "model")
+                         (:file "csv")))))
 
 
 (in-package :cl-user)
@@ -95,4 +71,3 @@
   (asdf:oos 'asdf:load-op :delectus))
 
 ;;; (load-delectus)
-;;; (delectus::delectus)

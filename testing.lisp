@@ -8,9 +8,15 @@
    (setf $zips (read-csv (namestring (cl-user::path "test-data/zipcode.csv"))))
    'done))
 
+(type-of $zips)
+(columns $zips)
+(seq:element (rows $zips) 0)
+
 (time (cl-store:store $zips (cl-user::path "test-data/zipcode.out")))
 (time (setq $restored-zips (cl-store:restore (cl-user::path "test-data/zipcode.out"))))
 (type-of $restored-zips)
+(value-at $restored-zips "city" 43190)
+(time (%canonicalize-column! $restored-zips "city"))
 
 (time
  (progn 
