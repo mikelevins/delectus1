@@ -63,7 +63,8 @@
                         ((:file "package")
                          (:file "model")
                          (:file "storage")
-                         (:file "csv")))))
+                         (:file "csv")
+                         ))))
 
 (defsystem delectus-cocoa
   :name "delectus cocoa"
