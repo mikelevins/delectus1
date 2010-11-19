@@ -91,9 +91,9 @@
 ;;; a label for a position in a row
 
 (defclass column ()
-  ((label :reader label :initarg :label)
-   (index :accessor index :initarg :index)
-   (deleted? :accessor deleted? :initform nil)))
+  ((label :reader label :initarg :label :initform nil)
+   (index :accessor index :initarg :index :initform nil)
+   (deleted? :accessor deleted? :initarg :deleted :initform nil)))
 
 (defmethod make-column ((label string))
   (make-instance 'column :label label))
@@ -141,10 +141,16 @@
       (apply #'seq:make (mapcar #'ensure-column 
                                 (ensure-no-duplicates cols)))))
 
+(defmethod ensure-columns ((cols fset:seq))
+  (ensure-columns (as 'list cols)))
+
 (defmethod ensure-rows ((rows list))
   (if (null rows)
       (seq:make)
       (as 'fset:seq (seq:image #'ensure-row rows))))
+
+(defmethod ensure-rows ((rows fset:seq))
+  (ensure-rows (as 'list rows)))
 
 (defclass model ()
   ((columns :accessor columns :initarg :columns :initform (seq:make))

@@ -15,5 +15,5 @@
   (:use :cl :capi #+cocoa :objc :folio.as)
   (:shadow "ELEMENT")
   (:import-from :folio.fn #:$ #:^)
-  (:import-from :cl-user))
+  (:import-from :hu.dwim.serializer #:serialize #:deserialize))
 

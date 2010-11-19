@@ -29,3 +29,7 @@ glob:template/Delectus.app/Contents/Resources/Thumbs.db
 src/ui/common/top-button.lisp~
 src/ui/application/delectus-window.lisp~
 src/ui/cocoa/resources.lisp~
+test-data/zipcode.out
+src/package.lisp~
+src/storage.lisp~
+src/storage1.lisp

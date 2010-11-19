@@ -48,11 +48,11 @@
 
 (in-package :delectus-asd)
 
-(defsystem delectus
-  :name "delectus"
-  :version "2.0a1"
+(defsystem delectus-data
+  :name "delectus data"
+  :version "1.9a2"
   :author "mikel evins"
-  :description "Delectus 2"
+  :description "Delectus Data Layer"
   :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :cl-store)
   :serial t
   :components ((:module lib :serial t
@@ -62,12 +62,22 @@
                         :components
                         ((:file "package")
                          (:file "model")
+                         (:file "storage")
                          (:file "csv")))))
+
+(defsystem delectus-cocoa
+  :name "delectus cocoa"
+  :version "1.9a2"
+  :author "mikel evins"
+  :description "Delectus Cocoa Applcation"
+  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :delectus-data)
+  :serial t
+  :components ())
 
 
 (in-package :cl-user)
 
-(defun load-delectus ()
-  (asdf:oos 'asdf:load-op :delectus))
+(defun load-data ()(asdf:oos 'asdf:load-op :delectus-data))
+(defun load-cocoa ()(asdf:oos 'asdf:load-op :delectus-cocoa))
 
-;;; (load-delectus)
+;;; (load-data)

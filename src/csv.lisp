@@ -37,7 +37,10 @@
                           "Malformed csv data read from file '~A'" path)
       (if first-row-headers?
           (progn
-            (setf (columns m)(seq:element (rows m) 0))
+            (setf (columns m)
+                  (ensure-columns (as 'list 
+                                      (seq:image #'val
+                                                 (elements (seq:element (rows m) 0))))))
             (setf (rows m)(seq:drop 1 (rows m)))
             m)
           (progn
