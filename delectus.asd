@@ -61,19 +61,31 @@
                (:module src :serial t
                         :components
                         ((:file "package")
-                         (:file "model")
-                         (:file "storage")
-                         (:file "csv")
-                         ))))
+                         (:module data-engine :serial t
+                                  :components
+                                  ((:file "model")
+                                   (:file "storage")
+                                   (:file "csv")))))))
 
 (defsystem delectus-cocoa
   :name "delectus cocoa app"
   :version "1.9a2"
   :author "mikel evins"
-  :description "Delectus Cocoa Applcation"
+  :description "Delectus Cocoa Application"
   :depends-on (:delectus-data-engine)
   :serial t
-  :components ())
+  :components ((:module src :serial t
+                        :components
+                        ((:file "singleton")
+                         (:module controllers :serial t
+                                  :components
+                                  ((:file "document")
+                                   (:file "app")))
+                         (:module views :serial t
+                                  :components
+                                  ((:file "menus")
+                                   (:file "document-window")
+                                   (:file "ui")))))))
 
 (defsystem delectus-win32
   :name "delectus win32 app"
@@ -92,3 +104,4 @@
 (defun load-win32-app ()(asdf:oos 'asdf:load-op :delectus-win32))
 
 ;;; (load-data-engine)
+;;; (load-cocoa-app)
