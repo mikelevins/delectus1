@@ -35,155 +35,125 @@
 ;;; utils
 ;;; ---------------------------------------------------------------------
 
-(defun sum-vector-lengths (vecs)
-  (seq:reduce #'+ (seq:image #'length vecs) :initial-value 0))
+(defmethod write-byte-on-vector ((byte integer) (outv vector))
+  (assert (<= 0 byte 255)() "Byte value (~S) out of range" byte)
+  (assert (array-has-fill-pointer-p outv)() "Output vector lacks a fill-pointer")
+  (vector-push-extend byte outv))
 
-(defun write-vector-on (inv outv &key (start 0))
-  (replace outv inv :start1 start :end1 (+ start (length inv))))
-
-;;; ---------------------------------------------------------------------
-;;; converting booleans
-;;; ---------------------------------------------------------------------
-
-(defmethod bool->serialized-form ((b (eql nil)))
-  (make-array 2 :element-type '(unsigned-byte 8)
-              :initial-contents `(,$tag-bool 0)))
-
-(defmethod bool->serialized-form ((b (eql t)))
-  (make-array 2 :element-type '(unsigned-byte 8)
-              :initial-contents `(,$tag-bool 1)))
+(defun write-vector-on-vector (inv outv)
+  (assert (array-has-fill-pointer-p outv)() "Output vector lacks a fill-pointer")
+  (if (> (length inv) (- (array-dimension outv 0)(fill-pointer outv)))
+      (progn
+        (adjust-array outv (* 2 (array-dimension outv 0)) :element-type '(unsigned-byte 8) :initial-element 0)
+        (write-vector-on inv outv))
+      (let* ((start (fill-pointer outv))
+             (end (+ start (length inv))))
+        (setf (fill-pointer outv) end)
+        (replace outv inv :start1 start :end1 end))))
 
 ;;; ---------------------------------------------------------------------
-;;; converting numbers
+;;; serialization output buffer
 ;;; ---------------------------------------------------------------------
 
-(defmethod integer->serialized-form ((i integer))
-  (assert (<= 0 i #xffffffff)() "Integer ~A is out of range" i)
-  (vector $tag-int 
-          (ldb (byte 8 24) i)
-          (ldb (byte 8 16) i)
-          (ldb (byte 8 8) i)
-          (ldb (byte 8 0) i)))
+(defun make-serialization-buffer (len)
+  (make-array len :element-type '(unsigned-byte 8) :fill-pointer 0 :adjustable t))
+
+(defun clear-serialization-buffer (buf)
+  (setf (fill-pointer buf) 0)
+  buf)
+
+(defmethod write-to-serialization-buffer ((vec vector)(out vector))
+  (write-vector-on-vector vec out))
 
 ;;; ---------------------------------------------------------------------
-;;; converting strings
+;;; serialize-*-to-buffer
 ;;; ---------------------------------------------------------------------
 
-(defmethod string->octets ((s string))
-  (let* ((len (length s))
-         (outbuf (make-array len :element-type '(unsigned-byte 8) :fill-pointer 0)))
-    (dotimes (i len)
-      (vector-push (char-code (elt s i)) outbuf))
-    outbuf))
+(defun serialize-delectus-format-to-buffer (out)
+  (write-vector-on-vector $delectus-format-sentinel out))
 
-(defmethod octets->string ((os vector))
-  (coerce (seq:image #'code-char os) 'string))
+(defun serialize-delectus-format-version-to-buffer (out)
+  (write-byte-on-vector (current-store-format-version) out))
 
-(defmethod string->serialized-form ((s string))
-  (let* ((tag $tag-string)
-         (outs (string->octets s))
-         (len (length outs))
-         (lenv (integer->serialized-form len))
-         (outbuf (make-array (+ 1 (length lenv) len)
-                             :element-type '(unsigned-byte 8))))
-    (setf (aref outbuf 0) tag)
-    (write-vector-on lenv outbuf :start 1)
-    (write-vector-on outs outbuf :start (+ 1 (length lenv)))
-    outbuf))
+(defmethod serialize-boolean-to-vector ((b (eql t)) out)
+  (write-byte-on-vector $tag-bool out)
+  (write-byte-on-vector 1 out)
+  out)
 
-;;; ---------------------------------------------------------------------
-;;; converting rows
-;;; ---------------------------------------------------------------------
+(defmethod serialize-boolean-to-buffer ((b (eql nil)) out)
+  (write-byte-on-vector $tag-bool out)
+  (write-byte-on-vector 0 out)
+  out)
 
-(defmethod row->serialized-form ((r row))
-  (let* ((tag $tag-row)
-         (fill 0)
-         (elt-vals (seq:image #'val (elements r)))
-         (elt-count (seq:length elt-vals))
-         (elt-count-v (integer->serialized-form elt-count))
-         (elt-vecs (as 'list (seq:image #'string->serialized-form elt-vals)))
-         (outbuf (make-array (+ 1 (length elt-count-v) (sum-vector-lengths elt-vecs))
-                             :element-type '(unsigned-byte 8))))
-    (setf (aref outbuf fill) tag)
-    (incf fill)
-    (write-vector-on elt-count-v outbuf :start fill)
-    (incf fill (length elt-count-v))
-    (dolist (vec elt-vecs)
-      (write-vector-on vec outbuf :start fill)
-      (incf fill))
-    outbuf))
+(defun serialize-count-to-buffer (i out)
+  (assert (<= 0 i #xffffffff)() "Count ~A is out of range" i)
+  (write-byte-on-vector $tag-int out)
+  (write-byte-on-vector (ldb (byte 8 24) i) out)
+  (write-byte-on-vector (ldb (byte 8 16) i) out)
+  (write-byte-on-vector (ldb (byte 8 8) i) out)
+  (write-byte-on-vector (ldb (byte 8 0) i) out)
+  out)
 
-;;; ---------------------------------------------------------------------
-;;; converting columns
-;;; ---------------------------------------------------------------------
+(defun serialize-index-to-buffer (i out)
+  (assert (<= 0 i #xffffffff)() "Index ~A is out of range" i)
+  (write-byte-on-vector $tag-int out)
+  (write-byte-on-vector (ldb (byte 8 24) i) out)
+  (write-byte-on-vector (ldb (byte 8 16) i) out)
+  (write-byte-on-vector (ldb (byte 8 8) i) out)
+  (write-byte-on-vector (ldb (byte 8 0) i) out)
+  out)
 
-(defmethod column->serialized-form ((col column))
+(defun serialize-string-to-buffer (s out)
+  (write-byte-on-vector $tag-string out)
+  (serialize-count-to-buffer (length s) out)
+  (loop for i from 0 upto (1- (length s))
+     do (write-byte-on-vector (char-code (aref s i)) out))
+  out)
+
+(defun serialize-column-to-buffer (col out)
   (let* ((tag $tag-column)
-         (fill 0)
          (label (label col))
-         (labelv (string->serialized-form label))
          (index (or (index col) 0))
-         (indexv (integer->serialized-form index))
-         (deleted? (deleted? col))
-         (deletedv (bool->serialized-form deleted?))
-         (outbuf (make-array (+ 1 (length labelv)(length indexv)(length deletedv))
-                             :element-type '(unsigned-byte 8))))
-    (setf (aref outbuf fill) tag)
-    (incf fill)
-    (write-vector-on labelv outbuf :start fill)
-    (incf fill (length labelv))
-    (write-vector-on indexv outbuf :start fill)
-    (incf fill (length indexv))
-    (write-vector-on deletedv outbuf :start fill)
-    outbuf))
+         (deleted? (deleted? col)))
+    (write-byte-on-vector tag out)
+    (serialize-string-to-buffer label out)
+    (serialize-index-to-buffer index out)
+    (serialize-boolean-to-buffer deleted? out))
+  out)
+
+(defun serialize-columns-to-buffer (cols out)
+  (dolist (col (as 'list cols))
+    (serialize-column-to-buffer col out))
+  out)
+
+(defun serialize-row-to-buffer (row out)
+  (let* ((tag $tag-row))
+    (write-byte-on-vector tag out)
+    (serialize-count-to-buffer (seq:length (elements row)) out)
+    (dolist (el (as 'list (elements row)))
+      (serialize-string-to-buffer (val el) out)))
+  out)
+
+(defun serialize-rows-to-buffer (rows out)
+  (dolist (row (as 'list rows))
+    (serialize-row-to-buffer row out))
+  out)
 
 ;;; ---------------------------------------------------------------------
-;;; converting to serialized binary
+;;; to-serialized-form
 ;;; ---------------------------------------------------------------------
 
-(defun columns->serialized-form (cols)
-  (let* ((serialized-cols (as 'list (seq:image #'column->serialized-form cols)))
-         (fill 0)
-         (outbuf (make-array (sum-vector-lengths serialized-cols)
-                             :element-type '(unsigned-byte 8))))
-    (dolist (colv serialized-cols)
-      (write-vector-on colv outbuf :start fill)
-      (incf fill (length colv)))
-    outbuf))
-
-(defun rows->serialized-form (rows)
-  (let* ((serialized-rows (as 'list (seq:image #'row->serialized-form rows)))
-         (fill 0)
-         (outbuf (make-array (sum-vector-lengths serialized-rows)
-                             :element-type '(unsigned-byte 8))))
-    (dolist (rowv serialized-rows)
-      (write-vector-on rowv outbuf :start fill)
-      (incf fill (length rowv)))
-    outbuf))
+(defmethod guess-serialized-length ((m model))
+  (+ (* 64 (seq:length (columns m)))
+     (* 64 (seq:length (rows m)))))
 
 (defmethod to-serialized-form ((m model))
-  (let* ((fill 0)
-         (format-sentinel $delectus-format-sentinel)
-         (format-version (vector (current-store-format-version)))
-         (columns (columns->serialized-form (as 'list (columns m))))
-         (rows (rows->serialized-form (as 'list (rows m))))
-         (outbuf (make-array (+ (length format-sentinel) (length format-version) (length columns) (length rows))
-                             :element-type '(unsigned-byte 8))))
-    (write-vector-on format-sentinel outbuf :start fill)
-    (incf fill (length format-sentinel))
-    (write-vector-on format-version outbuf :start fill)
-    (incf fill (length format-version))
-    (write-vector-on columns outbuf :start fill)
-    (incf fill (length columns))
-    (write-vector-on rows outbuf :start fill)
+  (let ((outbuf (make-serialization-buffer (guess-serialized-length m))))
+    (serialize-delectus-format-to-buffer outbuf)
+    (serialize-delectus-format-version-to-buffer outbuf)
+    (serialize-columns-to-buffer (columns m) outbuf)
+    (serialize-rows-to-buffer (rows m) outbuf)
     outbuf))
-
-;;; ---------------------------------------------------------------------
-;;; converting from serialized binary
-;;; ---------------------------------------------------------------------
-
-(defmethod from-serialized-form (data)
-  )
 
 ;;; ---------------------------------------------------------------------
 ;;; storing and loading models
@@ -201,21 +171,4 @@
 
 (defmethod store ((m model)(path string))
   (store m (pathname path)))
-
-(defmethod load-data ((path pathname))
-  (with-open-file (in path :direction :input
-                      :element-type '(unsigned-byte 8))
-    (let ((buffer (make-array (file-length in) :element-type '(unsigned-byte 8)
-                              :initial-element 0)))
-      (read-sequence buffer in)
-      buffer)))
-
-(defmethod load-data ((path string))
-  (load-data (pathname path)))
-
-(defmethod load-model ((path pathname))
-  (from-serialized-form (load-data path)))
-
-(defmethod load-model ((path string))
-  (load-data (pathname path)))
 
