@@ -42,13 +42,6 @@
   (replace outv inv :start1 start :end1 (+ start (length inv))))
 
 ;;; ---------------------------------------------------------------------
-;;; binary field definitions
-;;; ---------------------------------------------------------------------
-
-(bt:define-unsigned octet 1)
-(bt:define-unsigned int4 4)
-
-;;; ---------------------------------------------------------------------
 ;;; converting booleans
 ;;; ---------------------------------------------------------------------
 
@@ -145,7 +138,7 @@
     outbuf))
 
 ;;; ---------------------------------------------------------------------
-;;; converting to and from serialized binary
+;;; converting to serialized binary
 ;;; ---------------------------------------------------------------------
 
 (defun columns->serialized-form (cols)
@@ -185,7 +178,11 @@
     (write-vector-on rows outbuf :start fill)
     outbuf))
 
-(defmethod from-serialized-form ()
+;;; ---------------------------------------------------------------------
+;;; converting from serialized binary
+;;; ---------------------------------------------------------------------
+
+(defmethod from-serialized-form (data)
   )
 
 ;;; ---------------------------------------------------------------------
@@ -214,7 +211,7 @@
       buffer)))
 
 (defmethod load-data ((path string))
-  (reload m (pathname path)))
+  (load-data (pathname path)))
 
 (defmethod load-model ((path pathname))
   (from-serialized-form (load-data path)))

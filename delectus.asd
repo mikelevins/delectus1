@@ -53,7 +53,7 @@
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
-  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :binary-types)
+  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections)
   :serial t
   :components ((:module lib :serial t
                         :components ((:file "parse-number")
