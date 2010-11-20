@@ -48,8 +48,8 @@
 
 (in-package :delectus-asd)
 
-(defsystem delectus-data
-  :name "delectus data"
+(defsystem delectus-data-engine
+  :name "delectus data engine"
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
@@ -67,18 +67,28 @@
                          ))))
 
 (defsystem delectus-cocoa
-  :name "delectus cocoa"
+  :name "delectus cocoa app"
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Cocoa Applcation"
-  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections :delectus-data)
+  :depends-on (:delectus-data-engine)
+  :serial t
+  :components ())
+
+(defsystem delectus-win32
+  :name "delectus win32 app"
+  :version "1.9a2"
+  :author "mikel evins"
+  :description "Delectus Cocoa Applcation"
+  :depends-on (:delectus-data-engine)
   :serial t
   :components ())
 
 
 (in-package :cl-user)
 
-(defun load-data ()(asdf:oos 'asdf:load-op :delectus-data))
-(defun load-cocoa ()(asdf:oos 'asdf:load-op :delectus-cocoa))
+(defun load-data-engine ()(asdf:oos 'asdf:load-op :delectus-data-engine))
+(defun load-cocoa-app ()(asdf:oos 'asdf:load-op :delectus-cocoa))
+(defun load-win32-app ()(asdf:oos 'asdf:load-op :delectus-win32))
 
-;;; (load-data)
+;;; (load-data-engine)
