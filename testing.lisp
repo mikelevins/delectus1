@@ -13,7 +13,28 @@
 
 (time 
  (progn
-   (cl-store:store $zips (cl-user::path "test-data/zipcode.out"))
+   (setq $serialized-zips (to-serialized-form $zips))
+   'done))
+
+(length $serialized-zips)
+
+(time 
+ (progn
+   (store-data $serialized-zips (cl-user::path "test-data/zipcode.out"))
+   'done))
+
+(time 
+ (progn
+   (store $zips (cl-user::path "test-data/zipcode.out"))
+   'done))
+
+
+
+
+
+(time 
+ (progn
+   (setq $reloaded-zips (reload (cl-user::path "test-data/zipcode.out")))
    'done))
 
 (time 
