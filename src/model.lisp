@@ -56,6 +56,9 @@
   (setf (slot-value r 'elements)
         (apply #'seq:make (mapcar #'ensure-field (elements r)))))
 
+(defmethod row? (x) nil)
+(defmethod row? ((r row)) t)
+
 (defun make-row (vals)
   (make-instance 'row :elements vals))
 
@@ -97,6 +100,9 @@
 
 (defmethod make-column ((label string))
   (make-instance 'column :label label))
+
+(defmethod column? (x) nil)
+(defmethod column? ((c column)) t)
 
 (defmethod ensure-column (x)
   (error "Can't make a column from value ~S" x))

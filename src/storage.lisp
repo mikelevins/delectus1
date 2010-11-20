@@ -75,7 +75,7 @@
 (defun serialize-delectus-format-version-to-buffer (out)
   (write-byte-on-vector (current-store-format-version) out))
 
-(defmethod serialize-boolean-to-vector ((b (eql t)) out)
+(defmethod serialize-boolean-to-buffer ((b (eql t)) out)
   (write-byte-on-vector $tag-bool out)
   (write-byte-on-vector 1 out)
   out)
@@ -140,6 +140,80 @@
   out)
 
 ;;; ---------------------------------------------------------------------
+;;; deserialize-*-from-buffer
+;;; ---------------------------------------------------------------------
+
+(defun deserialize-delectus-format-from-buffer (inbuf pos)
+  (values (subseq inbuf pos (+ pos 4))
+          (+ pos 4)))
+
+(defun deserialize-delectus-format-version-from-buffer (inbuf pos)
+  (values (aref inbuf pos) (1+ pos)))
+
+(defmethod deserialize-boolean-from-buffer (inbuf pos)
+  (values (ecase (aref inbuf (1+ pos))
+            ((0) nil)
+            ((1) t))
+          (+ pos 2)))
+
+(defun deserialize-count-from-buffer (inbuf pos)
+  (let ((count 0))
+    (setf (ldb (byte 8 24) count)(aref inbuf (+ pos 1)))
+    (setf (ldb (byte 8 16) count)(aref inbuf (+ pos 2)))
+    (setf (ldb (byte 8 8) count)(aref inbuf (+ pos 3)))
+    (setf (ldb (byte 8 0) count)(aref inbuf (+ pos 4)))
+    (values count (+ pos 5))))
+
+(defun deserialize-index-from-buffer (inbuf pos)
+  (let ((count 0))
+    (setf (ldb (byte 8 24) count)(aref inbuf (+ pos 1)))
+    (setf (ldb (byte 8 16) count)(aref inbuf (+ pos 2)))
+    (setf (ldb (byte 8 8) count)(aref inbuf (+ pos 3)))
+    (setf (ldb (byte 8 0) count)(aref inbuf (+ pos 4)))
+    (values count (+ pos 5))))
+
+(defun deserialize-string-from-buffer (inbuf pos)
+  (multiple-value-bind (strlen new-pos)
+      (deserialize-count-from-buffer inbuf (1+ pos))
+    (let* ((str-bytes (subseq inbuf new-pos (+ new-pos strlen)))
+           (str (make-string strlen)))
+      (loop for i from 0 upto (1- strlen)
+           do (setf (aref str i)(code-char (aref str-bytes i))))
+      (values str (+ new-pos strlen)))))
+
+(defun deserialize-column-from-buffer (inbuf pos)
+  (multiple-value-bind (label new-pos)
+      (deserialize-string-from-buffer inbuf (1+ pos))
+    (multiple-value-bind (index new-pos2)
+        (deserialize-index-from-buffer inbuf new-pos)
+      (multiple-value-bind (deleted? new-pos3)
+          (deserialize-boolean-from-buffer inbuf new-pos2)
+        (values (make-instance 'column
+                               :label label
+                               :index index
+                               :deleted deleted?)
+                new-pos3)))))
+
+(defun deserialize-row-from-buffer (inbuf pos)
+  (multiple-value-bind (elt-count new-pos)
+      (deserialize-count-from-buffer inbuf (1+ pos))
+    (let ((elts nil)
+          (remaining-count elt-count)
+          (next-pos new-pos))
+      (block reading
+        (loop
+           (when (<= remaining-count 0)
+             (return-from reading
+               (values (ensure-row (reverse elts))
+                       next-pos)))
+           (multiple-value-bind (el new-pos2)
+               (deserialize-string-from-buffer inbuf next-pos)
+             (setf elts (cons el elts))
+             (decf remaining-count)
+             (setf next-pos new-pos2)))))))
+
+
+;;; ---------------------------------------------------------------------
 ;;; to-serialized-form
 ;;; ---------------------------------------------------------------------
 
@@ -156,7 +230,58 @@
     outbuf))
 
 ;;; ---------------------------------------------------------------------
-;;; storing and loading models
+;;; from-serialized-form
+;;; ---------------------------------------------------------------------
+
+(defmethod read-serialized-data ((inbuf array)(tag (eql $tag-row))(index integer))
+  (deserialize-row-from-buffer inbuf index))
+
+(defmethod read-serialized-data ((inbuf array)(tag (eql $tag-column))(index integer))
+  (deserialize-column-from-buffer inbuf index))
+
+(defmethod read-serialized-data ((inbuf array)(tag (eql $tag-string))(index integer))
+  (deserialize-string-from-buffer inbuf index))
+
+(defmethod read-serialized-data ((inbuf array)(tag (eql $tag-int))(index integer))
+  (deserialize-index-from-buffer inbuf index))
+
+(defmethod read-serialized-data ((inbuf array)(tag (eql $tag-bool))(index integer))
+  (deserialize-boolean-from-buffer inbuf index))
+
+(defmethod from-serialized-form ((inbuf array))
+  (let ((format-sentinel-bytes (subseq inbuf 0 4))
+        (format-version-byte (aref inbuf 4))
+        (pos 5)
+        (parts nil))
+    (block reading 
+      (loop
+         (when (>= pos (length inbuf))
+           (return-from reading))
+         (multiple-value-bind (part new-pos)
+             (read-serialized-data inbuf (elt inbuf pos) pos)
+           (setf parts (cons part parts))
+           (setf pos new-pos))))
+    (let ((columns (as 'list (seq:filter #'column? parts)))
+          (rows (as 'list (seq:filter #'row? parts))))
+      (make-instance 'model
+                     :columns columns
+                     :rows rows))))
+
+#|
+
+(block reading
+  (loop
+     (when (>= pos (length inbuf))
+       (return-from reading (reverse parts)))
+     (multiple-value-bind (part new-pos)
+         (read-serialized-data inbuf (elt inbuf pos)(1+ pos))
+       (setf parts (cons part parts))
+       (setf pos new-pos))))
+
+|#
+
+;;; ---------------------------------------------------------------------
+;;; storing  models
 ;;; ---------------------------------------------------------------------
 
 (defmethod store-data ((data vector)(path pathname))
@@ -171,4 +296,21 @@
 
 (defmethod store ((m model)(path string))
   (store m (pathname path)))
+
+;;; ---------------------------------------------------------------------
+;;; loading  models
+;;; ---------------------------------------------------------------------
+
+(defmethod load-data ((path pathname))
+  (with-open-file (in path :direction :input
+                       :element-type '(unsigned-byte 8))
+    (let ((inbuf (make-array (file-length in) :element-type '(unsigned-byte 8))))
+      (read-sequence inbuf in)
+      inbuf)))
+
+(defmethod load-model ((path pathname))
+  (from-serialized-form (load-data path)))
+
+(defmethod load-model ((path string))
+  (load-model (pathname path)))
 
