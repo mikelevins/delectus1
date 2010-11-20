@@ -38,4 +38,4 @@
   (:menu-bar application-menu file-menu edit-menu windows-menu help-menu)
   ;; defaults
   (:default-initargs :title "Delectus" 
-    :application-menu 'application-menu))
+    #+cocoa :application-menu #+cocoa 'application-menu))

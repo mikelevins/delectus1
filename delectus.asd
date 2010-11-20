@@ -53,7 +53,7 @@
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
-  :depends-on (:folio.as :folio.functions :folio.boxes :folio.collections)
+  :depends-on (:folio.as :folio.functions :folio.collections)
   :serial t
   :components ((:module lib :serial t
                         :components ((:file "parse-number")
@@ -91,10 +91,21 @@
   :name "delectus win32 app"
   :version "1.9a2"
   :author "mikel evins"
-  :description "Delectus Cocoa Applcation"
+  :description "Delectus Windows Applcation"
   :depends-on (:delectus-data-engine)
   :serial t
-  :components ())
+  :components ((:module src :serial t
+                        :components
+                        ((:file "singleton")
+                         (:module controllers :serial t
+                                  :components
+                                  ((:file "document")
+                                   (:file "app")))
+                         (:module views :serial t
+                                  :components
+                                  ((:file "menus")
+                                   (:file "document-window")
+                                   (:file "ui")))))))
 
 
 (in-package :cl-user)
@@ -105,3 +116,4 @@
 
 ;;; (load-data-engine)
 ;;; (load-cocoa-app)
+;;; (load-win32-app)
