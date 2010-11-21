@@ -13,6 +13,8 @@
 
 (defparameter $toolbar-image-width 16)
 (defparameter $toolbar-image-height 16)
+(defparameter $trash-image-width 32)
+(defparameter $trash-image-height 32)
 
 (define-interface document-window ()
   ;; slots
@@ -21,19 +23,22 @@
   (:panes
    ;; top row
    (row-cluster toolbar :title "Row" :title-position :right
-                :items (list (make-instance 'toolbar-button :text "Add Row" :image (image :add-button))
-                             (make-instance 'toolbar-button :text "Del Row" :image (image :del-button)))
+                :items (list (make-instance 'toolbar-button :image (image :add-button))
+                             (make-instance 'toolbar-button :image (image :del-button)))
                 :image-width $toolbar-image-width 
                 :image-height $toolbar-image-height)
    (column-cluster toolbar :title "Column" :title-position :left
-                   :items (list (make-instance 'toolbar-button :text "Add Col" :image (image :add-button))
-                                (make-instance 'toolbar-button :text "Del Col" :image (image :del-button)))
+                   :items (list (make-instance 'toolbar-button :image (image :add-button))
+                                (make-instance 'toolbar-button :image (image :del-button)))
                    :image-width $toolbar-image-width 
                    :image-height $toolbar-image-height)
    ;; main row
    (row-pane multi-column-list-panel :columns '((:title "A" :width (character 12))))
    ;; bottom row
-   (trash-button push-button :text "Trash")
+   (trash-cluster toolbar :title "Show deleted items" :title-position :right
+                  :image-width $trash-image-width 
+                  :image-height $trash-image-height
+                  :items (list (make-instance 'toolbar-button :image (image :trashempty-button))))
    (filter-field text-input-pane :title "Filter" :title-position :left))
   ;; layouts
   (:layouts
@@ -42,14 +47,7 @@
    ;; rows
    (top-row row-layout '(row-cluster nil column-cluster))
    (table-row row-layout '(row-pane))
-   (bottom-row row-layout '(trash-cluster nil filter-field) :external-min-height 56 :external-max-height 56)
-   ;; control clusters
-   ;;(row-cluster row-layout '(add-row-button delete-row-button) :adjust :center 
-   ;;             :external-min-width 196 :external-max-width 196)
-   ;;(column-cluster row-layout '(add-column-button delete-column-button) :adjust :center
-   ;;                :external-min-width 196 :external-max-width 196)
-   (trash-cluster row-layout '(trash-button) :adjust :center
-                  :external-min-width 84 :external-max-width 84))
+   (bottom-row row-layout '(trash-cluster nil filter-field) :external-min-height 56 :external-max-height 56))
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
                      :window-styles '(:internal-borderless :textured-background)
