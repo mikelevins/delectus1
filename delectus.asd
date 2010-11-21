@@ -119,3 +119,4 @@
 ;;; (load-data-engine)
 ;;; (load-cocoa-app)
 ;;; (load-win32-app)
+;;; (delectus::init-resources)

@@ -29,11 +29,6 @@
   (incf (%untitled-index (app)))
   (%untitled-index (app)))
 
-(defmethod initialize-instance :after ((app application) &rest initargs &key &allow-other-keys)
-  (define-resource :images :add-button (resource "add.bmp"))
-  (define-resource :images :del-button (resource "del.bmp"))
-  (define-resource :images :trashempty-button (resource "trashempty32.bmp")))
-
 ;;; ---------------------------------------------------------------------
 ;;; application main
 ;;; ---------------------------------------------------------------------

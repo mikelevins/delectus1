@@ -41,3 +41,9 @@
 
 (defun image (name)
   (find-resource :images name))
+
+(defmethod init-resources ()
+  (define-resource :images :add-button (resource "add.bmp"))
+  (define-resource :images :del-button (resource "del.bmp"))
+  (define-resource :images :trashempty-button (resource "trashempty32.bmp")))
+
