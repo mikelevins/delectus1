@@ -22,18 +22,18 @@
   ;; panes
   (:panes
    ;; top row
-   (row-cluster toolbar :title "Row" :title-position :right
+   (row-cluster toolbar :title "Row" :title-position :right :flatp t
                 :items (list (make-instance 'toolbar-button :image (image :add-button))
                              (make-instance 'toolbar-button :image (image :del-button)))
                 :image-width $toolbar-image-width 
                 :image-height $toolbar-image-height)
-   (column-cluster toolbar :title "Column" :title-position :left
+   (column-cluster toolbar :title "Column" :title-position :left :flatp t
                    :items (list (make-instance 'toolbar-button :image (image :add-button))
                                 (make-instance 'toolbar-button :image (image :del-button)))
                    :image-width $toolbar-image-width 
                    :image-height $toolbar-image-height)
    ;; bottom row
-   (trash-cluster toolbar :title "Show deleted items" :title-position :right
+   (trash-cluster toolbar :title "Show deleted items" :title-position :right :flatp t
                   :image-width $trash-image-width 
                   :image-height $trash-image-height
                   :items (list (make-instance 'toolbar-button :image (image :trashempty-button))))

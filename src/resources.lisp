@@ -43,7 +43,10 @@
   (find-resource :images name))
 
 (defmethod init-resources ()
-  (define-resource :images :add-button (resource "add.bmp"))
-  (define-resource :images :del-button (resource "del.bmp"))
-  (define-resource :images :trashempty-button (resource "trashempty32.bmp")))
+  #+cocoa(define-resource :images :add-button (resource "add.png"))
+  #+win32(define-resource :images :add-button (resource "add.bmp"))
+  #+cocoa(define-resource :images :del-button (resource "del.png"))
+  #+win32(define-resource :images :del-button (resource "del.bmp"))
+  #+cocoa(define-resource :images :trashempty-button (resource "trashempty32.png"))
+  #+win32(define-resource :images :trashempty-button (resource "trashempty32.bmp")))
 
