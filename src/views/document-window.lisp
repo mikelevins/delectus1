@@ -11,34 +11,43 @@
 
 (in-package :delectus)
 
+(defparameter $toolbar-image-width 16)
+(defparameter $toolbar-image-height 16)
+
 (define-interface document-window ()
   ;; slots
   ((document :reader document :initarg :document :initform nil))
   ;; panes
   (:panes
    ;; top row
-   (add-row-button push-button :text "Add Row")
-   (delete-row-button push-button :text "Del Row")
-   (add-column-button push-button :text "Add Col")
-   (delete-column-button push-button :text "Del Col")
+   (row-cluster toolbar :title "Row" :title-position :right
+                :items (list (make-instance 'toolbar-button :text "Add Row" :image (image :add-button))
+                             (make-instance 'toolbar-button :text "Del Row" :image (image :del-button)))
+                :image-width $toolbar-image-width 
+                :image-height $toolbar-image-height)
+   (column-cluster toolbar :title "Column" :title-position :left
+                   :items (list (make-instance 'toolbar-button :text "Add Col" :image (image :add-button))
+                                (make-instance 'toolbar-button :text "Del Col" :image (image :del-button)))
+                   :image-width $toolbar-image-width 
+                   :image-height $toolbar-image-height)
    ;; main row
    (row-pane multi-column-list-panel :columns '((:title "A" :width (character 12))))
    ;; bottom row
    (trash-button push-button :text "Trash")
-   (filter-field text-input-pane))
+   (filter-field text-input-pane :title "Filter" :title-position :left))
   ;; layouts
   (:layouts
    ;; main
    (main-layout column-layout '(top-row table-row bottom-row))
    ;; rows
-   (top-row row-layout '(row-cluster nil column-cluster) :external-min-height 60 :external-max-height 60)
+   (top-row row-layout '(row-cluster nil column-cluster))
    (table-row row-layout '(row-pane))
    (bottom-row row-layout '(trash-cluster nil filter-field) :external-min-height 56 :external-max-height 56)
    ;; control clusters
-   (row-cluster row-layout '(add-row-button delete-row-button) :adjust :center 
-                :external-min-width 196 :external-max-width 196)
-   (column-cluster row-layout '(add-column-button delete-column-button) :adjust :center
-                   :external-min-width 196 :external-max-width 196)
+   ;;(row-cluster row-layout '(add-row-button delete-row-button) :adjust :center 
+   ;;             :external-min-width 196 :external-max-width 196)
+   ;;(column-cluster row-layout '(add-column-button delete-column-button) :adjust :center
+   ;;                :external-min-width 196 :external-max-width 196)
    (trash-cluster row-layout '(trash-button) :adjust :center
                   :external-min-width 84 :external-max-width 84))
   ;; defaults

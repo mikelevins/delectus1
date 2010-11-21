@@ -16,8 +16,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defclass application ()
-  ((resources :accessor resources :initform {:images {}})
-   (documents :accessor documents :initform nil)
+  ((documents :accessor documents :initform nil)
    (active-interface :accessor active-interface :initform nil)
    (untitled-index :accessor %untitled-index :initform 0)
    (ui :reader ui :initform (make-instance 'delectus-ui)))
@@ -28,10 +27,6 @@
 (defmethod untitled-index ()
   (incf (%untitled-index (app)))
   (%untitled-index (app)))
-
-(defmethod initialize-instance :after ((app application) &rest initargs &key &allow-other-keys)
-  (define-resource :images :add-button (resource "add.bmp"))
-  (define-resource :images :del-button (resource "del.bmp")))
 
 ;;; ---------------------------------------------------------------------
 ;;; application main

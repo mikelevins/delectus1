@@ -77,6 +77,7 @@
   :components ((:module src :serial t
                         :components
                         ((:file "singleton")
+                         (:file "resources")
                          (:module controllers :serial t
                                   :components
                                   ((:file "document")
@@ -97,6 +98,7 @@
   :components ((:module src :serial t
                         :components
                         ((:file "singleton")
+                         (:file "resources")
                          (:module controllers :serial t
                                   :components
                                   ((:file "document")
