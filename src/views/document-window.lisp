@@ -57,5 +57,7 @@
                                          (when (eql (active-interface (app)) intf)
                                            (setf (active-interface (app)) nil)))))
 
-
-;;; (contain (make-instance 'document-window))
+;;; Against all reasonable expectation, this actually works and produces reasonable performance!
+;;; (setq $doc(make-instance 'document :presentation (make-instance 'presentation :model $zips)))
+;;; (setq $mlist (make-instance 'multi-column-list-panel :columns (mapcar (lambda (col) (list :title (label col) :adjust :left :width '(character 16))) (as 'list (columns $zips))) :column-function (lambda (row)(as 'list (elements row))) :items (as 'list (rows $zips)) :item-print-function #'val))
+;;; (capi:execute-with-interface (window $doc)(lambda ()(setf (layout-description (table-rows (window $doc))) (list $mlist))))
