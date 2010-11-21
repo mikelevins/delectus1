@@ -29,6 +29,9 @@
   (incf (%untitled-index (app)))
   (%untitled-index (app)))
 
+(defmethod next-untitled-name ()
+  (format nil "Untitled ~A" (untitled-index)))
+
 ;;; ---------------------------------------------------------------------
 ;;; application main
 ;;; ---------------------------------------------------------------------

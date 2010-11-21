@@ -32,8 +32,6 @@
                                 (make-instance 'toolbar-button :image (image :del-button)))
                    :image-width $toolbar-image-width 
                    :image-height $toolbar-image-height)
-   ;; main row
-   (row-pane multi-column-list-panel :columns '((:title "A" :width (character 12))))
    ;; bottom row
    (trash-cluster toolbar :title "Show deleted items" :title-position :right
                   :image-width $trash-image-width 
@@ -43,10 +41,10 @@
   ;; layouts
   (:layouts
    ;; main
-   (main-layout column-layout '(top-row table-row bottom-row))
+   (main-layout column-layout '(top-row table-rows bottom-row))
    ;; rows
    (top-row row-layout '(row-cluster nil column-cluster))
-   (table-row row-layout '(row-pane))
+   (table-rows row-layout '() :reader table-rows)
    (bottom-row row-layout '(trash-cluster nil filter-field) :external-min-height 56 :external-max-height 56))
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
@@ -58,5 +56,6 @@
                      :destroy-callback (lambda (intf)
                                          (when (eql (active-interface (app)) intf)
                                            (setf (active-interface (app)) nil)))))
+
 
 ;;; (contain (make-instance 'document-window))

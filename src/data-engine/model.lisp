@@ -160,8 +160,7 @@
 
 (defclass model ()
   ((columns :accessor columns :initarg :columns :initform (seq:make))
-   (rows :accessor rows :initarg :rows :initform (seq:make))
-   (changed? :accessor changed? :initform t)))
+   (rows :accessor rows :initarg :rows :initform (seq:make))))
 
 (defmethod initialize-instance ((m model) &rest initargs 
                                 &key columns rows
@@ -193,10 +192,10 @@
   (setf (element (seq:element (rows m) row-index)
                  (index (find-column m column-label)))
         val)
-  (setf (changed? m) t)
   val)
 
 
 ;;; (setq $m (make-model :columns '("Name" "Rank" "Serial Number") :rows '(("Fred" "Husband" 3)("Barney" "Lackey" 2)("Wilma" "Boss" 1))))
 ;;; (value-at $m "Rank" 2)
 ;;; (put-value-at! $m "Rank" 2 "Poobah")
+

@@ -64,6 +64,7 @@
                          (:module data-engine :serial t
                                   :components
                                   ((:file "model")
+                                   (:file "presentation")
                                    (:file "storage")
                                    (:file "csv")))))))
 
