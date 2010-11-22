@@ -48,7 +48,7 @@
 
 (in-package :delectus-asd)
 
-(defsystem delectus-data-engine
+(defsystem delectus-list-engine
   :name "delectus data engine"
   :version "1.9a2"
   :author "mikel evins"
@@ -61,7 +61,7 @@
                (:module src :serial t
                         :components
                         ((:file "package")
-                         (:module data-engine :serial t
+                         (:module list-engine :serial t
                                   :components
                                   ((:file "model")
                                    (:file "presentation")
@@ -73,7 +73,7 @@
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Cocoa Application"
-  :depends-on (:delectus-data-engine)
+  :depends-on (:delectus-list-engine)
   :serial t
   :components ((:module src :serial t
                         :components
@@ -94,7 +94,7 @@
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Windows Applcation"
-  :depends-on (:delectus-data-engine)
+  :depends-on (:delectus-list-engine)
   :serial t
   :components ((:module src :serial t
                         :components
@@ -113,11 +113,11 @@
 
 (in-package :cl-user)
 
-(defun load-data-engine ()(asdf:oos 'asdf:load-op :delectus-data-engine))
+(defun load-list-engine ()(asdf:oos 'asdf:load-op :delectus-list-engine))
 (defun load-cocoa-app ()(asdf:oos 'asdf:load-op :delectus-cocoa))
 (defun load-win32-app ()(asdf:oos 'asdf:load-op :delectus-win32))
 
-;;; (load-data-engine)
+;;; (load-list-engine)
 ;;; (load-cocoa-app)
 ;;; (load-win32-app)
 ;;; (delectus::init-resources)
