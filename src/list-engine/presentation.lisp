@@ -46,6 +46,12 @@
         cols
         (seq:filter (lambda (col)(not (deleted? col))) cols))))
 
+(defmethod rows ((pres presentation))
+  (let ((rows (rows (model pres))))
+    (if (show-deleted? pres)
+        rows
+        (seq:filter (lambda (row)(not (deleted? row))) rows))))
+
 (defmethod count-rows ((pres presentation))
   (seq:length (rows (model pres))))
 

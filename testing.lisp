@@ -10,6 +10,12 @@
 
 (time 
  (progn
+     (setf $doc
+      (make-instance 'document
+                     :presentation (make-instance 'presentation :model $zips)))))
+
+(time 
+ (progn
    (store $zips (cl-user::path "test-data/zipcode.out"))
    'done))
 
