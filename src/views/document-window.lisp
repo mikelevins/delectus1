@@ -57,21 +57,30 @@
                                          (when (eql (active-interface (app)) intf)
                                            (setf (active-interface (app)) nil)))))
 
-(defmethod update-contents ((win document-window))
+(defun column-description (col)
+  (list :title (label col)
+        :adjust :left
+        :width '(character 16)))
+
+#+cocoa
+(defun show-alternating-background (pane)
+  (objc:invoke
+   (slot-value (slot-value pane 'capi-internals::representation)
+               'capi-cocoa-library::main-view)
+   "setUsesAlternatingRowBackgroundColors:" t))
+
+(defun setup-rows (win)
   (let* ((doc (document win))
          (pres (presentation doc))
          (rows (table-rows win))
          (row-list (make-instance 'multi-column-list-panel
-                                 :columns (mapcar (lambda (col)
-                                                    (list :title (label col)
-                                                          :adjust :left
-                                                          :width '(character 16)))
-                                                  (as 'list (columns pres)))
-                                 :column-function (lambda (row)(as 'list (elements row)))
-                                 :items (as 'list (rows pres))
-                                 :item-print-function #'val)))
-    (execute-with-interface win
-                            (lambda ()
-                              (setf (layout-description rows)
-                                    (list row-list))))))
+                                  :columns (mapcar #'column-description (as 'list (columns pres)))
+                                  :column-function (lambda (row)(as 'list (elements row)))
+                                  :items (as 'list (rows pres))
+                                  :item-print-function #'val)))
+    (setf (layout-description rows)(list row-list))
+    #+cocoa (show-alternating-background row-list)))
+
+(defmethod update-contents ((win document-window))
+  (execute-with-interface win #'setup-rows win))
 
