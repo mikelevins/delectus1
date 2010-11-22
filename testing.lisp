@@ -15,8 +15,18 @@
 
 (time 
  (progn
+   (store $zips "/Users/mikel/Desktop/testzips.out")
+   'done))
+
+(time 
+ (progn
    (setq $loaded-zips (load-model (cl-user::path "test-data/zipcode.out")))
    'done))
 
+
+(time 
+ (progn
+   (setq $loaded-zips (load-model "/Users/mikel/Desktop/testzips2.out"))
+   'done))
 
 
