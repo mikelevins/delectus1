@@ -49,7 +49,7 @@
 (in-package :delectus-asd)
 
 (defsystem delectus-list-engine
-  :name "delectus data engine"
+  :name "delectus list engine"
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
@@ -67,6 +67,28 @@
                                    (:file "presentation")
                                    (:file "storage")
                                    (:file "csv")))))))
+
+(defsystem delectus-map-engine
+  :name "delectus map engine"
+  :version "1.9a2"
+  :author "mikel evins"
+  :description "Delectus Data Layer"
+  :depends-on (:folio.as :folio.functions :folio.collections)
+  :serial t
+  :components ((:module lib :serial t
+                        :components ((:file "parse-number")
+                                     (:file "csv-parser")))
+               (:module src :serial t
+                        :components
+                        ((:file "package")
+                         (:module map-engine :serial t
+                                  :components
+                                  ((:file "model")
+                                   ;;(:file "presentation")
+                                   ;;(:file "storage")
+                                   (:file "csv")))))))
+
+;;; (asdf:oos 'asdf:load-op :delectus-map-engine)
 
 (defsystem delectus-cocoa
   :name "delectus cocoa app"
