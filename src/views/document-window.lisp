@@ -74,10 +74,10 @@
          (pres (presentation doc))
          (rows (table-rows win))
          (row-list (make-instance 'multi-column-list-panel
-                                  :columns (mapcar #'column-description (as 'list (columns pres)))
+                                  :columns (mapcar #'column-description (as 'list (elements (columns pres))))
                                   :column-function (lambda (row)(as 'list (elements row)))
-                                  :items (as 'list (rows pres))
-                                  :item-print-function #'val)))
+                                  :items (as 'list (elements (rows pres)))
+                                  :item-print-function #'identity)))
     (setf (layout-description rows)(list row-list))
     #+cocoa (show-alternating-background row-list)))
 

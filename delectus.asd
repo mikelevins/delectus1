@@ -65,7 +65,7 @@
                                   :components
                                   (
                                    (:file "model")
-                                   ;;(:file "presentation")
+                                   (:file "presentation")
                                    ;;(:file "sort")
                                    (:file "storage")
                                    (:file "csv")))))))
