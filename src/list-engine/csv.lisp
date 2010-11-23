@@ -28,24 +28,20 @@
       (take-letters n (append alphabet (extend-alphabet alphabet)))))
 
 (defmethod read-csv ((path pathname) &key (first-row-headers? t))
-  (let ((m (make-model :columns nil :rows nil)))
+  (let ((cols nil)
+        (rows nil))
     (csv-parser::do-csv-file ((fields num-fields) path)
-      (setf (rows m)(seq:add-last (rows m) (ensure-row fields))))
-    (let ((field-count (seq:length (elements (seq:element (rows m) 0)))))
-      (assert (seq:every? (lambda (row)(= field-count (seq:length (elements row)))) 
-                          (rows m))()
-                          "Malformed csv data read from file '~A'" path)
+      (setf rows (cons fields rows)))
+    (let ((field-count (length (car rows))))
+      (assert (every (lambda (row)(= field-count (length row))) rows)
+              ()
+              "Malformed csv data read from file '~A'" path)
+      (setf rows (reverse rows))
       (if first-row-headers?
-          (progn
-            (setf (columns m)
-                  (ensure-columns (as 'list 
-                                      (seq:image #'val
-                                                 (elements (seq:element (rows m) 0))))))
-            (setf (rows m)(seq:drop 1 (rows m)))
-            m)
-          (progn
-            (setf (columns m)(ensure-columns (take-letters field-count)))
-            m)))))
+          (setf cols (car rows)
+                rows (cdr rows))
+          (setf cols (take-letters field-count)))
+      (make-model :columns cols :rows rows))))
 
 (defmethod read-csv ((path string) &key (first-row-headers? t))
   (read-csv (pathname path) :first-row-headers? first-row-headers?))

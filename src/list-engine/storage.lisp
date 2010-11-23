@@ -45,7 +45,7 @@
   (if (> (length inv) (- (array-dimension outv 0)(fill-pointer outv)))
       (progn
         (adjust-array outv (* 2 (array-dimension outv 0)) :element-type '(unsigned-byte 8) :initial-element 0)
-        (write-vector-on inv outv))
+        (write-vector-on-vector inv outv))
       (let* ((start (fill-pointer outv))
              (end (+ start (length inv))))
         (setf (fill-pointer outv) end)
@@ -122,21 +122,21 @@
   out)
 
 (defun serialize-columns-to-buffer (cols out)
-  (dolist (col (as 'list cols))
-    (serialize-column-to-buffer col out))
+  (loop for col across (elements cols)
+       do (serialize-column-to-buffer col out))
   out)
 
 (defun serialize-row-to-buffer (row out)
   (let* ((tag $tag-row))
     (write-byte-on-vector tag out)
-    (serialize-count-to-buffer (seq:length (elements row)) out)
-    (dolist (el (as 'list (elements row)))
-      (serialize-string-to-buffer (val el) out)))
+    (serialize-count-to-buffer (count-elements row) out)
+    (loop for el across (elements row)
+       do (serialize-string-to-buffer el out)))
   out)
 
 (defun serialize-rows-to-buffer (rows out)
-  (dolist (row (as 'list rows))
-    (serialize-row-to-buffer row out))
+  (loop for row across (elements rows)
+     do (serialize-row-to-buffer row out))
   out)
 
 ;;; ---------------------------------------------------------------------
@@ -204,7 +204,7 @@
         (loop
            (when (<= remaining-count 0)
              (return-from reading
-               (values (ensure-row (reverse elts))
+               (values (make-row (reverse elts))
                        next-pos)))
            (multiple-value-bind (el new-pos2)
                (deserialize-string-from-buffer inbuf next-pos)
@@ -218,8 +218,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod guess-serialized-length ((m model))
-  (+ (* 64 (seq:length (columns m)))
-     (* 64 (seq:length (rows m)))))
+  (+ (* 64 (count-elements (columns m)))
+     (* 64 (count-elements (rows m)))))
 
 (defmethod to-serialized-form ((m model))
   (let ((outbuf (make-serialization-buffer (guess-serialized-length m))))
@@ -263,22 +263,8 @@
            (setf pos new-pos))))
     (let ((columns (as 'list (seq:filter #'column? parts)))
           (rows (as 'list (seq:filter #'row? parts))))
-      (make-instance 'model
-                     :columns columns
-                     :rows rows))))
-
-#|
-
-(block reading
-  (loop
-     (when (>= pos (length inbuf))
-       (return-from reading (reverse parts)))
-     (multiple-value-bind (part new-pos)
-         (read-serialized-data inbuf (elt inbuf pos)(1+ pos))
-       (setf parts (cons part parts))
-       (setf pos new-pos))))
-
-|#
+      (make-model :columns columns
+                  :rows rows))))
 
 ;;; ---------------------------------------------------------------------
 ;;; storing  models

@@ -63,10 +63,15 @@
                         ((:file "package")
                          (:module list-engine :serial t
                                   :components
-                                  ((:file "model")
-                                   (:file "presentation")
+                                  (
+                                   (:file "model")
+                                   ;;(:file "presentation")
+                                   ;;(:file "sort")
                                    (:file "storage")
                                    (:file "csv")))))))
+
+;;; (cl-user::load-list-engine)
+
 
 (defsystem delectus-map-engine
   :name "delectus map engine"
