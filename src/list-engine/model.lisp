@@ -18,6 +18,10 @@
 ;;; conceptually a list whose elements are lists of fields. A field is
 ;;; a container for either a number or a string.
 
+;;; =====================================================================
+;;; model data
+;;; =====================================================================
+
 ;;; ---------------------------------------------------------------------
 ;;; stretchy-vectors
 ;;; ---------------------------------------------------------------------
@@ -25,98 +29,47 @@
 
 (defparameter $stretchy-vector-margin 8)
 
-(defclass stretchy-vector ()
-  ((elements :accessor elements)))
-
-(defmethod initialize-instance ((v stretchy-vector) &rest initargs 
-                                &key (initial-elements nil) (element-type t)
-                                &allow-other-keys)
-  (assert (every #'(lambda (e)(or (null e)(typep e element-type))) initial-elements)
-          ()
-          "the stretchy-vector requires elements of type ~S" element-type)
-  (let ((v (call-next-method))
-        (element-count (length initial-elements)))
-    (with-slots (elements) v
-      (setf elements 
-            (make-array element-count
-                        :element-type element-type
-                        :initial-contents initial-elements
-                        :adjustable t :fill-pointer element-count))
-      (adjust-array elements (+ element-count $stretchy-vector-margin)))
-    v))
-
-(defmethod print-object ((v stretchy-vector)(s stream))
-  (print-unreadable-object (v s :type t)
-    (format s "~{~A ~}" (as 'list (elements v)))))
-
 (defun make-stretchy-vector (vals &key (element-type t))
-  (make-instance 'stretchy-vector :initial-elements vals :element-type element-type))
+  (adjust-array (make-array (length vals) :element-type element-type :initial-contents vals
+                            :fill-pointer (length vals))
+                (+ (length vals) $stretchy-vector-margin)))
 
-(defmethod count-elements ((v stretchy-vector))
-  (length (elements v)))
-
-(defmethod add-element! ((v stretchy-vector) val)
-  (vector-push-extend val (elements v)))
-
-(defmethod element ((v stretchy-vector)(index integer))
-  (elt (elements v) index))
-
-(defmethod %set-element! ((v stretchy-vector)(index integer) val)
-  (setf (elt (elements v) index) val))
-
-(defsetf element %set-element!)
-
-(defmethod elements ((l list)) (as 'vector l))
-(defmethod elements ((v vector)) v)
+(defmethod add-element! ((v array) val)
+  (vector-push-extend val v))
 
 ;;; ---------------------------------------------------------------------
 ;;; row
 ;;; ---------------------------------------------------------------------
-;;; a sequence of fields
-
-(defclass row (stretchy-vector)
-  ((index :accessor index :initarg :index :initform 0)
-   (deleted? :accessor deleted? :initarg :deleted :initform nil))
-  (:default-initargs :element-type 'string))
+;;; a stretchy-vector of data items
 
 (defun make-row (vals)
   (assert (every #'(lambda (e)(or (null e) (stringp e))) vals)
           ()
           "rows can contain only strings or nil")
-  (make-instance 'row :initial-elements vals))
+  (make-stretchy-vector vals))
 
-(defmethod ensure-row ((row row)) row)
-(defmethod ensure-row ((vals list)) 
-  (make-row vals))
+;;; ---------------------------------------------------------------------
+;;; rows
+;;; ---------------------------------------------------------------------
+;;; a stretchy-vector of rows
 
-
-(defmethod row? (x) nil)
-(defmethod row? ((r row)) t)
+(defun make-rows (vals)
+  (assert (every #'(lambda (e)(or (null e) (vectorp e))) vals)
+          ()
+          "MAKE-ROWS accepts only rows as input")
+  (make-stretchy-vector vals))
 
 
 ;;; ---------------------------------------------------------------------
-;;; column
+;;; columns
 ;;; ---------------------------------------------------------------------
-;;; a label for a p[osition in a row
+;;; labels for positions in a row
 
-(defclass column ()
-  ((label :accessor label :initarg :label :initform nil)
-   (index :accessor index :initarg :index :initform 0)
-   (deleted? :accessor deleted? :initarg :deleted :initform nil)))
-
-(defun make-column (label &key (index 0)(deleted nil))
-  (make-instance 'column :label label :index index :deleted deleted))
-
-(defmethod ensure-column ((col column)) col)
-(defmethod ensure-column ((label string)) 
-  (make-column label))
-
-(defmethod column? (x) nil)
-(defmethod column? ((col column)) t)
-
-(defmethod print-object ((col column)(s stream))
-  (print-unreadable-object (col s :type t)
-    (format s "~A" (label col))))
+(defun make-columns (vals)
+  (assert (every #'(lambda (e)(or (null e) (stringp e))) vals)
+          ()
+          "a columns must be a string or nil")
+  (make-stretchy-vector vals))
 
 ;;; ---------------------------------------------------------------------
 ;;; model
@@ -124,75 +77,62 @@
 ;;; a sequence of rows of length L, and a sequence of columns, also of length L
 
 (defclass model ()
-  ((columns :accessor columns :initarg :columns :initform (make-stretchy-vector nil :element-type 'column))
-   (rows :accessor rows :initarg :rows :initform (make-stretchy-vector nil :element-type 'array))))
-
-(defmethod index-columns ((m model))
-  (loop
-     for i from 0 upto (1- (length (elements (columns m))))
-     and col across (elements (columns m))
-     do (setf (index col) i)))
-
-(defmethod index-rows ((m model))
-  (loop
-     for i from 0 upto (1- (length (elements (rows m))))
-     and row across (elements (rows m))
-     do (setf (index row) i)))
-
-(defmethod initialize-instance :after ((m model) &rest initargs
-                                       &key columns rows
-                                       &allow-other-keys)
-  (assert (every #'column? (elements columns))() "the columns argument must contain only COLUMN objects")
-  (assert (every #'row? (elements rows))() "the rows argument must contain only ROW objects")
-  (index-columns m)
-  (index-rows m))
+  ((columns :accessor columns :initarg :columns :initform (make-stretchy-vector nil))
+   (rows :accessor rows :initarg :rows :initform (make-stretchy-vector nil))))
 
 (defun make-model (&key columns rows)
   (make-instance 'model
-                 :columns (make-stretchy-vector (mapcar #'ensure-column columns) :element-type 'column)
-                 :rows (make-stretchy-vector (mapcar #'ensure-row rows) :element-type 'row)))
+                 :columns (make-stretchy-vector columns)
+                 :rows (make-rows (mapcar #'make-row rows))))
 
 (defmethod print-object ((m model)(s stream))
   (print-unreadable-object (m s :type t)
-    (format s "~{~A ~}" (as 'list (elements (columns m))))))
+    (format s "~{~A ~}" (as 'list (columns m)))))
 
 (defmethod find-column ((m model)(column-label string))
-  (find column-label (elements (columns m)) :test (lambda (a b)(equalp a (label b)))))
+  (find column-label (columns m) :test #'equalp))
+
+(defmethod column-index ((m model)(column-label string))
+  (position column-label (columns m) :test #'equalp))
 
 (defmethod value-at ((m model)(column-label string)(row-index integer))
-  (element (element (rows m) row-index)
-           (index (find-column m column-label))))
+  (aref (aref (rows m) row-index)
+        (column-index m column-label)))
 
 (defmethod put-value-at! ((m model)(column-label string)(row-index integer) val)
-  (setf (element (element (rows m) row-index)
-           (index (find-column m column-label)))
+  (setf (aref (aref (rows m) row-index)
+              (column-index m column-label))
         val))
 
 (defmethod count-columns ((m model))
-  (count-elements (columns m)))
+  (length (columns m)))
 
 (defmethod count-rows ((m model))
-  (count-elements (rows m)))
+  (length (rows m)))
 
 (defmethod add-row! ((m model))
   (add-element! (rows m)
                 (make-row (seq:repeat (count-columns m) nil))))
 
 (defmethod add-column! ((m model)(label string))
-  (if (find label (elements (columns m)) :test (lambda (a b)(equalp a (label b))))
+  (if (find label (columns m) :test #'equalp)
       (error "Column label \"~A\" is already in use" label)
       (progn
-        (add-element! (columns m)
-                      (make-column label :index (count-columns m)))
-        (loop for row across (elements (rows m))
+        (add-element! (columns m) label)
+        (loop for row across (rows m)
            do (add-element! row nil)))))
 
+#|
 
-;;; (setq $m (make-model :columns '("Name" "Rank" "Serial Number") :rows '(("Fred" "Husband" "3")("Barney" "Lackey" "2")("Wilma" "Boss" "1"))))
-;;; (value-at $m "Rank" 2)
-;;; (put-value-at! $m "Rank" 2 "Poobah")
-;;; (add-column! $m "Name")
-;;; (add-column! $m "Shape")
-;;; (columns $m)
-;;; (rows $m)
-;;; (add-row! $m)
+(setq $m
+      (make-instance 'model
+                     :columns (make-columns '("Name" "Rank" "Serial Number"))
+                     :rows (make-rows (mapcar #'make-row '(("Fred" "Husband" "3")("Barney" "Lackey" "2")("Wilma" "Boss" "1"))))))
+ (value-at $m "Rank" 2)
+ (put-value-at! $m "Rank" 2 "Poobah")
+ (add-column! $m "Name")
+ (add-column! $m "Shape")
+ (columns $m)
+ (rows $m)
+ (add-row! $m)
+|#

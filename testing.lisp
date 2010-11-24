@@ -10,21 +10,9 @@
 (progn (setf $model (read-csv (namestring (cl-user::path "test-data/logmessages.csv")) 
                               :first-row-headers? nil)) 'done)
 
-(progn (setf $pres (make-instance 'presentation :model $model)) 'done)
-(setf (sort-column $pres) "zip")
-(setf (sort-column $pres) "A")
-
-(time
- (progn
-   (setq $rows (rows $model))
-   'done))
-
-(seq:length (rows $model))
-
-(time (progn (setq $strings (seq:image (^ (row)(seq:element (elements row) 1)) (rows $model))) 'done))
-(time (progn (fset:sort $rows #'row<) 'done))
-(seq:length $rows)
-
+(progn (setf $rows (rows $model)) 'done)
+(length $rows)
+(time (progn (setf $rows1 (sort-rows $rows 1 #'string>)) 'done))
 
 ;;; ---------------------------------------------------------------------
 ;;; reading csv files
@@ -36,14 +24,38 @@
    'done))
 
 (describe (columns $zips))
-(count-elements (rows $zips))
-(value-at $zips "city" 43190)
+(value-at $zips "city" 0)
 
 (time
  (progn
    (setf $logms (read-csv (namestring (cl-user::path "test-data/logmessages.csv")) 
                           :first-row-headers? nil))
    'done))
+
+;;; ---------------------------------------------------------------------
+;;; presentations
+;;; ---------------------------------------------------------------------
+
+(setq $pres (make-instance 'presentation :model $logms))
+
+(row-deleted? $pres 0)
+(mark-row-deleted! $pres 0)
+(row-deleted? $pres 1)
+
+(columns $pres)
+(column-deleted? $pres "A")
+(mark-column-deleted! $pres "B")
+(column-deleted? $pres "B")
+
+(filter-match? $pres 0)
+
+(update $pres)
+
+(time
+ (progn
+   (setf $rows (rows $pres))
+   'done))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; creating documents

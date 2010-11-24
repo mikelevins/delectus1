@@ -61,13 +61,14 @@
                (:module src :serial t
                         :components
                         ((:file "package")
+                         (:file "binary")
                          (:module list-engine :serial t
                                   :components
-                                  (
-                                   (:file "model")
+                                  ((:file "model")
                                    (:file "presentation")
+                                   ;;(:file "filter")
                                    ;;(:file "sort")
-                                   (:file "storage")
+                                   ;;(:file "storage")
                                    (:file "csv")))))))
 
 ;;; (cl-user::load-list-engine)
@@ -78,7 +79,7 @@
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
-  :depends-on (:folio.as :folio.functions :folio.collections)
+  :depends-on (:folio.as :folio.functions :folio.collections :binary-types)
   :serial t
   :components ((:module lib :serial t
                         :components ((:file "parse-number")
