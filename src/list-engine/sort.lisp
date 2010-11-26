@@ -38,27 +38,3 @@
                (merge-sort (subseq sequence half) :test test :key key)
                test 
                :key key))))
-
-(defun make-row-sort-key (n)(lambda (el)(elt el n)))
-(defun make-index-sort-key (n)(lambda (el)(elt (elt rows ) n)))
-
-(defun sort-rows (rows index comparator)
-  (merge-sort rows :key (make-row-sort-key index) :test comparator))
-
-(defmethod index-comparator ((sort-type (eql :alphabetical))(reversed? (eql nil)))
-  #'string<)
-
-(defmethod index-comparator ((sort-type (eql :alphabetical))(reversed? (eql t)))
-  #'string>)
-
-(defmethod index-comparator ((sort-type (eql :numeric))(reversed? (eql nil)))
-  #'<)
-
-(defmethod index-comparator ((sort-type (eql :numeric))(reversed? (eql t)))
-  #'>)
-
-(defun sort-indexes (pres indexes)
-  (merge-sort indexes :key (make-index-sort-key)
-              :test (index-comparator (sort-type pres)(sort-reversed? pres))))
-
-;;; (merge-sort '("Foo" "Bar" "Baz" "Quux" "Grault") :test #'string<)

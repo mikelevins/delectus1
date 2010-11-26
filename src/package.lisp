@@ -13,5 +13,6 @@
 
 (defpackage "DELECTUS"
   (:use :cl :capi #+cocoa :objc :as)
-  (:shadow #:element))
+  (:shadow #:element)
+  (:import-from :folio.functions #:flip #:partial))
 

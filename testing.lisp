@@ -3,18 +3,6 @@
 (in-package :delectus)
 
 ;;; ---------------------------------------------------------------------
-;;; sorting rows
-;;; ---------------------------------------------------------------------
-
-(progn (setf $model (read-csv (namestring (cl-user::path "test-data/zipcode.csv")))) 'done)
-(progn (setf $model (read-csv (namestring (cl-user::path "test-data/logmessages.csv")) 
-                              :first-row-headers? nil)) 'done)
-
-(progn (setf $rows (rows $model)) 'done)
-(length $rows)
-(time (progn (setf $rows1 (sort-rows $rows 1 #'string>)) 'done))
-
-;;; ---------------------------------------------------------------------
 ;;; reading csv files
 ;;; ---------------------------------------------------------------------
 
@@ -23,31 +11,38 @@
    (setf $zips (read-csv (namestring (cl-user::path "test-data/zipcode.csv"))))
    'done))
 
-(describe (columns $zips))
+(columns $zips)
 (value-at $zips "city" 0)
-
-(time
- (progn
-   (setf $logms (read-csv (namestring (cl-user::path "test-data/logmessages.csv")) 
-                          :first-row-headers? nil))
-   'done))
+(length (rows $zips))
 
 ;;; ---------------------------------------------------------------------
 ;;; presentations
 ;;; ---------------------------------------------------------------------
 
-(setq $pres (make-instance 'presentation :model $logms))
-
-(row-deleted? $pres 0)
-(mark-row-deleted! $pres 0)
-(row-deleted? $pres 1)
+(setq $pres (make-instance 'presentation :model $zips))
 
 (columns $pres)
-(column-deleted? $pres "A")
-(mark-column-deleted! $pres "B")
-(column-deleted? $pres "B")
+(setf (sort-column $pres) "city")
+(setf (sort-reversed? $pres) nil)
+(sort-reversed? $pres)
+(mark-changed! $pres t)
+(time (value-at $pres "city" 0))
 
-(filter-match? $pres 0)
+(row-deleted? $pres (elt (rows $pres) 43190))
+(mark-row-deleted! $pres (elt (rows $pres) 43190) t)
+(mark-row-deleted! $pres (elt (rows $zips) 43190) nil)
+(mark-changed! $pres t)
+
+(value-at $pres "city" 43190)
+(length (rows $pres))
+(length (row-cache $pres))
+
+(show-deleted? $pres)
+(setf (show-deleted? $pres) nil)
+
+(column-deleted? $pres "city")
+(mark-column-deleted! $pres "city" t)
+(mark-column-deleted! $pres "city" nil)
 
 (update $pres)
 

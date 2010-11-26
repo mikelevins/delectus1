@@ -31,75 +31,135 @@
    ;; filter
    (filter-text :accessor filter-text :initarg :filter-text :initform nil)
    ;; display
-   (show-deleted? :accessor show-deleted? :initarg :show-deleted :initform t)
+   (show-deleted? :accessor show-deleted? :initarg :show-deleted :initform nil)
    ;; columns
    (deleted-columns :accessor deleted-columns :initarg :deleted-columns :initform nil)
+   (column-cache :accessor column-cache :initarg :row-cache :initform nil)
    ;; rows
    (deleted-rows :accessor deleted-rows :initarg :deleted-rows :initform nil)
    (row-cache :accessor row-cache :initarg :row-cache :initform nil)))
 
-;;; used for creating new empty delectus documents
-(defun make-default-presentation ()
-  (make-instance 'presentation :model (make-model :columns '("Items") :rows (list nil))))
+(defmethod print-object ((pres presentation)(s stream))
+  (print-unreadable-object (pres s :type t)
+    (format s "~{~A ~}" (as 'list (columns pres)))))
 
-(defmethod row-deleted? ((pres presentation)(i integer))
-  (member i (deleted-rows pres)))
+;;; ---------------------------------------------------------------------
+;;; row and column state
+;;; ---------------------------------------------------------------------
 
-(defmethod mark-row-deleted! ((pres presentation)(i integer))
-  (pushnew i (deleted-rows pres)))
+(defmethod column-deleted? ((pres presentation)(label string))
+  (member label (deleted-columns pres) :test #'equalp))
 
-(defmethod column-deleted? ((pres presentation)(col string))
-  (member col (deleted-columns pres) :test #'equalp))
+(defmethod mark-column-deleted! ((pres presentation)(label string)(deleted? (eql t)))
+  (pushnew (find-column pres label)(deleted-columns pres) :test #'eql))
 
-(defmethod mark-column-deleted! ((pres presentation)(col string))
-  (pushnew col (deleted-columns pres) :test #'equalp))
+(defmethod mark-column-deleted! ((pres presentation)(label string)(deleted? (eql nil)))
+  (setf (deleted-columns pres)
+        (remove label (deleted-columns pres) :test #'equalp)))
 
-(defmethod filter-match? ((pres presentation)(row vector))
-  (when (filter-text pres)
-    (some (lambda (e)(search (filter-string pres) e :test #'char-equal)) row)))
+(defmethod row-deleted? ((pres presentation)(row vector))
+  (member row (deleted-rows pres) :test #'eql))
+
+(defmethod mark-row-deleted! ((pres presentation)(row vector)(deleted? (eql t)))
+  (pushnew row (deleted-rows pres) :test #'eql))
+
+(defmethod mark-row-deleted! ((pres presentation)(row vector)(deleted? (eql nil)))
+  (setf (deleted-rows pres)
+        (remove row (deleted-rows pres) :test #'eql)))
+
+;;; ---------------------------------------------------------------------
+;;; managing presentation state
+;;; ---------------------------------------------------------------------
+
+(defmethod mark-changed! ((pres presentation)(changed? (eql t)))
+  (setf (changed? pres) changed?))
+
+(defmethod mark-changed! ((pres presentation)(changed? (eql nil)))
+  (setf (changed? pres) changed?))
+
+(defmethod update-column-cache ((pres presentation))
+  (if (show-deleted? pres)
+      (setf (column-cache pres) (columns (model pres)))
+      (setf (column-cache pres) (remove-if (partial #'column-deleted? pres)(columns (model pres))))))
+
+(defmethod filter-rows ((rows vector)(txt string))
+  (remove-if-not (lambda (row)
+                   (some (lambda (it)(search txt it :test #'char-equal))
+                         items))
+                 rows))
+
+(defmethod sort-rows ((rows vector)(index integer)(type (eql :alphabetical)) (reversed? (eql nil)))
+  (merge-sort rows :test #'string< :key (partial (flip #'elt) index)))
+
+(defmethod sort-rows ((rows vector)(index integer)(type (eql :alphabetical)) (reversed? (eql t)))
+  (merge-sort rows :test #'string> :key (partial (flip #'elt) index)))
+
+(defmethod sort-rows ((rows vector)(index integer)(type (eql :numeric)) (reversed? (eql nil)))
+  (merge-sort rows :test #'< :key (partial (flip #'elt) index)))
+
+(defmethod sort-rows ((rows vector)(index integer)(type (eql :numeric)) (reversed? (eql t)))
+  (merge-sort rows :test #'> :key (partial (flip #'elt) index)))
+
+(defmethod update-row-cache ((pres presentation))
+  (let* ((live-rows (if (show-deleted? pres)
+                        (rows (model pres))
+                        (remove-if (partial #'row-deleted? pres)(rows (model pres)))))
+         (filtered-rows (if (filter-text pres)
+                            (filter-rows live-rows (filter-text pres))
+                            live-rows))
+         (sorted-rows (if (sort-column pres)
+                          (sort-rows filtered-rows (column-index pres (sort-column pres))
+                                     (sort-type pres)(sort-reversed? pres))
+                          filtered-rows)))
+    (setf (row-cache pres) sorted-rows)))
 
 (defmethod update ((pres presentation))
   (when (changed? pres)
-    (let* ((live-indexes (loop
-                            for i from 0 upto (1- (length (rows (model pres))))
-                            if (not (row-deleted? pres i)) collect i))
-           (filtered-indexes (loop
-                                for i in live-indexes
-                                if (filter-match? pres (elt (rows (model pres)) i)) collect i))
-           (sorted-indexes (sort-indexes pres filtered-indexes)))
-      (setf (row-cache pres) (loop for i in sorted-indexes 
-                                collect (elt (rows (model pres)) i)))
-      (setf (changed? pres) nil))
-    pres))
+    (update-column-cache pres)
+    (update-row-cache pres)
+    (mark-changed! pres nil)))
+
+;;; ---------------------------------------------------------------------
+;;; model API
+;;; ---------------------------------------------------------------------
 
 (defmethod columns ((pres presentation))
-  (let ((cols (columns (model pres))))
-    (if (show-deleted? pres)
-        cols
-        (seq:filter (lambda (col)(not (column-deleted? pres col))) cols))))
+  (update pres)
+  (column-cache pres))
 
 (defmethod rows ((pres presentation))
   (update pres)
-  (loop for i across (row-indexes pres)
-       collect (aref (rows (model pres)) i)))
-
-(defmethod count-rows ((pres presentation))
-  (update pres)
-  (length (row-indexes pres)))
+  (row-cache pres))
 
 (defmethod find-column ((pres presentation)(column-label string))
-  (find column-label (columns pres) :test (lambda (a b)(equalp a (label b)))))
+  (find column-label (columns pres) :test #'equalp))
+
+(defmethod column-index ((pres presentation)(column-label string))
+  (position column-label (columns (model pres)) :test #'equalp))
+
+(defmethod count-columns ((pres presentation))
+  (length (columns pres)))
+
+(defmethod count-rows ((pres presentation))
+  (length (rows pres)))
 
 (defmethod value-at ((pres presentation)(column-label string)(row-index integer))
   (update pres)
-  (let ((col-index (index (find-column pres column-label)))
-        (row-index (aref (row-indexes pres) row-index)))
-    (aref (aref (rows (model pres)) row-index)
-          col-index)))
+  (elt (elt (rows pres) row-index)
+       (column-index pres column-label)))
 
-(defmethod put-value-at! ((pres presentation)(column-label string)(row-index integer) val)
-  (setf (aref (aref (rows (model pres)) row-index)
-              col-index)
+(defmethod put-value-at! ((pres presentation)(column-label string)(row-index integer) (val string))
+  (update pres)
+  (setf (elt (elt (rows pres) row-index)
+             (column-index pres column-label))
         val)
-  (setf (changed? pres) t)
+  (mark-changed! pres t)
   val)
+
+(defmethod add-row! ((pres presentation) &optional vals)
+  (update pres)
+  (mark-changed! pres t))
+
+(defmethod add-column! ((pres presentation)(label string))
+  (update pres)
+  (mark-changed! pres t))

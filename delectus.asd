@@ -40,7 +40,7 @@
     delivered?))
 
 ;;; ---------------------------------------------------------------------
-;;; system definition and loader
+;;; system definitions and loaders
 ;;; ---------------------------------------------------------------------
 
 (defpackage #:delectus-asd
@@ -48,12 +48,26 @@
 
 (in-package :delectus-asd)
 
+(defsystem delectus-store
+  :name "delectus-store"
+  :version "1.9a2"
+  :author "mikel evins"
+  :description "Delectus Storage Subsystem"
+  :depends-on (:folio.as :folio.functions :folio.collections :flexi-streams)
+  :serial t
+  :components ((:module src :serial t
+                        :components
+                        ((:file "package")
+                         (:module store :serial t
+                                  :components ((:file "tags")
+                                               (:file "binary-io")))))))
+
 (defsystem delectus-list-engine
   :name "delectus list engine"
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
-  :depends-on (:folio.as :folio.functions :folio.collections)
+  :depends-on (:folio.as :folio.functions :folio.collections :delectus-store)
   :serial t
   :components ((:module lib :serial t
                         :components ((:file "parse-number")
@@ -61,40 +75,17 @@
                (:module src :serial t
                         :components
                         ((:file "package")
-                         (:file "binary")
+                         ;;(:file "binary")
                          (:module list-engine :serial t
                                   :components
                                   ((:file "model")
+                                   (:file "csv")
+                                   (:file "sort")
                                    (:file "presentation")
-                                   ;;(:file "filter")
-                                   ;;(:file "sort")
-                                   ;;(:file "storage")
-                                   (:file "csv")))))))
+                                   (:file "store")))))))
 
 ;;; (cl-user::load-list-engine)
 
-
-(defsystem delectus-map-engine
-  :name "delectus map engine"
-  :version "1.9a2"
-  :author "mikel evins"
-  :description "Delectus Data Layer"
-  :depends-on (:folio.as :folio.functions :folio.collections :binary-types)
-  :serial t
-  :components ((:module lib :serial t
-                        :components ((:file "parse-number")
-                                     (:file "csv-parser")))
-               (:module src :serial t
-                        :components
-                        ((:file "package")
-                         (:module map-engine :serial t
-                                  :components
-                                  ((:file "model")
-                                   ;;(:file "presentation")
-                                   ;;(:file "storage")
-                                   (:file "csv")))))))
-
-;;; (asdf:oos 'asdf:load-op :delectus-map-engine)
 
 (defsystem delectus-cocoa
   :name "delectus cocoa app"

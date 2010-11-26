@@ -110,9 +110,12 @@
 (defmethod count-rows ((m model))
   (length (rows m)))
 
-(defmethod add-row! ((m model))
-  (add-element! (rows m)
-                (make-row (seq:repeat (count-columns m) nil))))
+(defmethod add-row! ((m model) &optional vals)
+  (assert (or (null vals (= (length vals (count-columns m)))))()
+          "If values for the new row are supplied, then their count must equal the count of columns in the model")
+  (let ((vals (or vals (seq:repeat (count-columns m) nil))))
+    (add-element! (rows m)
+                  (make-row vals))))
 
 (defmethod add-column! ((m model)(label string))
   (if (find label (columns m) :test #'equalp)
@@ -121,18 +124,3 @@
         (add-element! (columns m) label)
         (loop for row across (rows m)
            do (add-element! row nil)))))
-
-#|
-
-(setq $m
-      (make-instance 'model
-                     :columns (make-columns '("Name" "Rank" "Serial Number"))
-                     :rows (make-rows (mapcar #'make-row '(("Fred" "Husband" "3")("Barney" "Lackey" "2")("Wilma" "Boss" "1"))))))
- (value-at $m "Rank" 2)
- (put-value-at! $m "Rank" 2 "Poobah")
- (add-column! $m "Name")
- (add-column! $m "Shape")
- (columns $m)
- (rows $m)
- (add-row! $m)
-|#
