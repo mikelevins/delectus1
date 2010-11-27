@@ -48,26 +48,12 @@
 
 (in-package :delectus-asd)
 
-(defsystem delectus-store
-  :name "delectus-store"
-  :version "1.9a2"
-  :author "mikel evins"
-  :description "Delectus Storage Subsystem"
-  :depends-on (:folio.as :folio.functions :folio.collections :flexi-streams)
-  :serial t
-  :components ((:module src :serial t
-                        :components
-                        ((:file "package")
-                         (:module store :serial t
-                                  :components ((:file "tags")
-                                               (:file "binary-io")))))))
-
 (defsystem delectus-list-engine
   :name "delectus list engine"
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
-  :depends-on (:folio.as :folio.functions :folio.collections :delectus-store)
+  :depends-on (:folio.as :folio.functions :folio.collections)
   :serial t
   :components ((:module lib :serial t
                         :components ((:file "parse-number")
@@ -75,7 +61,6 @@
                (:module src :serial t
                         :components
                         ((:file "package")
-                         ;;(:file "binary")
                          (:module list-engine :serial t
                                   :components
                                   ((:file "model")

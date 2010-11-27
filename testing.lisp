@@ -21,6 +21,16 @@
 
 (setq $pres (make-instance 'presentation :model $zips))
 
+(time
+ (progn
+   (store $pres "/tmp/zips.delectus")
+   'done))
+
+(time
+ (progn
+   (setf $repres (reload-presentation "/tmp/zips.delectus"))
+   'done))
+
 (columns $pres)
 (setf (sort-column $pres) "city")
 (setf (sort-reversed? $pres) nil)
