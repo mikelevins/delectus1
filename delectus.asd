@@ -53,7 +53,7 @@
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
-  :depends-on (:folio.as :folio.functions :folio.collections)
+  :depends-on (:folio.as :folio.functions :folio.collections :cl-prevalence)
   :serial t
   :components ((:module lib :serial t
                         :components ((:file "parse-number")

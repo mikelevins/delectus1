@@ -43,6 +43,12 @@
   (print-unreadable-object (pres s :type t)
     (format s "~{~A ~}" (as 'list (columns pres)))))
 
+(defun make-default-presentation ()
+  (make-instance 'presentation
+                 :model (make-model 
+                         :columns '("Items")
+                         :rows '(("")))))
+
 ;;; ---------------------------------------------------------------------
 ;;; row and column state
 ;;; ---------------------------------------------------------------------

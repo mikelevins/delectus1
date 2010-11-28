@@ -31,19 +31,19 @@
    (setf $repres (reload-presentation "/tmp/zips.delectus"))
    'done))
 
-(columns $pres)
-(setf (sort-column $pres) "city")
-(setf (sort-reversed? $pres) nil)
-(sort-reversed? $pres)
-(mark-changed! $pres t)
-(time (value-at $pres "city" 0))
+(columns $repres)
+(setf (sort-column $repres) "city")
+(setf (sort-reversed? $repres) t)
+(sort-reversed? $repres)
+(mark-changed! $repres t)
+(time (value-at $repres "city" 0))
 
 (row-deleted? $pres (elt (rows $pres) 43190))
 (mark-row-deleted! $pres (elt (rows $pres) 43190) t)
 (mark-row-deleted! $pres (elt (rows $zips) 43190) nil)
 (mark-changed! $pres t)
 
-(value-at $pres "city" 43190)
+(value-at $repres "city" 43190)
 (length (rows $pres))
 (length (row-cache $pres))
 
