@@ -31,37 +31,6 @@
    (setf $repres (reload-presentation "/tmp/zips.delectus"))
    'done))
 
-(columns $repres)
-(setf (sort-column $repres) "city")
-(setf (sort-reversed? $repres) t)
-(sort-reversed? $repres)
-(mark-changed! $repres t)
-(time (value-at $repres "city" 0))
-
-(row-deleted? $pres (elt (rows $pres) 43190))
-(mark-row-deleted! $pres (elt (rows $pres) 43190) t)
-(mark-row-deleted! $pres (elt (rows $zips) 43190) nil)
-(mark-changed! $pres t)
-
-(value-at $repres "city" 43190)
-(length (rows $pres))
-(length (row-cache $pres))
-
-(show-deleted? $pres)
-(setf (show-deleted? $pres) nil)
-
-(column-deleted? $pres "city")
-(mark-column-deleted! $pres "city" t)
-(mark-column-deleted! $pres "city" nil)
-
-(update $pres)
-
-(time
- (progn
-   (setf $rows (rows $pres))
-   'done))
-
-
 ;;; ---------------------------------------------------------------------
 ;;; creating documents
 ;;; ---------------------------------------------------------------------
@@ -70,7 +39,7 @@
  (progn
      (setf $doc
       (make-instance 'document
-                     :presentation (make-instance 'presentation :model $logms)))))
+                     :presentation (make-instance 'presentation :model $zips)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; saving and loading

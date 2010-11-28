@@ -54,6 +54,7 @@
                                             (unless (eql (active-interface (app)) intf)
                                               (setf (active-interface (app)) intf))))
                      :destroy-callback (lambda (intf)
+                                         (remove-document! (app)(document intf))
                                          (when (eql (active-interface (app)) intf)
                                            (setf (active-interface (app)) nil)))))
 
@@ -69,6 +70,13 @@
                'capi-cocoa-library::main-view)
    "setUsesAlternatingRowBackgroundColors:" t))
 
+#+cocoa
+(defun allow-column-reordering (pane)
+  (objc:invoke
+   (slot-value (slot-value pane 'capi-internals::representation)
+               'capi-cocoa-library::main-view)
+   "setAllowsColumnReordering:" t))
+
 (defun setup-rows (win)
   (let* ((doc (document win))
          (pres (presentation doc))
@@ -79,6 +87,7 @@
                                   :items (as 'list (rows pres))
                                   :item-print-function #'identity)))
     (setf (layout-description rows)(list row-list))
+    #+cocoa (allow-column-reordering row-list)
     #+cocoa (show-alternating-background row-list)))
 
 (defmethod update-contents ((win document-window))

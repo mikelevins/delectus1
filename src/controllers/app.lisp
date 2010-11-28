@@ -25,6 +25,13 @@
 
 (defun app ()(make-instance 'application))
 
+(defmethod add-document! ((app application)(doc document))
+  (pushnew doc (documents app)))
+
+(defmethod remove-document! ((app application)(doc document))
+  (setf (documents app)
+        (remove doc (documents app))))
+
 (defmethod untitled-index ()
   (incf (%untitled-index (app)))
   (%untitled-index (app)))
