@@ -163,9 +163,11 @@
   val)
 
 (defmethod add-row! ((pres presentation) &optional vals)
+  (add-row! (model pres) vals)
   (update pres)
   (mark-changed! pres t))
 
 (defmethod add-column! ((pres presentation)(label string))
+  (add-column! (model pres) label)
   (update pres)
   (mark-changed! pres t))

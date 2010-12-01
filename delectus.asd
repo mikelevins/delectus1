@@ -69,8 +69,7 @@
                                    (:file "presentation")
                                    (:file "store")))))))
 
-;;; (cl-user::load-list-engine)
-
+;;; (asdf::oos 'asdf:load-op :delectus-list-engine)
 
 (defsystem delectus-cocoa
   :name "delectus cocoa app"
@@ -117,11 +116,9 @@
 
 (in-package :cl-user)
 
-(defun load-list-engine ()(asdf:oos 'asdf:load-op :delectus-list-engine))
 (defun load-cocoa-app ()(asdf:oos 'asdf:load-op :delectus-cocoa))
 (defun load-win32-app ()(asdf:oos 'asdf:load-op :delectus-win32))
 
-;;; (load-list-engine)
 ;;; (load-cocoa-app)
 ;;; (load-win32-app)
 ;;; (delectus::init-resources)

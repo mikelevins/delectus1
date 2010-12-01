@@ -28,6 +28,14 @@
   (display (window doc))
   (update-contents (window doc)))
 
+(defmethod add-row! ((doc document) &optional vals)
+  (add-row! (presentation doc) vals)
+  (update-contents (window doc)))
+
+(defmethod add-column! ((doc document)(label string))
+  (add-column! (presentation doc) label)
+  (update-contents (window doc)))
+
 ;;; (setq $doc (make-instance 'document))
 ;;; (documents (app))
 

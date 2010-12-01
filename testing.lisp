@@ -16,6 +16,16 @@
 (length (rows $zips))
 
 ;;; ---------------------------------------------------------------------
+;;; creating documents
+;;; ---------------------------------------------------------------------
+
+(time 
+ (progn
+     (setf $doc
+      (make-instance 'document
+                     :presentation (make-instance 'presentation :model $zips)))))
+
+;;; ---------------------------------------------------------------------
 ;;; presentations
 ;;; ---------------------------------------------------------------------
 
@@ -30,16 +40,6 @@
  (progn
    (setf $repres (reload-presentation "/tmp/zips.delectus"))
    'done))
-
-;;; ---------------------------------------------------------------------
-;;; creating documents
-;;; ---------------------------------------------------------------------
-
-(time 
- (progn
-     (setf $doc
-      (make-instance 'document
-                     :presentation (make-instance 'presentation :model $zips)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; saving and loading

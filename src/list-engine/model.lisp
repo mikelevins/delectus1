@@ -57,7 +57,7 @@
   (assert (every #'(lambda (e)(or (null e) (vectorp e))) vals)
           ()
           "MAKE-ROWS accepts only rows as input")
-  (make-stretchy-vector vals))
+  (make-array (length vals) :initial-contents vals))
 
 
 ;;; ---------------------------------------------------------------------
@@ -111,11 +111,15 @@
   (length (rows m)))
 
 (defmethod add-row! ((m model) &optional vals)
-  (assert (or (null vals (= (length vals (count-columns m)))))()
+  (assert (or (null vals)
+              (= (length vals)
+                 (count-columns m)))
+          ()
           "If values for the new row are supplied, then their count must equal the count of columns in the model")
-  (let ((vals (or vals (seq:repeat (count-columns m) nil))))
-    (add-element! (rows m)
-                  (make-row vals))))
+  (let* ((vals (or vals (seq:repeat (count-columns m) nil)))
+         (new-row (make-row vals)))
+    (setf (rows m)
+          (concatenate 'vector (vector new-row) (rows m)))))
 
 (defmethod add-column! ((m model)(label string))
   (if (find label (columns m) :test #'equalp)
