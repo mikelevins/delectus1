@@ -98,7 +98,7 @@
                  (count-columns m)))
           ()
           "If values for the new row are supplied, then their count must equal the count of columns in the model")
-  (let* ((vals (or vals (as 'list (seq:repeat (count-columns m) nil))))
+  (let* ((vals (or vals (as 'list (seq:repeat (count-columns m) ""))))
          (new-row (make-row vals)))
     (setf (rows m)(cons new-row (rows m)))))
 
@@ -109,5 +109,5 @@
         (setf (columns m) (append (columns m) (list label)))
         (loop for row in (rows m)
            do (setf (cdr (last row))
-                    (list nil))))))
+                    (list ""))))))
 

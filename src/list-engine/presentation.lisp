@@ -73,6 +73,10 @@
   (setf (deleted-rows pres)
         (remove row (deleted-rows pres) :test #'eql)))
 
+(defmethod item-deleted? ((pres presentation)(label string)(row list))
+  (or (column-deleted? pres label)
+      (row-deleted? pres row)))
+
 ;;; ---------------------------------------------------------------------
 ;;; managing presentation state
 ;;; ---------------------------------------------------------------------

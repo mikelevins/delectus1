@@ -58,6 +58,8 @@
                                                :callback #'handle-delete-column-button))
                    :image-width $toolbar-image-width 
                    :image-height $toolbar-image-height)
+   ;; main data view
+   (contents-layout delectus-list-pane :reader contents-layout)
    ;; bottom row
    (trash-cluster toolbar :title "Show deleted items" :title-position :right :flatp t
                   :image-width $trash-image-width 
@@ -68,10 +70,9 @@
   ;; layouts
   (:layouts
    ;; main
-   (main-layout column-layout '(top-row table-rows bottom-row))
+   (main-layout column-layout '(top-row contents-layout bottom-row))
    ;; rows
    (top-row row-layout '(row-cluster nil column-cluster))
-   (table-rows row-layout '() :reader table-rows)
    (bottom-row row-layout '(trash-cluster nil filter-field) :external-min-height 56 :external-max-height 56))
   ;; defaults
   (:default-initargs :title "Delectus" :width 700 :height 400 :initial-focus 'filter-field
@@ -85,29 +86,9 @@
                                          (when (eql (active-interface (app)) intf)
                                            (setf (active-interface (app)) nil)))))
 
-(defun column-description (col)
-  (list :title col
-        :adjust :left
-        :width '(character 16)))
-
-#+cocoa
-(defun setup-nstableview (pane)
-  (let ((objc-view (slot-value (slot-value pane 'capi-internals::representation)
-                               'capi-cocoa-library::main-view)))
-    (objc:invoke objc-view "setAllowsColumnReordering:" t)
-    (objc:invoke objc-view "setUsesAlternatingRowBackgroundColors:" t)))
-
 (defun setup-rows (win)
-  (let* ((doc (document win))
-         (pres (presentation doc))
-         (rows (table-rows win))
-         (row-list (make-instance 'multi-column-list-panel
-                                  :columns (mapcar #'column-description (columns pres))
-                                  :column-function #'identity
-                                  :items (rows pres)
-                                  :item-print-function #'identity)))
-    (setf (layout-description rows)(list row-list))
-    #+cocoa (setup-nstableview row-list)))
+  (update-presentation! (contents-layout win)
+                        (presentation (document win))))
 
 (defmethod update-contents ((win document-window))
   (execute-with-interface win #'setup-rows win))

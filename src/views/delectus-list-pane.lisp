@@ -1,0 +1,54 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          delectus-list-pane.lisp
+;;;; Project:       Delectus 2
+;;;; Purpose:       the pane that displays Delectus columns
+;;;; Author:        mikel evins
+;;;; Copyright:     2010 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+(in-package :delectus)
+
+(define-interface delectus-list-pane ()
+  ()
+  ;; panes
+  (:panes)
+  ;; layouts
+  (:layouts
+   (main-layout simple-pinboard-layout '() :reader contents))
+  ;; defaults
+  (:default-initargs))
+
+(defun max-item-length (rows col-index)
+  (let ((result 0))
+    (loop for row in rows
+       do (setf result (max result (length (elt row col-index)))))
+    result))
+
+(defun column-description (pres col)
+  (let* ((col-index (column-index pres col))
+         (col-width (max-item-length (rows pres)
+                                     (column-index pres col))))
+    (list :title col :adjust :left :width (list 'character (max (length col)
+                                                                (+ col-width 2))))))
+
+#+cocoa
+(defun setup-nstableview (pane)
+  (let ((objc-view (slot-value (slot-value pane 'capi-internals::representation)
+                               'capi-cocoa-library::main-view)))
+    (objc:invoke objc-view "setAllowsColumnReordering:" t)
+    (objc:invoke objc-view "setUsesAlternatingRowBackgroundColors:" t)))
+
+(defmethod update-presentation! ((pane delectus-list-pane)(pres presentation))
+  (update pres)
+  (let ((row-pane (make-instance 'multi-column-list-panel
+                                 :columns (mapcar (fun:partial #'column-description pres)
+                                                  (columns pres))
+                                 :items (rows pres))))
+    #+cocoa (setf (layout-description (contents pane))
+                  (list row-pane))
+    (setup-nstableview row-pane)))
+
+

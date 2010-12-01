@@ -14,6 +14,7 @@
 (columns $zips)
 (time (value-at $zips "city" 0))
 (time (length (rows $zips)))
+(time (max-item-length (rows $zips) 1))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating documents
@@ -24,6 +25,10 @@
      (setf $doc
       (make-instance 'document
                      :presentation (make-instance 'presentation :model $zips)))))
+
+(setq $list-pane (first (layout-description (contents (contents-layout (window $doc))))))
+
+
 
 ;;; ---------------------------------------------------------------------
 ;;; presentations
@@ -45,5 +50,6 @@
 (type-of (columns $repres))
 (value-at $repres "city" 0)
 (value-at $repres "city" 43190)
+(elt (rows $repres) 100)
 
 
