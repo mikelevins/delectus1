@@ -30,11 +30,13 @@
 
 (defmethod add-row! ((doc document) &optional vals)
   (add-row! (presentation doc) vals)
-  (update-contents (window doc)))
+  (update-contents (window doc))
+  (ensure-item-is-visible (contents-layout (window doc)) 0 0))
 
 (defmethod add-column! ((doc document)(label string))
   (add-column! (presentation doc) label)
-  (update-contents (window doc)))
+  (update-contents (window doc))
+  (ensure-item-is-visible (contents-layout (window doc)) (column-index (presentation doc) label) 0))
 
 ;;; (setq $doc (make-instance 'document))
 ;;; (documents (app))

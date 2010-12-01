@@ -33,11 +33,14 @@
                                      (column-index pres col))))
     (list :title col :adjust :left :width (list 'character (max (length col)
                                                                 (+ col-width 2))))))
+#+cocoa
+(defmethod %get-nstableview ((pane multi-column-list-panel))
+  (slot-value (slot-value pane 'capi-internals::representation)
+              'capi-cocoa-library::main-view))
 
 #+cocoa
-(defun setup-nstableview (pane)
-  (let ((objc-view (slot-value (slot-value pane 'capi-internals::representation)
-                               'capi-cocoa-library::main-view)))
+(defun %setup-nstableview (pane)
+  (let ((objc-view (%get-nstableview pane)))
     (objc:invoke objc-view "setAllowsColumnReordering:" t)
     (objc:invoke objc-view "setUsesAlternatingRowBackgroundColors:" t)))
 
@@ -46,19 +49,17 @@
   (let ((row-pane (make-instance 'multi-column-list-panel
                                  :columns (mapcar (fun:partial #'column-description pres)
                                                   (columns pres))
-                                 :items (rows pres)
-                                 :vertical-scroll t
-                                 :horizontal-scroll t
-                                 :pane-can-scroll nil)))
-    (setf (layout-description (contents pane))
-                  (list row-pane))
-    #+cocoa (setup-nstableview row-pane)))
-
-(defmethod update-presentation! ((pane delectus-list-pane)(pres presentation))
-  (update pres)
-  (let ((row-pane (make-instance 'list-panel
                                  :items (rows pres))))
     (setf (layout-description (contents pane))
-                  (list row-pane))))
+          (list row-pane))
+    #+cocoa (%setup-nstableview row-pane)))
+
+(defmethod ensure-item-is-visible ((pane delectus-list-pane)(col-index integer)(row-index integer))
+  #+cocoa
+  (let ((objc-view (%get-nstableview (first (layout-description (contents pane))))))
+    (objc:invoke objc-view "scrollColumnToVisible:" col-index)
+    (objc:invoke objc-view "scrollRowToVisible:" row-index))
+  #+win32 ())
+
 
 

@@ -29,6 +29,7 @@
 
 
 (setq $list-pane (first (layout-description (contents (contents-layout (window $doc))))))
+(setq $cont (contents-layout (window $doc)))
 
 (apply-in-pane-process $list-pane 'capi:scroll $list-pane :pan :move (list 0 100))
 (get-scroll-position $list-pane :vertical)
