@@ -40,7 +40,7 @@
       (if first-row-headers?
           (setf cols (car rows)
                 rows (cdr rows))
-          (setf cols (take-letters field-count)))
+          (setf cols (as 'list (take-letters field-count))))
       (make-model :columns cols :rows rows))))
 
 (defmethod read-csv ((path string) &key (first-row-headers? t))

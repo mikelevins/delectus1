@@ -12,8 +12,8 @@
    'done))
 
 (columns $zips)
-(value-at $zips "city" 0)
-(length (rows $zips))
+(time (value-at $zips "city" 0))
+(time (length (rows $zips)))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating documents
@@ -41,33 +41,9 @@
    (setf $repres (reload-presentation "/tmp/zips.delectus"))
    'done))
 
-;;; ---------------------------------------------------------------------
-;;; saving and loading
-;;; ---------------------------------------------------------------------
+(columns $repres)
+(type-of (columns $repres))
+(value-at $repres "city" 0)
+(value-at $repres "city" 43190)
 
-(time 
- (progn
-   (store $zips (cl-user::path "test-data/zipcode.out"))
-   'done))
-
-(time 
- (progn
-   (store $zips "/Users/mikel/Desktop/testzips.out")
-   'done))
-
-(time 
- (progn
-   (setq $loaded-zips (load-model (cl-user::path "test-data/zipcode.out")))
-   'done))
-
-(time 
- (progn
-   (setq $loaded-zips (load-model "/Users/mikel/Desktop/testzips2.out"))
-   'done))
-
-(columns $loaded-zips)
-(type-of (columns $loaded-zips))
-(count-elements (rows $zips))
-(type-of (rows $zips))
-(value-at $zips "city" 43190)
 

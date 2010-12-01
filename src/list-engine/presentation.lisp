@@ -41,7 +41,7 @@
 
 (defmethod print-object ((pres presentation)(s stream))
   (print-unreadable-object (pres s :type t)
-    (format s "~{~A ~}" (as 'list (columns pres)))))
+    (format s "~{~A ~}" (columns pres))))
 
 (defun make-default-presentation ()
   (make-instance 'presentation
@@ -63,13 +63,13 @@
   (setf (deleted-columns pres)
         (remove label (deleted-columns pres) :test #'equalp)))
 
-(defmethod row-deleted? ((pres presentation)(row vector))
+(defmethod row-deleted? ((pres presentation)(row list))
   (member row (deleted-rows pres) :test #'eql))
 
-(defmethod mark-row-deleted! ((pres presentation)(row vector)(deleted? (eql t)))
+(defmethod mark-row-deleted! ((pres presentation)(row list)(deleted? (eql t)))
   (pushnew row (deleted-rows pres) :test #'eql))
 
-(defmethod mark-row-deleted! ((pres presentation)(row vector)(deleted? (eql nil)))
+(defmethod mark-row-deleted! ((pres presentation)(row list)(deleted? (eql nil)))
   (setf (deleted-rows pres)
         (remove row (deleted-rows pres) :test #'eql)))
 
@@ -88,22 +88,22 @@
       (setf (column-cache pres) (columns (model pres)))
       (setf (column-cache pres) (remove-if (partial #'column-deleted? pres)(columns (model pres))))))
 
-(defmethod filter-rows ((rows vector)(txt string))
+(defmethod filter-rows ((rows list)(txt string))
   (remove-if-not (lambda (row)
                    (some (lambda (it)(search txt it :test #'char-equal))
                          items))
                  rows))
 
-(defmethod sort-rows ((rows vector)(index integer)(type (eql :alphabetical)) (reversed? (eql nil)))
+(defmethod sort-rows ((rows list)(index integer)(type (eql :alphabetical)) (reversed? (eql nil)))
   (merge-sort rows :test #'string< :key (partial (flip #'elt) index)))
 
-(defmethod sort-rows ((rows vector)(index integer)(type (eql :alphabetical)) (reversed? (eql t)))
+(defmethod sort-rows ((rows list)(index integer)(type (eql :alphabetical)) (reversed? (eql t)))
   (merge-sort rows :test #'string> :key (partial (flip #'elt) index)))
 
-(defmethod sort-rows ((rows vector)(index integer)(type (eql :numeric)) (reversed? (eql nil)))
+(defmethod sort-rows ((rows list)(index integer)(type (eql :numeric)) (reversed? (eql nil)))
   (merge-sort rows :test #'< :key (partial (flip #'elt) index)))
 
-(defmethod sort-rows ((rows vector)(index integer)(type (eql :numeric)) (reversed? (eql t)))
+(defmethod sort-rows ((rows list)(index integer)(type (eql :numeric)) (reversed? (eql t)))
   (merge-sort rows :test #'> :key (partial (flip #'elt) index)))
 
 (defmethod update-row-cache ((pres presentation))

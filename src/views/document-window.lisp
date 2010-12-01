@@ -102,9 +102,9 @@
          (pres (presentation doc))
          (rows (table-rows win))
          (row-list (make-instance 'multi-column-list-panel
-                                  :columns (mapcar #'column-description (as 'list (columns pres)))
-                                  :column-function (lambda (row)(as 'list row))
-                                  :items (as 'list (rows pres))
+                                  :columns (mapcar #'column-description (columns pres))
+                                  :column-function #'identity
+                                  :items (rows pres)
                                   :item-print-function #'identity)))
     (setf (layout-description rows)(list row-list))
     #+cocoa (setup-nstableview row-list)))
