@@ -46,9 +46,19 @@
   (let ((row-pane (make-instance 'multi-column-list-panel
                                  :columns (mapcar (fun:partial #'column-description pres)
                                                   (columns pres))
-                                 :items (rows pres))))
-    #+cocoa (setf (layout-description (contents pane))
+                                 :items (rows pres)
+                                 :vertical-scroll t
+                                 :horizontal-scroll t
+                                 :pane-can-scroll nil)))
+    (setf (layout-description (contents pane))
                   (list row-pane))
-    (setup-nstableview row-pane)))
+    #+cocoa (setup-nstableview row-pane)))
+
+(defmethod update-presentation! ((pane delectus-list-pane)(pres presentation))
+  (update pres)
+  (let ((row-pane (make-instance 'list-panel
+                                 :items (rows pres))))
+    (setf (layout-description (contents pane))
+                  (list row-pane))))
 
 
