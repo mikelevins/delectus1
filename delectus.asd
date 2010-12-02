@@ -111,6 +111,7 @@
                          (:module views :serial t
                                   :components
                                   ((:file "menus")
+                                   (:file "delectus-list-pane")
                                    (:file "document-window")
                                    (:file "ui")))))))
 

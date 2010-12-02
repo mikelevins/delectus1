@@ -16,15 +16,19 @@
 (time (length (rows $zips)))
 (time (max-item-length (rows $zips) 1))
 
+
 ;;; ---------------------------------------------------------------------
 ;;; creating documents
 ;;; ---------------------------------------------------------------------
 
+(setq $pres (make-instance 'presentation :model $zips))
+(column-description $pres "Foo")
+
+
 (time 
  (progn
      (setf $doc
-      (make-instance 'document
-                     :presentation (make-instance 'presentation :model $zips)))))
+      (make-instance 'document :presentation $pres))))
 
 
 

@@ -31,8 +31,8 @@
   (let* ((col-index (column-index pres col))
          (col-width (max-item-length (rows pres)
                                      (column-index pres col))))
-    (list :title col :adjust :left :width (list 'character (max (length col)
-                                                                (+ col-width 2))))))
+    (list :title col :adjust :left :width (list 'character (+ 4 (max (length col) col-width))))))
+
 #+cocoa
 (defmethod %get-nstableview ((pane multi-column-list-panel))
   (slot-value (slot-value pane 'capi-internals::representation)
@@ -59,5 +59,6 @@
   (let ((objc-view (%get-nstableview (first (layout-description (contents pane))))))
     (objc:invoke objc-view "scrollColumnToVisible:" col-index)
     (objc:invoke objc-view "scrollRowToVisible:" row-index))
-  #+win32 ())
+  #+win32
+  (capi:scroll pane :pan :move (list col-index row-index)))
 
