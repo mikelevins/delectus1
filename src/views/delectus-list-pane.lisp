@@ -61,5 +61,3 @@
     (objc:invoke objc-view "scrollRowToVisible:" row-index))
   #+win32 ())
 
-
-
