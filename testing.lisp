@@ -22,15 +22,11 @@
 ;;; ---------------------------------------------------------------------
 
 (setq $pres (make-instance 'presentation :model $zips))
-(column-description $pres "Foo")
-
 
 (time 
  (progn
      (setf $doc
       (make-instance 'document :presentation $pres))))
-
-
 
 (setq $list-pane (first (layout-description (contents (contents-layout (window $doc))))))
 (setq $cont (contents-layout (window $doc)))

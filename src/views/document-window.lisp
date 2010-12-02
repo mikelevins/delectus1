@@ -66,7 +66,7 @@
                   :image-height $trash-image-height
                   :items (list (make-instance 'toolbar-button :image (image :trashempty-button)
                                               :callback #'handle-trash-button)))
-   (filter-field text-input-pane :title "Filter" :title-position :left))
+   (filter-field filter-input-pane :title-position :left))
   ;; layouts
   (:layouts
    ;; main

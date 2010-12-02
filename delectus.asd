@@ -90,6 +90,9 @@
                                   :components
                                   ((:file "menus")
                                    (:file "delectus-list-pane")
+                                   (:module cocoa :serial t
+                                            :components
+                                            ((:file "filter-input-pane")))
                                    (:file "document-window")
                                    (:file "ui")))))))
 
@@ -112,6 +115,9 @@
                                   :components
                                   ((:file "menus")
                                    (:file "delectus-list-pane")
+                                   (:module win32 :serial t
+                                            :components
+                                            ((:file "filter-input-pane")))
                                    (:file "document-window")
                                    (:file "ui")))))))
 
