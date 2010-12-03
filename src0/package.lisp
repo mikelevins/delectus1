@@ -12,8 +12,7 @@
 (in-package :cl-user)
 
 (defpackage "DELECTUS"
-  (:use :cl :as :fn)
-  (:shadow #:get #:element)
-  (:import-from :folio.fn #:^)
+  (:use :cl :capi #+cocoa :objc :as)
+  (:shadow #:element)
   (:import-from :folio.functions #:flip #:partial))
 

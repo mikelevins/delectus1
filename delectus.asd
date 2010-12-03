@@ -48,8 +48,8 @@
 
 (in-package :delectus-asd)
 
-(defsystem delectus-list-engine
-  :name "delectus list engine"
+(defsystem delectus-engine
+  :name "delectus engine"
   :version "1.9a2"
   :author "mikel evins"
   :description "Delectus Data Layer"
@@ -61,72 +61,17 @@
                (:module src :serial t
                         :components
                         ((:file "package")
-                         (:module list-engine :serial t
+                         (:module model :serial t
                                   :components
-                                  ((:file "model")
-                                   (:file "csv")
-                                   (:file "sort")
-                                   (:file "presentation")
-                                   (:file "store")))))))
-
-;;; (asdf::oos 'asdf:load-op :delectus-list-engine)
-
-(defsystem delectus-cocoa
-  :name "delectus cocoa app"
-  :version "1.9a2"
-  :author "mikel evins"
-  :description "Delectus Cocoa Application"
-  :depends-on (:delectus-list-engine)
-  :serial t
-  :components ((:module src :serial t
-                        :components
-                        ((:file "singleton")
-                         (:file "resources")
-                         (:module controllers :serial t
-                                  :components
-                                  ((:file "document")
-                                   (:file "app")))
+                                  ((:file "item")
+                                   (:file "delectus")
+                                   ;;(:file "csv")
+                                   ;;(:file "sort")
+                                   ;;(:file "presentation")
+                                   ;;(:file "store")
+                                   ))
                          (:module views :serial t
                                   :components
-                                  ((:file "menus")
-                                   (:file "delectus-list-pane")
-                                   (:module cocoa :serial t
-                                            :components
-                                            ((:file "filter-input-pane")))
-                                   (:file "document-window")
-                                   (:file "ui")))))))
+                                  ((:file "delectus-pane")))))))
 
-(defsystem delectus-win32
-  :name "delectus win32 app"
-  :version "1.9a2"
-  :author "mikel evins"
-  :description "Delectus Windows Applcation"
-  :depends-on (:delectus-list-engine)
-  :serial t
-  :components ((:module src :serial t
-                        :components
-                        ((:file "singleton")
-                         (:file "resources")
-                         (:module controllers :serial t
-                                  :components
-                                  ((:file "document")
-                                   (:file "app")))
-                         (:module views :serial t
-                                  :components
-                                  ((:file "menus")
-                                   (:file "delectus-list-pane")
-                                   (:module win32 :serial t
-                                            :components
-                                            ((:file "filter-input-pane")))
-                                   (:file "document-window")
-                                   (:file "ui")))))))
-
-
-(in-package :cl-user)
-
-(defun load-cocoa-app ()(asdf:oos 'asdf:load-op :delectus-cocoa))
-(defun load-win32-app ()(asdf:oos 'asdf:load-op :delectus-win32))
-
-;;; (load-cocoa-app)
-;;; (load-win32-app)
-;;; (delectus::init-resources)
+;;; (asdf::oos 'asdf:load-op :delectus-engine)

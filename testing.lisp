@@ -17,37 +17,3 @@
 (time (max-item-length (rows $zips) 1))
 
 
-;;; ---------------------------------------------------------------------
-;;; creating documents
-;;; ---------------------------------------------------------------------
-
-(setq $pres (make-instance 'presentation :model $zips))
-
-(time 
- (progn
-     (setf $doc
-      (make-instance 'document :presentation $pres))))
-
-;;; ---------------------------------------------------------------------
-;;; presentations
-;;; ---------------------------------------------------------------------
-
-(setq $pres (make-instance 'presentation :model $zips))
-
-(time
- (progn
-   (store $pres "/tmp/zips.delectus")
-   'done))
-
-(time
- (progn
-   (setf $repres (reload-presentation "/tmp/zips.delectus"))
-   'done))
-
-(columns $repres)
-(type-of (columns $repres))
-(value-at $repres "city" 0)
-(value-at $repres "city" 43190)
-(elt (rows $repres) 100)
-
-
