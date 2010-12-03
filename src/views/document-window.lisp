@@ -21,7 +21,8 @@
     (add-row! doc)))
 
 (defun handle-delete-row-button (data intf)
-  (display-message "~S, ~S" data intf))
+  (let ((doc (document intf)))
+    (delete-selected-row! doc)))
 
 (defun handle-add-column-button (data intf)
   (let ((doc (document intf)))
@@ -59,7 +60,7 @@
                    :image-width $toolbar-image-width 
                    :image-height $toolbar-image-height)
    ;; main data view
-   (contents-layout delectus-list-pane :reader contents-layout)
+   (contents-view delectus-list-pane :reader contents-view)
    ;; bottom row
    (trash-cluster toolbar :title "Show deleted items" :title-position :right :flatp t
                   :image-width $trash-image-width 
@@ -70,7 +71,7 @@
   ;; layouts
   (:layouts
    ;; main
-   (main-layout column-layout '(top-row contents-layout bottom-row))
+   (main-layout column-layout '(top-row contents-view bottom-row))
    ;; rows
    (top-row row-layout '(row-cluster nil column-cluster))
    (bottom-row row-layout '(trash-cluster nil filter-field) :external-min-height 56 :external-max-height 56))
@@ -87,9 +88,11 @@
                                            (setf (active-interface (app)) nil)))))
 
 (defun setup-rows (win)
-  (update-presentation! (contents-layout win)
+  (update-presentation! (contents-view win)
                         (presentation (document win))))
 
 (defmethod update-contents ((win document-window))
   (execute-with-interface win #'setup-rows win))
+
+
 

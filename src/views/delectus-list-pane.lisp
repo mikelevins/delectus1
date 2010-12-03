@@ -21,6 +21,9 @@
   ;; defaults
   (:default-initargs))
 
+(defmethod get-list-view ((pane delectus-list-pane))
+  (first (layout-description (contents pane))))
+
 (defun max-item-length (rows col-index)
   (let ((result 0))
     (loop for row in rows

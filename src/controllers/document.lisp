@@ -31,12 +31,23 @@
 (defmethod add-row! ((doc document) &optional vals)
   (add-row! (presentation doc) vals)
   (update-contents (window doc))
-  (ensure-item-is-visible (contents-layout (window doc)) 0 0))
+  (ensure-item-is-visible (contents-view (window doc)) 0 0))
+
+(defmethod get-list-view ((doc document))
+  (get-list-view (contents-view (window doc))))
+
+(defmethod get-selected-row ((doc document))
+  (choice-selected-item (get-list-view doc)))
+
+(defmethod delete-selected-row! ((doc document) &optional vals)
+  (mark-row-deleted! (presentation doc)(get-selected-row doc) t)
+  (update-contents (window doc))
+  (ensure-item-is-visible (contents-view (window doc)) 0 0))
 
 (defmethod add-column! ((doc document)(label string))
   (add-column! (presentation doc) label)
   (update-contents (window doc))
-  (ensure-item-is-visible (contents-layout (window doc)) (column-index (presentation doc) label) 0))
+  (ensure-item-is-visible (contents-view (window doc)) (column-index (presentation doc) label) 0))
 
 ;;; (setq $doc (make-instance 'document))
 ;;; (documents (app))
