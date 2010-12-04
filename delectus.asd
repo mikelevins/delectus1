@@ -65,9 +65,9 @@
                                   :components
                                   ((:file "delectus")
                                    (:file "csv")
-                                   (:file "sort")
-                                   ;;(:file "presentation")
-                                   ;;(:file "store")
-                                   ))))))
+                                   (:file "sort")))
+                         (:module views :serial t
+                                  :components
+                                  ((:file "")))))))
 
 ;;; (asdf::oos 'asdf:load-op :delectus-engine)
