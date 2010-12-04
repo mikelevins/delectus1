@@ -63,15 +63,11 @@
                         ((:file "package")
                          (:module model :serial t
                                   :components
-                                  ((:file "item")
-                                   (:file "delectus")
-                                   ;;(:file "csv")
-                                   ;;(:file "sort")
+                                  ((:file "delectus")
+                                   (:file "csv")
+                                   (:file "sort")
                                    ;;(:file "presentation")
                                    ;;(:file "store")
-                                   ))
-                         (:module views :serial t
-                                  :components
-                                  ((:file "delectus-pane")))))))
+                                   ))))))
 
 ;;; (asdf::oos 'asdf:load-op :delectus-engine)

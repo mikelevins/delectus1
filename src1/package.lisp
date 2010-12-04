@@ -13,7 +13,7 @@
 
 (defpackage "DELECTUS"
   (:use :cl :as :fn)
-  (:shadow #:count #:get #:element)
+  (:shadow #:get #:element)
   (:import-from :folio.fn #:^)
   (:import-from :folio.functions #:flip #:partial))
 

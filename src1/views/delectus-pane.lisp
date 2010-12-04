@@ -139,13 +139,17 @@
            collect (list left top width height))))))
 
 #|
-(setq $del (make-delectus "Fred" "Barney" "Wilma" "Betty" "Pebbles" "Bam Bam"))
+(setq $del (make-delectus  "Barney" "Wilma" "Betty" "Pebbles" "Bam Bam"))
 (setq $w (capi:contain (make-instance 'horizontal-delectus-pane :delectus $del)))
 (setq $w (capi:contain (make-instance 'vertical-delectus-pane :delectus $del)))
 
-(setq $w (capi:contain (make-instance 'horizontal-delectus-pane :delectus $del
+(setq $w (capi:contain (make-instance 'vertical-delectus-pane 
+                                      :delectus (apply #'make-delectus (loop for i from 0 upto 1000
+                                                                            collect (princ-to-string i)))
                                       :background :lightgray
-                                      :item-frame 2 :item-frame-color :red)))
+                                      :item-frame 2 :item-frame-color :red
+                                      :pane-can-scroll nil
+                                      :vertical-scroll t)))
 
 
 |#
