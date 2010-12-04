@@ -68,6 +68,6 @@
                                    (:file "sort")))
                          (:module views :serial t
                                   :components
-                                  ((:file "")))))))
+                                  ((:file "render-item")))))))
 
 ;;; (asdf::oos 'asdf:load-op :delectus-engine)

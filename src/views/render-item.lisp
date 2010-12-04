@@ -36,52 +36,63 @@
           (getf params :right-color :black)
           (getf params :bottom-color :black)))
 
-(defmethod render-item ((pane capi:output-pane)(item string) x y width height
-                        &key
-                        (background nil)(foreground :black)
-                        (font nil)(frame nil)
-                        (margin-left 0)(margin-top 0)
-                        (margin-right 0)(margin-bottom 0))
+(defmethod render ((pane capi:output-pane)(item string) x y width height
+                   &key
+                   (background nil)(foreground :black)
+                   (font nil)(frame nil)
+                   (margin-left 0)(margin-top 0)
+                   (margin-right 0)(margin-bottom 0)
+                   &allow-other-keys)
   (let* ((font (or (and font
-                       (gp:find-best-font pane font)) 
-                  (capi:simple-pane-font pane)))
-         (width (+ margin-left (string-width pane item :font font) margin-right))
-         (height (+ margin-top (string-height pane item :font font) margin-bottom)))
+                        (gp:find-best-font pane font)) 
+                   (capi:simple-pane-font pane)))
+         (item-width (+ margin-left (string-width pane item :font font) margin-right))
+         (item-height (+ margin-top (string-height pane item :font font) margin-bottom)))
     (when background
       (gp:with-graphics-state (pane :foreground background)
-        (gp:draw-rectangle pane x y width height :filled t)))
-    (gp:draw-string pane item (+ x margin-left)(- (+ y height) margin-bottom)
+        (gp:draw-rectangle pane x y item-width item-height :filled t)))
+    (gp:draw-string pane item (+ x margin-left)(- (+ y item-height) margin-bottom)
                     :font font)
     (when frame
       (multiple-value-bind (left-thickness top-thickness right-thickness bottom-thickness
                                            left-color top-color right-color bottom-color)
           (parse-frame-parameters frame)
-        (let* ((y (- (+ y height) bottom-thickness))
-               (height bottom-thickness))
+        (let* ((y (- (+ y item-height) bottom-thickness))
+               (frame-height bottom-thickness))
           (gp:with-graphics-state (pane :foreground bottom-color :thickness bottom-thickness)
-            (gp:draw-rectangle pane x y width height :filled t)))
-        (let* ((x (- (+ x width) right-thickness))
-               (width right-thickness))
+            (gp:draw-rectangle pane x y item-width frame-height :filled t)))
+        (let* ((x (- (+ x item-width) right-thickness))
+               (frame-width right-thickness))
           (gp:with-graphics-state (pane :foreground right-color :thickness right-thickness)
-            (gp:draw-rectangle pane x y width height :filled t)))
-        (let* ((width left-thickness))
+            (gp:draw-rectangle pane x y frame-width item-height :filled t)))
+        (let* ((frame-width left-thickness))
           (gp:with-graphics-state (pane :foreground left-color :thickness left-thickness)
-            (gp:draw-rectangle pane x y width height :filled t)))
-        (let* ((height top-thickness))
+            (gp:draw-rectangle pane x y frame-width item-height :filled t)))
+        (let* ((frame-height top-thickness))
           (gp:with-graphics-state (pane :foreground top-color :thickness top-thickness)
-            (gp:draw-rectangle pane x y width height :filled t)))))))
+            (gp:draw-rectangle pane x y item-width frame-height :filled t)))))))
+
+(defmethod render ((pane capi:output-pane)(del delectus) x y width height
+                   &key
+                   (direction :horizontal)
+                   (background nil)(foreground :black)
+                   (font nil)(frame nil)
+                   (margin-left 0)(margin-top 0)
+                   (margin-right 0)(margin-bottom 0)
+                   &allow-other-keys)
+  )
 
 #|
 
-(let ((out (make-instance 'capi:output-pane 
-                          :font (gp:make-font-description :family "Arial" :size 14 :weight :bold))))
+(let ((out (make-instance 'capi:output-pane)))
   (setf (capi:output-pane-display-callback out)
         (lambda (out x y width height)
-          (render-item out "Foo!" x y width height
-                       :margin-left 2 :margin-top 2
-                       :margin-right 2 :margin-bottom 6
-                       :background :lightgray :frame '(:left-color :red :left-thickness 4)
-                       :font (gp:make-font-description :family "Helvetica" :size 16 :weight :bold))))
+          (render out "A considerably longer string for checking on clipping issues"
+                  x y width height
+                  :margin-left 16 :margin-top 2
+                  :margin-right 16 :margin-bottom 6
+                  :background :lightgray :frame t
+                  :font (gp:make-font-description :family "Helvetica" :size 16 :weight :bold))))
   (capi:contain out))
 
 |#
