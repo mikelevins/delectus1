@@ -16,11 +16,8 @@
 (defmethod read-csv ((path pathname))
   (let ((rows nil))
     (csv-parser:do-csv-file ((fields num-fields) path)
-      (push fields rows))
-    (let* ((rows (reverse rows))
-           (keys (car rows))
-           (items (cdr rows)))
-      (make-map keys items))))
+      (push (make-delectus fields) rows))
+    (make-delectus (reverse rows))))
 
 (defmethod read-csv ((path string))
   (read-csv (pathname path)))

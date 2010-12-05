@@ -10,16 +10,14 @@
         (setf $zips (read-csv (namestring (cl-user::path "test-data/zipcode.csv"))))
         'done))
 
-(time (progn
-        (sort! $zips :key (index-sort-key 1))
-        'done))
+(keys $zips)
+(elt (items $zips) 10000)
 
-(count $zips)
+(time (with-open-file (out "/tmp/zips.sexp" :direction :output
+                           :if-exists :supersede
+                           :if-does-not-exist :create)
+        (s-serialization:serialize-sexp $zips out)))
 
-(item $zips 100)
-(item $zips 101)
-
-(time (progn
-        (remove! $zips 100)
-        'done))
-
+(time (progn (setq $rezips (with-open-file (in "/tmp/zips.sexp" :direction :input)
+                             (s-serialization:deserialize-sexp in)))
+             'done))

@@ -15,63 +15,71 @@
 ;;; ABOUT
 ;;; =====================================================================
 ;;; "delectus" is from the Latin "delectum", meaning something
-;;; chosen. A delectus is a set of selected items.
+;;; chosen. A delectus is an ordered set of selected items.
 
-(defclass delectus ()
-  ((items :reader items :initarg :items)))
+(defparameter $delectus-size-increment 32)
 
-(defmethod make-delectus ((vals list))
-  (let ((item-count (length vals)))
-    (make-instance 'delectus :items (make-array item-count :fill-pointer item-count
-                                                :initial-contents vals :adjustable t))))
+(defmethod make-delectus ((items list))
+  (let* ((item-count (length items))
+         (size (max $delectus-size-increment item-count))
+         (result (make-array size :fill-pointer item-count :adjustable t)))
+    (setf (fill-pointer result) item-count)
+    (replace result items)
+    result))
 
-(defmethod make-delectus ((vals vector))
-  (let ((item-count (length vals)))
-    (make-instance 'delectus :items vals)))
-
-(defmethod print-object ((del delectus)(s stream))
-  (print-unreadable-object (del s :type t)
-    (if (> (count del) 3)
-        (format s "~{~A ~}... " (loop for i from 0 upto 2 collect (elt (items del) i)))
-        (format s "~{~A ~}" (as 'list (items del))))))
-
-(defmethod count ((del delectus))
-  (length (items del)))
-
-(defmethod item ((del delectus)(index integer))
-  (elt (items del) index))
-
-(defmethod add! ((del delectus) val)
-  (vector-push-extend val (items del))
-  val)
-
-(defmethod remove! ((del delectus) (index integer))
-  (let* ((items (items del))
-         (item-count (count del))
-         (new-items (make-array (1- item-count) :fill-pointer (1- item-count)
-                                :initial-element nil :adjustable t)))
-    (loop
-       for i from 0 upto (1- index)
-       do (setf (elt new-items i)
-                (elt items i)))
-    (loop
-       for i from (1+ index) upto (1- item-count) 
-       do (setf (elt new-items (1- i))
-                (elt items i)))
-    (with-slots (items) del (setf items new-items)))
+(defmethod add-item! ((del vector) val)
+  (vector-push-extend val del 16)
   del)
 
-(defun index-sort-key (n)
-  (lambda (x)(elt (items x) n)))
+(defmethod remove-item! ((del vector)(index integer))
+  (assert (<= 0 index (1- (fill-pointer del)))(index) "index out of range")
+  (loop
+     for i from (1+ index) upto (1- (fill-pointer del))
+     do (setf (elt del (1- i))
+              (elt del i)))
+  (decf (fill-pointer del))
+  del)
 
-(defmethod sort! ((del delectus) &key (test #'string<)(key #'identity))
-  (with-slots (items) del
-    (setf items
-          (merge-sort (items del) :test test :key key))))
+;;; (setq $d (make-delectus '()))
+;;; (add-item! $d "Fred")
+;;; (add-item! $d "Flintstone")
+;;; (add-item! $d "Bedrock")
+;;; (remove-item! $d 1)
 
-;;; (setq $del (make-delectus '("Foo bar")))
-;;; (setq $del1 (make-delectus '("Foo" "bar")))
-;;; (setq $del2 (make-delectus '("baz" "grault" "quux" "wibble" "frobbozz")))
-;;; (setq $del (make-delectus (list $del1 $del2)))
-;;; (count $del1)
-;;; (add! $del1 "foobie")
+;;; ---------------------------------------------------------------------
+;;; maps
+;;; ---------------------------------------------------------------------
+;;; a pair of delecti represents a map: one delectus contains the keys, 
+;;; and the other contains the values. more generally, a collection
+;;; of delecti all of the same length can be used to represent a set
+;;; of maps that all share the same keys: the first delectus again
+;;; contains the keys; each of the rest is an item containing a set
+;;; of values for those keys
+
+(defclass map ()
+  ((keys :reader keys :initform (make-delectus nil) :initarg :keys)
+   (items :reader items :initform (make-delectus nil) :initarg :items)))
+
+(defmethod make-map ((keys list)(items list))
+  (let ((key-count (length keys)))
+    (assert (every (^ (i)(= key-count (length i))) items)()
+            "Each item in the map must have ~S elements" key-count)
+    (make-instance 'map
+                   :keys (make-delectus keys)
+                   :items (make-delectus (mapcar #'make-delectus items)))))
+
+(defmethod add-item! ((map map)(elements list))
+  (assert (= (length (keys map))(length elements))()
+          "The new item must contain ~S elements" (length (keys map)))
+  (add-item! (items map) (make-delectus elements))
+  map)
+
+#|
+(setq $m
+      (make-map '("Name" "Age" "Weight")
+                '(("Fred" "Grown" "Heavy")
+                  ("Wilma" "Mature" "Slim")
+                  ("Pebbles" "Young" "Tiny"))))
+(add-item! $m '("Bam Bam" "Young" "Small"))
+(describe $m)
+|#
