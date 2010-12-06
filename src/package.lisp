@@ -12,8 +12,10 @@
 (in-package :cl-user)
 
 (defpackage "DELECTUS"
-  (:use :cl :as :fn)
+  (:use :cl :series :as :fn)
   (:shadow #:count #:get #:element #:map)
   (:import-from :folio.fn #:^)
   (:import-from :folio.functions #:flip #:partial))
+
+(defpackage "DELECTUS-KEYS")
 

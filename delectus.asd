@@ -63,7 +63,12 @@
                         ((:file "package")
                          (:module model :serial t
                                   :components
-                                  ((:file "delectus")
-                                   (:file "csv")))))))
+                                  ((:file "stretchy-vector")
+                                   (:file "take-labels")
+                                   (:file "item")
+                                   (:file "delectus")
+                                   (:file "csv")
+                                   (:file "sort")
+                                   ))))))
 
 ;;; (asdf::oos 'asdf:load-op :delectus-engine)

@@ -11,6 +11,8 @@
         'done))
 
 (keys $zips)
+(length (items $zips))
+(describe (elt (items $zips) 0))
 (elt (items $zips) 10000)
 
 (time (with-open-file (out "/tmp/zips.sexp" :direction :output
@@ -20,4 +22,7 @@
 
 (time (progn (setq $rezips (with-open-file (in "/tmp/zips.sexp" :direction :input)
                              (s-serialization:deserialize-sexp in)))
+             'done))
+
+(time (progn (merge-sort (items $zips) :test #'string< :key (lambda (x)(get x (item-key "city") :default "")))
              'done))

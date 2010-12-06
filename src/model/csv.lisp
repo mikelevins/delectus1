@@ -13,16 +13,21 @@
 
 (defparameter $csv-read-buffer-size 128)
 
-(defmethod read-csv ((path pathname))
-  (let ((rows nil))
+(defmethod read-csv ((path pathname) &key (first-line-keys? t))
+  (let ((reversed-lines nil))
     (csv-parser:do-csv-file ((fields num-fields) path)
-      (push fields rows))
-    (let* ((rows (reverse rows))
-           (keys (car rows))
-           (items (cdr rows)))
-      (make-map keys items))))
+      (push fields reversed-lines))
+    (let* ((lines (reverse reversed-lines))
+           (keys (if first-line-keys?
+                     (mapcar #'item-key (car lines))
+                     (mapcar #'item-key (take-labels (length (car lines))))))
+           (items (mapcar (partial #'zip-item keys)
+                          (if first-line-keys? (cdr lines) lines))))
+      (make-instance 'delectus
+                     :keys (make-stretchy-vector :initial-contents keys) 
+                     :items (make-stretchy-vector :initial-contents items)))))
 
-(defmethod read-csv ((path string))
-  (read-csv (pathname path)))
+(defmethod read-csv ((path string) &key (first-line-keys? t))
+  (read-csv (pathname path) :first-line-keys? first-line-keys?))
 
 
