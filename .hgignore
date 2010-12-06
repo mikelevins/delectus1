@@ -34,3 +34,5 @@ src/ui/win32/init.lisp~
 template/Delectus.app/Contents/Info.plist~
 test-data/zipcode.out
 
+drafts/delectus1/scm/.\#utils.scm
+drafts/delectus1/scm/\#utils.scm\#
