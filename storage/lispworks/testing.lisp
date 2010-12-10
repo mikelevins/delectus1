@@ -20,7 +20,7 @@
 
 (time 
  (with-open-database (db ":memory:")
-   (execute-non-query db "create table users (id integer primary key, first_name text not null, last_name text not null)")
+   (execute-non-query db "create table users (id integer primary key not null, first_name text not null, last_name text not null)")
    (execute-to-list db "PRAGMA table_info('users')")))
 
 (time 

@@ -66,13 +66,11 @@
                (:module src :serial t
                         :components
                         ((:file "package")
-                         (:module model :serial t
-                                  :components
-                                  ((:file "sqlite")
-                                   (:file "take-labels")
-                                   ;;(:file "delectus")
-                                   (:file "csv")
-                                   ;;(:file "sort")
-                                   ))))))
+                         (:file "sqlite")
+                         ;;(:file "take-labels")
+                         ;;(:file "delectus")
+                         ;;(:file "csv")
+                         ;;(:file "sort")
+                         ))))
 
-;;; (asdf::oos 'asdf:load-op :delectus-engine)
+;;; (asdf::oos 'asdf:load-op :delectus-storage-engine)
