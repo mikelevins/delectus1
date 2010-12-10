@@ -3,8 +3,8 @@ EXECUTABLE=delec
 SCM_LIBS=lib/scm/csv.scm lib/scm/Sort.scm lib/srfi/srfi1.scm lib/srfi/srfi13.scm lib/srfi/srfi28.scm
 SCM_LIBS_CFILES=lib/scm/csv.c lib/scm/Sort.c lib/srfi/srfi1.c lib/srfi/srfi13.c lib/srfi/srfi28.c
 
-SCM_SRCS=  scm/main.scm 
-SCM_SRCS_CFILES=  scm/main.c scm/main_.c
+SCM_SRCS= scm/errors.scm scm/csv-utils.scm scm/utils.scm scm/store.scm scm/store-io.scm scm/main.scm 
+SCM_SRCS_CFILES=  scm/errors.c scm/utils.c scm/csv-utils.c scm/store.c scm/store-io.c scm/main.c scm/main_.c
 
 SCM_CFILES= ${SCM_LIBS_CFILES} ${SCM_SRCS_CFILES}
 

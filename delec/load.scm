@@ -10,7 +10,7 @@
 
 ;;; modify if the Delectus sources are at another pathname
 
-(define $root "/Users/mikel/Valise/bywicket/repositories/delectus")
+(define $root "/Users/mikel/Projects/delectus/delec")
 
 ;;; ----------------------------------------------------------------------
 ;;; About
@@ -34,28 +34,12 @@
     ;; data management
     "/scm/store.scm"
     "/scm/store-io.scm"
-    "/scm/document.scm"
     ;; tests
     "/scm/test-utils.scm"
     "/scm/store-tests.scm"
     "/scm/store-io-tests.scm"
-    "/scm/document-tests.scm"
     "/scm/tests.scm"
     ))
-
-;;; Cocoa files
-;;; ----------------------------------------------------------------------
-;;; these are the Scheme sources for code that interacts with
-;;; Objective-C and Cocoa. We can't load these interactively, because
-;;; they depend on interaction with the NSApplication runtime,
-;;; which is available only in the compiled application. For that 
-;;; reason, code in these files is kept as simple as possible
-;;;
-;;; Cocoa.scm
-;;; Cocoa-cache.scm
-;;; c-interface.scm
-;;; main.scm
-;;;
 
 ;;; load Scheme files
 ;;; ----------------------------------------------------------------------

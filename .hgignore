@@ -36,3 +36,17 @@ test-data/zipcode.out
 
 drafts/delectus1/scm/.\#utils.scm
 drafts/delectus1/scm/\#utils.scm\#
+delec/delec
+delec/lib/srfi/srfi1.c
+delec/lib/srfi/srfi13.c
+delec/lib/srfi/srfi28.c
+delec/lib/scm/csv.c
+delec/lib/scm/Sort.c
+delec/test/zips.delectus
+delec/scm/csv-utils.c
+delec/scm/errors.c
+delec/scm/main_.c
+delec/scm/main.c
+delec/scm/store-io.c
+delec/scm/store.c
+delec/scm/utils.c

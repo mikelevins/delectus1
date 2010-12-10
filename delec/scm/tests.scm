@@ -13,7 +13,4 @@
     ;; db tests
     (run-test-suite test-suite:store-tests)
     ;; io tests
-    (run-test-suite test-suite:store-io-tests)
-    ;; document tests
-    (run-test-suite test-suite:document-tests)
-    ))
+    (run-test-suite test-suite:store-io-tests)))

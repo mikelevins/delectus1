@@ -1,0 +1,50 @@
+How Delectus uses SQLite
+
+A delectus is a sequence of tuples. Each tuple in a delectus has the
+same number of elements. The zeroth tuple contains keys that have the
+same function as column labels. These properties make a tabular
+relational database like SQLite a natural fit for storing a
+delectus. A delectus is simply a table.
+
+However, supporting delectus presentations requires a little extra
+work. 
+
+In addition to the sequence of tuples in the delectus, the
+presentation specifies:
+
+- deleted rows
+- deleted columns
+
+A delectus file stores the sequence of tuples as the rows of a table
+named "delectus". That table has an extra column, besides the column
+for each key in the key sequence: the "index" column uses an integer
+primary key to identify rows in the order they are added.
+
+A second table, the "deleted_columns" table, stores a list of the
+labels of all deleted columns.
+
+A third table, the "deleted_rows" table, stores a list of the
+indexes of all deleted columns.
+
+When the Delectus presentation layer is told to hide deleted items
+(the default setting), it uses prepared statements to fetch only those
+rows and columns that have not been deleted.
+
+In order to fetch non-deleted columns, Delectus first asks for all columns:
+
+  PRAGMA table_info('delectus')
+
+It then asks for the columns that have been deleted:
+
+  SELECT 'column_label' FROM 'deleted_columns'
+
+Removing the deleted columns from the list of all columns, it can then
+construct a prepared statement that returns only those rows and
+columns that have not been marked deleted:
+
+  SELECT * FROM 'delectus' WHERE index' NOT IN 
+    (SELECT 'index' FROM 'deleted_rows')
+
+In the prepared statement, '*' is replaced by the
+dynamically-constructed list of columns that have not been deleted.
+
