@@ -1,136 +1,164 @@
 Delectus architecture and design
 
-Delectus is a family of applications designed for efficiently storing
-and using sequences of tuples. It consists of three parts:
+I. Introduction
 
-1. The Data Engine, which maintains a memory image of a delectus
-   instance, and provides an API for querying and updating it.
+The name "delectus" is taken from the Latin "delectum", for something
+consciously chosen. A delectus is a sequence of tuples.
 
-2. The Storage Engine, which serializes delectus data to a stream or
-   container file, and deserializes it from such sources.
+Delectus is a family of applications designed for storing, viewing,
+and editing delecti. Most simply, it's an application for managing
+lists of things, or, rather, lists of lists of things.
 
-3. The Presentation Engine, which presents convenient views of the delectus
-   data, and provides affordances for querying, updating, filtering,
-   and sorting it.
+The delectus concept is language-independent; it is intended to
+provide a nonvolatile representation of persistent data useful in a
+variety of applications. Delectus defines the operations and logical
+structure of a delectus, and also defines a language- and
+platform-independent representation for delectus data, so that
+applications that use it can be conveniently developed for a variety
+of platforms without concerning themselves about format conversions.
 
-I. The Data Engine
+II. An Example
 
-A. Basic Data Definition
+Here's an example delectus:
 
-A delectus is a sequence of tuples of the same length. The elements of
-a tuple are called values. A value is either a UTF-8 string, or Null.
+  [("index", "Title",                      "Author")
+   (1,       "War of the Worlds",          "H.G. Wells")
+   (2,       "Foundation and Empire",      "Isaac Asimov")
+   (3,       "Stranger in a Strange Land", "Robert Heinlein")]
 
-B. Delectus In-memory Format
+The definition of a delectus requires that each tuple have the same
+number of elements. By convention, the first tuple (tuple zero) is
+called the "key sequence", and is treated specially: only strings are
+allowed as elements of the key sequence, and the first element
+(element zero) is always the string "index". The other elements may be
+any string values, but no string may appear more than once. Elements
+of the key sequence are compared in a case-insensitive manner, so that
+"bob" and "Bob" are considered the same. It would therefore be an
+error to specify a delectus with a key "bob" and also a key "Bob".
 
-A program that implements the Delectus Data Model is free to represent
-the XGValues value types in any way that is efficient and
-convenient. The in-memory format assumes that some convenient mapping
-has been chosen in the host language, and does not specify the format
-of individual values beyond that.
+The astute observer might notice that, if every delectus has the
+"index" column, and if its contents are always the key "index"
+followed by the natural numbers, the one could omit the index column
+from a delectus representation and simply treat it as if it's always
+there. That would certainly be a viable strategy for implementing
+delectus representations.
 
-It does, however, specify the higher-level format of a delectus
-instance, which conforms to the following rules:
+III. Values
 
-  1. A delectus is a sequence
+The values that appear as the elements of each tuple in a delectus may
+be of the following types:
 
-  2. A delectus is allowed to be empty. Any empty delectus is
-     considered equivalent to any other.
+  Null
+  Boolean
+  Integer
+  Float
+  Bytevector
+  Sequence
+  Map
 
-  3. If it is not empty, a delectus must contain one or more
-     tuples. All tuples in a given delectus are the same length.
+These types were chosen consciously to provide a rich enough set of
+basic data types to represent most any kind of data conveniently,
+while also being easy to implement in many different common
+programming languages on many different platforms. The set of types
+allowed is intentionally similar to those allowed in JSON and
+MessagePack serialization formats.
 
-  4. The first tuple, called the "key sequence", must contain
-     strings. Each string may appear at most once. It is an error
-     for a Null value to appear in the key sequence.
+The Null value has two special meanings:
 
-  5. Each tuple after the first must have the same number of items
-     as the key sequence. The items in sequences after the key
-     sequence may be any valid value.
+  1. Used as an element of a tuple, it repreents the absence of a
+     value. If you interpret a delectus as a map, or as a sequence of
+     maps (see the next section), then a Null value indicates that the
+     key represented by the column is not present in the map.
 
-  6. Each sequence in a delectus is implicitly identified by an
-    "index". The index of the key sequence is zero. A pair of values,
-    (key, index), is sufficient to uniquely identify any value in the
-    delectus.
+  2. Used as a delectus, Null represents the empty delectus, a
+     delectus with no elements. Any empty sequence [] is also
+     considered equivalent to Null in this role. The empty sequence is
+     still considered to have one column: the "index" column, and one
+     row, row zero (the row that contains the key sequence). 
 
-  7. The map interpretation: you can look at a delectus as a sequence
-     of maps with common keys. For example, the maps
+IV. Interpretations
 
-       { "name": "Fred", "town": "Bedrock" }
+A delectus is an extremely flexible means of organizing data. It's
+rich enough to represent sequences or key/value maps in several
+different ways:
 
-     and
+  - a delectus with only two keys, "index" and one other, is a
+    convenient representation of a named list or other ordered
+    sequence.
 
-       { "name": "Barney", "town": "Bedrock" }
+  - a delectus with three keys--two besides "index"--makes a
+    convenient representation of a map from keys to values.
 
-     can be represented by the delectus:
+  - a delectus with M keys and N tuples makes a convenient
+    representation of a sequence of N map objects, where the maps all
+    share the same set of keys.
 
-       [("name", "town")
-        ("Fred", "Bedrock")
-        ("Barney", "Bedrock")]
+  - a delectus can conveniently be interpreted as a set of rows and
+    columns, like those in a relational database, and can be indexed
+    and otherwise manipulated in much the same way. Each tuple is a
+    row; each position in a tuple is a column. It's often convenient
+    to speak of a delectus as rows and columns, rather than as a
+    sequence of tuples.
 
-     The Null value signifies the absence of a value. If a value in
-     the delectus is Null, the standard interpretation is that the
-     corresponding key is absent in that particular map. Thus, if the
-     delectus is this:
+V. APIs
 
-       [("name", "town")
-        ("Fred", Null)
-        ("Barney", "Bedrock")]
+There are three Delectus APIs: the Data API, the Presentation API, and
+the Storage API.
 
-     then, by interpretation, the maps are these:
+The Data API concerns itself with creating and copying delecti, adding
+and removing rows and columns, and fetching and updating values stored
+in them.
 
-       { "name": "Fred" }
-       { "name": "Barney", "town": "Bedrock" }
+The Presentation API concerns itself with manipulating views of
+delecti: with sorting and filtering them. The Presentation API also
+provides operations for marking or columns deleted, but it's the Data
+API that actually performs deletions. 
 
-  8. Row/column interpretation: alternatively, you can interpret a
-     delectus as a table consisting of rows and columns. The rows are
-     the tuples contained by the delectus; the columns correspond
-     to indexes into the rows. The key at a given index in the key
-     sequence is the label of the corresponding column.
+We separate marking deletions from actually carrying them out both
+because it makes deletion operations safer and more efficient, and
+because it's convenient for users to be able to put rows and columns
+"in the trash" without actually losing the data. Separating marking
+from execution is analogous to the distinction between putting
+something in the trash, and emptying the trash.
 
-C. Data Engine Operations
+The Storage API handles writing delectus data to nonvolatile storage
+and reading it back again, and, more generally, with serialization and
+deserialization of delectus data.
 
-Data Engine operations include:
+The protocols are described in pseudocode that is designed to provie
+enough information to guide implementation in any common programming language.
 
-  make-delectus ([s]*) => delectus
-    Returns a new delectus whose items are the sequences s*
+  A. The Data API
 
-  add-row (delectus, [keys, values]) => delectus'
-    Returns an updated delectus that is the same as the input
-    delectus, plus any new keys in the same order that they appear in
-    the input, plus a new row containing the input values.
+   make-delectus :: () => Delectus
+   make-delectus :: ([label :: String]) => Delectus
+   make-delectus :: ([label :: String], [tuple :: [Value]]) => Delectus
 
-    In order to preserve the invariants of the delectus, the
-    sequence of values provided as input may be altered before
-    being added to the delectus. For example, if some of the
-    keys in the input are already present in the delectus, then
-    the values supplied for them will appear in the order 
-    specified by the delectus, not in the order specified by
-    the inputs. Additionally, if the delectus contains keys
-    not present in the inputs, then the row that represents 
-    the inputs will contain Null values in the columns that
-    were not present in the input.
+     Returns a newly-constructed delectus. If no arguments are
+     supplied, the new delectus is the empty delectus, or Null.
 
-  add-column (delectus, label) => delectus'
-     Returns an updated delectus that is the same as the input
-
-  value-at (delectus, label, index) => value
-
-  put-value-at (delectus, label, index, value) => value
-
-II. The Storage Engine
-
-The Storage Engine serializes and deserializes values and delecti for
-storage and transmission. Delectus data are stored in a SQLite file.
+     If a list of strings is supplied, then they become the key
+     strings in the key sequence, but no additional tuples are
+     included in the new delectus.
+     
+     If both a list of strings and a list of tuples is supplied, then
+     the key sequence of the new delectus has the input strings as
+     keys (plus, of course, the "index" key), and has tuples as given
+     in the list of tuples. All values in the tuples must be valid
+     delectus values, and all tuples must be the same length as the
+     key sequence.
 
 
-III. The Presentation Engine
 
-The Presentation Engine provides an API for retrieving "views" of a
-delectus. A view is conceptually identical to a delectus, but
-represents a subset of the data stored in the delectus. The
-presentation API duplicates the API of the Data Engine, but adds
-operations for restricting or altering the view. 
+  B. The Presentation API
 
-Presentation operations include sorting by column, marking a row or
-column deleted, and filtering rows according to string or other value
-matches.
+  C. The Storage API
+
+VI. Serialization Format
+
+Delectus specifies the byte-level serialization format for delectus
+data in order to make it possible to implement fast binary
+serialization of delectus data that works identically across languages
+and platforms, using the same format. The objective is that any
+implementation of the Delectus protocols should work identically on a
+given delectus file, regardless of what implementation wrote it.
