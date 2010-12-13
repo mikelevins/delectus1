@@ -24,12 +24,13 @@
           ;; read bytes from the file
           (do ((byte-count (read-subu8vector data-buffer 0 buffer-length in)
                            (read-subu8vector data-buffer 0 buffer-length in)))
-              ((< byte-count buffer-length) (set! chunks (append chunks (list (subu8vector data-buffer 0 byte-count)))))
-            (set! chunks (append chunks (list (subu8vector data-buffer 0 byte-count))))))
+              ((< byte-count buffer-length)
+               (set! chunks (cons (subu8vector data-buffer 0 byte-count) chunks)))
+            (set! chunks (cons (subu8vector data-buffer 0 byte-count) chunks))))
         (lambda () (close-input-port in)))
     ;; convert the bytes to a scheme object and return it
     (if (not (null? chunks))
-        (apply u8vector-append chunks)
+        (apply u8vector-append (reverse chunks))
         #f)))
 
 ;;; ======================================================================
@@ -137,8 +138,7 @@
            (vector-ref r 2)                  ; deleted?
            )) 
         (vector-ref data 6))
-   (vector-ref data 7)        ; notes
-   ))
+   (vector-ref data 7)))
 
 (define (io:from-format-beta-2 data) (store.deserialize data))
 
@@ -185,49 +185,4 @@
         (lambda () (close-output-port out)))
     dest-path))
 
-;;; ======================================================================
-;;; CSV I/O
-;;; ======================================================================
-
-(define (read-csv-file path #!optional (headers-in-first-line? #t))
-  (let* ((data (csv:read-csv-file path)))
-    (if data
-        (let ((labels (csv:get-csv-column-labels data headers-in-first-line?)))
-          (if (contains-duplicates? labels string-ci=?)
-              (begin
-                (report-error context: (format "(import-csv-file \"~a\")" path)
-                              error: #f
-                              message: (str (format "Error importing the CSV file '~a'; " path)
-                                            (format " unable to convert CSV data.")))
-                #f)
-              (let* ((make-row-fields (lambda (row-strings) (map make-field row-strings)))
-                     (row-data (csv:get-csv-column-entries data headers-in-first-line?))
-                     (field-lists (map make-row-fields row-data))
-                     (rows (map (lambda (field-list) (make-row field-list #f)) 
-                                field-lists))
-                     (s (make-store (current-store-format) '() #f '() '() #f #f rows ""))
-                     (cols (map (lambda (l) (make-column l #f)) labels)))
-                (store.set-columns! s cols)
-                s)))
-        #f)))
-
-(define (write-csv-file store dest-path)
-  (let* ((col-line (apply (partial string-join ",")
-                          (map (lambda (c) (format "\"~a\"" (column-label c)))
-                               (store-columns store))))
-         (row-lines (map (lambda (r) 
-                           (apply (partial string-join  ",")
-                                  (map (lambda (f) (format "\"~a\"" (field-value f)))
-                                       (row-fields r)))) 
-                         (store-rows store)))
-         (out-lines (cons col-line row-lines))
-         (data (apply (partial string-join (format "~%")) out-lines))
-         (doc-bytes (object->u8vector data))
-         (byte-count (u8vector-length doc-bytes))
-         (out #f))
-    (dynamic-wind
-        (lambda () (set! out (open-output-file dest-path)))
-        (lambda () (write-subu8vector doc-bytes 0 byte-count out))
-        (lambda () (close-output-port out)))
-    dest-path))
 

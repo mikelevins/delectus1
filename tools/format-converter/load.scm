@@ -10,11 +10,11 @@
 
 ;;; modify if the Delectus sources are at another pathname
 
-(define $root "/Users/mikel/Projects/delectus/libdelectus/gambit/scm/")
+(define $root "/Users/mikel/Projects/delectus/tools/format-converter/")
 
 (define $load-files
-  '("store.scm"
-    "store-io.scm"))
+  '("src/read-binary.scm"
+    "src/write-binary.scm"))
 
 ;;; load Scheme files
 ;;; ----------------------------------------------------------------------
