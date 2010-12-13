@@ -22,7 +22,10 @@
 ;;; ----------------------------------------------------------------------
 
 (define $engine-load-files
-  '("delectus.scm"))
+  '("lists.scm"
+    "sort.scm"
+    "delectus.scm"
+    "csv.scm"))
 
 (define (load-engine)
   (for-each (lambda (f)
