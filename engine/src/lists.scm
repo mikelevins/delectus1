@@ -30,3 +30,19 @@
             (error "count out of range" n)
             (loop (+ 1 i)
                   (cdr in))))))
+
+(define (every? pred ls)
+  (if (null? ls)
+      #t
+      (if (pred (car ls))
+          (if (null? (cdr ls))
+              #t
+              (every? pred (cdr ls)))
+          #f)))
+
+(define (repeat n val)
+  (let loop ((i n)
+             (result '()))
+    (if (<= i 0)
+        result
+        (loop (- i 1)(cons val result)))))
