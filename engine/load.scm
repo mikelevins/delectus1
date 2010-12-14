@@ -25,6 +25,7 @@
   '("src/lists.scm"
     "src/vectors.scm"
     "src/sort.scm"
+    "src/roster.scm"
     "src/delectus.scm"
     "src/csv.scm"))
 
