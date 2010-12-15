@@ -23,6 +23,8 @@
   (let ((elt-count (vector-length vec)))
     (let loop ((i 0))
       (if (< i elt-count)
-          (fn (vector-ref vec i))
+          (begin
+            (fn (vector-ref vec i))
+            (loop (+ i 1)))
           vec))))
 

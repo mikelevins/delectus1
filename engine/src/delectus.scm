@@ -76,9 +76,10 @@
 
 (define-type delectus
   constructor: %make-delectus
-  (columns columns) 
+  (format format) 
+  (columns columns set-columns!) 
   (column-indexes column-indexes)
-  (rows rows))
+  (rows rows set-rows!))
 
 (define (parse-columns cols)
   (vector-with (map ensure-column cols)))
@@ -97,15 +98,56 @@
           (begin
             (table-set! col-indexes (column-label (vector-ref cols i)) i)
             (loop (+ i 1)))))
-    (%make-delectus cols col-indexes rows)))
+    (%make-delectus (current-store-format) cols col-indexes rows)))
 
 ;;; (define $d (make-delectus columns: '("name" "color") rows: '(("fred" "orange")("barney" "brown")("wilma" "white"))))
 ;;; $d
 
 (define (row-at del row-index)
-  (vector-ref (delectus-rows del) row-index))
+  (vector-ref (rows del) row-index))
 
 (define (column-index del label)
   (table-ref (column-indexes del) label #f))
 
+(define (count-columns del)
+  (vector-length (columns del)))
+
+(define (count-rows del)
+  (vector-length (rows del)))
+
+(define (value-at del label row-index)
+  (row-element-at (row-at del row-index)
+                  (column-index del label)))
+
+(define (put-value-at! del label row-index val)
+  (row-put-element-at! (row-at del row-index)
+                       (column-index del label)
+                       val))
+
+;;; (value-at $d "color" 0)
+;;; (put-value-at! $d "color" 0 "lurid")
+
+(define (add-row! del)
+  (set-rows! del
+             (vector-append (rows del)
+                            (vector (make-row (repeat (count-columns del) #f))))))
+
+;;; (count-rows $d)
+;;; (rows $d)
+;;; (add-row! $d)
+;;; (row-elements (row-at $d 3))
+;;; (column-index $d "frob")
+
+(define (add-column! del label)
+  (if (column-index del label)
+      (error "column exists" label)
+      (begin
+        (table-set! (column-indexes del) label (vector-length (columns del)))
+        (set-columns! del (vector-append (columns del)(vector (ensure-column label))))
+        (vector-for-each (lambda (row)(row-add! row #f))
+                         (rows del))
+        del)))
+
+;;; (row-elements (row-at $d 2))
+;;; (add-column! $d "shape")
 ;;; (column-index $d "shape")
