@@ -24,7 +24,6 @@
              ((char=? next-char quotech)
               (begin
                 (set! quote-pending? (not quote-pending?))
-                (set! acc (string-append acc (string quotech)))
                 (loop (+ 1 i))))
              ((char=? next-char sep)
               (if quote-pending?
@@ -40,12 +39,20 @@
                 (set! acc (string-append acc (string next-char)))
                 (loop (+ 1 i))))))))))
 
-(define (read-csv-file path)
+(define (read-csv-lines path)
   (call-with-input-file path
-    (lambda (in)
-      (map (lambda (ln)(parse-csv-line ln #\, #\"))
-       (read-all in read-line)))))
+    (lambda (in)(read-all in read-line))))
 
-;;; (time (length (read-csv-file "/Users/mikel/Projects/delectus/test-data/zipcode.csv")))
-;;; (parse-csv-line "Fred, Barney, \"Wilma, formerly Gravel\"" #\, #\")
+(define (read-csv-file path)
+  (map (lambda (ln)(parse-csv-line ln #\, #\"))
+       (read-csv-lines path)))
 
+
+;;; (define $lines #f)
+;;; (time (set! $lines (read-csv-file "/Users/mikel/Projects/delectus/test-data/zipcode.csv")))
+;;; (length $lines)
+;;; (define $d #f)
+;;; (time (set! $d (make-delectus columns: (car $lines) rows: (cdr $lines))))
+;;; (columns $d)
+;;; (column-index $d "dst")
+;;; (row-elements (vector-ref (rows $d) 100))

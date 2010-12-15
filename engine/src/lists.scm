@@ -8,6 +8,11 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define (identity x) x)
+
+(define (copy-list ls)
+  (map identity ls))
+
 (define (take n ls)
   (let loop ((i 0)
              (in ls)
