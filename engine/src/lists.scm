@@ -46,3 +46,22 @@
     (if (<= i 0)
         result
         (loop (- i 1)(cons val result)))))
+
+(define (range m n)
+  (let loop ((i m)
+             (result '()))
+    (if (>= i n)
+        (reverse result)
+        (loop (+ i 1)(cons i result)))))
+
+(define (zip ls1 ls2)
+  (let loop ((l1 ls1)
+             (l2 ls2)
+             (result '()))
+    (if (or (null? l1)
+            (null? l2))
+        (reverse result)
+        (loop (cdr l1)(cdr l2)
+              (cons (cons (car l1)
+                          (car l2))
+                    result)))))

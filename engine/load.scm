@@ -22,12 +22,13 @@
 ;;; ----------------------------------------------------------------------
 
 (define $engine-load-files
-  '("src/lists.scm"
+  '("lib/wt-tree.scm"
+    "src/lists.scm"
     "src/vectors.scm"
     "src/sort.scm"
-    "src/roster.scm"
-    "src/delectus.scm"
-    "src/csv.scm"))
+    ;;"src/delectus.scm"
+    ;;"src/csv.scm"
+    ))
 
 (define (load-engine)
   (for-each (lambda (f)
