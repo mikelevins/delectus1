@@ -25,8 +25,9 @@
   '("src/lists.scm"
     "src/vectors.scm"
     "src/sort.scm"
-    "src/versions.scm"
     "src/delectus.scm"
+    "src/store.scm"
+    "src/versions.scm"
     "src/csv.scm"))
 
 (define (load-engine)

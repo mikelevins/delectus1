@@ -75,6 +75,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define-type delectus
+  id: 7B8A84C9-C07E-493E-8506-BD3F85E4979A
   constructor: %make-delectus
   (format format) 
   (columns columns set-columns!) 
