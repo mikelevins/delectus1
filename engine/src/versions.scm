@@ -19,6 +19,7 @@
 (define $delectus-format-2.0 4)
 
 (define (current-store-format) $delectus-format-2.0)
+(define (serialized-store-format s)(vector-ref s 1))
 
 ;;; ----------------------------------------------------------------------
 ;;; Delectus file formats
@@ -63,16 +64,89 @@
 (define $data-converters (make-table))
 
 (define (io:from-format-alpha-1 data)
-  #f)
+  (let* ((cols-data (vector-ref data 1))
+         (cols (vector-with (map (lambda (cd)(make-column (vector-ref cd 2)
+                                                          (vector-ref cd 1)))
+                                 cols-data)))
+         (col-count (length cols))
+         (col-indexes (make-table test: string-ci=?))
+         (rows-data (vector-ref data 2))
+         (rws (vector-with (map (lambda (rd)(make-row (vector-ref rd 2)
+                                                      (vector-ref rd 1)))
+                                rows-data))))
+    (let loop ((i 0))
+      (if (< i col-count)
+          (begin
+            (table-set! col-indexes (column-label (vector-ref cols i)) i)
+            (loop (+ i 1)))))
+    (%make-delectus (current-store-format)
+                    cols
+                    col-indexes
+                    rows)))
 
 (define (io:from-format-alpha-2 data)
-  #f)
+  (let* ((cols-data (vector-ref data 2))
+         (cols (vector-with (map (lambda (cd)(make-column (vector-ref cd 1)
+                                                          (vector-ref cd 2)))
+                                 cols-data)))
+         (col-count (length cols))
+         (col-indexes (make-table test: string-ci=?))
+         (rows-data (vector-ref data 6))
+         (rws (vector-with (map (lambda (rd)(make-row (vector-ref rd 1)
+                                                      (vector-ref rd 2)))
+                                rows-data))))
+    (let loop ((i 0))
+      (if (< i col-count)
+          (begin
+            (table-set! col-indexes (column-label (vector-ref cols i)) i)
+            (loop (+ i 1)))))
+    (%make-delectus (current-store-format)
+                    cols
+                    col-indexes
+                    rows)))
 
 (define (io:from-format-alpha-4 data) 
-  #f)
+  (let* ((cols-data (vector-ref data 2))
+         (cols (vector-with (map (lambda (cd)(make-column (vector-ref cd 1)
+                                                          (vector-ref cd 3)))
+                                 cols-data)))
+         (col-count (length cols))
+         (col-indexes (make-table test: string-ci=?))
+         (rows-data (vector-ref data 6))
+         (rws (vector-with (map (lambda (rd)(make-row (vector-ref rd 1)
+                                                      (vector-ref rd 2)))
+                                rows-data))))
+    (let loop ((i 0))
+      (if (< i col-count)
+          (begin
+            (table-set! col-indexes (column-label (vector-ref cols i)) i)
+            (loop (+ i 1)))))
+    (%make-delectus (current-store-format)
+                    cols
+                    col-indexes
+                    rows)))
 
 (define (io:from-format-beta-2 data)
-  #f)
+  (let* ((cols-data (vector-ref data 2))
+         (cols (vector-with (map (lambda (cd)(make-column (vector-ref cd 1)
+                                                          (vector-ref cd 2)))
+                                 cols-data)))
+         (col-count (vector-length cols))
+         (col-indexes (make-table test: string-ci=?))
+         (rows-data (vector-ref data 8))
+         (rws (vector-with (map (lambda (rd)(make-row (map (lambda (f)(vector-ref f 1))
+                                                           (vector-ref rd 1))
+                                                      (vector-ref rd 2)))
+                                rows-data))))
+    (let loop ((i 0))
+      (if (< i col-count)
+          (begin
+            (table-set! col-indexes (column-label (vector-ref cols i)) i)
+            (loop (+ i 1)))))
+    (%make-delectus (current-store-format)
+                    cols
+                    col-indexes
+                    rws)))
 
 (define (io:from-format-2.0 data)
   data)
@@ -83,3 +157,5 @@
 (table-set! $data-converters $delectus-format-beta-2 io:from-format-beta-2)
 (table-set! $data-converters $delectus-format-2.0 io:from-format-2.0)
 
+;;; (define $movies #f)
+;;; (time (set! $movies (read-delectus-file "/Users/mikel/Projects/delectus/test-data/junior-movies.delectus")))
