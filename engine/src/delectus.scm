@@ -13,6 +13,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define-type column
+  id: C99AFCA2-40FC-4F5A-9D85-B1F083A2A55B
   constructor: %make-column
   (label read-only:)
   (deleted? unprintable:))
@@ -37,6 +38,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define-type row
+  id: CEECF465-735A-4AC2-A51B-03C61FB5E49D
   constructor: %make-row
   (elements unprintable:)
   (deleted? unprintable:))

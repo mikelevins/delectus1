@@ -159,3 +159,6 @@
 
 ;;; (define $movies #f)
 ;;; (time (set! $movies (read-delectus-file "/Users/mikel/Projects/delectus/test-data/junior-movies.delectus")))
+;;; (time (write-delectus-file $movies "/Users/mikel/Desktop/junior-movies.delectus"))
+;;; (define $movies2 #f)
+;;; (time (set! $movies2 (read-delectus-file "/Users/mikel/Desktop/junior-movies.delectus")))
