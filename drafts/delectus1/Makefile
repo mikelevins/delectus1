@@ -19,7 +19,7 @@ OBJC_DEMO_SRCS= objc/DelectusAppDemoDelegate.m objc/NSString+CString.m objc/Dele
 
 EXECUTABLE=${APPNAME}.out
 
-CFLAGS= -O2 -x objective-c -I/Library/Gambit-C/current/include -L/Library/Gambit-C/current/lib -framework Cocoa -arch ppc -arch i386
+CFLAGS= -O2 -x objective-c -I/Library/Gambit-C/current/include -L/Library/Gambit-C/current/lib -framework Cocoa -arch i386
 CLIBS= -lgambc
 
 all: bundle
