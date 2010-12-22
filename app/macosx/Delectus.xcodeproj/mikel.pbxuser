@@ -68,6 +68,8 @@
 		executableUserSymbolLevel = 0;
 		libgmallocEnabled = 0;
 		name = Delectus;
+		savedGlobals = {
+		};
 		showTypeColumn = 0;
 		sourceDirectories = (
 		);

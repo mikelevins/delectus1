@@ -294,7 +294,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>566 519 788 504 0 0 1920 1178 </string>
+						<string>13 666 788 504 0 0 1920 1178 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -331,7 +331,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {580, 269}}</string>
 								<key>RubberWindowFrame</key>
-								<string>566 519 788 504 0 0 1920 1178 </string>
+								<string>13 666 788 504 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -351,7 +351,7 @@
 								<key>Frame</key>
 								<string>{{0, 274}, {580, 189}}</string>
 								<key>RubberWindowFrame</key>
-								<string>566 519 788 504 0 0 1920 1178 </string>
+								<string>13 666 788 504 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -515,7 +515,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>979D1CAB12C0E3C4007F0251</string>
 		<string>979D1CAC12C0E3C4007F0251</string>
 		<string>979D1CAD12C0E3C4007F0251</string>
 		<string>1C78EAAD065D492600B07095</string>
@@ -524,7 +523,7 @@
 		<string>/Users/mikel/Projects/delectus/app/macosx/Delectus.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>566 519 788 504 0 0 1920 1178 </string>
+	<string>13 666 788 504 0 0 1920 1178 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
