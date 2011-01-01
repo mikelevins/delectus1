@@ -59,7 +59,7 @@ Delectus API
 
   Summary of calls:
 
-     (int) version ()
+       (int) version ()
   (delectus) make_delectus ()
        (err) add_row (delectus del)
        (err) add_column (delectus del, char* label)
