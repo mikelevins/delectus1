@@ -23,6 +23,10 @@
 
 (define $load-files
   '("lib/uuid.scm"
+    "src/lists.scm"
+    "src/vectors.scm"
+    "src/functions.scm"
+    "src/delectus.scm"
     "src/api.scm"))
 
 ;;; load Scheme files
