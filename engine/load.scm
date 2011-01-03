@@ -26,8 +26,10 @@
     "src/lists.scm"
     "src/vectors.scm"
     "src/functions.scm"
-    "src/delectus.scm"
-    "src/api.scm"))
+    "src/sequences.scm"
+    "src/maps.scm"
+    "src/delectus-tables.scm"
+    ))
 
 ;;; load Scheme files
 ;;; ----------------------------------------------------------------------

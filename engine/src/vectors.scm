@@ -34,3 +34,12 @@
               i
               (loop (+ 1 i)))
           #f))))
+
+(define (vector-contains? pred vec val)
+  (let ((eltcount (vector-length vec)))
+    (let loop ((i 0))
+      (if (< i eltcount)
+          (if (pred (vector-ref vec i) val)
+              #t
+              (loop (+ 1 i)))
+          #f))))

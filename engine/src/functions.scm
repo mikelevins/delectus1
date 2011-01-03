@@ -15,3 +15,8 @@
 (define (flip fn)
   (lambda (x y)
     (fn y x)))
+
+(define (complement fn)
+  (lambda args
+    (not (apply fn args))))
+
