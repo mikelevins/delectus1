@@ -28,6 +28,7 @@
     "src/functions.scm"
     "src/sequences.scm"
     "src/maps.scm"
+    "src/delectus-values.scm"
     "src/delectus-tables.scm"
     ))
 

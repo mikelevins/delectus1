@@ -13,8 +13,8 @@
    ;; null
    ((null? v) v)
    ;; boolean
-   ((eql? v #f) v)
-   ((eql? v #t) v)
+   ((eqv? v #f) v)
+   ((eqv? v #t) v)
    ;; integer
    ((integer? v) v)
    ;; float

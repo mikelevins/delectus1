@@ -85,8 +85,9 @@
   (vector-ref (vector-ref (table:rows del) row-index) column-index))
 
 (define (table:put-value-at! del column-index row-index val)
-  (vector-set! (vector-ref (table:rows del) row-index) column-index val)
-  del)
+  (let ((val (delectus-value val)))
+    (vector-set! (vector-ref (table:rows del) row-index) column-index val)
+    del))
 
 (define (table:column-at del column-index)
   (let ((row-count (table:count-rows del)))
