@@ -26,7 +26,7 @@
    (map proc
         (vector->list vec))))
 
-(define (vector-position vec val pred)
+(define (vector-position pred vec val)
   (let ((eltcount (vector-length vec)))
     (let loop ((i 0))
       (if (< i eltcount)

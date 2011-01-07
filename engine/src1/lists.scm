@@ -16,6 +16,15 @@
         (loop (- counter 1)
               (cons val result)))))
 
+(define (range m n #!key (by 1))
+  (let ((step-fn (if (<= m n) + -))
+        (test-fn (if (<= m n) >= <=)))
+    (let loop ((k m)
+               (result '()))
+      (if (test-fn k n)
+          (reverse result)
+          (loop (step-fn k by)(cons k result))))))
+
 (define (copy-tree x)
   (if (list? x)
       (map copy-tree x)

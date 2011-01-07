@@ -23,6 +23,7 @@
 
 (define $load-files
   '("lib/uuid.scm"
+    "lib/Sort.scm"
     "src/lists.scm"
     "src/vectors.scm"
     "src/functions.scm"
@@ -30,6 +31,12 @@
     "src/maps.scm"
     "src/delectus-values.scm"
     "src/delectus-tables.scm"
+    "src/delectus-views.scm"
+    "src/filter.scm"
+    "src/sort.scm"
+    "src/delectus-documents.scm"
+    "src/document-registry.scm"
+    "src/file-formats.scm"
     ))
 
 ;;; load Scheme files

@@ -20,3 +20,4 @@
   (lambda args
     (not (apply fn args))))
 
+(define (always v)(lambda args v))

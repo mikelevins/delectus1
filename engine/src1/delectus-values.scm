@@ -13,8 +13,7 @@
    ;; null
    ((null? v) v)
    ;; boolean
-   ((eqv? v #f) v)
-   ((eqv? v #t) v)
+   ((boolean? v) v)
    ;; integer
    ((integer? v) v)
    ;; float
@@ -26,3 +25,12 @@
    ;; map
    ((map:map? v) v)
    (else (error "Not a valid delectus value" v))))
+
+;;; ----------------------------------------------------------------------
+;;; special values
+;;; ----------------------------------------------------------------------
+
+(define (nothing) '())
+(define (nothing? x) (null? x))
+(define (something? x) (not (nothing? x)))
+

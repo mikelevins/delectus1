@@ -1,46 +1,48 @@
-#define delectus unsigned long
-#define err int
+#define SORT_NONE         0
+#define SORT_DESCENDING   1
+#define SORT_ASCENDING    2
+#define SORT_NUMERIC      3
+#define SORT_ALPHABETICAL 4
 
-#define NONE         0
-#define DESCENDING   1
-#define ASCENDING    2
-#define NUMERIC      3
-#define ALPHABETICAL 4
+#define VAL_NO 0
+#define VAL_YES 1
+#define VAL_NO_VALUE 0L
 
-#define NO_VALUE 0L
-#define NO_DELECTUS 0L
+#define OBJ_NO_OID 0L
 
-#define CANT_CREATE        (-1) /* unable to create delectus. */
-#define CANT_ADD_ROW       (-2) /* unable to add row */
-#define LABEL_IN_USE       (-3) /* column label is already in use */
-#define NO_SUCH_COLUMN     (-4) /* no such column */
-#define INDEX_OUT_OF_RANGE (-5) /* row-index out of range */
-#define CANT_UPDATE        (-6) /* unable to update a delectus */
-#define CANT_WRITE         (-7) /* unable to write to the supplied pathname */
-#define CANT_READ          (-8) /* unable to read from the supplied pathname */
-#define BAD_FORMAT         (-9) /* can't interpret supplied data */
+#define ERR_NO_ERROR            (0)
+#define ERR_UNKNOWN_ERROR      (-1)
+#define ERR_CANT_CREATE        (-2)
+#define ERR_CANT_ADD_ROW       (-3)
+#define ERR_CANT_ADD_COLUMN    (-4)
+#define ERR_NO_SUCH_COLUMN     (-5)
+#define ERR_INDEX_OUT_OF_RANGE (-6)
+#define ERR_CANT_UPDATE        (-7)
+#define ERR_CANT_WRITE         (-8)
+#define ERR_CANT_READ          (-9)
+#define ERR_BAD_FORMAT         (-10)
 
-extern (int) version ();
-extern (delectus) make_delectus ();
-extern (err) add_row (delectus del);
-extern (err) add_column (delectus del, char* label);
-extern (char*) value_at (delectus del, char* column_label, int row_index);
-extern (err) put_value_at (delectus del, char* column_label, int row-index, char* value);
-extern (err) mark_column_deleted (delectus del, char* column_label, bool deleted);
-extern (err) mark_row_deleted (delectus del, int row_index, bool deleted);
-extern (bool) show_deleted (delectus del);
-extern (err) set_show_deleted (delectus del, bool show);
-extern (err) compact_delectus (delectus del);
-extern (char*) sort_column (delectus del);
-extern (err) set_sort_column (delectus del, char* column_label);
-extern (int) sort_order (delectus del);
-extern (err) set_sort_order (delectus del, int order);
-extern (int) sort_type (delectus del);
-extern (err) set_sort_type (delectus del, int type);
-extern (char*) filter_text (delectus del);
-extern (err) set_filter_text (delectus del, char* text);
-extern (err) write_delectus (delectus del, char* path);
-extern (delectus) read_delectus (char* path);
-extern (err) write_delectus_csv (delectus del, char* path);
-extern (delectus) read_delectus_csv (char* path);
+extern int version ();
+extern unsigned long make_table ();
+extern int add_row (unsigned long oid);
+extern int add_column (unsigned long oid, char* label);
+extern char* value_at (unsigned long oid, char* column_label, int row_index);
+extern int put_value_at (unsigned long oid, char* column_label, int row_index, char* value);
+extern int mark_column_deleted (unsigned long oid, char* column_label, int deleted);
+extern int mark_row_deleted (unsigned long oid, int row_index, int deleted);
+extern int show_deleted (unsigned long oid);
+extern int set_show_deleted (unsigned long oid, int show);
+extern int compact_table (unsigned long oid);
+extern char* sort_column (unsigned long oid);
+extern int set_sort_column (unsigned long oid, char* column_label);
+extern int sort_order (unsigned long oid);
+extern int set_sort_order (unsigned long oid, int order);
+extern int sort_type (unsigned long oid);
+extern int set_sort_type (unsigned long oid, int type);
+extern char* filter_text (unsigned long oid);
+extern int set_filter_text (unsigned long oid, char* text);
+extern int write_delectus (unsigned long oid, char* path);
+extern unsigned long read_delectus (char* path);
+extern int write_delectus_csv (unsigned long oid, char* path);
+extern unsigned long read_delectus_csv (char* path);
 
