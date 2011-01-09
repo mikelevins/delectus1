@@ -9,54 +9,63 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; Constants
+;;; error handler
 ;;; ---------------------------------------------------------------------
 
-(define $SORT_NONE         0)
-(define $SORT_DESCENDING   1)
-(define $SORT_ASCENDING    2)
-(define $SORT_NUMERIC      3)
-(define $SORT_ALPHABETICAL 4)
-
-(define $VAL_NO #f)
-(define $VAL_YES #t)
-(define $VAL_NO_VALUE #f)
-
-(define $OBJ_NO_OID 0)
-
-(define $ERR_NO_ERROR            0)
-(define $ERR_UNKNOWN_ERROR      -1)
-(define $ERR_CANT_CREATE        -2)
-(define $ERR_CANT_ADD_ROW       -3)
-(define $ERR_CANT_ADD_COLUMN    -4)
-(define $ERR_NO_SUCH_COLUMN     -5)
-(define $ERR_INDEX_OUT_OF_RANGE -6)
-(define $ERR_CANT_UPDATE        -7)
-(define $ERR_CANT_WRITE         -8)
-(define $ERR_CANT_READ          -9)
-(define $ERR_BAD_FORMAT         -10)
+(define (if-error errval thunk)
+  (let ((handler (lambda (err) errval)))
+    (with-exception-catcher handler thunk)))
 
 ;;; ---------------------------------------------------------------------
 ;;; API functions
 ;;; ---------------------------------------------------------------------
 
 (define (api:version)
-  0)
+  (current-delectus-format-version))
 
 (define (api:make-table)
-  $VAL_NO_VALUE)
+  (let* ((tbl (table:make))
+         (id (register-document tbl)))
+    id))
 
-(define (api:add-row oid)
-  $ERR_NO_ERROR)
+(define (api:add-row! oid)
+  (if-error $ERR_CANT_ADD_ROW
+            (lambda ()
+              (let ((tbl (find-document oid)))
+                (if tbl
+                    (begin
+                      (table:add-row! tbl)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
-(define (api:add-column oid label)
-  $ERR_NO_ERROR)
+(define (api:add-column! oid label)
+  (if-error $ERR_CANT_ADD_COLUMN
+            (lambda ()
+              (let ((tbl (find-document oid)))
+                (if tbl
+                    (begin
+                      (table:add-column! tbl label)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:value-at oid column-label row-index)
-  $VAL_NO_VALUE)
+  (if-error $VAL_NO_VALUE
+            (lambda ()
+              (let* ((tbl (find-document oid))
+                     (val (table:value-at tbl (table:column-index tbl column-label) row-index)))
+                (if (and tbl val)
+                    val
+                    $VAL_NO_VALUE)))))
 
 (define (api:put-value-at! oid column-label row-index val)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((tbl (find-document oid)))
+                (if (and tbl val)
+                    (begin
+                      (table:put-value-at! tbl (table:column-index tbl column-label) row-index val)
+                      $ERR_NO_ERROR)
+                    $ERR_CANT_UPDATE)))))
 
 (define (api:mark-column-deleted! oid column-label deleted?)
   $ERR_NO_ERROR)

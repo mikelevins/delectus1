@@ -10,14 +10,6 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; error handler
-;;; ---------------------------------------------------------------------
-
-(define (if-error errval thunk)
-  (let ((handler (lambda (err) errval)))
-    (with-exception-catcher handler thunk)))
-
-;;; ---------------------------------------------------------------------
 ;;; C interface
 ;;; ---------------------------------------------------------------------
 
@@ -34,12 +26,12 @@
 (c-define (c:add_row oid) (unsigned-long)
           int "add_row" ""
           (if-error $ERR_CANT_ADD_ROW
-                    (lambda ()(api:add-row oid))))
+                    (lambda ()(api:add-row! oid))))
 
 (c-define (c:add_column oid label) (unsigned-long char-string)
           int "add_column" "" 
           (if-error $ERR_CANT_ADD_COLUMN
-                    (lambda ()(api:add-column oid label))))
+                    (lambda ()(api:add-column! oid label))))
 
 (c-define (c:value_at oid column-label row-index) (unsigned-long char-string int)
           char-string "value_at" "" 

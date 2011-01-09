@@ -21,6 +21,7 @@
 #define ERR_CANT_WRITE         (-8)
 #define ERR_CANT_READ          (-9)
 #define ERR_BAD_FORMAT         (-10)
+#define ERR_NO_DOCUMENT        (-11)
 
 extern int version ();
 extern unsigned long make_table ();
