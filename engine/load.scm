@@ -23,13 +23,18 @@
 
 (define $load-files
   '(
+    "lib/uuid.scm"
     "src/lists.scm"
-    "src/vectors.scm"
-    "src/sequences.scm"
     "src/maps.scm"
-    "src/delectus-constants.scm"
-    "src/delectus-values.scm"
-    "src/delectus-tables.scm"
+    "src/sequences.scm"
+    "src/vectors.scm"
+    "src/constants.scm"
+    "src/values.scm"
+    "src/tables.scm"
+    "src/sort-info.scm"
+    "src/filter-info.scm"
+    "src/presentations.scm"
+    "src/documents.scm"
     "src/document-registry.scm"
     "src/file-formats.scm"
     "src/api.scm"
@@ -44,4 +49,15 @@
                 (load p)))
             $load-files))
 
+
+;;; testing
+;;; ----------------------------------------------------------------------
+;;;
 ;;; (load-delectus)
+;;; (define $tbl (api:make-table))
+;;; (api:add-column! $tbl "Name")
+;;; (api:add-row! $tbl)
+;;; (api:value-at $tbl "Name" 0)
+;;; (api:put-value-at! $tbl "Name" 0 "Fred")
+;;; (api:value-at $tbl "Name" 0)
+;;; 
