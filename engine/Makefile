@@ -14,7 +14,8 @@ SCM_SOURCES = lib/uuid.scm\
 	      src/lists.scm src/maps.scm src/sequences.scm src/vectors.scm\
 	      src/constants.scm src/values.scm\
 	      src/tables.scm\
-	      src/sort-info.scm src/filter-info.scm src/presentations.scm\
+	      src/sort-info.scm src/filter-info.scm\
+	      src/metadata.scm\
               src/documents.scm src/document-registry.scm src/file-formats.scm\
               src/api.scm src/delectus.scm
 
@@ -22,7 +23,8 @@ C_SOURCES = lib/uuid.c\
 	    src/lists.c src/maps.c src/sequences.c src/vectors.c\
             src/constants.c src/values.c\
             src/tables.c\
-            src/sort-info.c src/filter-info.c src/presentations.c\
+            src/sort-info.c src/filter-info.c\
+	    src/metadata.c\
             src/documents.c src/document-registry.c src/file-formats.c\
             src/api.c src/delectus.c src/delectus_.c
 
@@ -30,7 +32,8 @@ C_OBJECTS = uuid.o\
 	    lists.o maps.o sequences.o vectors.o\
             constants.o values.o\
             tables.o\
-            sort-info.o filter-info.o presentations.o\
+            sort-info.o filter-info.o\
+	    metadata.o\
             documents.o document-registry.o file-formats.o\
             api.o delectus.o delectus_.o
 

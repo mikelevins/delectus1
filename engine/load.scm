@@ -33,7 +33,7 @@
     "src/tables.scm"
     "src/sort-info.scm"
     "src/filter-info.scm"
-    "src/presentations.scm"
+    "src/metadata.scm"
     "src/documents.scm"
     "src/document-registry.scm"
     "src/file-formats.scm"

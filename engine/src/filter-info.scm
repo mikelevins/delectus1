@@ -13,4 +13,5 @@
   constructor: %make-filter-info
   text)
 
-
+(define (make-filter-info tx)
+  (%make-filter-info tx))
