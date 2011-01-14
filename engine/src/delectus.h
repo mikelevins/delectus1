@@ -24,7 +24,7 @@
 #define ERR_NO_DOCUMENT        (-11)
 
 extern int version ();
-extern unsigned long make_table ();
+extern unsigned long make_document ();
 extern int add_row (unsigned long oid);
 extern int add_column (unsigned long oid, char* label);
 extern char* value_at (unsigned long oid, char* column_label, int row_index);

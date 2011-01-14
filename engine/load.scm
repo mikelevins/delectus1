@@ -54,10 +54,3 @@
 ;;; ----------------------------------------------------------------------
 ;;;
 ;;; (load-delectus)
-;;; (define $tbl (api:make-table))
-;;; (api:add-column! $tbl "Name")
-;;; (api:add-row! $tbl)
-;;; (api:value-at $tbl "Name" 0)
-;;; (api:put-value-at! $tbl "Name" 0 "Fred")
-;;; (api:value-at $tbl "Name" 0)
-;;; 

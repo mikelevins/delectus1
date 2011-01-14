@@ -64,10 +64,10 @@ int main (int argc, char **argv)
   printf("\n\n");
 
   /* 2. Make a new table */
-  printf("  2. Make a new table");
+  printf("  2. Make a new document");
   printf("\n");
-  unsigned long oid = make_table();
-  printf("  Test table id = %d",oid);
+  unsigned long oid = make_document();
+  printf("  Test document id = %d",oid);
   printf("\n\n");
 
   /* 3. Add a "Name" column */
@@ -106,6 +106,41 @@ int main (int argc, char **argv)
   char* val2 = value_at(oid, name_label, 0);
   printf("  value_at(oid, name_label, 0) returned '%s' (should be \"Fred\")",val2);
   /* TODO: need to deallocate the returned string here */
+  printf("\n\n");
+  
+  /* 8. Mark the "Name" column deleted */
+  printf("  8. Mark the \"Name\" column deleted");
+  printf("\n");
+  int mark_col_err1 = mark_column_deleted(oid, name_label, 1);
+  printf("  mark_column_deleted(oid, name_label, 1) returned %d",mark_col_err1);
+  printf("\n\n");
+  
+  /* 9. Mark the "Name" column undeleted */
+  printf("  9. Mark the \"Name\" column undeleted");
+  printf("\n");
+  int mark_col_err2 = mark_column_deleted(oid, name_label, 0);
+  printf("  mark_column_deleted(oid, name_label, 0) returned %d",mark_col_err2);
+  printf("\n\n");
+  
+  /* 10. Check whether to show deleted items */
+  printf("  10. Check whether to show deleted items");
+  printf("\n");
+  int whether_to_show1 = show_deleted(oid);
+  printf("  show_deleted(oid) returned %d (should be 0)",whether_to_show1);
+  printf("\n\n");
+  
+  /* 11. Set show deleted items to true */
+  printf("  11. Set show deleted items to true");
+  printf("\n");
+  int show_error = set_show_deleted(oid, 1);
+  printf("  set_show_deleted(oid, 1) returned %d",show_error);
+  printf("\n\n");
+  
+  /* 12. Check whether to show deleted items */
+  printf("  12. Check whether to show deleted items");
+  printf("\n");
+  int whether_to_show2 = show_deleted(oid);
+  printf("  show_deleted(oid) returned %d (should be 1)",whether_to_show2);
   printf("\n\n");
   
 /**********************************************************************/

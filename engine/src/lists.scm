@@ -66,3 +66,12 @@
         (if (contains? pred (cdr ls) (car ls))
             #t
             (loop (cdr ls))))))
+
+(define (remove item ls #!key (test eqv?))
+  (let loop ((ls ls)
+             (result '()))
+    (if (null? ls)
+        (reverse result)
+        (if (test item (car ls))
+            (loop (cdr ls) result)
+            (loop (cdr ls) (cons (car ls) result))))))

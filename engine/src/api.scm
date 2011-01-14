@@ -23,61 +23,85 @@
 (define (api:version)
   (current-delectus-format-version))
 
-(define (api:make-table)
-  (let* ((tbl (table:make))
-         (id (register-document tbl)))
-    id))
+(define (api:make-document)
+  (new-document))
 
 (define (api:add-row! oid)
   (if-error $ERR_CANT_ADD_ROW
             (lambda ()
-              (let ((tbl (find-document oid)))
-                (if tbl
+              (let ((doc (find-document oid)))
+                (if doc
                     (begin
-                      (table:add-row! tbl)
+                      (doc:add-row! doc)
                       $ERR_NO_ERROR)
                     $ERR_NO_DOCUMENT)))))
 
 (define (api:add-column! oid label)
   (if-error $ERR_CANT_ADD_COLUMN
             (lambda ()
-              (let ((tbl (find-document oid)))
-                (if tbl
+              (let ((doc (find-document oid)))
+                (if doc
                     (begin
-                      (table:add-column! tbl label)
+                      (doc:add-column! doc label)
                       $ERR_NO_ERROR)
                     $ERR_NO_DOCUMENT)))))
 
 (define (api:value-at oid column-label row-index)
   (if-error $VAL_NO_VALUE
             (lambda ()
-              (let* ((tbl (find-document oid))
-                     (val (table:value-at tbl (table:column-index tbl column-label) row-index)))
-                (if (and tbl val)
+              (let* ((doc (find-document oid))
+                     (val (doc:value-at doc (doc:column-index doc column-label) row-index)))
+                (if (and doc val)
                     val
                     $VAL_NO_VALUE)))))
 
 (define (api:put-value-at! oid column-label row-index val)
   (if-error $ERR_CANT_UPDATE
             (lambda ()
-              (let* ((tbl (find-document oid)))
-                (if (and tbl val)
+              (let* ((doc (find-document oid)))
+                (if (and doc val)
                     (begin
-                      (table:put-value-at! tbl (table:column-index tbl column-label) row-index val)
+                      (doc:put-value-at! doc (doc:column-index doc column-label) row-index val)
                       $ERR_NO_ERROR)
-                    $ERR_CANT_UPDATE)))))
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:mark-column-deleted! oid column-label deleted?)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:mark-column-deleted! doc column-label deleted?)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:mark-row-deleted! oid row-index deleted?)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:mark-row-deleted! doc row-index deleted?)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:show-deleted? oid)
-  $VAL_NO)
+  (if-error $VAL_NO
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if (and doc (doc:show-deleted? doc))
+                    $VAL_YES
+                    $VAL_NO)))))
 
 (define (api:set-show-deleted! oid deleted?)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:set-show-deleted! doc show?)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:compact-table! oid)
   $ERR_NO_ERROR)
@@ -119,3 +143,9 @@
   $OBJ_NO_OID)
 
 
+;;; (define $doc (new-document))
+;;; (api:add-column! $doc "Name")
+;;; (api:add-row! $doc)
+;;; (api:mark-column-deleted! $doc "Name" #t)
+;;; (define $d (find-document $doc))
+;;; (doc:set-meta! $d (cons "Name" (doc:get-meta $d )))

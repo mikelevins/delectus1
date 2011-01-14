@@ -20,8 +20,8 @@
         (lambda () document-id)))
 
 (define registry:no-document 0)
-(define registry:document->id-table (make-table))
-(define registry:id->document-table (make-table))
+(define registry:document->id-table (make-table test: eqv?))
+(define registry:id->document-table (make-table test: eqv?))
 
 (define (find-document id)
   (table-ref registry:id->document-table id #f))

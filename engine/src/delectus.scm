@@ -18,10 +18,10 @@
           (if-error $ERR_UNKNOWN_ERROR
                     (lambda ()(api:version))))
 
-(c-define (c:make_table) ()
-          unsigned-long "make_table" "" 
+(c-define (c:make_document) ()
+          unsigned-long "make_document" "" 
           (if-error $OBJ_NO_OID
-                    (lambda ()(api:make-table))))
+                    (lambda ()(api:make-document))))
 
 (c-define (c:add_row oid) (unsigned-long)
           int "add_row" ""

@@ -16,5 +16,27 @@
 (define (parse-metadata meta)
   (%make-metadata (plist->alist meta)))
 
+(define (meta:get m key #!key (default #f))
+  (let ((entry (assq key (delectus-metadata-entries m))))
+    (if entry
+        (cdr entry)
+        default)))
 
+(define (meta:set! m key val)
+  (let ((entry (assq key (delectus-metadata-entries m))))
+    (if entry
+        (begin
+          (set-cdr! entry val)
+          val)
+        (begin
+          (delectus-metadata-entries-set! m (cons (cons key val)
+                                                  (delectus-metadata-entries m)))
+          val))))
+
+;;; (define $m (parse-metadata '(name: "Fred" size: large)))
+;;; (meta:get $m name:)
+;;; (meta:get $m shape: default: 'none)
+;;; (meta:set! $m shape: 'trapezoid)
+;;; (meta:get $m shape: default: 'none)
+;;; $m
 
