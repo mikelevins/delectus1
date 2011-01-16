@@ -93,3 +93,41 @@
         (document-deleted-rows-set! doc (remove row-index (document-deleted-rows doc) test: =))
         doc)))
 
+(define (doc:show-deleted? doc)
+  (document-include-deleted? doc))
+
+(define (doc:set-show-deleted! doc deleted?)
+  (document-include-deleted?-set! doc deleted?))
+
+(define (doc:compact-table! doc)
+  (table:remove-rows! (document-table doc)
+                      (document-deleted-rows doc))
+  (table:remove-columns! (document-table doc)
+                         (document-deleted-columns doc))
+  (document-deleted-rows-set! doc '())
+  (document-deleted-columns-set! doc '()))
+
+(define (doc:sort-column doc)
+  (document-sort-column doc))
+
+(define (doc:set-sort-column! doc column-label)
+  (document-sort-column-set! doc column-label))
+
+(define (doc:sort-order doc)
+  (document-sort-order doc))
+
+(define (doc:set-sort-order! doc order)
+  (document-sort-order-set! doc order))
+
+(define (doc:sort-type doc)
+  (document-sort-type doc))
+
+(define (doc:set-sort-type! doc type)
+  (document-sort-type-set! doc type))
+
+(define (doc:filter-text doc)
+  (document-filter-text doc))
+
+(define (doc:set-filter-text! doc text)
+  (document-filter-text-set! doc text))
+

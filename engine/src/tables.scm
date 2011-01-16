@@ -86,17 +86,17 @@
         del)))
 
 (define (table:remove-columns! del labels)
-  (let* ((deleted-indexes (map (partial table:column-index del)
+  (let* ((deleted-indexes (map (lambda (l)(table:column-index del l))
                                labels))
-         (live-indexes (filter (lambda (i)(not (contains? deleted-indexes i)))
+         (live-indexes (filter (lambda (i)(not (contains? = deleted-indexes i)))
                                (range 0 (table:count-columns del))))
          (rowcount (table:count-rows del)))
-    (table:set-columns! del (vector-select (table:columns del) live-indexes))
+    (table:set-columns! del (vector-select live-indexes (table:columns del)))
     (let loop ((i 0))
       (if (< i rowcount)
           (vector-set! (table:rows del) i
-                       (vector-select (vector-ref (table:rows del) i)
-                                      live-indexes))))
+                       (vector-select live-indexes
+                                      (vector-ref (table:rows del) i)))))
     del))
 
 (define (table:value-at del column-index row-index)

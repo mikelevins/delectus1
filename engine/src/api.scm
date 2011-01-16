@@ -124,10 +124,23 @@
                     $ERR_NO_DOCUMENT)))))
 
 (define (api:compact-table! oid)
-  $ERR_CANT_UPDATE)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:compact-table! doc)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:sort-column oid)
-  $VAL_NO_VALUE)
+  (if-error $VAL_NO_VALUE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (or (doc:sort-column doc)
+                        $VAL_NO_VALUE)
+                    $VAL_NO_VALUE)))))
 
 (define (api:set-sort-column! oid column-label)
   (if-error $ERR_CANT_UPDATE
@@ -140,22 +153,61 @@
                     $ERR_NO_DOCUMENT)))))
 
 (define (api:sort-order oid)
-  $SORT_NONE)
+  (if-error $SORT_NONE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (or (doc:sort-order doc)
+                        $SORT_NONE)
+                    $SORT_NONE)))))
 
 (define (api:set-sort-order! oid order)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:set-sort-order! doc order)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:sort-type oid)
-  $SORT_NONE)
+  (if-error $SORT_NONE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (or (doc:sort-type doc)
+                        $SORT_NONE)
+                    $SORT_NONE)))))
 
 (define (api:set-sort-type! oid type)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:set-sort-type! doc type)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:filter-text oid)
-  $VAL_NO_VALUE)
+  (if-error $VAL_NO_VALUE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (or (doc:filter-text doc)
+                        $VAL_NO_VALUE)
+                    $VAL_NO_VALUE)))))
 
 (define (api:set-filter-text! oid text)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:set-filter-text! doc text)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:write-delectus oid path)
   $ERR_NO_ERROR)
