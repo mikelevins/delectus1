@@ -33,6 +33,7 @@
     "src/tables.scm"
     "src/views.scm"
     "src/documents.scm"
+    "src/document-registry.scm"
     "src/fileio.scm"
     "src/csv.scm"
     "src/api.scm"
@@ -53,4 +54,9 @@
 ;;;
 ;;; (load-delectus)
 
-;;;
+;;; (define $d1 (api:make-document))
+;;; $d1
+;;; (reg:find-document $d1)
+;;; (define $d2 (api:make-document))
+;;; $d2
+;;; (reg:find-document $d2)

@@ -21,10 +21,10 @@
 ;;; ---------------------------------------------------------------------
 
 (define (api:version)
-  (current-delectus-format-version))
+  $delectus-format-1.0)
 
 (define (api:make-document)
-  (new-document))
+  (reg:register-document! (doc:make table: (table:make)) #f))
 
 (define (api:add-row! oid)
   (if-error $ERR_CANT_ADD_ROW
