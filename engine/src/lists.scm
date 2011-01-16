@@ -67,6 +67,15 @@
             #t
             (loop (cdr ls))))))
 
+(define (filter pred ls)
+  (let loop ((ls ls)
+             (result '()))
+    (if (null? ls)
+        (reverse result)
+        (if (pred (car ls))
+            (loop (cdr ls) (cons (car ls) result))
+            (loop (cdr ls) result)))))
+
 (define (remove item ls #!key (test eqv?))
   (let loop ((ls ls)
              (result '()))
@@ -75,3 +84,13 @@
         (if (test item (car ls))
             (loop (cdr ls) result)
             (loop (cdr ls) (cons (car ls) result))))))
+
+(define (select indexes ls)
+  (let loop ((ls ls)
+             (j 0)
+             (result '()))
+    (if (null? ls)
+        (reverse result)
+        (if (contains? = indexes j)
+            (loop (cdr ls)(+ j 1)(cons (car ls) result))
+            (loop (cdr ls)(+ j 1) result)))))

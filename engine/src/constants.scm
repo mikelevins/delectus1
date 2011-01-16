@@ -37,3 +37,8 @@
 (define $ERR_BAD_FORMAT         -10)
 (define $ERR_NO_DOCUMENT        -11)
 
+(define $delectus-format-alpha-1 0)
+(define $delectus-format-alpha-2 1)
+(define $delectus-format-alpha-4 2)
+(define $delectus-format-beta-2 3)
+(define $delectus-format-1.0 4)

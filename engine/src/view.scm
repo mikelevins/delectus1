@@ -1,22 +1,23 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          file-formats.scm
+;;;; Name:          view.scm
 ;;;; Project:       Delectus
-;;;; Purpose:       reading and writing delectus file formats
+;;;; Purpose:       computed views of tables
 ;;;; Author:        mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 ;;; ----------------------------------------------------------------------
-;;; constants
+;;; view data structure
 ;;; ----------------------------------------------------------------------
 
-(define $delectus-format-alpha-1 0)
-(define $delectus-format-alpha-2 1)
-(define $delectus-format-alpha-4 2)
-(define $delectus-format-beta-2 3)
-(define $delectus-format-1.0 4)
+(define-type view
+  id: 3520C851-B065-48DA-80B9-358367AF8A3E
+  constructor: %make-view
+  columns
+  rows)
 
-(define (current-delectus-format-version) $delectus-format-1.0)
+
+
 

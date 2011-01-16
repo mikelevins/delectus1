@@ -104,13 +104,20 @@
                     $ERR_NO_DOCUMENT)))))
 
 (define (api:compact-table! oid)
-  $ERR_NO_ERROR)
+  $ERR_CANT_UPDATE)
 
 (define (api:sort-column oid)
   $VAL_NO_VALUE)
 
 (define (api:set-sort-column! oid column-label)
-  $ERR_NO_ERROR)
+  (if-error $ERR_CANT_UPDATE
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:set-sort-column! doc column-label)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
 
 (define (api:sort-order oid)
   $SORT_NONE)

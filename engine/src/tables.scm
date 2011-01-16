@@ -15,8 +15,8 @@
 (define-type delectus-table
   id: 045F1C7B-788D-4F47-A325-BDB0D60EF205
   constructor: %make-delectus-table
-  (rows table:rows table:set-rows!)
-  (columns table:columns table:set-columns!))
+  (columns table:columns table:set-columns!)
+  (rows table:rows table:set-rows!))
 
 (define (%parse-rows rows)
   (list->vector
@@ -34,10 +34,14 @@
         (error "Duplicate labels" cols)
         (list->vector cols))))
 
-(define (table:make #!key (columns '())(rows '()))
+(define (table:make 
+         #!key
+         (columns '())(rows '())
+         (sort-column #f)(sort-order #f)(sort-type #f)
+         (filter-text #f))
   (let* ((rows (%parse-rows rows))
          (cols (%parse-columns columns)))
-    (%make-delectus-table rows cols)))
+    (%make-delectus-table cols rows)))
 
 ;;; ----------------------------------------------------------------------
 ;;; table API
@@ -65,6 +69,13 @@
                                     (make-vector (table:count-columns del) (nothing))))
   del)
 
+(define (table:remove-rows! del indexes)
+  (table:set-rows! del
+                   (vector-select (filter (lambda (i)(not (contains? = indexes i)))
+                                          (range 0 (table:count-rows del))) 
+                                  (table:rows del)))
+  del)
+
 (define (table:add-column! del label)
   (if (vector-contains? string-ci=? (table:columns del) label)
       (error "Column exists" label)
@@ -73,6 +84,20 @@
         (table:set-rows! del (vector-map (lambda (row)(vector-add-last row (nothing)))
                                          (table:rows del)))
         del)))
+
+(define (table:remove-columns! del labels)
+  (let* ((deleted-indexes (map (partial table:column-index del)
+                               labels))
+         (live-indexes (filter (lambda (i)(not (contains? deleted-indexes i)))
+                               (range 0 (table:count-columns del))))
+         (rowcount (table:count-rows del)))
+    (table:set-columns! del (vector-select (table:columns del) live-indexes))
+    (let loop ((i 0))
+      (if (< i rowcount)
+          (vector-set! (table:rows del) i
+                       (vector-select (vector-ref (table:rows del) i)
+                                      live-indexes))))
+    del))
 
 (define (table:value-at del column-index row-index)
   (vector-ref (vector-ref (table:rows del) row-index) column-index))

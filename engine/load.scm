@@ -31,12 +31,10 @@
     "src/constants.scm"
     "src/values.scm"
     "src/tables.scm"
-    "src/sort-info.scm"
-    "src/filter-info.scm"
-    "src/metadata.scm"
+    "src/views.scm"
     "src/documents.scm"
-    "src/document-registry.scm"
-    "src/file-formats.scm"
+    "src/fileio.scm"
+    "src/csv.scm"
     "src/api.scm"
     ))
 
@@ -54,3 +52,5 @@
 ;;; ----------------------------------------------------------------------
 ;;;
 ;;; (load-delectus)
+
+;;;
