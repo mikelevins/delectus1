@@ -26,16 +26,6 @@
 (define (api:make-document)
   (reg:register-document! (doc:make table: (table:make)) #f))
 
-(define (api:add-row! oid)
-  (if-error $ERR_CANT_ADD_ROW
-            (lambda ()
-              (let ((doc (find-document oid)))
-                (if doc
-                    (begin
-                      (doc:add-row! doc)
-                      $ERR_NO_ERROR)
-                    $ERR_NO_DOCUMENT)))))
-
 (define (api:add-column! oid label)
   (if-error $ERR_CANT_ADD_COLUMN
             (lambda ()
@@ -43,6 +33,16 @@
                 (if doc
                     (begin
                       (doc:add-column! doc label)
+                      $ERR_NO_ERROR)
+                    $ERR_NO_DOCUMENT)))))
+
+(define (api:add-row! oid)
+  (if-error $ERR_CANT_ADD_ROW
+            (lambda ()
+              (let ((doc (find-document oid)))
+                (if doc
+                    (begin
+                      (doc:add-row! doc)
                       $ERR_NO_ERROR)
                     $ERR_NO_DOCUMENT)))))
 
@@ -75,6 +75,16 @@
                       $ERR_NO_ERROR)
                     $ERR_NO_DOCUMENT)))))
 
+(define (api:column-deleted? oid column-label)
+  (if-error $VAL_NO
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (if (doc:column-deleted? column-label)
+                        $VAL_YES
+                        $VAL_NO)
+                    $VAL_NO)))))
+
 (define (api:mark-row-deleted! oid row-index deleted?)
   (if-error $ERR_CANT_UPDATE
             (lambda ()
@@ -84,6 +94,16 @@
                       (doc:mark-row-deleted! doc row-index deleted?)
                       $ERR_NO_ERROR)
                     $ERR_NO_DOCUMENT)))))
+
+(define (api:row-deleted? oid row-index)
+  (if-error $VAL_NO
+            (lambda ()
+              (let* ((doc (find-document oid)))
+                (if doc
+                    (if (doc:row-deleted? row-index)
+                        $VAL_YES
+                        $VAL_NO)
+                    $VAL_NO)))))
 
 (define (api:show-deleted? oid)
   (if-error $VAL_NO

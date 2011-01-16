@@ -57,6 +57,19 @@
 ;;; (define $d1 (api:make-document))
 ;;; $d1
 ;;; (reg:find-document $d1)
-;;; (define $d2 (api:make-document))
-;;; $d2
-;;; (reg:find-document $d2)
+;;; (doc:add-column! (reg:find-document $d1) "Name")
+;;; (doc:add-row! (reg:find-document $d1))
+;;; (doc:value-at (reg:find-document $d1) "Name" 0)
+;;; (doc:put-value-at! (reg:find-document $d1) "Name" 0 "Fred")
+;;; (doc:value-at (reg:find-document $d1) "Name" 0)
+;;; (doc:column-deleted? (reg:find-document $d1) "Name")
+;;; (doc:row-deleted? (reg:find-document $d1) 0)
+;;; (doc:mark-column-deleted! (reg:find-document $d1) "Name" #t)
+;;; (doc:column-deleted? (reg:find-document $d1) "Name")
+;;; (doc:mark-column-deleted! (reg:find-document $d1) "Name" #f)
+;;; (doc:column-deleted? (reg:find-document $d1) "Name")
+;;; (doc:mark-row-deleted! (reg:find-document $d1) 0 #t)
+;;; (doc:row-deleted? (reg:find-document $d1) 0)
+;;; (doc:mark-row-deleted! (reg:find-document $d1) 0 #f)
+;;; (doc:row-deleted? (reg:find-document $d1) 0)
+
