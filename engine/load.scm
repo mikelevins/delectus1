@@ -25,7 +25,6 @@
   '(
     "lib/uuid.scm"
     "src/lists.scm"
-    "src/maps.scm"
     "src/sequences.scm"
     "src/vectors.scm"
     "src/constants.scm"
@@ -48,4 +47,4 @@
                 (load p)))
             $load-files))
 
-
+;;; (load-delectus)

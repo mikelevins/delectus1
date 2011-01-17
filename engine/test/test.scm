@@ -49,3 +49,4 @@ $d2
 (doc:mark-column-deleted! (reg:find-document $d2) "Size" #t)
 (doc:mark-row-deleted! (reg:find-document $d2) 1 #t)
 (doc:compact-table! (reg:find-document $d2))
+
