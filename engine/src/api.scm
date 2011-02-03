@@ -65,6 +65,14 @@
                       $ERR_NO_ERROR)
                     $ERR_NO_DOCUMENT)))))
 
+(define (api:count-columns oid)
+  (if-error $ERR_CANT_READ
+            (lambda ()
+              (let* ((doc (reg:find-document oid)))
+                (if doc
+                    (doc:count-columns doc)
+                    $ERR_CANT_READ)))))
+
 (define (api:mark-column-deleted! oid column-label deleted?)
   (if-error $ERR_CANT_UPDATE
             (lambda ()
@@ -113,7 +121,7 @@
                     $VAL_YES
                     $VAL_NO)))))
 
-(define (api:set-show-deleted! oid deleted?)
+(define (api:set-show-deleted! oid show?)
   (if-error $ERR_CANT_UPDATE
             (lambda ()
               (let* ((doc (reg:find-document oid)))
@@ -219,12 +227,7 @@
   $ERR_NO_ERROR)
 
 (define (api:read-delectus/csv path)
-  $OBJ_NO_OID)
+  (if-error $OBJ_NO_OID
+            (lambda ()
+              (csv:read-document path))))
 
-
-;;; (define $doc (new-document))
-;;; (api:add-column! $doc "Name")
-;;; (api:add-row! $doc)
-;;; (api:mark-column-deleted! $doc "Name" #t)
-;;; (define $d (reg:find-document $doc))
-;;; (doc:set-meta! $d (cons "Name" (doc:get-meta $d )))

@@ -123,7 +123,8 @@
           (if-error $ERR_CANT_WRITE
                     (lambda ()(api:write-delectus/csv oid path))))
 
-(c-define (c:read_delectus_csv path) (unsigned-long char-string)
+(c-define (c:read_delectus_csv path) (char-string)
           unsigned-long "read_delectus_csv" "" 
           (if-error $OBJ_NO_OID
                     (lambda ()(api:read-delectus/csv path))))
+

@@ -25,6 +25,18 @@
           (reverse result)
           (loop (step-fn k by)(cons k result))))))
 
+(define (range-except exceptions m n #!key (by 1))
+  (let ((step-fn (if (<= m n) + -))
+        (test-fn (if (<= m n) >= <=)))
+    (let loop ((k m)
+               (result '()))
+      (if (test-fn k n)
+          (reverse result)
+          (loop (step-fn k by)
+                (if (memv k exceptions)
+                    result
+                    (cons k result)))))))
+
 (define (copy-tree x)
   (if (list? x)
       (map copy-tree x)
@@ -94,3 +106,33 @@
         (if (contains? = indexes j)
             (loop (cdr ls)(+ j 1)(cons (car ls) result))
             (loop (cdr ls)(+ j 1) result)))))
+
+(define (select-not indexes ls)
+  (let loop ((ls ls)
+             (j 0)
+             (result '()))
+    (if (null? ls)
+        (reverse result)
+        (if (contains? = indexes j)
+            (loop (cdr ls)(+ j 1) result)
+            (loop (cdr ls)(+ j 1)(cons (car ls) result))))))
+
+(define (select-if pred ls)
+  (let loop ((ls ls)
+             (j 0)
+             (result '()))
+    (if (null? ls)
+        (reverse result)
+        (if (pred (car ls))
+            (loop (cdr ls)(+ j 1)(cons (car ls) result))
+            (loop (cdr ls)(+ j 1) result)))))
+
+(define (position pred ls val)
+  (let loop ((tl ls)
+             (i 0))
+    (if (null? tl)
+        #f
+        (if (pred (car tl) val)
+            i
+            (loop (cdr tl)(+ 1 i))))))
+

@@ -176,11 +176,19 @@
       (let loop ((ch (peek-char port))
                  (result '()))
         (if (eof-object? ch)
-            (reverse result)
+            (reverse (cdr result))
             (loop (peek-char port)
                   (cons (read-csv-record port)
                         result)))))))
 
+(define (csv:read-document path)
+  (let* ((records (csv:read path))
+         (cols (car records))
+         (rows (cdr records)))
+    (reg:register-document! (doc:make table: (table:make columns: cols rows: rows)) #f)))
+
+
 ;;; (define $zips #f)
-;;; (time (set! $zips (csv:read "/Users/mikel/Projects/delectus/test-data/zipcode.csv")))
+;;; (time (set! $zips (csv:read-document "/Users/mikel/Projects/delectus/test-data/zipcode.csv")))
 ;;; $zips
+;;; (api:value-at $zips "zip" 10000)

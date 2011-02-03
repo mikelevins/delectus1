@@ -49,6 +49,15 @@
               (loop (+ 1 i)))
           #f))))
 
+(define (vector-some? pred vec)
+  (let ((eltcount (vector-length vec)))
+    (let loop ((i 0))
+      (if (< i eltcount)
+          (if (pred (vector-ref vec i))
+              #t
+              (loop (+ 1 i)))
+          #f))))
+
 (define (vector-select indexes vec)
   (let* ((outvec (make-vector (length indexes)))
          (eltcount (vector-length outvec)))

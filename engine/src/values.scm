@@ -22,8 +22,6 @@
    ((string? v) v)
    ;; sequence
    ((seq:sequence? v) v)
-   ;; map
-   ((map:map? v) v)
    (else (error "Not a valid delectus value" v))))
 
 ;;; ----------------------------------------------------------------------

@@ -20,19 +20,23 @@
 
 (define (%parse-rows rows)
   (list->vector
-   (map (lambda (row)(map delectus-value row))
+   (map (lambda (row)(list->vector (map delectus-value row)))
         rows)))
 
-(define (delectus-column-label thing)
+(define (%delectus-column-label thing)
   (if (string? thing)
       thing
       (error "Invalid column label" thing)))
 
 (define (%parse-columns columns)
-  (let ((cols (map delectus-column-label columns)))
+  (let ((cols (map %delectus-column-label columns)))
     (if (duplicates? string-ci=? cols)
         (error "Duplicate labels" cols)
         (list->vector cols))))
+
+;;; ----------------------------------------------------------------------
+;;; table API
+;;; ----------------------------------------------------------------------
 
 (define (table:make 
          #!key
@@ -42,14 +46,6 @@
   (let* ((rows (%parse-rows rows))
          (cols (%parse-columns columns)))
     (%make-delectus-table cols rows)))
-
-;;; ----------------------------------------------------------------------
-;;; table API
-;;; ----------------------------------------------------------------------
-
-(define (table:row-at del row-index)
-  (vector-ref (table:rows del)
-              row-index))
 
 (define (table:column-at del column-index)
   (vector-ref (table:columns del) column-index))

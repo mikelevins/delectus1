@@ -23,14 +23,16 @@
 
 (define $load-files
   '(
+    "lib/srfi-13.scm"
     "lib/uuid.scm"
+    "lib/Sort.scm"
     "src/lists.scm"
     "src/sequences.scm"
     "src/vectors.scm"
     "src/constants.scm"
     "src/values.scm"
+    "src/functions.scm"
     "src/tables.scm"
-    "src/views.scm"
     "src/documents.scm"
     "src/document-registry.scm"
     "src/fileio.scm"

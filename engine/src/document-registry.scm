@@ -42,7 +42,7 @@
 
 (define (reg:register-document! doc id)
   (if id
-      (let ((old-doc (find-document id)))
+      (let ((old-doc (reg:find-document id)))
         (if old-doc (table-set! *document->id-table* old-doc))
         (table-set! *id->document-table* id doc)
         (table-set! *document->id-table* doc id)
