@@ -10,14 +10,9 @@
 
 ;;; modify if the Delectus sources are at another pathname
 
-(define $root "/Users/mikel/Projects/delectus/engine/")
-(define $test-data "/Users/mikel/Projects/delectus/test-data/")
-
-;;; ----------------------------------------------------------------------
-;;; About
-;;; ----------------------------------------------------------------------
-;;; This file loads the pure-Scheme portion of Delectus, which is
-;;; nearly everything except the Cocoa UI.
+(define $delectus-root "/Users/mikel/Projects/delectus/")
+(define $engine-root (string-append $delectus-root "engine/"))
+(define $test-data-root (string-append $delectus-root "test-data/"))
 
 ;;; Scheme files to load for interactive testing
 ;;; ----------------------------------------------------------------------
@@ -25,26 +20,11 @@
 (define $load-files
   '(
     "lib/uuid.scm"
-    "lib/Sort.scm"
-    "src/lists.scm"
-    "src/sequences.scm"
-    "src/vectors.scm"
-    "src/strings.scm"
+    "lib/wt-tree.scm"
     "src/constants.scm"
-    "src/values.scm"
-    "src/functions.scm"
-    "src/columns.scm"
-    "src/rows.scm"
-    "src/tables.scm"
-    "src/registry.scm"
-    "src/presentations.scm"
-    "src/stores.scm"
-    "src/csv.scm"
-    ;;"src/api.scm"
-    "test/scm/test-utils.scm"
-    "test/scm/tables.scm"
-    "test/scm/csv.scm"
-    "test/scm/tests.scm"
+    "src/api.scm"
+    "src/lists.scm"
+    "src/delectus.scm"
     ))
 
 ;;; load Scheme files
@@ -52,7 +32,7 @@
 
 (define (load-delectus)
   (for-each (lambda (f)
-              (let ((p (string-append $root f)))
+              (let ((p (string-append $engine-root f)))
                 (load p)))
             $load-files))
 

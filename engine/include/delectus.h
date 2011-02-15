@@ -24,26 +24,24 @@
 #define ERR_NO_DOCUMENT        (-11)
 
 extern int version ();
-extern unsigned long make_document ();
-extern int add_row (unsigned long oid);
-extern int add_column (unsigned long oid, char* label);
-extern char* value_at (unsigned long oid, char* column_label, int row_index);
-extern int put_value_at (unsigned long oid, char* column_label, int row_index, char* value);
-extern int mark_column_deleted (unsigned long oid, char* column_label, int deleted);
-extern int mark_row_deleted (unsigned long oid, int row_index, int deleted);
-extern int show_deleted (unsigned long oid);
-extern int set_show_deleted (unsigned long oid, int show);
-extern int compact_table (unsigned long oid);
-extern char* sort_column (unsigned long oid);
-extern int set_sort_column (unsigned long oid, char* column_label);
-extern int sort_order (unsigned long oid);
-extern int set_sort_order (unsigned long oid, int order);
-extern int sort_type (unsigned long oid);
-extern int set_sort_type (unsigned long oid, int type);
-extern char* filter_text (unsigned long oid);
-extern int set_filter_text (unsigned long oid, char* text);
-extern int write_delectus (unsigned long oid, char* path);
-extern unsigned long read_delectus (char* path);
-extern int write_delectus_csv (unsigned long oid, char* path);
-extern unsigned long read_delectus_csv (char* path);
+extern int new_delectus ();
+extern char* value_at (int oid, char* column_label, int row_index);
+extern int put_value_at (int oid, char* column_label, int row_index, char* value);
+extern int add_row (int oid);
+extern int add_column (int oid, char* label);
+extern int mark_column_deleted (int oid, char* column_label, int deleted);
+extern int mark_row_deleted (int oid, int row_index, int deleted);
+extern int include_deleted (int oid);
+extern int set_include_deleted (int oid, int show);
+extern int compact_delectus (int oid);
+extern char* sort_column (int oid);
+extern int set_sort_column (int oid, char* column_label);
+extern int sort_order (int oid);
+extern int set_sort_order (int oid, int order);
+extern char* filter_text (int oid);
+extern int set_filter_text (int oid, char* text);
+extern int write_delectus_file (int oid, char* path);
+extern int read_delectus_file (char* path);
+extern int write_delectus_csv (int oid, char* path);
+extern int read_delectus_csv (char* path);
 
