@@ -11,6 +11,7 @@
 ;;; modify if the Delectus sources are at another pathname
 
 (define $root "/Users/mikel/Projects/delectus/engine/")
+(define $test-data "/Users/mikel/Projects/delectus/test-data/")
 
 ;;; ----------------------------------------------------------------------
 ;;; About
@@ -23,21 +24,27 @@
 
 (define $load-files
   '(
-    "lib/srfi-13.scm"
     "lib/uuid.scm"
     "lib/Sort.scm"
     "src/lists.scm"
     "src/sequences.scm"
     "src/vectors.scm"
+    "src/strings.scm"
     "src/constants.scm"
     "src/values.scm"
     "src/functions.scm"
+    "src/columns.scm"
+    "src/rows.scm"
     "src/tables.scm"
-    "src/documents.scm"
-    "src/document-registry.scm"
-    "src/fileio.scm"
+    "src/registry.scm"
+    "src/presentations.scm"
+    "src/stores.scm"
     "src/csv.scm"
-    "src/api.scm"
+    ;;"src/api.scm"
+    "test/scm/test-utils.scm"
+    "test/scm/tables.scm"
+    "test/scm/csv.scm"
+    "test/scm/tests.scm"
     ))
 
 ;;; load Scheme files
@@ -50,3 +57,4 @@
             $load-files))
 
 ;;; (load-delectus)
+;;; (run-all-tests)

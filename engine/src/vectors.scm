@@ -31,6 +31,35 @@
             (loop (+ i 1))))
       outvec)))
 
+(define (vector-for-each proc vec)
+  (let ((eltcount (vector-length vec)))
+    (let loop ((i 0))
+      (if (< i eltcount)
+          (begin
+            (proc (vector-ref vec i))
+            (loop (+ i 1)))))))
+
+(define (vector-filter pred vec)
+  (let* ((eltcount (vector-length vec)))
+    (let loop ((i 0)
+               (result '()))
+      (if (< i eltcount)
+          (let ((e (vector-ref vec i)))
+            (if (pred e)
+                (loop (+ i 1) (cons e result))
+                (loop (+ i 1) result)))
+          (list->vector (reverse result))))))
+
+(define (vector-select vec indexes)
+  (let ((outvec (make-vector (length indexes))))
+    (let loop ((i 0)
+               (indexes indexes))
+      (if (null? indexes)
+          outvec
+          (begin
+            (vector-set! outvec i (vector-ref vec (car indexes)))
+            (loop (+ i 1)(cdr indexes)))))))
+
 (define (vector-position pred vec val)
   (let ((eltcount (vector-length vec)))
     (let loop ((i 0))
@@ -57,25 +86,4 @@
               #t
               (loop (+ 1 i)))
           #f))))
-
-(define (vector-select indexes vec)
-  (let* ((outvec (make-vector (length indexes)))
-         (eltcount (vector-length outvec)))
-    (let loop ((is indexes)
-               (i 0))
-      (if (null? is)
-          outvec
-          (begin
-            (vector-set! outvec i (vector-ref vec (car is)))
-            (loop (cdr is)(+ i 1)))))))
-
-(define (vector-filter proc vec)
-  (let ((eltcount (vector-length vec)))
-    (let loop ((i 0)
-               (indexes '()))
-      (if (< i eltcount)
-          (if (proc (vector-ref vec i))
-              (loop (+ i 1) (cons i indexes))
-              (loop (+ i 1) indexes))
-          (vector-select (reverse indexes) vec)))))
 

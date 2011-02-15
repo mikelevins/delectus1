@@ -13,29 +13,23 @@ FLAGS_EXE =  -I${GSC_INC} -L${GSC_LIB} -Wno-unused -O1 -fno-math-errno -fschedul
 SCM_SOURCES = lib/uuid.scm lib/Sort.scm\
 	      src/lists.scm src/sequences.scm src/vectors.scm src/strings.scm\
 	      src/constants.scm src/values.scm src/functions.scm\
-	      src/tables.scm\
-	      src/views.scm src/documents.scm src/document-registry.scm\
-	      src/csv.scm\
+	      src/columns.scm src/rows.scm src/tables.scm\
               src/api.scm src/delectus.scm
 
 C_SOURCES = lib/uuid.c lib/Sort.c\
 	    src/lists.c src/sequences.c src/vectors.c src/strings.c\
 	    src/constants.c src/values.c src/functions.c\
-	    src/tables.c\
-	    src/views.c src/documents.c src/document-registry.c\
-	    src/csv.c\
+	    src/columns.c src/rows.c src/tables.c\
             src/api.c src/delectus.c src/delectus_.c
 
 C_OBJECTS = uuid.o Sort.o\
 	    lists.o sequences.o vectors.o strings.o\
 	    constants.o values.o functions.o\
-	    tables.o\
-	    views.o documents.o document-registry.o\
-	    csv.o\
+	    columns.o rows.o tables.o\
             api.o delectus.o delectus_.o
 
 exe: lib
-	${GCC} ${FLAGS_EXE} -I"${GSC_INC}" -I./include test/delectus_test.c -o delectus_test -L${GSC_LIB} -L. -ldelectus -lgambc
+	${GCC} ${FLAGS_EXE} -I"${GSC_INC}" -I./include test/c/delectus_test.c -o delectus_test -L${GSC_LIB} -L. -ldelectus -lgambc
 
 lib: obj
 	ar rc libdelectus.a ${C_OBJECTS} && ranlib libdelectus.a

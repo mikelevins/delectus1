@@ -170,7 +170,11 @@
         (else
 	 (car '()))))
 
-(define (csv:read path)
+;;; ----------------------------------------------------------------------
+;;; CSV API
+;;; ----------------------------------------------------------------------
+
+(define (%read-csv-file path)
   (call-with-input-file path
     (lambda (port)
       (let loop ((ch (peek-char port))
@@ -181,14 +185,9 @@
                   (cons (read-csv-record port)
                         result)))))))
 
-(define (csv:read-document path)
-  (let* ((records (csv:read path))
+(define (csv:read path)
+  (let* ((records (%read-csv-file path))
          (cols (car records))
          (rows (cdr records)))
-    (reg:register-document! (doc:make table: (table:make columns: cols rows: rows)) #f)))
+    (table:make columns: cols rows: rows)))
 
-
-;;; (define $zips #f)
-;;; (time (set! $zips (csv:read-document "/Users/mikel/Projects/delectus/test-data/zipcode.csv")))
-;;; $zips
-;;; (api:value-at $zips "zip" 10000)
