@@ -21,10 +21,15 @@
   '(
     "lib/uuid.scm"
     "lib/wt-tree.scm"
-    "src/constants.scm"
-    "src/api.scm"
-    "src/lists.scm"
-    "src/delectus.scm"
+    "src/public/constants.scm"
+    "src/public/api.scm"
+    "src/private/lists.scm"
+    "src/private/vectors.scm"
+    "src/private/functions.scm"
+    "src/private/data.scm"
+    ;;"src/private/registry.scm"
+    ;;"src/private/views.scm"
+    ;;"src/private/delectus.scm"
     ))
 
 ;;; load Scheme files

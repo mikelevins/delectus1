@@ -160,3 +160,6 @@
         (if (contains? test ls2 (car items))
             (loop (cdr items) result)
             (loop (cdr items)(cons (car items) result))))))
+
+(define (zip ls1 ls2)
+  (map cons ls1 ls2))

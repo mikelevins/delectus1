@@ -20,107 +20,64 @@
 ;;; API functions
 ;;; ---------------------------------------------------------------------
 
+
 (define (api:version) $delectus-format-1.0)
 
 (define (api:new-delectus)
   (if-error $ERR_CANT_CREATE
+            (lambda ()(reg:new-delectus))))
+
+(define (api:view oid include-deleted? sort-column sort-order filter-text)
+  (if-error $ERR_CANT_CREATE
             (lambda ()
-              #f)))
+              (reg:get-view (reg:get oid)
+                            include-deleted: include-deleted?
+                            sort-column: sort-column
+                            sort-order: sort-order
+                            filter-text: filter-text))))
 
 (define (api:value-at oid column-label row-index)
   (if-error $VAL_NO_VALUE
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:value-at (reg:get oid) column-label row-index))))
 
 (define (api:put-value-at! oid column-label row-index val)
   (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:put-value-at! (reg:get oid) column-label row-index))))
 
 
 (define (api:add-row! oid)
   (if-error $ERR_CANT_ADD_ROW
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:add-row! (reg:get oid)))))
 
 (define (api:add-column! oid label)
   (if-error $ERR_CANT_ADD_COLUMN
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:add-column! (reg:get oid)))))
 
 (define (api:mark-column-deleted! oid column-label deleted?)
   (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:mark-column-deleted! (reg:get oid) column-label deleted?))))
 
 (define (api:mark-row-deleted! oid row-index deleted?)
   (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              #f)))
-
-(define (api:include-deleted? oid)
-  (if-error $VAL_NO
-            (lambda ()
-              #f)))
-
-(define (api:set-include-deleted! oid show?)
-  (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:mark-row-deleted! (reg:get oid) row-index deleted?))))
 
 (define (api:compact-delectus! oid)
   (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              (let* ((doc (reg:find-document oid)))
-                #f))))
-
-(define (api:sort-column oid)
-  (if-error $VAL_NO_VALUE
-            (lambda ()
-              #f)))
-
-(define (api:set-sort-column! oid column-label)
-  (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              #f)))
-
-(define (api:sort-order oid)
-  (if-error $SORT_NONE
-            (lambda ()
-              #f)))
-
-(define (api:set-sort-order! oid order)
-  (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              #f)))
-
-(define (api:filter-text oid)
-  (if-error $VAL_NO_VALUE
-            (lambda ()
-              #f)))
-
-(define (api:set-filter-text! oid text)
-  (if-error $ERR_CANT_UPDATE
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:compact! (reg:get oid)))))
 
 (define (api:write-delectus-file oid path)
   (if-error $ERR_CANT_WRITE
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:write (reg:get oid) path))))
 
 (define (api:read-delectus-file path)
   (if-error $OBJ_NO_OID
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:read path))))
 
 (define (api:write-delectus/csv oid path)
   (if-error $ERR_CANT_WRITE
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:write-csv (reg:get oid) path))))
 
 (define (api:read-delectus/csv path)
   (if-error $OBJ_NO_OID
-            (lambda ()
-              #f)))
+            (lambda ()(delectus:read-csv path))))
 
