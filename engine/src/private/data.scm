@@ -79,6 +79,10 @@
 (define (row:add-element! seq val)
   (row:set-entries! seq (vector-add-last (row:entries seq) (entry:make val))))
 
+(define (row:match-text? row text)
+  (vector-some? (lambda (e)(string-contains-ci? (entry:value e) text))
+                (row:entries row))) 
+
 ;;; (define $s (row:make '("fred" "12" "bedrock")))
 ;;; (row:element $s 0)
 ;;; (row:element-as-number $s 0)
@@ -89,6 +93,7 @@
 ;;; (row:element-as-number $s 0)
 ;;; (row:add-element! $s "fred")
 ;;; (row:element $s 3)
+;;; (row:match-text? $s "z")
 
 ;;; ----------------------------------------------------------------------
 ;;; columns
@@ -170,6 +175,19 @@
 (define (%table-select-rows tbl pred)
   (vector->list (vector-filter pred (table:rows tbl))))
 
+;;; return a list of entries for the column
+(define (%table-column-entries tbl column-label)
+  (let ((rowcount (table:count-rows tbl))
+        (colindex (table:column-index tbl column-label)))
+    (let loop ((i 0)
+               (result '()))
+      (if (< i rowcount)
+          (loop (+ i 1)(cons (vector-ref (row:entries (vector-ref (table:rows tbl)
+                                                                  i))
+                                         colindex)
+                             result))
+          (reverse result)))))
+
 (define (table:make #!key (columns '()) (rows '()))
   (let ((col-sequence (%table-parse-columns columns))
         (row-vector (%table-parse-rows rows)))
@@ -193,13 +211,24 @@
 (define (table:count-rows tbl)
   (vector-length (table:rows tbl)))
 
+(define (table:column-index tbl column-label)
+  (column-sequence:position (table:column-sequence tbl) column-label))
+
 (define (table:column-at tbl column-label)
-  (let ((col-seq (table:column-sequence tbl)))
-    (column-sequence:element col-seq
-                             (column-sequence:position col-seq column-label))))
+  (column-sequence:element (table:column-sequence tbl)
+                           (table:column-index tbl label)))
 
 (define (table:row-at tbl row-index)
   (vector-ref (table:rows tbl) row-index))
+
+(define (table:column-values tbl column-label)
+  (map entry:value (%table-column-entries tbl column-label)))
+
+(define (table:column-values-as-numbers tbl column-label)
+  (map %entry-number-value (%table-column-entries tbl column-label)))
+
+(define (table:numeric-column? tbl column-label)
+  (every? number? (table:column-values-as-numbers tbl column-label)))
 
 (define (table:add-row! tbl)
   (table:set-rows! tbl

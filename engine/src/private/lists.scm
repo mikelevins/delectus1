@@ -163,3 +163,10 @@
 
 (define (zip ls1 ls2)
   (map cons ls1 ls2))
+
+(define (every? pred ls)
+  (if (null? ls)
+      #t
+      (if (pred (car ls))
+          (every? pred (cdr ls))
+          #f)))

@@ -20,15 +20,16 @@
 (define $load-files
   '(
     "lib/uuid.scm"
-    "lib/wt-tree.scm"
+    "lib/Sort.scm"
     "src/public/constants.scm"
     "src/public/api.scm"
     "src/private/lists.scm"
     "src/private/vectors.scm"
+    "src/private/strings.scm"
     "src/private/functions.scm"
     "src/private/data.scm"
+    "src/private/views.scm"
     ;;"src/private/registry.scm"
-    ;;"src/private/views.scm"
     ;;"src/private/delectus.scm"
     ))
 
