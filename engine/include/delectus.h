@@ -29,7 +29,7 @@ typedef int err;
 
 extern oid version ();
 extern oid new_delectus ();
-extern oid view(oid id, int include_deleted, int sort_column, int sort_order, char* filter_text);
+extern oid get_view(oid id, int include_deleted, int sort_column, int sort_order, char* filter_text);
 extern val value_at (oid id, char* column_label, int row_index); // returns a value id
 extern err put_value_at (oid id, char* column_label, int row_index, char* value);
 extern err add_row (oid id);

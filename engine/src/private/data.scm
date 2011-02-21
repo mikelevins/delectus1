@@ -158,6 +158,7 @@
 (define-type delectus-table
   id: D604C012-3A9D-4D7B-BE70-4ACB9260659F
   constructor: %make-delectus-table
+  (derived-from table:derived-from)
   (column-sequence table:column-sequence table:set-column-sequence!)
   (rows table:rows table:set-rows!))
 
@@ -188,10 +189,10 @@
                              result))
           (reverse result)))))
 
-(define (table:make #!key (columns '()) (rows '()))
+(define (table:make #!key (columns '()) (rows '())(derived-from #f))
   (let ((col-sequence (%table-parse-columns columns))
         (row-vector (%table-parse-rows rows)))
-    (%make-delectus-table col-sequence row-vector)))
+    (%make-delectus-table derived-from col-sequence row-vector)))
 
 (define (table:compact! tbl)
   (let* ((new-cols (%table-select-columns tbl (complement column:deleted?)))
@@ -216,7 +217,7 @@
 
 (define (table:column-at tbl column-label)
   (column-sequence:element (table:column-sequence tbl)
-                           (table:column-index tbl label)))
+                           (table:column-index tbl column-label)))
 
 (define (table:row-at tbl row-index)
   (vector-ref (table:rows tbl) row-index))

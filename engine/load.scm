@@ -29,8 +29,9 @@
     "src/private/functions.scm"
     "src/private/data.scm"
     "src/private/views.scm"
-    ;;"src/private/registry.scm"
-    ;;"src/private/delectus.scm"
+    "src/private/registry.scm"
+    "src/private/io.scm"
+    "src/public/delectus.scm"
     ))
 
 ;;; load Scheme files
