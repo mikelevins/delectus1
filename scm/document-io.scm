@@ -37,3 +37,10 @@
           (write-delectus-file (document.store doc) dest)
           docID)
         #f)))
+
+;;; (define $path1 "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
+;;; (define $path2 "/Users/mikel/Desktop/zipcode.delectus")
+;;; (define $docid (import-csv-file $path1 #t))
+;;; (save-delectus-file $docid $path2)
+;;; (define $docid2 (load-delectus-file $path2))
+

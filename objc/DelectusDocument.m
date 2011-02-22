@@ -301,7 +301,7 @@
         }else{
             [self deselectAll];
         }
-        [self updateChangeCount: NSChangeDone];
+        //        [self updateChangeCount: NSChangeDone];
     } else{
         [sender editColumn:[sender clickedColumn] row:[sender clickedRow] withEvent:nil  select:YES];
     }
@@ -349,7 +349,8 @@
     NSPrintOperation *op = [NSPrintOperation
                 printOperationWithView:printView
                 printInfo:[self printInfo]];
-    [op setShowPanels:showPanels];
+    //    [op setShowPanels:showPanels];
+    [op setShowsPrintPanel:YES];
  
     // Run operation, which shows the Print panel if showPanels was YES
     [self runModalPrintOperation:op
@@ -551,7 +552,7 @@
     NSTableColumn* theCol = (NSTableColumn*)[cols objectAtIndex: new_index];
     NSString* theLabel = [theCol identifier];
     move_column(documentID,[theLabel asCString],new_index);
-    [self updateChangeCount: NSChangeDone];
+    //    [self updateChangeCount: NSChangeDone];
 }
 
 - (void)tableViewColumnDidResize:(NSNotification *)aNotification{
@@ -563,7 +564,7 @@
     CGFloat fWidth = [theCol width];
     int new_width = (int)fWidth;
     set_column_width(documentID,[theLabel asCString],new_width);
-    [self updateChangeCount: NSChangeDone];
+    //    [self updateChangeCount: NSChangeDone];
 }
 
 // ----------------------------------------

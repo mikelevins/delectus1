@@ -72,73 +72,64 @@
 (define $data-converters (make-table))
 
 (define (io:from-format-alpha-1 data)
-  (make-store
-   (current-store-format)     ; version
-   (map (lambda (c)           ; columns
-          (make-column
-           (vector-ref c 2) ; label
-           (vector-ref c 1) ; deleted?
-           )) 
-        (vector-ref data 1))
-   '() ; column-order
-   #f ; sort-column
-   #f ; sort-reversed?
-   (map (lambda (r)           ; rows
-          (make-row
-           (map make-field (vector-ref r 2)) ; fields
-           (vector-ref r 1)                  ; deleted?
-           )) 
-        (vector-ref data 2))
-   #f                         ; notes
-   ))
+  (store:make
+   version: (current-store-format)     ; version
+   columns: (map (lambda (c)           ; columns
+                   (make-column
+                    (vector-ref c 2) ; label
+                    (vector-ref c 1))) 
+                 (vector-ref data 1))
+   show-deleted: #f
+   sort-column: #f ; sort-column
+   sort-reversed: #f ; sort-reversed?
+   rows: (map (lambda (r)           ; rows
+                (make-row
+                 (map make-field (vector-ref r 2)) ; fields
+                 (vector-ref r 1))) 
+              (vector-ref data 2))
+   notes: #f))
 
 (define (io:from-format-alpha-2 data)
-  (make-store
-   (current-store-format)     ; version
-   (map (lambda (c)           ; columns
-          (make-column
-           (vector-ref c 1) ; label
-           (vector-ref c 2) ; deleted?
-           )) 
-        (vector-ref data 2))
-   #f ; show-deleted?
-   '() ; column-layout
-   '() ; window-layout
-   #f ; sort-column
-   #f ; sort-reversed?
-   (map (lambda (r)           ; rows
-          (make-row
-           (map (lambda (f) (make-field (vector-ref f 1))) ; fields
-                (vector-ref r 1))
-           (vector-ref r 2)                  ; deleted?
-           )) 
-        (vector-ref data 6))
-   (vector-ref data 7)        ; notes
-   ))
+  (store:make
+   version: (current-store-format)     ; version
+   columns: (map (lambda (c)           ; columns
+                   (make-column
+                    (vector-ref c 1) ; label
+                    (vector-ref c 2))) 
+                 (vector-ref data 2))
+   show-deleted: #f ; show-deleted?
+   column-layout: '() ; column-layout
+   window-layout: '() ; window-layout
+   sort-column: #f
+   sort-reversed: #f
+   rows: (map (lambda (r)           ; rows
+                (make-row
+                 (map (lambda (f) (make-field (vector-ref f 1))) ; fields
+                      (vector-ref r 1))
+                 (vector-ref r 2))) 
+              (vector-ref data 6))
+   notes: (vector-ref data 7)))
 
 (define (io:from-format-alpha-4 data) 
-  (make-store
-   (current-store-format)     ; version
-   (map (lambda (c)           ; columns
-          (make-column
-           (vector-ref c 1) ; label
-           (vector-ref c 3) ; deleted?
-           )) 
-        (vector-ref data 2))
-   #f ; show-deleted?
-   '() ; column-layout
-   '() ; window-layout
-   #f ; sort-column
-   #f ; sort-reversed?
-   (map (lambda (r)           ; rows
-          (make-row
-           (map (lambda (f) (make-field (vector-ref f 1))) ; fields
-                (vector-ref r 1))
-           (vector-ref r 2)                  ; deleted?
-           )) 
-        (vector-ref data 6))
-   (vector-ref data 7)        ; notes
-   ))
+  (store:make
+   version: (current-store-format)
+   columns: (map (lambda (c)
+                   (make-column
+                    (vector-ref c 1) ; label
+                    (vector-ref c 3))) 
+                 (vector-ref data 2))
+   show-deleted: #f
+   column-layout: '()
+   window-layout: '()
+   sort-column: #f
+   sort-reversed: #f
+   rows: (map (lambda (r)
+                (make-row
+                 (map (lambda (f) (make-field (vector-ref f 1))) ; fields
+                      (vector-ref r 1))
+                 (vector-ref r 2))) 
+              (vector-ref data 6))
+   notes: (vector-ref data 7)))
 
 (define (io:from-format-beta-2 data) (store.deserialize data))
 
@@ -205,7 +196,9 @@
                      (field-lists (map make-row-fields row-data))
                      (rows (map (lambda (field-list) (make-row field-list #f)) 
                                 field-lists))
-                     (s (make-store (current-store-format) '() #f '() '() #f #f rows ""))
+                     (s (store:make version: (current-store-format) columns: '() show-deleted: #f
+                                    column-layout: '() window-layout: '()
+                                    sort-column: #f sort-reversed: #f rows: rows notes: ""))
                      (cols (map (lambda (l) (make-column l #f)) labels)))
                 (store.set-columns! s cols)
                 s)))

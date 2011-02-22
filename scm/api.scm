@@ -79,6 +79,14 @@
    message: "I/O error"
    default: $no-document))
 
+;;; (define $path1 "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
+;;; (define $path2 "/Users/mikel/Desktop/zipcode.delectus")
+;;; (define $docid (api:read-csv-from-path $path1 #t))
+;;; (api:write-delectus-to-path $docid $path2)
+;;; (define $docid2 (api:read-delectus-from-path $path2))
+;;; (value-for-cell (%ensure-document $docid #f) "city" 100)
+;;; (value-for-cell (%ensure-document $docid2 #f) "city" 100)
+
 ;;; ----------------------------------------------------------------------
 ;;; support for NSDocument IBActions in class DelectusDocument
 ;;; ----------------------------------------------------------------------

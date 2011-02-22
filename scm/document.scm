@@ -140,7 +140,9 @@
         #f)))
 
 (define (get-new-document!)
-  (let* ((s (make-store (current-store-format) '() #f '() '() #f #f '() ""))
+  (let* ((s (store:make version: (current-store-format) columns: '() show-deleted: #f
+                        column-layout: '() window-layout: '()
+                        sort-column: #f sort-reversed: #f rows: '() notes: ""))
          (p (next-document-id))
          (d (document s)))
     (register-document! p d)

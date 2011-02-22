@@ -10,7 +10,7 @@
 
 ;;; modify if the Delectus sources are at another pathname
 
-(define $root "/Users/mikel/Valise/bywicket/repositories/delectus")
+(define $root "/Users/mikel/Projects/delectus/delectus")
 
 ;;; ----------------------------------------------------------------------
 ;;; About
@@ -35,6 +35,7 @@
     "/scm/store.scm"
     "/scm/store-io.scm"
     "/scm/document.scm"
+    "/scm/document-io.scm"
     ;; tests
     "/scm/test-utils.scm"
     "/scm/store-tests.scm"
@@ -65,3 +66,5 @@
               (let ((p (string-append $root f)))
                 (load p)))
             $load-files))
+
+;;; (load-delectus)

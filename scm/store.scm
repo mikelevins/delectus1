@@ -16,6 +16,9 @@
 ;;; constants
 ;;; ----------------------------------------------------------------------
 
+(define $maximum-columns 64)
+(define $maximum-rows 16000)
+
 (define $delectus-format-alpha-1 0)
 (define $delectus-format-alpha-2 1)
 (define $delectus-format-alpha-4 2)
@@ -172,6 +175,28 @@
   rows ; all rows in the store
   notes ; user-supplied notes about the store
   )
+
+(define (store:make #!key
+                    (version (current-store-format))
+                    (columns '())
+                    (show-deleted #f)
+                    (column-layout '())
+                    (window-layout '())
+                    (sort-column #f)
+                    (sort-reversed #f)
+                    (rows '())
+                    (notes #f))
+  (let ((colcount (length columns))
+        (rowcount (length rows)))
+    (cond
+     ((> colcount $maximum-columns) 
+      (error "Too many columns"))
+     ((> rowcount $maximum-rows) 
+      (error "Too many rows"))
+     (else (make-store version columns show-deleted column-layout
+                       window-layout sort-column sort-reversed
+                       rows notes)))))
+
 
 (define (%regenerate-column-layout s)
   (if (or (null? (store.column-layout s))
