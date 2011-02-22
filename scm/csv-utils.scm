@@ -8,66 +8,183 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define $default-column-labels
-  '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
-    "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"))
+;;; ----------------------------------------------------------------------
+;;; CSV input
+;;; ----------------------------------------------------------------------
+;;;; Author:        Bradley Lucier
+;;;;                https://mercure.iro.umontreal.ca/pipermail/gambit-list/2007-February/001135.html
+;;;;                with modifications by mikel evins
 
-(define $default-column-labels-count (length $default-column-labels))
+(declare (standard-bindings)
+         (extended-bindings)
+         (block)
+         (fixnum)
+         (not safe))
 
-(define (csv:make-column-labels count #!optional (append-count 0) (acc '()))
-  (let* ((csv:build-labels (lambda (c lbs) (map (partial string-repeat (+ c 1)) lbs))))
-    (if (<= count 0)
-        acc
-        (if (<= count $default-column-labels-count)
-            (append acc (csv:build-labels append-count (take count $default-column-labels)))
-            (csv:make-column-labels (- count $default-column-labels-count)
-                                (+ append-count 1)
-                                (append acc (csv:build-labels append-count 
-                                                              (take $default-column-labels-count $default-column-labels))))))))
+(define (read-csv-record . args)
 
-(define (csv:get-csv-column-labels data headers-in-first-line?)
-  (or (and headers-in-first-line? (car data))
-      (csv:make-column-labels (length (car data)))))
+  (define (read-csv sep port)
 
-(define (csv:get-csv-column-entries data headers-in-first-line?)
-  (or (and headers-in-first-line? (cdr data))
-      data))
+    (define (add-char-to-field c field)
+      (let ((length  (field-length field))
+	    (buffer  (field-buffer field)))
+	(if (< length (string-length buffer))
+	    (begin
+	      (string-set! buffer length c)
+	      (field-length-set! field (+ length 1))
+	      field)
+	    (let ((new-buffer (string-append buffer (make-string length))))
+	      (string-set! new-buffer length c)
+	      (field-length-set! field (+ length 1))
+	      (field-buffer-set! field new-buffer)
+	      field))))
 
-(define (csv:empty-csv-row? r)
-  (or (null? r)
-      (every (disjoin null? (partial string=? "")) r)))
+    (define (extract-string-from-field! field)
+      (let ((result (substring (field-buffer field) 0 (field-length  
+                                                       field))))
+	(reset-field! field)
+	result))
 
-(define (csv:remove-empty-csv-elements data)
-  (filter (complement csv:empty-csv-row?) data))
+    (define (new-field)
+      (cons (make-string 800)
+	    0))
 
-(define (csv:well-formed-csv? data)
-  (or (null? data)
-      (let* ((field-count (length (car data)))
-             (not-empty? (complement csv:empty-csv-row?))
-             (count-valid? (lambda (e) (= field-count (length e)))))
-        (every (conjoin not-empty?
-                        count-valid?)
-               data))))
+    (define (field-buffer field)
+      (car field))
 
-(define (csv:canonicalize-csv-list data)
-  (let ((data (csv:remove-empty-csv-elements data)))
-    (if (csv:well-formed-csv? data)
-        data
-        (error "ill-formed CSV data"))))
+    (define (field-buffer-set! field value)
+      (set-car! field value))
+
+    (define (field-length field)
+      (cdr field))
+
+    (define (field-length-set! field value)
+      (set-cdr! field value))
+
+    (define (reset-field! field)
+      (field-length-set! field 0)
+      field)
+
+    (define (add-field! field fields)
+      (cons (extract-string-from-field! field) fields))
+
+
+    (define (start field fields)
+      (let ((c (read-char port)))
+        (cond ((eof-object? c)
+	       (reverse fields))
+              ((char=? #\return c)
+	       (carriage-return field fields))
+              ((char=? #\newline c)
+	       (line-feed field fields))
+              ((char=? #\" c)
+	       (quoted-field field fields))
+              ((char=? sep c)
+	       (let ((fields (add-field! field fields)))
+		 (not-field field fields)))
+              (else
+	       (unquoted-field (add-char-to-field c field) fields)))))
+
+    (define (not-field field fields)
+      (let ((c (read-char port)))
+        (cond ((eof-object? c)
+	       (cons "" fields))
+              ((char=? #\return c)
+	       (carriage-return '() (add-field! field fields)))
+              ((char=? #\newline c)
+	       (line-feed '() (add-field! field fields)))
+              ((char=? #\" c)
+	       (quoted-field field fields))
+              ((char=? sep c)
+	       (let ((fields (add-field! field fields)))
+		 (not-field field fields)))
+	      (else
+	       (unquoted-field (add-char-to-field c field) fields)))))
+
+    (define (quoted-field field fields)
+      (let ((c (read-char port)))
+        (cond ((eof-object? c)
+	       (add-field! field fields))
+              ((char=? #\" c)
+	       (may-be-doubled-quotes field fields))
+              (else
+	       (quoted-field (add-char-to-field c field) fields)))))
+
+    (define (may-be-doubled-quotes field fields)
+      (let ((c (read-char port)))
+        (cond ((eof-object? c)
+	       (add-field! field fields))
+              ((char=? #\return c)
+	       (carriage-return '() (add-field! field fields)))
+              ((char=? #\newline c)
+	       (line-feed '() (add-field! field fields)))
+              ((char=? #\" c)
+	       (quoted-field (add-char-to-field #\" field) fields))
+              ((char=? sep c)
+	       (let ((fields (add-field! field fields)))
+		 (not-field field fields)))
+              (else
+	       (unquoted-field (add-char-to-field c field) fields)))))
+
+    (define (unquoted-field field fields)
+      (let ((c (read-char port)))
+        (cond ((eof-object? c)
+	       (add-field! field fields))
+              ((char=? #\return c)
+	       (carriage-return '() (add-field! field fields)))
+              ((char=? #\newline c)
+	       (line-feed '() (add-field! field fields)))
+              ((char=? sep c)
+	       (let ((fields (add-field! field fields)))
+		 (not-field field fields)) )
+              (else
+	       (unquoted-field (add-char-to-field c field) fields)))))
+
+    (define (carriage-return field fields)
+      (if (or (eof-object? (peek-char port))
+              (char=? #\newline (peek-char port)))
+	  (read-char port))
+      fields)
+
+    (define (line-feed field fields)
+      (if (or (eof-object? (peek-char port))
+              (char=? #\return (peek-char port)))
+          (read-char port))
+      fields)
+
+    (if (eof-object? (peek-char port))
+	(peek-char port)
+	(reverse (start (new-field) '()))))
+
+  (cond ((null? args)
+	 (read-csv #\, (current-input-port)))
+        ((and (null? (cdr args))
+	      (char? (car args)))
+	 (read-csv (car args) (current-input-port)))
+        ((and (null? (cdr args))
+	      (port? (car args)))
+	 (read-csv #\, (car args)))
+        ((and (pair? (cdr args)) (null? (cddr args))
+              (char? (car args)) (port? (cadr args)))
+	 (read-csv (car args) (cadr args)))
+        (else
+	 (car '()))))
+
+;;; ----------------------------------------------------------------------
+;;; CSV API
+;;; ----------------------------------------------------------------------
+
+(define (%read-csv-file path)
+  (call-with-input-file path
+    (lambda (port)
+      (let loop ((ch (peek-char port))
+                 (result '()))
+        (if (eof-object? ch)
+            (reverse (cdr result))
+            (loop (peek-char port)
+                  (cons (read-csv-record port)
+                        result)))))))
 
 (define (csv:read-csv-file path)
-  (let ((reader (lambda ()
-                  (csv:canonicalize-csv-list
-                   (csv->list
-                    (make-csv-reader
-                     (open-input-file path)
-                     '((separator-chars            . (#\,))
-                       (strip-leading-whitespace?  . #t)
-                       (strip-trailing-whitespace? . #t)))))))
-        (error-handler (lambda (err)
-                         (report-error context: (format "(csv:read-csv-file ~a)" path)
-                                       error: err
-                                       message: (format "Error reading the file '~a'; Could not read CSV data" path))
-                         #f)))
-    (with-exception-catcher error-handler reader)))
+  (%read-csv-file path))
 

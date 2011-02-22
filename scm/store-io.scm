@@ -183,7 +183,8 @@
 (define (read-csv-file path #!optional (headers-in-first-line? #t))
   (let* ((data (csv:read-csv-file path)))
     (if data
-        (let ((labels (csv:get-csv-column-labels data headers-in-first-line?)))
+        (let ((labels (car data))
+              (row-data (cdr data)))
           (if (contains-duplicates? labels string-ci=?)
               (begin
                 (report-error context: (format "(import-csv-file \"~a\")" path)
@@ -192,7 +193,6 @@
                                             (format " unable to convert CSV data.")))
                 #f)
               (let* ((make-row-fields (lambda (row-strings) (map make-field row-strings)))
-                     (row-data (csv:get-csv-column-entries data headers-in-first-line?))
                      (field-lists (map make-row-fields row-data))
                      (rows (map (lambda (field-list) (make-row field-list #f)) 
                                 field-lists))
