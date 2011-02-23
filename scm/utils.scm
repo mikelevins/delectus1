@@ -185,7 +185,14 @@
 
 (define (empty-string? s)
   (and (string? s)
-       (= 0 (string-length s))))
+       (or (zero? (string-length s))
+           (let ((slen (string-length s)))
+             (let loop ((i 0))
+               (if (< i slen)
+                   (if (char-whitespace? (string-ref s i))
+                       (loop (+ i 1))
+                       #f)
+                   #t))))))
 
 (define (strip-whitespace s)
   (let* ((slen (string-length s))
@@ -204,6 +211,32 @@
     (if start-non-whitespace
         (substring s start-non-whitespace (+ end-non-whitespace 1))
         "")))
+
+(define (string-contains-ci? str substr)
+  (let ((str-len (string-length str))
+        (substr-len (string-length substr)))
+    (if (zero? substr-len)
+        #t
+        (if (zero? str-len)
+            #f
+            (if (< str-len substr-len)
+                #f
+                (if (= str-len substr-len)
+                    (string-ci=? str substr)
+                    (let ((start-search-ch (string-ref substr 0))
+                          (search-end-pos (- str-len substr-len)))
+                      (let outer-loop ((i 0))
+                        (if (> i search-end-pos)
+                            #f
+                            (if (char-ci=? start-search-ch (string-ref str i))
+                                (let inner-loop ((j 0))
+                                  (if (>= j substr-len)
+                                      #t
+                                      (if (char-ci=? (string-ref substr j)
+                                                     (string-ref str (+ i j)))
+                                          (inner-loop (+ j 1))
+                                          (outer-loop (+ i 1)))))
+                                (outer-loop (+ i 1))))))))))))
 
 ;;; ----------------------------------------------------------------------
 ;;; logging and reporting

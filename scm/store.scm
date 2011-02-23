@@ -26,8 +26,11 @@
 
 (define (current-store-format) $delectus-format-beta-2)
 
-;;; a very large integer used mainly for sorting
+;;; a very large integer used for sorting
 (define $maximum-row-index 2000000000)
+
+;;; a string used for sorting
+(define $maximum-string "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 ;;; ----------------------------------------------------------------------
 ;;; utils
@@ -43,8 +46,7 @@
 ;;; ----------------------------------------------------------------------
 
 (define-structure field
-  value ; the value stored in the field
-  )
+  value)
 
 ;;; accessors
 
@@ -78,9 +80,8 @@
 ;;; ----------------------------------------------------------------------
 
 (define-structure row
-  fields ; the list of fields in the row
-  deleted? ; whether this row has been deleted by the user
-  )
+  fields
+  deleted?)
 
 ;;; accessors
 

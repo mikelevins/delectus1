@@ -152,24 +152,27 @@
 ;;; filtered and sorted contents 
 ;;; ----------------------------------------------------------------------
 
-(define $end-sort-string
-  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
 (define (%string->number-for-sort s)
-  (if (eqv? s #f)
-      $maximum-row-index
-      (let ((s (strip-whitespace s)))
-        (if (empty-string? s)
-            $maximum-row-index
-            (string->number s)))))
+  (if s
+      (or (string->number s)
+          $maximum-row-index)
+      $maximum-row-index))
+
+(define (%string-for-sort s)
+  (if s
+      (if (empty-string? s)
+          $maximum-string
+          s)
+      $maximum-string))
+
+(define (numeric? s)
+  (and s (string? s)(string->number s) #t))
 
 (define (%all-visible-entries-are-numbers? doc sort-index)
-  (let* ((rows (filter (if (document.show-deleted? doc)
-                           id
-                           (lambda (r) (not (row.deleted? r))))
-                       (document.rows doc))))
-    (every? (lambda (r)
-              (%string->number-for-sort (field.value (list-ref (row.fields r) sort-index))))
+  (let* ((rows (if (document.show-deleted? doc)
+                   (document.rows doc)
+                   (filter (complement row.deleted?) (document.rows doc)))))
+    (every? (lambda (r)(numeric? (field.value (list-ref (row.fields r) sort-index))))
             rows)))
 
 (define (%string-numeric<? s1 s2)
@@ -180,21 +183,13 @@
   (> (%string->number-for-sort s1)
      (%string->number-for-sort s2)))
 
-(define (%normalize-value v)
-  (if (string? v)
-      (let ((v (strip-whitespace v)))
-        (if (empty-string? v)
-            $end-sort-string
-            v))
-      $end-sort-string))
+(define (%string<? s1 s2)
+  (string-ci<? (%string-for-sort s1)
+               (%string-for-sort s2)))
 
-(define (%string-ci-value>? v1 v2)
-  (string-ci>? (%normalize-value v1)
-               (%normalize-value v2)))
-
-(define (%string-ci-value<? v1 v2)
-  (string-ci<? (%normalize-value v1)
-               (%normalize-value v2)))
+(define (%string>? s1 s2)
+  (string-ci>? (%string-for-sort s1)
+               (%string-for-sort s2)))
 
 (define (%row-visible-fields doc row)
   (let* ((visible-columns (get-visible-columns doc))
@@ -206,17 +201,27 @@
     (map (lambda (i) (list-ref fields i))
          visible-indexes)))
 
+(define (%make-string-filter filter-string)
+  (lambda (rows) 
+    (filter (lambda (row)
+              (any? (lambda (f)
+                      (let ((s (field.value f)))
+                        (and (string? s)
+                             (string-contains-ci? s filter-string))))
+                     (row.fields row)))
+            rows)))
+
 (define (%make-document-filter-function doc)
   (let* ((filter-string (document.filter-string doc))
          (string-filter (if filter-string
-                            (let* ((field-matches? (lambda (f) (string-contains-ci (or (field.value f) "") filter-string)))
-                                   (matches-filter? (lambda (r) (any? field-matches? (%row-visible-fields doc r)))))
-                              (lambda (rows) (filter (lambda (r) (matches-filter? r)) rows)))
+                            (%make-string-filter filter-string)
                             id))
          (show-deleted? (document.show-deleted? doc))
          (deleted-filter (if show-deleted?
                              id
-                             (lambda (rows) (filter (lambda (r) (not (row.deleted? r))) rows)))))
+                             (lambda (rows) 
+                               (filter (lambda (r) (not (row.deleted? r)))
+                                       rows)))))
     (lambda (rows) (deleted-filter (string-filter rows)))))
 
 (define (%make-document-sort-function doc)
@@ -227,7 +232,7 @@
                (all-are-numbers? (%all-visible-entries-are-numbers? doc sort-index))
                (comparator (if all-are-numbers?
                                (if sort-reversed? %string-numeric>? %string-numeric<?)
-                               (if sort-reversed? %string-ci-value>? %string-ci-value<?))))
+                               (if sort-reversed? %string>? %string<?))))
           (lambda (rows)
             (sort rows
                   (lambda (r1 r2)
@@ -237,10 +242,10 @@
 
 (define (document.regenerate-filtered-rows doc)
   (let* ((filter-fn (%make-document-filter-function doc))
-           (sort-fn (%make-document-sort-function doc)))
-      (document.set-filtered-rows! doc (sort-fn (filter-fn (document.rows doc))))
-      (document.validate! doc)
-      doc))
+         (sort-fn (%make-document-sort-function doc)))
+    (document.set-filtered-rows! doc (sort-fn (filter-fn (document.rows doc))))
+    (document.validate! doc)
+    doc))
 
 (define (get-filtered-rows doc)
   (let ((doc-id (table-search (lambda (k v)
