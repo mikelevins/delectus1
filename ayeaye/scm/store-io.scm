@@ -99,7 +99,7 @@
                  (vector-ref data 2))
    show-deleted: #f ; show-deleted?
    column-layout: '() ; column-layout
-   window-layout: '() ; window-layout
+   to-do-column: #f ; to-do-column
    sort-column: #f
    sort-reversed: #f
    rows: (map (lambda (r)           ; rows
@@ -120,7 +120,7 @@
                  (vector-ref data 2))
    show-deleted: #f
    column-layout: '()
-   window-layout: '()
+   to-do-column: #f ; to-do-column
    sort-column: #f
    sort-reversed: #f
    rows: (map (lambda (r)
@@ -197,7 +197,7 @@
                      (rows (map (lambda (field-list) (make-row field-list #f)) 
                                 field-lists))
                      (s (store:make version: (current-store-format) columns: '() show-deleted: #f
-                                    column-layout: '() window-layout: '()
+                                    column-layout: '() to-do-column: #f
                                     sort-column: #f sort-reversed: #f rows: rows notes: ""))
                      (cols (map (lambda (l) (make-column l #f)) labels)))
                 (store.set-columns! s cols)

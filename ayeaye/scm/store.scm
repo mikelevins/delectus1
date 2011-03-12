@@ -170,7 +170,7 @@
   columns ; all columns in the store
   show-deleted?
   column-layout ; ((label1 . width1)(label1 . width2)...)
-  window-layout ; (left top width height)
+  to-do-column ; a column of booleans, or #f 
   sort-column ; the column used for sorting the rows
   sort-reversed? ; whether to sort in reverse order
   rows ; all rows in the store
@@ -182,20 +182,29 @@
                     (columns '())
                     (show-deleted #f)
                     (column-layout '())
-                    (window-layout '())
+                    (to-do-column #f)
                     (sort-column #f)
                     (sort-reversed #f)
                     (rows '())
                     (notes #f))
-  (let ((colcount (length columns))
-        (rowcount (length rows)))
+  (let* ((colcount (length columns))
+         (rowcount (length rows))
+         (to-do-column (if to-do-column
+                           (cond
+                            ((eqv? #t to-do-column)(make-vector rowcount #f))
+                            ((eqv? '() to-do-column) #f)
+                            ((vector? to-do-column)(if (and (= rowcount (length to-do-column))
+                                                            (vector-every? boolean? to-do-column))
+                                                       to-do-column
+                                                       (error "Invalid to-do-column"))))
+                           #f)))
     (cond
      ((> colcount $maximum-columns) 
       (error "Too many columns"))
      ((> rowcount $maximum-rows) 
       (error "Too many rows"))
      (else (make-store version columns show-deleted column-layout
-                       window-layout sort-column sort-reversed
+                       to-do-column sort-column sort-reversed
                        rows notes)))))
 
 
@@ -259,8 +268,8 @@
                                                        entry))
                                    (store.column-layout s))))
 
-(define (store.window-layout s)(store-window-layout s))
-(define (store.set-window-layout! s co)(store-window-layout-set! s co))
+(define (store.to-do-column s)(store-to-do-column s))
+(define (store.set-to-do-column! s co)(store-to-do-column-set! s co))
 (define (store.sort-column s)(store-sort-column s))
 (define (store.set-sort-column! s lbl)(store-sort-column-set! s lbl))
 (define (store.sort-reversed? s)(store-sort-reversed? s))
@@ -281,7 +290,7 @@
                                   (map column.serialize (store.columns s))
                                   (store.show-deleted? s)
                                   (store.column-layout s)
-                                  (store.window-layout s)
+                                  (store.to-do-column s)
                                   (store.sort-column s)
                                   (store.sort-reversed? s)
                                   (map row.serialize (store.rows s))
@@ -301,7 +310,7 @@
                                       (map column.deserialize (vector-ref s 2)) ; columns
                                       (vector-ref s 3) ; show-deleted?
                                       (vector-ref s 4) ; column-layout
-                                      (vector-ref s 5) ; window-layout
+                                      (vector-ref s 5) ; to-do-column
                                       (vector-ref s 6) ; sort-column
                                       (vector-ref s 7) ; sort-reversed?
                                       (map row.deserialize (vector-ref s 8)) ; rows
@@ -339,7 +348,7 @@
                       (store.columns s)))
             (format "~%  show-deleted?: ~a" (store.show-deleted? s))
             (format "~%  column-layout: ~a" (store.column-layout s))
-            (format "~%  window-layout: ~a" (store.window-layout s))
+            (format "~%  to-do-column: ~a" (store.to-do-column s))
             (format "~%  sort-column: ~a" (store.sort-column s))
             (format "~%  sort-reversed?: ~a" (store.sort-reversed? s))
             (format "~%  row-count: ~a" (length (store.rows s)))

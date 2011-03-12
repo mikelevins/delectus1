@@ -36,7 +36,7 @@
 (define (conjoin f1 . fs)
   (lambda (x)
     (and (f1 x)
-         (every (lambda (f) (f x))
+         (every? (lambda (f) (f x))
                 fs))))
 
 (define (disjoin f1 . fs)
@@ -166,6 +166,19 @@
           alist)
         (cons (key val)
               alist))))
+
+;;; ----------------------------------------------------------------------
+;;; vector utils
+;;; ----------------------------------------------------------------------
+
+(define (vector-every? pred vec)
+  (let ((vlen (vector-length vec)))
+    (let loop ((i 0))
+      (if (< i vlen)
+          (if (pred (vector-ref vec i))
+              (loop (+ 1 i))
+              #f)
+          #t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; string utils

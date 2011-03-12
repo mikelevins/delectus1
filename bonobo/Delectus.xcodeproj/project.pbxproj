@@ -1,0 +1,470 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
+		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
+		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		976F830D132B38F000727B01 /* DelectusAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 976F8302132B38F000727B01 /* DelectusAppDelegate.m */; };
+		976F830F132B38F000727B01 /* DelectusCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 976F8306132B38F000727B01 /* DelectusCell.m */; };
+		976F8310132B38F000727B01 /* DelectusDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 976F8308132B38F000727B01 /* DelectusDocument.m */; };
+		976F8311132B38F000727B01 /* DelectusTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 976F830A132B38F000727B01 /* DelectusTableView.m */; };
+		976F8312132B38F000727B01 /* NSString+CString.m in Sources */ = {isa = PBXBuildFile; fileRef = 976F830C132B38F000727B01 /* NSString+CString.m */; };
+		978AD76F132B37DD0028AE78 /* AddColumnSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978AD751132B37DD0028AE78 /* AddColumnSheet.xib */; };
+		978AD770132B37DD0028AE78 /* DelectusHelp.css in Resources */ = {isa = PBXBuildFile; fileRef = 978AD754132B37DD0028AE78 /* DelectusHelp.css */; };
+		978AD771132B37DD0028AE78 /* DelectusHelp.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD755132B37DD0028AE78 /* DelectusHelp.html */; };
+		978AD772132B37DD0028AE78 /* add_col.png in Resources */ = {isa = PBXBuildFile; fileRef = 978AD757132B37DD0028AE78 /* add_col.png */; };
+		978AD773132B37DD0028AE78 /* add_row.png in Resources */ = {isa = PBXBuildFile; fileRef = 978AD758132B37DD0028AE78 /* add_row.png */; };
+		978AD774132B37DD0028AE78 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 978AD759132B37DD0028AE78 /* icon.png */; };
+		978AD775132B37DD0028AE78 /* main_window.png in Resources */ = {isa = PBXBuildFile; fileRef = 978AD75A132B37DD0028AE78 /* main_window.png */; };
+		978AD776132B37DD0028AE78 /* main_window2.png in Resources */ = {isa = PBXBuildFile; fileRef = 978AD75B132B37DD0028AE78 /* main_window2.png */; };
+		978AD777132B37DD0028AE78 /* adding_columns.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD75D132B37DD0028AE78 /* adding_columns.html */; };
+		978AD778132B37DD0028AE78 /* adding_rows.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD75E132B37DD0028AE78 /* adding_rows.html */; };
+		978AD779132B37DD0028AE78 /* editing_things.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD75F132B37DD0028AE78 /* editing_things.html */; };
+		978AD77A132B37DD0028AE78 /* finding_things.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD760132B37DD0028AE78 /* finding_things.html */; };
+		978AD77B132B37DD0028AE78 /* getting_started.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD761132B37DD0028AE78 /* getting_started.html */; };
+		978AD77C132B37DD0028AE78 /* importing.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD762132B37DD0028AE78 /* importing.html */; };
+		978AD77D132B37DD0028AE78 /* sorting.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD763132B37DD0028AE78 /* sorting.html */; };
+		978AD77E132B37DD0028AE78 /* tips.html in Resources */ = {isa = PBXBuildFile; fileRef = 978AD764132B37DD0028AE78 /* tips.html */; };
+		978AD77F132B37DD0028AE78 /* Delectus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 978AD765132B37DD0028AE78 /* Delectus.icns */; };
+		978AD781132B37DD0028AE78 /* DelectusDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978AD769132B37DD0028AE78 /* DelectusDocument.xib */; };
+		978AD782132B37DD0028AE78 /* trashempty.png in Resources */ = {isa = PBXBuildFile; fileRef = 978AD76B132B37DD0028AE78 /* trashempty.png */; };
+		978AD783132B37DD0028AE78 /* trashfull.png in Resources */ = {isa = PBXBuildFile; fileRef = 978AD76D132B37DD0028AE78 /* trashfull.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		2564AD2C0F5327BB00F57823 /* Delectus_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delectus_Prefix.pch; sourceTree = "<group>"; };
+		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
+		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		8D15AC360486D014006FF6A4 /* Delectus-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Delectus-Info.plist"; sourceTree = "<group>"; };
+		8D15AC370486D014006FF6A4 /* Delectus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Delectus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		976F8301132B38F000727B01 /* DelectusAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusAppDelegate.h; sourceTree = "<group>"; };
+		976F8302132B38F000727B01 /* DelectusAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusAppDelegate.m; sourceTree = "<group>"; };
+		976F8305132B38F000727B01 /* DelectusCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusCell.h; sourceTree = "<group>"; };
+		976F8306132B38F000727B01 /* DelectusCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusCell.m; sourceTree = "<group>"; };
+		976F8307132B38F000727B01 /* DelectusDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDocument.h; sourceTree = "<group>"; };
+		976F8308132B38F000727B01 /* DelectusDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDocument.m; sourceTree = "<group>"; };
+		976F8309132B38F000727B01 /* DelectusTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusTableView.h; sourceTree = "<group>"; };
+		976F830A132B38F000727B01 /* DelectusTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusTableView.m; sourceTree = "<group>"; };
+		976F830B132B38F000727B01 /* NSString+CString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CString.h"; sourceTree = "<group>"; };
+		976F830C132B38F000727B01 /* NSString+CString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CString.m"; sourceTree = "<group>"; };
+		978AD752132B37DD0028AE78 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/AddColumnSheet.xib; sourceTree = "<group>"; };
+		978AD754132B37DD0028AE78 /* DelectusHelp.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = DelectusHelp.css; sourceTree = "<group>"; };
+		978AD755132B37DD0028AE78 /* DelectusHelp.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DelectusHelp.html; sourceTree = "<group>"; };
+		978AD757132B37DD0028AE78 /* add_col.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_col.png; sourceTree = "<group>"; };
+		978AD758132B37DD0028AE78 /* add_row.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_row.png; sourceTree = "<group>"; };
+		978AD759132B37DD0028AE78 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		978AD75A132B37DD0028AE78 /* main_window.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = main_window.png; sourceTree = "<group>"; };
+		978AD75B132B37DD0028AE78 /* main_window2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = main_window2.png; sourceTree = "<group>"; };
+		978AD75D132B37DD0028AE78 /* adding_columns.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = adding_columns.html; sourceTree = "<group>"; };
+		978AD75E132B37DD0028AE78 /* adding_rows.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = adding_rows.html; sourceTree = "<group>"; };
+		978AD75F132B37DD0028AE78 /* editing_things.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = editing_things.html; sourceTree = "<group>"; };
+		978AD760132B37DD0028AE78 /* finding_things.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = finding_things.html; sourceTree = "<group>"; };
+		978AD761132B37DD0028AE78 /* getting_started.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getting_started.html; sourceTree = "<group>"; };
+		978AD762132B37DD0028AE78 /* importing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = importing.html; sourceTree = "<group>"; };
+		978AD763132B37DD0028AE78 /* sorting.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = sorting.html; sourceTree = "<group>"; };
+		978AD764132B37DD0028AE78 /* tips.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = tips.html; sourceTree = "<group>"; };
+		978AD766132B37DD0028AE78 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = English; path = English.lproj/Delectus.icns; sourceTree = "<group>"; };
+		978AD76A132B37DD0028AE78 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DelectusDocument.xib; sourceTree = "<group>"; };
+		978AD76C132B37DD0028AE78 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/trashempty.png; sourceTree = "<group>"; };
+		978AD76E132B37DD0028AE78 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/trashfull.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D15AC330486D014006FF6A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7A8FEA54F5311CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */,
+				13E42FBA07B3F13500E4EEF1 /* CoreData.framework */,
+				2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FB0FE9D524F11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D15AC370486D014006FF6A4 /* Delectus.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2A37F4AAFDCFA73011CA2CEA /* Delectus */ = {
+			isa = PBXGroup;
+			children = (
+				2A37F4ABFDCFA73011CA2CEA /* Classes */,
+				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
+				2A37F4B8FDCFA73011CA2CEA /* Resources */,
+				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
+				19C28FB0FE9D524F11CA2CBB /* Products */,
+			);
+			name = Delectus;
+			sourceTree = "<group>";
+		};
+		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				976F8301132B38F000727B01 /* DelectusAppDelegate.h */,
+				976F8302132B38F000727B01 /* DelectusAppDelegate.m */,
+				976F8305132B38F000727B01 /* DelectusCell.h */,
+				976F8306132B38F000727B01 /* DelectusCell.m */,
+				976F8307132B38F000727B01 /* DelectusDocument.h */,
+				976F8308132B38F000727B01 /* DelectusDocument.m */,
+				976F8309132B38F000727B01 /* DelectusTableView.h */,
+				976F830A132B38F000727B01 /* DelectusTableView.m */,
+				976F830B132B38F000727B01 /* NSString+CString.h */,
+				976F830C132B38F000727B01 /* NSString+CString.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				2564AD2C0F5327BB00F57823 /* Delectus_Prefix.pch */,
+				2A37F4B0FDCFA73011CA2CEA /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				978AD751132B37DD0028AE78 /* AddColumnSheet.xib */,
+				978AD753132B37DD0028AE78 /* Delectus.help */,
+				978AD765132B37DD0028AE78 /* Delectus.icns */,
+				978AD769132B37DD0028AE78 /* DelectusDocument.xib */,
+				978AD76B132B37DD0028AE78 /* trashempty.png */,
+				978AD76D132B37DD0028AE78 /* trashfull.png */,
+				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
+				8D15AC360486D014006FF6A4 /* Delectus-Info.plist */,
+				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
+				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
+				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		978AD753132B37DD0028AE78 /* Delectus.help */ = {
+			isa = PBXGroup;
+			children = (
+				978AD754132B37DD0028AE78 /* DelectusHelp.css */,
+				978AD755132B37DD0028AE78 /* DelectusHelp.html */,
+				978AD756132B37DD0028AE78 /* images */,
+				978AD75C132B37DD0028AE78 /* topics */,
+			);
+			name = Delectus.help;
+			path = English.lproj/Delectus.help;
+			sourceTree = "<group>";
+		};
+		978AD756132B37DD0028AE78 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				978AD757132B37DD0028AE78 /* add_col.png */,
+				978AD758132B37DD0028AE78 /* add_row.png */,
+				978AD759132B37DD0028AE78 /* icon.png */,
+				978AD75A132B37DD0028AE78 /* main_window.png */,
+				978AD75B132B37DD0028AE78 /* main_window2.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		978AD75C132B37DD0028AE78 /* topics */ = {
+			isa = PBXGroup;
+			children = (
+				978AD75D132B37DD0028AE78 /* adding_columns.html */,
+				978AD75E132B37DD0028AE78 /* adding_rows.html */,
+				978AD75F132B37DD0028AE78 /* editing_things.html */,
+				978AD760132B37DD0028AE78 /* finding_things.html */,
+				978AD761132B37DD0028AE78 /* getting_started.html */,
+				978AD762132B37DD0028AE78 /* importing.html */,
+				978AD763132B37DD0028AE78 /* sorting.html */,
+				978AD764132B37DD0028AE78 /* tips.html */,
+			);
+			path = topics;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D15AC270486D014006FF6A4 /* Delectus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Delectus" */;
+			buildPhases = (
+				8D15AC2B0486D014006FF6A4 /* Resources */,
+				8D15AC300486D014006FF6A4 /* Sources */,
+				8D15AC330486D014006FF6A4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Delectus;
+			productInstallPath = "$(HOME)/Applications";
+			productName = Delectus;
+			productReference = 8D15AC370486D014006FF6A4 /* Delectus.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Delectus" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Delectus */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D15AC270486D014006FF6A4 /* Delectus */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D15AC2B0486D014006FF6A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
+				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
+				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
+				978AD76F132B37DD0028AE78 /* AddColumnSheet.xib in Resources */,
+				978AD770132B37DD0028AE78 /* DelectusHelp.css in Resources */,
+				978AD771132B37DD0028AE78 /* DelectusHelp.html in Resources */,
+				978AD772132B37DD0028AE78 /* add_col.png in Resources */,
+				978AD773132B37DD0028AE78 /* add_row.png in Resources */,
+				978AD774132B37DD0028AE78 /* icon.png in Resources */,
+				978AD775132B37DD0028AE78 /* main_window.png in Resources */,
+				978AD776132B37DD0028AE78 /* main_window2.png in Resources */,
+				978AD777132B37DD0028AE78 /* adding_columns.html in Resources */,
+				978AD778132B37DD0028AE78 /* adding_rows.html in Resources */,
+				978AD779132B37DD0028AE78 /* editing_things.html in Resources */,
+				978AD77A132B37DD0028AE78 /* finding_things.html in Resources */,
+				978AD77B132B37DD0028AE78 /* getting_started.html in Resources */,
+				978AD77C132B37DD0028AE78 /* importing.html in Resources */,
+				978AD77D132B37DD0028AE78 /* sorting.html in Resources */,
+				978AD77E132B37DD0028AE78 /* tips.html in Resources */,
+				978AD77F132B37DD0028AE78 /* Delectus.icns in Resources */,
+				978AD781132B37DD0028AE78 /* DelectusDocument.xib in Resources */,
+				978AD782132B37DD0028AE78 /* trashempty.png in Resources */,
+				978AD783132B37DD0028AE78 /* trashfull.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D15AC300486D014006FF6A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC320486D014006FF6A4 /* main.m in Sources */,
+				976F830D132B38F000727B01 /* DelectusAppDelegate.m in Sources */,
+				976F830F132B38F000727B01 /* DelectusCell.m in Sources */,
+				976F8310132B38F000727B01 /* DelectusDocument.m in Sources */,
+				976F8311132B38F000727B01 /* DelectusTableView.m in Sources */,
+				976F8312132B38F000727B01 /* NSString+CString.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1660FE840EACC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1DDD582A0DA1D0D100B32029 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1DDD582B0DA1D0D100B32029 /* English */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2A37F4BAFDCFA73011CA2CEA /* English */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		978AD751132B37DD0028AE78 /* AddColumnSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				978AD752132B37DD0028AE78 /* English */,
+			);
+			name = AddColumnSheet.xib;
+			sourceTree = "<group>";
+		};
+		978AD765132B37DD0028AE78 /* Delectus.icns */ = {
+			isa = PBXVariantGroup;
+			children = (
+				978AD766132B37DD0028AE78 /* English */,
+			);
+			name = Delectus.icns;
+			sourceTree = "<group>";
+		};
+		978AD769132B37DD0028AE78 /* DelectusDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				978AD76A132B37DD0028AE78 /* English */,
+			);
+			name = DelectusDocument.xib;
+			sourceTree = "<group>";
+		};
+		978AD76B132B37DD0028AE78 /* trashempty.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				978AD76C132B37DD0028AE78 /* English */,
+			);
+			name = trashempty.png;
+			sourceTree = "<group>";
+		};
+		978AD76D132B37DD0028AE78 /* trashfull.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				978AD76E132B37DD0028AE78 /* English */,
+			);
+			name = trashfull.png;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C05733C808A9546B00998B17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
+				INFOPLIST_FILE = "Delectus-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = Delectus;
+			};
+			name = Debug;
+		};
+		C05733C908A9546B00998B17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
+				INFOPLIST_FILE = "Delectus-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = Delectus;
+			};
+			name = Release;
+		};
+		C05733CC08A9546B00998B17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		C05733CD08A9546B00998B17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Delectus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C05733C808A9546B00998B17 /* Debug */,
+				C05733C908A9546B00998B17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Delectus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C05733CC08A9546B00998B17 /* Debug */,
+				C05733CD08A9546B00998B17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+}

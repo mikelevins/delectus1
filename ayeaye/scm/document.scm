@@ -98,8 +98,8 @@
 
 (define (document.move-column! doc label new-index) (store.move-column! (document.store doc) label new-index))
 
-(define (document.window-layout doc)(store.window-layout (document.store doc)))
-(define (document.set-window-layout! doc co)(store.set-window-layout! (document.store doc) co))
+(define (document.to-do-column doc)(store.to-do-column (document.store doc)))
+(define (document.set-to-do-column! doc co)(store.set-to-do-column! (document.store doc) co))
 
 (define (document.sort-column doc)(store-sort-column (document.store doc)))
 (define (document.set-sort-column! doc label)(store-sort-column-set! (document.store doc) label))
@@ -141,7 +141,7 @@
 
 (define (get-new-document!)
   (let* ((s (store:make version: (current-store-format) columns: '() show-deleted: #f
-                        column-layout: '() window-layout: '()
+                        column-layout: '() to-do-column: #f
                         sort-column: #f sort-reversed: #f rows: '() notes: ""))
          (p (next-document-id))
          (d (document s)))

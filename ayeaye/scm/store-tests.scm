@@ -146,7 +146,7 @@
                       (test-show-deleted? #f)
                       (test-column-layout (map (lambda (lbl) (cons lbl 150.0))
                                                (test:shuffle $column-labels-1)))
-                      (test-window-layout '(100. 100. 600. 400.))
+                      (test-to-do-column #t)
                       (test-sort (list-ref $column-labels-1 (random-integer (length $column-labels-1))))
                       (test-rows (map (lambda (r) (make-row (map make-field r)
                                                             #f))
@@ -156,7 +156,7 @@
                                      test-columns
                                      test-show-deleted?
                                      test-column-layout
-                                     test-window-layout
+                                     test-to-do-column
                                      test-sort
                                      #f
                                      test-rows
@@ -177,7 +177,7 @@
                       (test-show-deleted? #f)
                       (test-column-layout (map (lambda (lbl) (cons lbl 150.0))
                                                (test:shuffle $column-labels-1)))
-                      (test-window-layout '(100. 100. 600. 400.))
+                      (test-to-do-column #f)
                       (test-sort (list-ref $column-labels-1 (random-integer (length $column-labels-1))))
                       (test-rows (map (lambda (r) (make-row (map make-field r)
                                                             #f))
@@ -187,7 +187,7 @@
                                         test-columns
                                         test-show-deleted?
                                         test-column-layout
-                                        test-window-layout
+                                        test-to-do-column
                                         test-sort
                                         #f
                                         test-rows
