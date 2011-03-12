@@ -27,57 +27,54 @@
 ;;; API functions
 ;;; ---------------------------------------------------------------------
 
-(define (api:version) $delectus-format-1.0)
+(define (api:version)
+  (if-error $VAL_NO_VALUE
+            $VAL_DEFAULT_VALUE))
 
 (define (api:new-delectus)
   (if-error $OBJ_NO_OID
-            $OBJ_NO_OID))
+            $OBJ_DEFAULT_OID))
 
-(define (api:get-view oid include-deleted? sort-column sort-order filter-text)
+(define (api:get-view id include-deleted? sort-column sort-order filter-text)
   (if-error $OBJ_NO_OID
-            $OBJ_NO_OID))
+            $OBJ_DEFAULT_OID))
 
-(define (api:value-at oid column-label row-index)
+(define (api:value-at id column-label row-index)
   (if-error $VAL_NO_VALUE
-            $VAL_NO_VALUE))
+            $VAL_DEFAULT_VALUE))
 
-(define (api:put-value-at! oid column-label row-index val)
+(define (api:put-value-at! id column-label row-index val)
   (if-error $ERR_CANT_UPDATE
-            $ERR_CANT_UPDATE))
+            $ERR_NO_ERROR))
 
-(define (api:add-row! oid)
-  (if-error $ERR_CANT_ADD_ROW
-            $ERR_CANT_ADD_ROW))
-
-(define (api:add-column! oid label)
-  (if-error $ERR_CANT_ADD_COLUMN
-            $ERR_CANT_ADD_COLUMN))
-
-(define (api:mark-column-deleted! oid column-label deleted?)
+(define (api:add-row id)
   (if-error $ERR_CANT_UPDATE
-            $ERR_CANT_UPDATE))
+            $ERR_NO_ERROR))
 
-(define (api:mark-row-deleted! oid row-index deleted?)
+(define (api:add-column! id column-label)
   (if-error $ERR_CANT_UPDATE
-            $ERR_CANT_UPDATE))
+            $ERR_NO_ERROR))
 
-(define (api:compact-delectus! oid)
+(define (api:mark-row-deleted! id row-index deleted?)
   (if-error $ERR_CANT_UPDATE
-            $ERR_CANT_UPDATE))
+            $ERR_NO_ERROR))
 
-(define (api:write-delectus-file oid path)
+(define (api:compact-delectus! id)
+  (if-error $ERR_CANT_UPDATE
+            $ERR_NO_ERROR))
+
+(define (api:write-delectus-file id path)
   (if-error $ERR_CANT_WRITE
-            $ERR_CANT_WRITE))
+            $ERR_NO_ERROR))
 
 (define (api:read-delectus-file path)
   (if-error $OBJ_NO_OID
-            $OBJ_NO_OID))
+            $OBJ_DEFAULT_OID))
 
-(define (api:write-delectus/csv oid path)
+(define (api:write-delectus-csv id path)
   (if-error $ERR_CANT_WRITE
-            $ERR_CANT_WRITE))
+            $ERR_NO_ERROR))
 
-(define (api:read-delectus/csv path)
+(define (api:read-delectus-csv path)
   (if-error $OBJ_NO_OID
-            $OBJ_NO_OID))
-
+            $OBJ_DEFAULT_OID))

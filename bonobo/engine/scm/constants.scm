@@ -21,8 +21,10 @@
 (define $VAL_NO #f)
 (define $VAL_YES #t)
 (define $VAL_NO_VALUE #f)
+(define $VAL_DEFAULT_VALUE "")
 
 (define $OBJ_NO_OID 0)
+(define $OBJ_DEFAULT_OID 0)
 
 (define $ERR_NO_ERROR            0)
 (define $ERR_UNKNOWN_ERROR      -1)

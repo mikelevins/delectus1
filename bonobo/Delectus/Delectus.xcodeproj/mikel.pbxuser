@@ -4,6 +4,9 @@
 		activeBuildConfigurationName = Debug;
 		activeExecutable = 9702B8D6132B47B8002CAC0F /* Delectus */;
 		activeTarget = 8D15AC270486D014006FF6A4 /* Delectus */;
+		addToTargets = (
+			8D15AC270486D014006FF6A4 /* Delectus */,
+		);
 		codeSenseManager = 9702B8F4132B47C2002CAC0F /* Code sense */;
 		executables = (
 			9702B8D6132B47B8002CAC0F /* Delectus */,
@@ -14,9 +17,9 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					668,
+					807,
 					20,
-					52.541015625,
+					52,
 					43,
 					43,
 					20,
@@ -31,11 +34,45 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 321603512;
-			PBXWorkspaceStateSaveDate = 321603512;
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					629,
+					60,
+					20,
+					52,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 321628224;
+			PBXWorkspaceStateSaveDate = 321628224;
+		};
+		perUserProjectItems = {
+			97853DC5132B7DA9008D485C /* PBXTextBookmark */ = 97853DC5132B7DA9008D485C /* PBXTextBookmark */;
+			97853DE0132B946A008D485C /* PBXTextBookmark */ = 97853DE0132B946A008D485C /* PBXTextBookmark */;
+			97934968132BA875008486FB /* PBXTextBookmark */ = 97934968132BA875008486FB /* PBXTextBookmark */;
 		};
 		sourceControlManager = 9702B8F3132B47C2002CAC0F /* Source Control */;
 		userBuildSettings = {
+		};
+	};
+	2A37F4B0FDCFA73011CA2CEA /* main.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {989, 802}}";
+			sepNavSelRange = "{207, 0}";
+			sepNavVisRange = "{0, 711}";
 		};
 	};
 	8D15AC270486D014006FF6A4 /* Delectus */ = {
@@ -87,5 +124,42 @@
 	9702B8F4132B47C2002CAC0F /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	97853DC5132B7DA9008D485C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 97D44A56132B7B6D0048ADA8 /* Delectus.h */;
+		name = "Delectus.h: 27";
+		rLen = 0;
+		rLoc = 711;
+		rType = 0;
+		vrLen = 1424;
+		vrLoc = 84;
+	};
+	97853DE0132B946A008D485C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */;
+		name = "main.m: 12";
+		rLen = 0;
+		rLoc = 207;
+		rType = 0;
+		vrLen = 711;
+		vrLoc = 0;
+	};
+	97934968132BA875008486FB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */;
+		name = "main.m: 12";
+		rLen = 0;
+		rLoc = 207;
+		rType = 0;
+		vrLen = 711;
+		vrLoc = 0;
+	};
+	97D44A56132B7B6D0048ADA8 /* Delectus.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {851, 615}}";
+			sepNavSelRange = "{711, 0}";
+			sepNavVisRange = "{84, 1424}";
+		};
 	};
 }

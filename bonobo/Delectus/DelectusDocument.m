@@ -1,14 +1,14 @@
 //
-//  MyDocument.m
+//  DelectusDocument.m
 //  Delectus
 //
 //  Created by mikel on 3/12/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "MyDocument.h"
+#import "DelectusDocument.h"
 
-@implementation MyDocument
+@implementation DelectusDocument
 
 - (id)init
 {
@@ -26,7 +26,7 @@
 {
     // Override returning the nib file name of the document
     // If you need to use a subclass of NSWindowController or if your document supports multiple NSWindowControllers, you should remove this method and override -makeWindowControllers instead.
-    return @"MyDocument";
+    return @"DelectusDocument";
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
@@ -62,5 +62,18 @@
 	}
     return YES;
 }
+
+// IBActions
+- (IBAction)toggleToDo:(id)sender{}
+- (IBAction)addRow:(id)sender{}
+- (IBAction)toggleRowDeleted:(id)sender{}
+- (IBAction)addColumn:(id)sender{}
+- (IBAction)toggleColumnDeleted:(id)sender{}
+- (IBAction)toggleTotals:(id)sender{}
+- (IBAction)setFilter:(id)sender{}
+- (IBAction)toggleShowDeleted:(id)sender{}
+- (IBAction)emptyTrash:(id)sender{}
+- (IBAction)renameColumn:(id)sender{}
+
 
 @end

@@ -23,22 +23,18 @@
 #define ERR_BAD_FORMAT         (-10)
 #define ERR_NO_DOCUMENT        (-11)
 
-typedef int val;
-typedef int oid;
-typedef int err;
-
-extern oid version ();
-extern oid new_delectus ();
-extern oid get_view(oid id, int include_deleted, int sort_column, int sort_order, char* filter_text);
-extern val value_at (oid id, char* column_label, int row_index); // returns a value id
-extern err put_value_at (oid id, char* column_label, int row_index, char* value);
-extern err add_row (oid id);
-extern err add_column (int oid, char* label);
-extern err mark_column_deleted (oid id, char* column_label, int deleted);
-extern err mark_row_deleted (oid id, int row_index, int deleted);
-extern err compact_delectus (oid id);
-extern err write_delectus_file (oid id, char* path);
-extern oid read_delectus_file (char* path);
-extern err write_delectus_csv (oid id, char* path);
-extern oid read_delectus_csv (char* path);
-extern err release_value (char* val); // releases a string malloced by Gambit
+extern char* version ();
+extern int new_delectus ();
+extern int get_view(int id, int include_deleted, int sort_column, int sort_order, char* filter_text);
+extern char* value_at (int id, char* column_label, int row_index); // returns a value id
+extern int put_value_at (int id, char* column_label, int row_index, char* value);
+extern int add_row (int id);
+extern int add_column (int oid, char* label);
+extern int mark_column_deleted (int id, char* column_label, int deleted);
+extern int mark_row_deleted (int id, int row_index, int deleted);
+extern int compact_delectus (int id);
+extern int write_delectus_file (int id, char* path);
+extern int read_delectus_file (char* path);
+extern int write_delectus_csv (int id, char* path);
+extern int read_delectus_csv (char* path);
+extern int release_value (char* val); // releases a string malloced by Gambit
