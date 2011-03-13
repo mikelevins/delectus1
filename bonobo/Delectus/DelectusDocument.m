@@ -65,14 +65,42 @@
 
 // IBActions
 - (IBAction)toggleToDo:(id)sender{}
+
 - (IBAction)addRow:(id)sender{}
+
 - (IBAction)toggleRowDeleted:(id)sender{}
+
 - (IBAction)addColumn:(id)sender{}
+
 - (IBAction)toggleColumnDeleted:(id)sender{}
-- (IBAction)toggleTotals:(id)sender{}
+
+- (IBAction)toggleTotals:(id)sender{
+    NSInteger state = [sender state];
+    NSRect viewFrame;
+    if (state == NSOnState){
+        [totalsView setHidden: NO];
+        [totalsView setNeedsDisplay:YES];
+        viewFrame = [tableView frame];
+        viewFrame.size.height-=24;
+        viewFrame.origin.y+=24;
+        [tableView setFrame:viewFrame];
+        [tableView setNeedsDisplay:YES];
+    }else{
+        [totalsView setHidden: YES];
+        viewFrame = [tableView frame];
+        viewFrame.size.height+=24;
+        viewFrame.origin.y-=24;
+        [tableView setFrame:viewFrame];
+        [tableView setNeedsDisplay:YES];
+    }
+}
+
 - (IBAction)setFilter:(id)sender{}
+
 - (IBAction)toggleShowDeleted:(id)sender{}
+
 - (IBAction)emptyTrash:(id)sender{}
+
 - (IBAction)renameColumn:(id)sender{}
 
 
