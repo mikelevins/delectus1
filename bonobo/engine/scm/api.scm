@@ -47,6 +47,14 @@
   (if-error $ERR_CANT_UPDATE
             $ERR_NO_ERROR))
 
+(define (api:row-finished? id row-index)
+  (if-error $VAL_NO
+            $VAL_NO))
+
+(define (api:mark-row-finished! id row-index finished?)
+  (if-error $ERR_CANT_UPDATE
+            $ERR_NO_ERROR))
+
 (define (api:add-row id)
   (if-error $ERR_CANT_UPDATE
             $ERR_NO_ERROR))
@@ -54,6 +62,26 @@
 (define (api:add-column! id column-label)
   (if-error $ERR_CANT_UPDATE
             $ERR_NO_ERROR))
+
+(define (api:column-deleted? id column-label)
+  (if-error $VAL_NO
+            $VAL_NO))
+
+(define (api:mark-column-deleted! id column-label deleted?)
+  (if-error $ERR_CANT_UPDATE
+            $ERR_NO_ERROR))
+
+(define (api:column-has-total? id column-label)
+  (if-error $VAL_NO
+            $VAL_NO))
+
+(define (api:column-total id column-label)
+  (if-error $VAL_NO
+            $VAL_NO))
+
+(define (api:row-deleted? id row-index)
+  (if-error $VAL_NO
+            $VAL_NO))
 
 (define (api:mark-row-deleted! id row-index deleted?)
   (if-error $ERR_CANT_UPDATE

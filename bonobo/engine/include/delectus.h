@@ -7,6 +7,7 @@
 #define VAL_NO 0
 #define VAL_YES 1
 #define VAL_NO_VALUE 0L
+#define VAL_DEFAULT_VALUE 0L
 
 #define OBJ_NO_OID 0L
 
@@ -28,9 +29,15 @@ extern int new_delectus ();
 extern int get_view(int id, int include_deleted, int sort_column, int sort_order, char* filter_text);
 extern char* value_at (int id, char* column_label, int row_index); // returns a value id
 extern int put_value_at (int id, char* column_label, int row_index, char* value);
+extern int is_row_finished(int id, int row_index);
+extern int mark_row_finished(int id, int row_index, int finished);
 extern int add_row (int id);
 extern int add_column (int oid, char* label);
+extern int is_column_deleted (int id, char* column_label);
 extern int mark_column_deleted (int id, char* column_label, int deleted);
+extern int column_has_total (int id, char* column_label);
+extern int column_total (int id, char* column_label);
+extern int is_row_deleted (int id, int row_index);
 extern int mark_row_deleted (int id, int row_index, int deleted);
 extern int compact_delectus (int id);
 extern int write_delectus_file (int id, char* path);

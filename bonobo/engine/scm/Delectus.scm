@@ -32,6 +32,14 @@
           int "put_value_at" ""
           (api:put-value-at! id column-label row-index val))
 
+(c-define (c:row-finished? id row-index) (int int) 
+          char-string "is_row_finished" ""
+          (api:row-finished? id row-index))
+
+(c-define (c:mark-row-finished! id row-index finished) (int int int) 
+          char-string "mark_row_finished" ""
+          (api:mark-row-finished! id row-index finished?))
+
 (c-define (c:add-row! id) (int) 
           int "add_row" ""
           (api:add-row id))
@@ -39,6 +47,26 @@
 (c-define (c:add-column! id column-label) (int char-string) 
           int "add_column" ""
           (api:add-column! id column-label))
+
+(c-define (c:column-deleted? id column-label) (int char-string)
+          int "is_column_deleted" ""
+          (api:column-deleted? id column-label))
+
+(c-define (c:mark-column-deleted! id column-label deleted?) (int char-string int)
+          int "mark_column_deleted" ""
+          (api:mark-column-deleted! id column-label deleted?))
+
+(c-define (c:column-has-total? id column-label) (int char-string)
+          int "column_has_total" ""
+          (api:column-has-total? id column-label))
+
+(c-define (c:column-total id column-label) (int char-string)
+          int "column_total" ""
+          (api:column-total id column-label))
+
+(c-define (c:row-deleted? id row-index) (int int)
+          int "is_row_deleted" ""
+          (api:row-deleted? id row-index))
 
 (c-define (c:mark-row-deleted! id row-index deleted?) (int int int)
           int "mark_row_deleted" ""

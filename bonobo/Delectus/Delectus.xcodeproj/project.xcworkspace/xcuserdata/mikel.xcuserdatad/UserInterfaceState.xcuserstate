@@ -8558,15 +8558,15 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
+					<integer>859</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
 					<integer>860</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>861</integer>
-				</dict>
-				<dict>
-					<key>CF$UID</key>
-					<integer>871</integer>
+					<integer>870</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
@@ -10999,7 +10999,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>859</integer>
+					<integer>839</integer>
 				</dict>
 			</array>
 		</dict>
@@ -11263,7 +11263,7 @@
 				<integer>856</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>321692225.41831702</real>
+			<real>321722749.86621702</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -11274,9 +11274,8 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 12:57 AM</string>
+		<string>Today at 10:25 AM</string>
 		<integer>106</integer>
-		<string>Delectus</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -11284,12 +11283,7 @@
 				<integer>39</integer>
 			</dict>
 			<key>NS.objects</key>
-			<array>
-				<dict>
-					<key>CF$UID</key>
-					<integer>4</integer>
-				</dict>
-			</array>
+			<array/>
 		</dict>
 		<dict>
 			<key>$class</key>
@@ -11301,7 +11295,7 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>862</integer>
+					<integer>861</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
@@ -11312,11 +11306,11 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>863</integer>
+					<integer>862</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>868</integer>
+					<integer>867</integer>
 				</dict>
 			</array>
 		</dict>
@@ -11347,22 +11341,22 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>864</integer>
+					<integer>863</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>865</integer>
+					<integer>864</integer>
 				</dict>
 			</array>
 			<key>NS.objects</key>
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>866</integer>
+					<integer>865</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>867</integer>
+					<integer>866</integer>
 				</dict>
 			</array>
 		</dict>
@@ -11380,22 +11374,22 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>864</integer>
+					<integer>863</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>865</integer>
+					<integer>864</integer>
 				</dict>
 			</array>
 			<key>NS.objects</key>
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>869</integer>
+					<integer>868</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>870</integer>
+					<integer>869</integer>
 				</dict>
 			</array>
 		</dict>
@@ -11411,39 +11405,39 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>872</integer>
+					<integer>871</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>874</integer>
+					<integer>873</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>876</integer>
+					<integer>875</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>878</integer>
+					<integer>877</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>880</integer>
+					<integer>879</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>882</integer>
+					<integer>881</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>884</integer>
+					<integer>883</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>886</integer>
+					<integer>885</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>888</integer>
+					<integer>887</integer>
 				</dict>
 			</array>
 		</dict>
@@ -11461,7 +11455,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>873</integer>
+				<integer>872</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/DelectusDocument.xib</string>
@@ -11479,7 +11473,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>875</integer>
+				<integer>874</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.m</string>
@@ -11497,7 +11491,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>877</integer>
+				<integer>876</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.h</string>
@@ -11515,7 +11509,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>879</integer>
+				<integer>878</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/InfoPlist.strings</string>
@@ -11533,7 +11527,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>881</integer>
+				<integer>880</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/main.m</string>
@@ -11551,7 +11545,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>883</integer>
+				<integer>882</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDelegate.h</string>
@@ -11569,7 +11563,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>885</integer>
+				<integer>884</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/MainMenu.xib</string>
@@ -11587,7 +11581,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>887</integer>
+				<integer>886</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDelegate.m</string>
