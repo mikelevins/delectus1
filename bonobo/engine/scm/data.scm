@@ -255,6 +255,10 @@
   (row:set-deleted! (table:row-at tbl row-index)
                        deleted?))
 
+(define (table:value-at tbl column-label row-index)
+  (row:element (table:row-at tbl row-index)
+               (table:column-index tbl column-label)))
+
 ;;; (define $cols '("Name" "Shape" "Color"))
 ;;; (define $rows '(("Fred" "Big" "Orange")("Barney" "Small" "Brown")("Wilma" "Slender" "White")))
 ;;; (define $d (table:make columns: $cols rows: $rows))

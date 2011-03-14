@@ -27,6 +27,8 @@
 extern char* version ();
 extern int new_delectus ();
 extern int get_view(int id, int include_deleted, int sort_column, int sort_order, char* filter_text);
+extern int count_columns (int id);
+extern int count_rows (int id);
 extern char* value_at (int id, char* column_label, int row_index); // returns a value id
 extern int put_value_at (int id, char* column_label, int row_index, char* value);
 extern int is_row_finished(int id, int row_index);

@@ -29,47 +29,106 @@
 
 (define (api:version)
   (if-error $VAL_NO_VALUE
-            $VAL_DEFAULT_VALUE))
+            $delectus-format-1.0))
+
+;;; (api:version)
 
 (define (api:new-delectus)
   (if-error $OBJ_NO_OID
-            $OBJ_DEFAULT_OID))
+            (new-document)))
+
+;;; (define $doc (api:new-delectus))
 
 (define (api:get-view id include-deleted? sort-column sort-order filter-text)
   (if-error $OBJ_NO_OID
-            $OBJ_DEFAULT_OID))
+            (get-view id 
+                      include-deleted: include-deleted?
+                      sort-column: sort-column
+                      sort-order: sort-order
+                      filter-text: filter-text)))
+
+;;; (define $doc (api:new-delectus))
+;;; (api:get-view $doc #t #f #f "w")
+;;; (get-view $doc include-deleted: #t sort-column: #f sort-order: #f filter-text: "w")
+
+(define (api:count-columns id)
+  (if-error $VAL_NO
+            (count-columns id)))
+
+(define (api:count-rows id)
+  (if-error $VAL_NO
+            (count-rows id)))
+
+;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
+;;; (define $zipid (api:read-delectus-csv $zip-path))
+;;; (api:count-columns $zipid)
+;;; (api:count-rows $zipid)
 
 (define (api:value-at id column-label row-index)
   (if-error $VAL_NO_VALUE
-            $VAL_DEFAULT_VALUE))
+            (value-at id column-label row-index)))
+
+;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
+;;; (define $zipid (api:read-delectus-csv $zip-path))
+;;; (api:value-at $zipid "city" 43190)
 
 (define (api:put-value-at! id column-label row-index val)
   (if-error $ERR_CANT_UPDATE
-            $ERR_NO_ERROR))
+            (put-value-at! id column-label row-index val)))
+
+;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
+;;; (define $zipid (api:read-delectus-csv $zip-path))
+;;; (api:value-at $zipid "city" 0)
+;;; (api:put-value-at! $zipid "city" 0 "Frostbite Falls")
+;;; (api:value-at $zipid "city" 0)
 
 (define (api:row-finished? id row-index)
   (if-error $VAL_NO
-            $VAL_NO))
+            (row-finished? id row-index)))
 
 (define (api:mark-row-finished! id row-index finished?)
   (if-error $ERR_CANT_UPDATE
-            $ERR_NO_ERROR))
+            (mark-row-finished! id row-index finished?)))
+
+;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode_10k.csv")
+;;; (define $zipid (api:read-delectus-csv $zip-path))
+;;; (api:row-finished? $zipid 0)
+;;; (api:mark-row-finished! $zipid 0 #f)
+;;; (api:row-finished? $zipid 0)
 
 (define (api:add-row id)
   (if-error $ERR_CANT_UPDATE
-            $ERR_NO_ERROR))
+            (add-row! id)))
 
-(define (api:add-column! id column-label)
+(define (api:add-column id column-label)
   (if-error $ERR_CANT_UPDATE
-            $ERR_NO_ERROR))
+            (add-column! id column-label)))
+
+;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode_10k.csv")
+;;; (define $zipid (api:read-delectus-csv $zip-path))
+;;; (api:count-columns $zipid)
+;;; (api:count-rows $zipid)
+;;; (api:add-column $zipid "city")
+;;; (api:count-columns $zipid)
+;;; (api:add-column $zipid "foobar")
+;;; (api:count-columns $zipid)
+;;; (api:add-row $zipid)
+;;; (api:count-rows $zipid)
 
 (define (api:column-deleted? id column-label)
   (if-error $VAL_NO
-            $VAL_NO))
+            (column-deleted? id column-label)))
 
 (define (api:mark-column-deleted! id column-label deleted?)
   (if-error $ERR_CANT_UPDATE
-            $ERR_NO_ERROR))
+            (mark-column-deleted! id column-label deleted?)))
+
+;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode_10k.csv")
+;;; (define $zipid (api:read-delectus-csv $zip-path))
+;;; (api:column-deleted? $zipid "city")
+;;; (api:mark-column-deleted! $zipid "city" #t)
+;;; (api:column-deleted? $zipid "city")
+;;; (api:mark-column-deleted! $zipid "city" #f)
 
 (define (api:column-has-total? id column-label)
   (if-error $VAL_NO
@@ -105,4 +164,8 @@
 
 (define (api:read-delectus-csv path)
   (if-error $OBJ_NO_OID
-            $OBJ_DEFAULT_OID))
+            (read-csv-file path)))
+
+;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
+;;; (define $zipid (api:read-delectus-csv $zip-path))
+;;; $zipid

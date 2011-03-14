@@ -16,18 +16,32 @@
   (sort-column view-description:sort-column)
   (sort-order view-description:sort-order))
 
+(define (view:description #!key
+                          (include-deleted #f)
+                          (filter-text #f)
+                          (sort-column #f)
+                          (sort-order #f))
+  (%make-view-description include-deleted
+                          filter-text
+                          sort-column
+                          sort-order))
+
 (define (view:null-description? description)(not description))
 
 (define (view:null-description) #f)
 
 (define (view:description-equal? desc1 desc2)
-  (or (eq? desc1 desc2)
+  (or (eqv? desc1 desc2)
       (and (eqv? (view-description:include-deleted? desc1)
                  (view-description:include-deleted? desc2))
-           (string-ci=? (view-description:filter-text desc1)
-                        (view-description:filter-text desc2))
-           (string-ci=? (view-description:sort-column desc1)
-                        (view-description:sort-column desc2))
+           (or (and (not (view-description:filter-text desc1))
+                    (not (view-description:filter-text desc2)))
+               (string-ci=? (view-description:filter-text desc1)
+                            (view-description:filter-text desc2)))
+           (or (and (not (view-description:sort-column desc1))
+                    (not (view-description:sort-column desc2)))
+               (string-ci=? (view-description:sort-column desc1)
+                            (view-description:sort-column desc2)))
            (eqv? (view-description:sort-order desc1)
                  (view-description:sort-order desc2)))))
 
@@ -52,12 +66,20 @@
                               (always #t))))))
     (lambda (row1 row2)(compare (accessor row1) (accessor row2)))))
 
-(define (view:create tbl #!key
-                     (include-deleted #f)
-                     (filter-text #f)
-                     (sort-column #f)
-                     (sort-order #f))
-  (let* ((view-columns (if include-deleted
+(define (view:create tbl #!key (description (view:null-description)))
+  (let* ((include-deleted (if description
+                              (view-description:include-deleted? description)
+                              #f))
+         (sort-column (if description
+                          (view-description:sort-column description)
+                          #f))
+         (sort-order (if description
+                         (view-description:sort-order description)
+                         #f))
+         (filter-text (if description
+                          (view-description:filter-text description)
+                          #f))
+         (view-columns (if include-deleted
                            (%table-select-columns tbl (always #t))
                            (%table-select-columns tbl (complement column:deleted?))))
          (view-column-indexes (map (partial table:column-index tbl)
@@ -69,7 +91,7 @@
                          live-rows))
          (filtered-rows (if filter-text
                             (filter (lambda (row)(row:match-text? row filter-text))
-                             view-rows)
+                                    view-rows)
                             view-rows))
          (sorted-rows (if sort-column
                           (sort filtered-rows (%make-row-comparator tbl sort-column sort-order))

@@ -28,6 +28,9 @@
     "api.scm"
     "data.scm"
     "views.scm"
+    "documents.scm"
+    "csv.scm"
+    ;;"io.scm"
     ))
 
 ;;; load Scheme files
