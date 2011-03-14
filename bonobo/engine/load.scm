@@ -30,7 +30,8 @@
     "views.scm"
     "documents.scm"
     "csv.scm"
-    ;;"io.scm"
+    "io-formats.scm"
+    "io.scm"
     ))
 
 ;;; load Scheme files
@@ -43,4 +44,3 @@
             $load-files))
 
 ;;; (load-delectus)
-

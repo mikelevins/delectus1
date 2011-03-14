@@ -19,11 +19,15 @@
   (number-value %entry-number-value %set-entry-number-value!))
 
 (define (%->entry-number-value thing)
-  (if (string? thing)
-      (string->number thing)
-      (if (null? thing)
-          #f
-          (error "Invalid entry value" thing))))
+  (if thing
+      (if (string? thing)
+          (if (string=? thing "")
+              0
+              (string->number thing))
+          (if (null? thing)
+              0
+              (error "Invalid entry value" thing)))
+      0))
 
 (define (entry:make val)
   (%make-entry val (%->entry-number-value val)))
@@ -134,6 +138,9 @@
 (define (column-sequence:element seq index)
   (vector-ref (column-sequence:columns seq) index))
 
+(define (column-sequence:labels seq)
+  (vector-map column:label (column-sequence:columns seq)))
+
 (define (column-sequence:position seq val)
   (vector-position (lambda (elt v)(string-ci=? (column:label elt) v))
                    (column-sequence:columns seq) val))
@@ -173,11 +180,11 @@
 
 ;;; return a list of columns
 (define (%table-select-columns tbl pred)
-  (vector->list (vector-filter pred (column-sequence:columns (table:column-sequence tbl)))))
+  (filter pred (vector->list (column-sequence:columns (table:column-sequence tbl)))))
 
 ;;; return a list of rows
 (define (%table-select-rows tbl pred)
-  (vector->list (vector-filter pred (table:rows tbl))))
+  (filter pred (vector->list (table:rows tbl))))
 
 ;;; return a list of entries for the column
 (define (%table-column-entries tbl column-label)
@@ -208,6 +215,9 @@
     (table:set-column-sequence! tbl (column-sequence:make live-column-labels))
     (table:set-rows! tbl (list->vector new-rows))
     tbl))
+
+(define (table:column-labels tbl)
+  (vector->list (column-sequence:labels (table:column-sequence tbl))))
 
 (define (table:count-columns tbl)
   (column-sequence:length (table:column-sequence tbl)))

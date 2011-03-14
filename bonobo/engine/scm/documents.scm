@@ -53,12 +53,15 @@
                   filter-text sort-column sort-order))
 
 (define (update-view! doc)
-  (or (doc:view-valid? doc)
+  (if (doc:view-valid? doc)
+      doc
       (begin
         (doc:set-view! doc
                        (view:create (doc:table doc)
-                                    description: (doc:view-description doc)))
-        (doc:set-view-valid! doc #t))))
+                                    description: (or (doc:view-description doc)
+                                                     (view:default-description))))
+        (doc:set-view-valid! doc #t)
+        doc)))
 
 ;;; ----------------------------------------------------------------------
 ;;; the global table of active documents
@@ -83,13 +86,9 @@
 (define (get-view docid #!key (description (view:null-description)))
   (let ((doc (find-document docid)))
     (if doc
-        (let ((doc-desc (doc:view-description doc)))
-          (if (view:description-equal? description doc-desc)
-              docid
-              (begin
-                (doc:set-view-description! doc description)
-                (doc:set-view-valid! doc #f)
-                docid)))
+        (begin
+          (doc:set-view-description! doc description)
+          (doc:set-view-valid! doc #f))
         (error "No such document"))))
 
 (define (count-columns docid)
@@ -193,4 +192,51 @@
             (doc:set-view-valid! doc #f)))
         (error "No such document"))))
 
+(define (column-has-total? docid column-label)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((tbl (doc:table doc)))
+            (table:numeric-column? tbl column-label)))
+        (error "No such document"))))
 
+(define (column-total docid column-label)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((tbl (doc:table doc)))
+            (reduce + 0 (table:column-values-as-numbers tbl column-label))))
+        (error "No such document"))))
+
+(define (row-deleted? docid row-index)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((tbl (doc:view doc))
+                 (row (table:row-at tbl row-index)))
+            (row:deleted? row)))
+        (error "No such document"))))
+
+(define (mark-row-deleted! docid row-index deleted?)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((tbl (doc:view doc))
+                 (row (table:row-at tbl row-index)))
+            (row:set-deleted! row (if deleted? #t #f))
+            (doc:set-view-valid! doc #f)))
+        (error "No such document"))))
+
+(define (compact! docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((tbl (doc:view doc)))
+            (table:compact! tbl)
+            (doc:set-view-valid! doc #f)))
+        (error "No such document"))))

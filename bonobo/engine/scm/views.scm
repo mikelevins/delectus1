@@ -26,9 +26,11 @@
                           sort-column
                           sort-order))
 
-(define (view:null-description? description)(not description))
-
-(define (view:null-description) #f)
+(define (view:default-description)
+  (%make-view-description #f
+                          #f
+                          #f
+                          #f))
 
 (define (view:description-equal? desc1 desc2)
   (or (eqv? desc1 desc2)
@@ -66,33 +68,21 @@
                               (always #t))))))
     (lambda (row1 row2)(compare (accessor row1) (accessor row2)))))
 
-(define (view:create tbl #!key (description (view:null-description)))
-  (let* ((include-deleted (if description
-                              (view-description:include-deleted? description)
-                              #f))
-         (sort-column (if description
-                          (view-description:sort-column description)
-                          #f))
-         (sort-order (if description
-                         (view-description:sort-order description)
-                         #f))
-         (filter-text (if description
-                          (view-description:filter-text description)
-                          #f))
+(define (view:create tbl #!key (description (view:default-description)))
+  (let* ((include-deleted (view-description:include-deleted? description))
+         (sort-column (view-description:sort-column description))
+         (sort-order (view-description:sort-order description))
+         (filter-text (view-description:filter-text description))
          (view-columns (if include-deleted
                            (%table-select-columns tbl (always #t))
                            (%table-select-columns tbl (complement column:deleted?))))
-         (view-column-indexes (map (partial table:column-index tbl)
-                                   (map column:label view-columns)))
          (live-rows (if include-deleted
                         (%table-select-rows tbl (always #t))
                         (%table-select-rows tbl (complement row:deleted?))))
-         (view-rows (map (lambda (r)(row:make-with-row-entries r view-column-indexes))
-                         live-rows))
          (filtered-rows (if filter-text
                             (filter (lambda (row)(row:match-text? row filter-text))
-                                    view-rows)
-                            view-rows))
+                                    live-rows)
+                            live-rows))
          (sorted-rows (if sort-column
                           (sort filtered-rows (%make-row-comparator tbl sort-column sort-order))
                           filtered-rows)))
@@ -103,5 +93,5 @@
 ;;; (define $cols '("Name" "Shape" "Color"))
 ;;; (define $rows '(("Fred" "Big" "Orange")("Barney" "Small" "Brown")("Wilma" "Slender" "White")))
 ;;; (define $d (table:make columns: $cols rows: $rows))
-;;; (define $v1 (view:create $d filter-text: "w" sort-column: "Name" sort-order: $SORT_DESCENDING))
-;;; (define $v2 (view:create $d filter-text: "i" sort-column: "Name" sort-order: $SORT_ASCENDING))
+;;; (define $v1 (view:create $d description: (view:description filter-text: "w" sort-column: "Name" sort-order: $SORT_DESCENDING)))
+;;; (define $v2 (view:create $d description: (view:description filter-text: "i" sort-column: "Name" sort-order: $SORT_ASCENDING)))

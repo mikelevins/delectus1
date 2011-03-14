@@ -170,3 +170,8 @@
       (if (pred (car ls))
           (every? pred (cdr ls))
           #f)))
+
+(define (reduce fn start-val vals)
+  (if (null? vals)
+      start-val
+      (reduce fn (fn start-val (car vals))(cdr vals))))
