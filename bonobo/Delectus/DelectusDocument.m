@@ -43,34 +43,6 @@
     [super windowControllerDidLoadNib:aController];
 }
 
-- (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
-{
-    // Insert code here to write your document to data of the specified type. If the given outError != NULL, ensure that you set *outError when returning nil.
-
-    // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-
-    // For applications targeted for Panther or earlier systems, you should use the deprecated API -dataRepresentationOfType:. In this case you can also choose to override -fileWrapperRepresentationOfType: or -writeToFile:ofType: instead.
-
-    if ( outError != NULL ) {
-		*outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:unimpErr userInfo:NULL];
-	}
-	return nil;
-}
-
-- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
-{
-    // Insert code here to read your document from the given data of the specified type.  If the given outError != NULL, ensure that you set *outError when returning NO.
-
-    // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead. 
-    
-    // For applications targeted for Panther or earlier systems, you should use the deprecated API -loadDataRepresentation:ofType. In this case you can also choose to override -readFromFile:ofType: or -loadFileWrapperRepresentation:ofType: instead.
-    
-    if ( outError != NULL ) {
-		*outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:unimpErr userInfo:NULL];
-	}
-    return YES;
-}
-
 // IBActions
 - (IBAction)toggleToDo:(id)sender{}
 
@@ -110,6 +82,97 @@
 - (IBAction)emptyTrash:(id)sender{}
 
 - (IBAction)renameColumn:(id)sender{}
+
+// ----------------------------------------
+// NSDocument APIs
+// ----------------------------------------
+
+- (int)readCSVFile:(NSURL *)absoluteURL {
+    NSString* fPath = [absoluteURL path];
+	char* path = (char*)[fPath cStringUsingEncoding: NSASCIIStringEncoding];
+    int docid = read_delectus_csv(path);
+    return docid;
+}
+
+- (int)readDelectusFile:(NSURL *)absoluteURL {
+    NSString* fPath = [absoluteURL path];
+	char* path = (char*)[fPath cStringUsingEncoding: NSASCIIStringEncoding];
+    int docid = read_delectus_file(path);
+    NSLog(@"readDelectusFile docid == %d",docid);
+    return docid;
+}
+
+- (BOOL)readFromURL: (NSURL *)absoluteURL ofType:(NSString *) typeName error: (NSError **)outError{
+    NSString* fPath = [absoluteURL path];
+    NSDictionary* errDict;
+    NSString *errStr, *errMsg;
+    
+    if ([typeName isEqualToString: @"csv"]) {
+        errStr=@"CSVFormatError";
+        errMsg=@"Couldn't read CSV data from the file";
+        documentID = [self readCSVFile:absoluteURL];
+    } else if ([typeName isEqualToString: @"delectus"]) {
+        errStr=@"DelectusFormatError";
+        errMsg=@"Couldn't read Delectus data from the file";
+        documentID = [self readDelectusFile:absoluteURL];
+    } else {
+        errStr=@"FileFormatError";
+        errMsg=@"Unrecognized file type";
+        documentID=OBJ_NO_OID;
+    }
+    
+    if (documentID != OBJ_NO_OID){
+        return YES;
+    }else{
+        errDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                   errMsg, NSLocalizedDescriptionKey,
+                   fPath, NSFilePathErrorKey, nil
+                   ];
+        *outError = [NSError errorWithDomain:errStr code:2 userInfo:errDict];
+        return NO;
+    }
+}
+
+- (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError{
+    NSDictionary* errDict;
+    NSString* savePath;
+    if([typeName isEqualToString: @"delectus"]){
+        savePath = [absoluteURL path];
+        int written_err = write_delectus_file(documentID, [savePath asCString]);
+        if(written_err == ERR_NO_ERROR){
+            return YES;
+        }else{
+            NSString* errMsg = [NSString stringWithFormat: @"Write failed on pathname '%@'",savePath];
+            NSRunAlertPanel(@"Save Failed",errMsg,nil, nil, nil);   
+            errDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                       @"Save Failed", NSLocalizedDescriptionKey,
+                       savePath, NSFilePathErrorKey, nil];
+            *outError = [NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict];
+            return NO;
+        }
+    }else if ([typeName isEqualToString: @"csv"]){
+        savePath = [absoluteURL path];
+        int written_err = write_delectus_csv(documentID, [savePath asCString]);
+        if(written_err == ERR_NO_ERROR){
+            return YES;
+        }else{
+            NSString* errMsg = [NSString stringWithFormat: @"Write failed on pathname '%@'",savePath];
+            NSRunAlertPanel(@"Save Failed",errMsg,nil, nil, nil);   
+            errDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                       @"Save Failed", NSLocalizedDescriptionKey,
+                       savePath, NSFilePathErrorKey, nil];
+            *outError = [NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict];
+            return NO;}
+    }else{
+        NSString* errMsg = [NSString stringWithFormat: @"Can't save a document of type '%@'",typeName];
+        NSRunAlertPanel(@"Save Failed",errMsg,nil, nil, nil);   
+        errDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                   @"Save Failed", NSLocalizedDescriptionKey, nil];
+        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict];
+        return NO;
+    }
+}
+
 
 
 @end

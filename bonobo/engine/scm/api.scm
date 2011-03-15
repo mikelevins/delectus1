@@ -177,11 +177,11 @@
 
 (define (api:write-delectus-file id path)
   (if-error $ERR_CANT_WRITE
-            $ERR_NO_ERROR))
+            (write-delectus-file (find-document id) path)))
 
 (define (api:read-delectus-file path)
   (if-error $OBJ_NO_OID
-            $OBJ_DEFAULT_OID))
+            (read-delectus-file path)))
 
 (define (api:write-delectus-csv id path)
   (if-error $ERR_CANT_WRITE
@@ -195,3 +195,7 @@
 ;;; (define $zipid (api:read-delectus-csv $zip-path))
 ;;; (define $zipid (read-csv-file $zip-path))
 ;;; $zipid
+
+;;; (define $jr-path "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
+;;; (define $jr (api:read-delectus-file $jr-path))
+;;; (define $jr (read-delectus-file $jr-path))

@@ -42,10 +42,11 @@
 
 (define (read-delectus-file path)
   (let* ((raw (io:read-binary-file path))
-         (data (u8vector->object raw)))
-    (if (document? data)
-        data
-        (data->document data))))
+         (data (u8vector->object raw))
+         (doc (if (document? data)
+                  data
+                  (data->document data))))
+    (doc:register! (next-document-id) doc)))
 
 ;;; (define $jr-path "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
 ;;; (define $jr (read-delectus-file $jr-path))
