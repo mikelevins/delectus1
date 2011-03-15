@@ -18,6 +18,7 @@
 		97D44A58132B7B780048ADA8 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97D44A57132B7B780048ADA8 /* libDelectus.a */; };
 		97EB7F17132BF7AE00F99745 /* deleted.png in Resources */ = {isa = PBXBuildFile; fileRef = 97EB7F16132BF7AE00F99745 /* deleted.png */; };
 		97EB7F1A132BF8F600F99745 /* DelectusDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EB7F19132BF8F600F99745 /* DelectusDelegate.m */; };
+		97EB7F1C132FB6D900F99745 /* nodeleted.png in Resources */ = {isa = PBXBuildFile; fileRef = 97EB7F1B132FB6D900F99745 /* nodeleted.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		97EB7F16132BF7AE00F99745 /* deleted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = deleted.png; path = assets/deleted.png; sourceTree = "<group>"; };
 		97EB7F18132BF8F600F99745 /* DelectusDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDelegate.h; sourceTree = "<group>"; };
 		97EB7F19132BF8F600F99745 /* DelectusDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDelegate.m; sourceTree = "<group>"; };
+		97EB7F1B132FB6D900F99745 /* nodeleted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nodeleted.png; path = assets/nodeleted.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				97EB7F1B132FB6D900F99745 /* nodeleted.png */,
 				97EB7F16132BF7AE00F99745 /* deleted.png */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				8D15AC360486D014006FF6A4 /* Delectus-Info.plist */,
@@ -195,6 +198,7 @@
 				1DDD582C0DA1D0D100B32029 /* DelectusDocument.xib in Resources */,
 				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
 				97EB7F17132BF7AE00F99745 /* deleted.png in Resources */,
+				97EB7F1C132FB6D900F99745 /* nodeleted.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

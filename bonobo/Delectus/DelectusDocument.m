@@ -7,6 +7,9 @@
 //
 
 #import "DelectusDocument.h"
+#define ___VERSION 406000
+#include "gambit.h"
+#include "Delectus.h"
 
 @implementation DelectusDocument
 
@@ -31,8 +34,13 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
+    // how to get and release a string value
+    //char* versionString=version();
+    //NSLog(@"\nversion = %s\n\n", versionString);
+    //NSString* vStr = [[NSString stringWithCString:versionString] retain];
+    //___release_string(versionString);
+    //NSRunAlertPanel(@"version test",vStr,@"Okay",nil,nil);
     [super windowControllerDidLoadNib:aController];
-    // Add any code here that needs to be executed once the windowController has loaded the document's window.
 }
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
