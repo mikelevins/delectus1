@@ -136,14 +136,6 @@
         (error "Column exists" val)
         (column-sequence:set-columns! seq (vector-add-last (column-sequence:columns seq) (column:make val))))))
 
-;;; (define $cs (column-sequence:make '("Name" "Age" "Town")))
-;;; $cs
-;;; (column-sequence:element $cs 0)
-;;; (column-sequence:position $cs "Age")
-;;; (column-sequence:add-element! $cs "Color")
-;;; (column-sequence:position $cs "Color")
-;;; (column-sequence:element $cs 3)
-
 ;;; ----------------------------------------------------------------------
 ;;; tables
 ;;; ----------------------------------------------------------------------
@@ -157,8 +149,8 @@
 (define (%table-parse-columns column-descriptions)
   (column-sequence:make column-descriptions))
 
-(define (%table-parse-rows row-descriptions indexes)
-  (list->vector (map row:make row-descriptions indexes)))
+(define (%table-parse-rows row-descriptions)
+  (list->vector (map row:make row-descriptions)))
 
 ;;; return a list of columns
 (define (%table-select-columns tbl pred)
@@ -183,7 +175,7 @@
 
 (define (table:make #!key (columns '()) (rows '()))
   (let ((col-sequence (%table-parse-columns columns))
-        (row-vector (%table-parse-rows rows (range 0 (length rows)))))
+        (row-vector (%table-parse-rows rows)))
     (%make-delectus-table col-sequence row-vector)))
 
 (define (table:compact! tbl)
@@ -250,34 +242,3 @@
   (row:element (table:row-at tbl row-index)
                (table:column-index tbl column-label)))
 
-;;; (define $cols '("Name" "Shape" "Color"))
-;;; (define $rows '(("Fred" "Big" "Orange")("Barney" "Small" "Brown")("Wilma" "Slender" "White")))
-;;; (define $d (table:make columns: $cols rows: $rows))
-;;; $d
-;;; (table:count-columns $d)
-;;; (table:row-at $d 1)
-;;; (table:add-row! $d)
-;;; $d
-;;; (table:add-column! $d "Town")
-;;; (table:count-columns $d)
-;;; $d
-;;; (table:mark-column-deleted! $d "Shape" #t)
-;;; (column:deleted? (table:column-at $d "Shape"))
-;;; (table:mark-column-deleted! $d "Shape" #f)
-;;; (column:deleted? (table:column-at $d "Shape"))
-;;; $d
-;;; (table:mark-row-deleted! $d 2 #t)
-;;; (row:deleted? (table:row-at $d 2))
-;;; (table:mark-row-deleted! $d 2 #f)
-;;; (row:deleted? (table:row-at $d 2))
-;;; $d
-;;; (table:count-rows $d)
-;;; (table:mark-row-deleted! $d 2 #t)
-;;; (table:compact! $d)
-;;; (table:count-rows $d)
-;;; $d
-;;; (table:count-columns $d)
-;;; (table:mark-column-deleted! $d "Shape" #t)
-;;; (table:compact! $d)
-;;; (table:count-columns $d)
-;;; $d
