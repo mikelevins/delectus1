@@ -32,6 +32,8 @@
     "csv.scm"
     "io-formats.scm"
     "io.scm"
+    "test-utils.scm"
+    "tests.scm"
     ))
 
 ;;; load Scheme files
@@ -44,3 +46,4 @@
             $load-files))
 
 ;;; (load-delectus)
+;;; (run-all-tests)

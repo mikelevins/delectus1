@@ -37,13 +37,6 @@
   (%set-entry-number-value! e (%->entry-number-value val))
   val)
 
-;;; (define $e (entry:make "zero"))
-;;; (entry:value $e)
-;;; (%entry-number-value $e)
-;;; (entry:set-value! $e "0")
-;;; (entry:value $e)
-;;; (%entry-number-value $e)
-
 ;;; ----------------------------------------------------------------------
 ;;; rows
 ;;; ----------------------------------------------------------------------
@@ -52,19 +45,17 @@
   id: 3520C851-B065-48DA-80B9-358367AF8A3E
   constructor: %make-row
   (entries row:entries row:set-entries!)
-  (id row:id)
   (deleted? row:deleted? row:set-deleted!)
   (finished? row:finished? row:set-finished!))
 
-(define (row:make vals id)
-  (%make-row (list->vector (map entry:make vals)) id #f #f))
+(define (row:make vals)
+  (%make-row (list->vector (map entry:make vals)) #f #f))
 
 (define (row:make-with-row-entries r indexes)
   (let loop ((is indexes)
              (result '()))
     (if (null? is)
         (%make-row (list->vector (reverse result)) 
-                   (row:id r)
                    (row:deleted? r)
                    (row:finished? r))
         (loop (cdr is)
@@ -91,17 +82,8 @@
   (vector-some? (lambda (e)(string-contains-ci? (entry:value e) text))
                 (row:entries row))) 
 
-;;; (define $s (row:make '("fred" "12" "bedrock")))
-;;; (row:element $s 0)
-;;; (row:element-as-number $s 0)
-;;; (row:element-as-number $s 1)
-;;; (row:position $s "bedrock")
-;;; (row:position $s "foobar")
-;;; (row:set-element! $s 0 "12.34")
-;;; (row:element-as-number $s 0)
-;;; (row:add-element! $s "fred")
-;;; (row:element $s 3)
-;;; (row:match-text? $s "z")
+(define (row:count-elements row)
+  (vector-length (row:entries row)))
 
 ;;; ----------------------------------------------------------------------
 ;;; columns
@@ -176,7 +158,7 @@
   (column-sequence:make column-descriptions))
 
 (define (%table-parse-rows row-descriptions indexes)
-  (list->vector (map (lambda (desc id)(row:make desc id)) row-descriptions indexes)))
+  (list->vector (map row:make row-descriptions indexes)))
 
 ;;; return a list of columns
 (define (%table-select-columns tbl pred)
@@ -247,8 +229,7 @@
 (define (table:add-row! tbl)
   (table:set-rows! tbl
                    (vector-add-last (table:rows tbl)
-                                    (row:make (repeat (table:count-columns tbl) '())
-                                              (+ 1 (row:id (table:row-at tbl (- (table:count-rows tbl) 1)))))))
+                                    (row:make (repeat (table:count-columns tbl) '()))))
   tbl)
 
 (define (table:add-column! tbl column-label)

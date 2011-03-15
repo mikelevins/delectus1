@@ -36,7 +36,7 @@
           char-string "is_row_finished" ""
           (api:row-finished? id row-index))
 
-(c-define (c:mark-row-finished! id row-index finished) (int int int) 
+(c-define (c:mark-row-finished! id row-index finished?) (int int int) 
           char-string "mark_row_finished" ""
           (api:mark-row-finished! id row-index finished?))
 
@@ -44,9 +44,9 @@
           int "add_row" ""
           (api:add-row id))
 
-(c-define (c:add-column! id column-label) (int char-string) 
+(c-define (c:add-column id column-label) (int char-string) 
           int "add_column" ""
-          (api:add-column! id column-label))
+          (api:add-column id column-label))
 
 (c-define (c:column-deleted? id column-label) (int char-string)
           int "is_column_deleted" ""

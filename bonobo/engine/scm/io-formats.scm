@@ -53,64 +53,43 @@
 (define $data-converters (make-table))
 
 (define (io:from-format-alpha-1 data)
-  (store:make
-   version: (current-store-format)     ; version
-   columns: (map (lambda (c)           ; columns
-                   (make-column
-                    (vector-ref c 2) ; label
-                    (vector-ref c 1))) 
-                 (vector-ref data 1))
-   show-deleted: #f
-   sort-column: #f ; sort-column
-   sort-reversed: #f ; sort-reversed?
-   rows: (map (lambda (r)           ; rows
-                (make-row
-                 (map make-field (vector-ref r 2)) ; fields
-                 (vector-ref r 1))) 
-              (vector-ref data 2))
-   notes: #f))
+  (let* ((columns (map (lambda (c) (column:make (vector-ref c 2))) 
+                       (vector-ref data 1)))
+         (colseq (%make-column-sequence (list->vector columns)))
+         (rows (map (lambda (r)(%make-row (map entry:make (vector-ref r 2)) #f #f)) 
+                    (vector-ref data 2)))
+         (include-deleted? #f)
+         (sort-column #f)
+         (tbl (%make-delectus-table colseq (list->vector rows))))
+    (%make-document tbl #f #f #f include-deleted? #f sort-column #f)))
 
 (define (io:from-format-alpha-2 data)
-  (store:make
-   version: (current-store-format)     ; version
-   columns: (map (lambda (c)           ; columns
-                   (make-column
-                    (vector-ref c 1) ; label
-                    (vector-ref c 2))) 
-                 (vector-ref data 2))
-   show-deleted: #f ; show-deleted?
-   column-layout: '() ; column-layout
-   to-do-column: #f ; to-do-column
-   sort-column: #f
-   sort-reversed: #f
-   rows: (map (lambda (r)           ; rows
-                (make-row
-                 (map (lambda (f) (make-field (vector-ref f 1))) ; fields
-                      (vector-ref r 1))
-                 (vector-ref r 2))) 
-              (vector-ref data 6))
-   notes: (vector-ref data 7)))
+  (let* ((columns (map (lambda (c)(column:make (vector-ref c 1))) 
+                       (vector-ref data 2)))
+         (colseq (%make-column-sequence (list->vector columns)))
+         (rows (map (lambda (r)
+                      (%make-row (map (lambda (f) (entry:make (vector-ref f 1))) ; fields
+                                      (vector-ref r 1))
+                                 #f #f)) 
+                    (vector-ref data 6)))
+         (include-deleted? #f)
+         (sort-column #f)
+         (tbl (%make-delectus-table colseq (list->vector rows))))
+    (%make-document tbl #f #f #f include-deleted? #f sort-column #f)))
 
 (define (io:from-format-alpha-4 data) 
-  (store:make
-   version: (current-store-format)
-   columns: (map (lambda (c)
-                   (make-column
-                    (vector-ref c 1) ; label
-                    (vector-ref c 3))) 
-                 (vector-ref data 2))
-   show-deleted: #f
-   column-layout: '()
-   to-do-column: #f ; to-do-column
-   sort-column: #f
-   sort-reversed: #f
-   rows: (map (lambda (r)
-                (make-row
-                 (map (lambda (f) (make-field (vector-ref f 1))) ; fields
-                      (vector-ref r 1))
-                 (vector-ref r 2))) 
-              (vector-ref data 6))
-   notes: (vector-ref data 7)))
+  (let* ((columns (map (lambda (c)(column:make (vector-ref c 1))) 
+                       (vector-ref data 2)))
+         (colseq (%make-column-sequence (list->vector columns)))
+         (rows (map (lambda (r)
+                      (%make-row (map (lambda (f) (entry:make (vector-ref f 1)))
+                                      (vector-ref r 1))
+                                 #f #f)) 
+                    (vector-ref data 6)))
+         (include-deleted? #f)
+         (sort-column #f)
+         (tbl (%make-delectus-table colseq (list->vector rows))))
+    (%make-document tbl #f #f #f include-deleted? #f sort-column #f)))
 
 (define (io:from-format-beta-2 data) 
   (let* ((format-version (vector-ref data 1))
@@ -119,23 +98,19 @@
                        columns-data))
          (colseq (%make-column-sequence (list->vector columns)))
          (include-deleted? (vector-ref data 3))
-         (column-layout (vector-ref data 4))
-         (window-layout (vector-ref data 5))
          (sort-column (vector-ref data 6))
          (sort-reversed? (vector-ref data 7))
          (rows-data (vector-ref data 8))
-         (rids (range 0 (length rows-data)))
-         (rows (map (lambda (rdata rid) 
+         (rows (map (lambda (rdata) 
                       (let* ((fields-data (vector-ref rdata 1))
                              (entries (map (lambda (fd)(entry:make (vector-ref fd 1)))
                                            fields-data))
                              (rdel? (vector-ref rdata 2)))
-                        (%make-row (list->vector entries) rid #f #f))) 
-                    rows-data rids))
-         (notes (vector-ref data 9))
+                        (%make-row (list->vector entries) #f #f))) 
+                    rows-data))
          (tbl (%make-delectus-table colseq (list->vector rows))))
-    (%make-document tbl #f #f #f include-deleted?
-                    #f sort-column (if sort-reversed? $SORT_DESCENDING $SORT_ASCENDING))))
+    (%make-document tbl #f #f #f include-deleted? #f sort-column
+                    (if sort-reversed? $SORT_DESCENDING $SORT_ASCENDING))))
 
 (table-set! $data-converters $delectus-format-alpha-1 io:from-format-alpha-1)
 (table-set! $data-converters $delectus-format-alpha-2 io:from-format-alpha-2)

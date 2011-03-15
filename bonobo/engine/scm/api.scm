@@ -29,7 +29,7 @@
 
 (define (api:version)
   (if-error $VAL_NO_VALUE
-            $delectus-format-1.0))
+            "1.0"))
 
 ;;; (api:version)
 

@@ -44,7 +44,7 @@
                   (table (table:make))
                   (view #f)
                   (view-valid #f)
-                  (view-description (view:null-description))
+                  (view-description (view:default-description))
                   (include-deleted #f)
                   (filter-text #f)
                   (sort-column #f)
@@ -83,7 +83,7 @@
 (define (new-document)
   (doc:register! (next-document-id)(doc:make)))
 
-(define (get-view docid #!key (description (view:null-description)))
+(define (get-view docid #!key (description (view:default-description)))
   (let ((doc (find-document docid)))
     (if doc
         (begin

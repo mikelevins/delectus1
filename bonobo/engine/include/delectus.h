@@ -46,4 +46,3 @@ extern int write_delectus_file (int id, char* path);
 extern int read_delectus_file (char* path);
 extern int write_delectus_csv (int id, char* path);
 extern int read_delectus_csv (char* path);
-extern int release_value (char* val); // releases a string malloced by Gambit
