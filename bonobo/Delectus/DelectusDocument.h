@@ -9,14 +9,15 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface DelectusDocument : NSDocument
+@interface DelectusDocument : NSDocument <NSTableViewDataSource>
 {
-    int documentID;
     IBOutlet id documentWindow;
-    IBOutlet id tableView;
+    IBOutlet NSTableView* tableView;
+    IBOutlet id tableScrollView;
     IBOutlet id totalsView;
     IBOutlet id itemCountField;    
     IBOutlet id filterField;    
+    IBOutlet id dataSource;    
 }
 
 // IBActions
@@ -30,6 +31,7 @@
 - (IBAction)toggleShowDeleted:(id)sender;
 - (IBAction)emptyTrash:(id)sender;
 - (IBAction)renameColumn:(id)sender;
+
 
 
 @end

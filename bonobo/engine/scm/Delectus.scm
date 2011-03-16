@@ -20,6 +20,14 @@
           int "new_delectus" ""
           (api:new-delectus))
 
+(c-define (c:count-rows id) (int) 
+          int "count_rows" ""
+          (api:count-rows id))
+
+(c-define (c:count-columns id) (int) 
+          int "count_columns" ""
+          (api:count-rows id))
+
 (c-define (c:get-view id include-deleted? sort-column sort-order filter-text) (int int int int char-string)
           int "get_view" ""
           (api:get-view id include-deleted? sort-column sort-order filter-text))
