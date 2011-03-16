@@ -26,7 +26,7 @@
 
 (c-define (c:count-columns id) (int) 
           int "count_columns" ""
-          (api:count-rows id))
+          (api:count-columns id))
 
 (c-define (c:column-at-index id index) (int int) 
           char-string "column_at_index" ""

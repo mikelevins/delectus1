@@ -7,12 +7,17 @@
 //
 
 #import "DelectusDocument.h"
+#import "DelectusDelegate.h"
 #import "DelectusDataSource.h"
 #define ___VERSION 406000
 #include "gambit.h"
 #include "Delectus.h"
 
 @implementation DelectusDocument
+
+// --------------------------------------------------------------------------------
+// init
+// --------------------------------------------------------------------------------
 
 - (id)init
 {
@@ -22,20 +27,40 @@
     return self;
 }
 
+// --------------------------------------------------------------------------------
+// Window init
+// --------------------------------------------------------------------------------
+
 - (NSString *)windowNibName
 {
     return @"DelectusDocument";
+}
+
+- (void)setupColumns{
+    NSArray* columnLabels = [dataSource collectColumns];
+    int colcount = [columnLabels count];
+    for(int i = 0;i<colcount;i++){
+        NSString* label = (NSString*)[columnLabels objectAtIndex:i];
+        NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
+        [[col headerCell] setStringValue: label];
+        [tableView addTableColumn: col];
+    }
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
     [super windowControllerDidLoadNib:aController];
     if (dataSource==nil){
-        dataSource=[[DelectusDataSource newDocument] retain];
+        dataSource=[[[NSApp delegate] newDelectus] retain];
     }
+    [self setupColumns];
+    [tableView setDataSource: dataSource];
 }
 
+// --------------------------------------------------------------------------------
 // IBActions
+// --------------------------------------------------------------------------------
+
 - (IBAction)toggleToDo:(id)sender{}
 
 - (IBAction)addRow:(id)sender{}
@@ -75,9 +100,9 @@
 
 - (IBAction)renameColumn:(id)sender{}
 
-// ----------------------------------------
+// --------------------------------------------------------------------------------
 // NSDocument APIs
-// ----------------------------------------
+// --------------------------------------------------------------------------------
 
 - (BOOL)readFromURL: (NSURL *)absoluteURL ofType:(NSString *) typeName error: (NSError **)outError{
     NSDictionary* errDict;
@@ -86,9 +111,9 @@
     if ([typeName isEqualToString: @"csv"]) {
         errStr=@"CSVFormatError";
         errMsg=@"Couldn't read CSV data from the file";
-        DelectusDataSource* src=[DelectusDataSource readDelectusCSV:absoluteURL];
+        DelectusDataSource* src=[[NSApp delegate] readCSVFile:absoluteURL];
         if (src==nil){
-            errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL absoluteString], NSFilePathErrorKey, nil];
+            errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [NSError errorWithDomain:errStr code:2 userInfo:errDict];
             return NO;
         }else{
@@ -98,9 +123,9 @@
     } else if ([typeName isEqualToString: @"delectus"]) {
         errStr=@"DelectusFormatError";
         errMsg=@"Couldn't read Delectus data from the file";
-        DelectusDataSource* src=[DelectusDataSource readDelectusFile:absoluteURL];
+        DelectusDataSource* src=[[NSApp delegate] readDelectusFile:absoluteURL];
         if (src==nil){
-            errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL absoluteString], NSFilePathErrorKey, nil];
+            errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [NSError errorWithDomain:errStr code:2 userInfo:errDict];
             return NO;
         }else{
@@ -110,7 +135,7 @@
     } else {
         errStr=@"FileFormatError";
         errMsg=@"Unrecognized file type";
-        errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL absoluteString], NSFilePathErrorKey, nil];
+        errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
         *outError = [NSError errorWithDomain:errStr code:2 userInfo:errDict];
         return NO;
     }    
@@ -118,32 +143,26 @@
 
 - (BOOL)writeDelectusToURL:(NSURL *)absoluteURL error:(NSError **)outError{
     NSDictionary* errDict;
-    NSString* savePath = [absoluteURL path];
-    char* path = (char*)[savePath cStringUsingEncoding: NSASCIIStringEncoding];
-    int written_err = write_delectus_file([dataSource documentID], path);
-    if(written_err == ERR_NO_ERROR){
+    int result = [dataSource writeDelectusFile:absoluteURL];
+    if(result == ERR_NO_ERROR){
         return YES;
     }else{
-        NSString* errMsg = [NSString stringWithFormat: @"Write failed on pathname '%@'",savePath];
-        NSRunAlertPanel(@"Save Failed",errMsg,nil, nil, nil);   
-        errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey,savePath, NSFilePathErrorKey, nil];
-        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict];
+         errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
+        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:result userInfo:errDict];
         return NO;
     }
 }
 
+
+
 - (BOOL)writeCSVToURL:(NSURL *)absoluteURL error:(NSError **)outError{
     NSDictionary* errDict;
-    NSString* savePath = [absoluteURL path];
-    char* path = (char*)[savePath cStringUsingEncoding: NSASCIIStringEncoding];
-    int written_err = write_delectus_csv([dataSource documentID], path);
-    if(written_err == ERR_NO_ERROR){
+    int result = [dataSource writeDelectusCSV:absoluteURL];
+    if(result == ERR_NO_ERROR){
         return YES;
     }else{
-        NSString* errMsg = [NSString stringWithFormat: @"Write failed on pathname '%@'",savePath];
-        NSRunAlertPanel(@"Save Failed",errMsg,nil, nil, nil);   
-        errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey,savePath, NSFilePathErrorKey, nil];
-        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict];
+        errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
+        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:result userInfo:errDict];
         return NO;
     }
 }
@@ -158,8 +177,6 @@
         BOOL result = [self writeCSVToURL:absoluteURL error:outError];
         return result;
     }else{
-        NSString* errMsg = [NSString stringWithFormat: @"Can't save a document of type '%@'",typeName];
-        NSRunAlertPanel(@"Save Failed",errMsg,nil, nil, nil);   
         errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey, nil];
         *outError = [NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict];
         return NO;

@@ -87,6 +87,12 @@
 ;;; (define $zipid (read-csv-file $zip-path))
 ;;; (document? (find-document $zipid))
 
+;;; (define $in-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode_10k.csv")
+;;; (define $out-path "/Users/mikel/Desktop/testdelectus.csv")
+;;; (define $out-path"/private/var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/TemporaryItems/(A Document Being Saved By Delectus 3)/testdelectus.csv")
+;;; (define $doc (read-csv-file $in-path))
+;;; (api:write-delectus-csv $doc $out-path)
+
 (define (write-columns-csv file-view out)
   (let* ((cols (table:column-labels file-view)))
     (write (car cols) out)

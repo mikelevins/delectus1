@@ -26,12 +26,33 @@
 
 - (id)initWithDocumentID:(int)docid
 {
-    self = [super init];
-    if (self) {
-        documentID=docid;
+    if (docid==VAL_NO_DOCUMENT){
+        // no document; try to make a new one
+        int newID=new_delectus();
+        if (newID==VAL_NO_DOCUMENT){
+            // failed; give up and return nil
+            return nil;
+        }else{
+            // succeeded; init the datasource and return it
+            self = [super init];
+            if (self) {
+                documentID=newID;
+                return self;
+            } else {
+                return nil;
+            }
+        }
+    }else{
+        // a delectus document was provided; init a new datasource with it
+        self = [super init];
+        if (self) {
+            documentID=docid;
+            return self;
+        } else {
+            return nil;
+        }
     }
-    
-    return self;
+    return nil;
 }
 
 - (void)dealloc
@@ -42,11 +63,6 @@
 - (int)documentID{
     return documentID;
 }
-
-- (void)setDocumentID:(int)docID{
-    documentID=docID;
-}
-
 
 // --------------------------------------------------------------
 // Delectus API
@@ -67,31 +83,6 @@
     char* v= version();
     NSString* result = [self convertToNSString:v];
     return result;
-}
-
-+ (DelectusDataSource*)newDocument{
-    int docID = new_delectus();
-    DelectusDataSource* src = [[DelectusDataSource alloc] init];
-    [src setDocumentID: docID];
-    return src;
-}
-
-+ (DelectusDataSource*)readDelectusFile:(NSURL*)url{
-    NSString* pathStr = [url absoluteString];
-    char* path = (char*)[pathStr cStringUsingEncoding: NSASCIIStringEncoding];
-    int docID = read_delectus_file(path);
-    DelectusDataSource* src = [[DelectusDataSource alloc] init];
-    [src setDocumentID: docID];
-    return src;
-}
-
-+ (DelectusDataSource*)readDelectusCSV:(NSURL*)url{
-    NSString* pathStr = [url absoluteString];
-    char* path = (char*)[pathStr cStringUsingEncoding: NSASCIIStringEncoding];
-    int docID = read_delectus_csv(path);
-    DelectusDataSource* src = [[DelectusDataSource alloc] init];
-    [src setDocumentID: docID];
-    return src;
 }
 
 - (int)getViewIncludingDeleted:(BOOL)yesOrNo withSortColumn:(NSString*)label andSortOrder:(int)order andFilterText:(NSString*)text{
@@ -263,7 +254,7 @@
     if (documentID==VAL_NO_DOCUMENT){
         return ERR_NO_DOCUMENT;
     }else{
-        NSString* pathStr = [url absoluteString];
+        NSString* pathStr = [url path];
         char* path = (char*)[pathStr cStringUsingEncoding: NSASCIIStringEncoding];
         int result = write_delectus_file(documentID,path);
         return result;
@@ -274,9 +265,11 @@
     if (documentID==VAL_NO_DOCUMENT){
         return ERR_NO_DOCUMENT;
     }else{
-        NSString* pathStr = [url absoluteString];
+        NSString* pathStr = [url path];
         char* path = (char*)[pathStr cStringUsingEncoding: NSASCIIStringEncoding];
+        NSLog(@"\ndocumentID==%d\npath==%s",documentID,path);
         int result = write_delectus_csv(documentID,path);
+        NSLog(@"\nresult==%d",result);
         return result;
     }
 }
@@ -286,9 +279,30 @@
 // --------------------------------------------------------------
 
 - (NSArray*)collectColumns{
-    return nil;
+    if (documentID==VAL_NO_DOCUMENT){
+        return nil;
+    }else{
+        int colcount = count_columns(documentID);
+        if(colcount<0){
+            return (NSArray*)nil;
+        }else {
+            NSMutableArray* cols = [NSMutableArray array];
+            if(colcount==0){
+                return (NSArray*)[cols retain];
+            }else{
+                char* lbl;
+                for(int i=0;i<colcount;i++){
+                    lbl = column_at_index(documentID,i);
+                    if(lbl!=NULL){
+                        NSString* label = [NSString stringWithCString:lbl encoding: NSASCIIStringEncoding];
+                        [cols addObject:label];
+                    }
+                }
+                return (NSArray*)[cols retain];
+            }
+        }
+    }
 }
-
 
 // --------------------------------------------------------------
 // NSTableViewDataSource Protocol

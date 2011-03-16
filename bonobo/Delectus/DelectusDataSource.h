@@ -28,9 +28,6 @@
 // Delectus API
 // --------------------------------------------------------------
 
-+ (DelectusDataSource*)newDocument;
-+ (DelectusDataSource*)readDelectusFile:(NSURL*)url;
-+ (DelectusDataSource*)readDelectusCSV:(NSURL*)url;
 - (NSString*)version;
 - (int)getViewIncludingDeleted:(BOOL)yesOrNo withSortColumn:(NSString*)label andSortOrder:(int)order andFilterText:(NSString*)text;
 - (int)countColumns;
@@ -51,6 +48,10 @@
 - (int)writeDelectusFile:(NSURL*)url;
 - (int)writeDelectusCSV:(NSURL*)url;
 
+// --------------------------------------------------------------
+// utils
+// --------------------------------------------------------------
+- (NSArray*)collectColumns;
 
 // --------------------------------------------------------------
 // NSTableViewDataSource Protocol

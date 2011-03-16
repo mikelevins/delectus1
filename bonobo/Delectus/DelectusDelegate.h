@@ -7,9 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "DelectusDataSource.h"
 
 @interface DelectusDelegate : NSObject {
 }
+
+- (DelectusDataSource*)newDelectus;
+- (DelectusDataSource*)readDelectusFile:(NSURL*)url;
+- (DelectusDataSource*)readCSVFile:(NSURL*)url;
+
 
 @end
