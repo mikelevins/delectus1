@@ -52,11 +52,21 @@
 // Delectus API
 // --------------------------------------------------------------
 
+- (NSString*)convertToNSString:(char*)s{
+    NSString* vStr;
+    if(s != NULL){
+        vStr = [[NSString stringWithCString:s encoding:NSASCIIStringEncoding] retain];
+        ___release_string(s);        
+    }else{
+        vStr=nil;
+    }
+    return vStr;
+}
+
 - (NSString*)version{
     char* v= version();
-    NSString* vStr = [[NSString stringWithCString:v encoding:NSASCIIStringEncoding] retain];
-    ___release_string(v);
-    return vStr;
+    NSString* result = [self convertToNSString:v];
+    return result;
 }
 
 + (DelectusDataSource*)newDocument{
@@ -84,24 +94,200 @@
     return src;
 }
 
-- (int)getViewIncludingDeleted:(BOOL)yesOrNo withSortColumn:(NSString*)label andSortOrder:(int)order andFilterText:(NSString*)text{return 0;}
-- (int)countColumns{return 0;}
-- (int)countRows{return 0;}
-- (NSString*)valueAtColumn:(NSString*)label andRow:(int)index{return nil;}
-- (int)putValue:(NSString*)val atColumn:(NSString*)label andRow:(int)index{return 0;}
-- (BOOL)isRowFinished:(int)index{return NO;}
-- (int)markRow:(int)index finished:(BOOL)yesOrNo{return 0;}
-- (int)addRow{return 0;}
-- (int)addColumn:(NSString*)label{return 0;}
-- (BOOL)isColumnDeleted:(NSString*)label{return NO;}
-- (int)markColumn:(NSString*)label deleted: (BOOL)yesOrNo{return 0;}
-- (BOOL)columnHasTotal:(NSString*)label{return NO;}
-- (int)columnTotal:(NSString*)label{return 0;}
-- (BOOL)isRowDeleted:(int)index{return NO;}
-- (int)markRow:(int)index deleted:(BOOL)yesOrNo{return 0;}
-- (int)compact{return 0;}
-- (int)writeDelectusFile:(NSURL*)url{return 0;}
-- (int)writeDelectusCSV:(NSURL*)url{return 0;}
+- (int)getViewIncludingDeleted:(BOOL)yesOrNo withSortColumn:(NSString*)label andSortOrder:(int)order andFilterText:(NSString*)text{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        char* sortcol = (char*)[label cStringUsingEncoding:NSASCIIStringEncoding];
+        char* filtertext = (char*)[text cStringUsingEncoding:NSASCIIStringEncoding];
+        int result = get_view(documentID, (int)yesOrNo, sortcol, order, filtertext);
+        return result;
+    }
+}
+
+- (int)countColumns{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        int result = count_columns(documentID);
+        return result;
+    }
+}
+
+- (NSString*)columnAtIndex:(int)index{
+    if (documentID==VAL_NO_DOCUMENT){
+        return nil;
+    }else{
+        char* lbl=column_at_index(documentID,index);
+        NSString* result = [self convertToNSString:lbl];
+        return result;
+    }
+}
+
+- (int)countRows{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        int result = count_rows(documentID);
+        return result;
+    }
+}
+
+- (NSString*)valueAtColumn:(NSString*)label andRow:(int)index{
+    if (documentID==VAL_NO_DOCUMENT){
+        return nil;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding:NSASCIIStringEncoding];    
+        char* val=value_at(documentID,colname,index);
+        NSString* result = [self convertToNSString:val];
+        return result;
+    }
+}
+
+- (int)putValue:(NSString*)valStr atColumn:(NSString*)label andRow:(NSInteger)index{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
+        char* val=(char*)[valStr cStringUsingEncoding: NSASCIIStringEncoding];
+        int result = put_value_at(documentID,colname,index,val);
+        return result;
+    }
+}
+
+- (BOOL)isRowFinished:(int)index{
+    if (documentID==VAL_NO_DOCUMENT){
+        return NO;
+    }else{
+        int answer = is_row_finished(documentID,index);
+        return (BOOL)answer;
+    }
+}
+
+- (int)markRow:(int)index finished:(BOOL)yesOrNo{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        int result = mark_row_finished(documentID,index,(int)yesOrNo);
+        return result;
+    }
+}
+
+- (int)addRow{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        int result = add_row(documentID);
+        return result;
+    }
+}
+
+- (int)addColumn:(NSString*)label{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
+        int result = add_column(documentID,colname);
+        return result;
+    }
+}
+
+- (BOOL)isColumnDeleted:(NSString*)label{
+    if (documentID==VAL_NO_DOCUMENT){
+        return NO;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
+        int result = is_column_deleted(documentID,colname);
+        return (BOOL)result;
+    }
+}
+
+- (int)markColumn:(NSString*)label deleted: (BOOL)yesOrNo{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
+        int result = mark_column_deleted(documentID,colname,yesOrNo);
+        return result;
+    }
+}
+
+- (BOOL)columnHasTotal:(NSString*)label{
+    if (documentID==VAL_NO_DOCUMENT){
+        return NO;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
+        int result = column_has_total(documentID,colname);
+        return (BOOL)result;
+    }
+}
+
+- (double)columnTotal:(NSString*)label{
+    if (documentID==VAL_NO_DOCUMENT){
+        return 0.0;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
+        double result = column_total(documentID,colname);
+        return result;
+    }
+}
+
+- (BOOL)isRowDeleted:(int)index{
+    if (documentID==VAL_NO_DOCUMENT){
+        return NO;
+    }else{
+        int result = is_row_deleted(documentID,index);
+        return (BOOL)result;
+    }
+}
+
+- (int)markRow:(int)index deleted:(BOOL)yesOrNo{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        int result = mark_row_deleted(documentID,index,yesOrNo);
+        return result;
+    }
+}
+
+- (int)compact{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        int result = compact_delectus(documentID);
+        return result;
+    }
+}
+
+- (int)writeDelectusFile:(NSURL*)url{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        NSString* pathStr = [url absoluteString];
+        char* path = (char*)[pathStr cStringUsingEncoding: NSASCIIStringEncoding];
+        int result = write_delectus_file(documentID,path);
+        return result;
+    }
+}
+
+- (int)writeDelectusCSV:(NSURL*)url{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        NSString* pathStr = [url absoluteString];
+        char* path = (char*)[pathStr cStringUsingEncoding: NSASCIIStringEncoding];
+        int result = write_delectus_csv(documentID,path);
+        return result;
+    }
+}
+
+// --------------------------------------------------------------
+// DataSource utils
+// --------------------------------------------------------------
+
+- (NSArray*)collectColumns{
+    return nil;
+}
 
 
 // --------------------------------------------------------------
@@ -111,20 +297,31 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView{
     NSInteger count;
-    if (documentID==OBJ_NO_OID){
+    if (documentID==VAL_NO_DOCUMENT){
         // new empty, unregistered document
         count = 0;
     } else {
-        count = count_rows(documentID);
+        count = [self countRows];
     }
     return count;
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{
-    return nil;
+    NSString* result;
+    if (documentID==VAL_NO_DOCUMENT){
+        result=nil;
+    } else {
+        NSString* label = (NSString*)[aTableColumn identifier];
+        NSString* val = [self valueAtColumn:label andRow:rowIndex];
+        result = val;
+    }
+    return result;    
 }
 
 - (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{
+    NSString* valStr = (NSString*)anObject;
+    NSString* label = (NSString*)[aTableColumn identifier];
+    [self putValue:valStr atColumn:label andRow:rowIndex];
 }
 
 

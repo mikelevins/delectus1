@@ -28,7 +28,11 @@
           int "count_columns" ""
           (api:count-rows id))
 
-(c-define (c:get-view id include-deleted? sort-column sort-order filter-text) (int int int int char-string)
+(c-define (c:column-at-index id index) (int int) 
+          char-string "column_at_index" ""
+          (api:column-at-index id index))
+
+(c-define (c:get-view id include-deleted? sort-column sort-order filter-text) (int int char-string int char-string)
           int "get_view" ""
           (api:get-view id include-deleted? sort-column sort-order filter-text))
 
@@ -69,7 +73,7 @@
           (api:column-has-total? id column-label))
 
 (c-define (c:column-total id column-label) (int char-string)
-          int "column_total" ""
+          double "column_total" ""
           (api:column-total id column-label))
 
 (c-define (c:row-deleted? id row-index) (int int)

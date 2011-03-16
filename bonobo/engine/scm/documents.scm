@@ -95,9 +95,16 @@
   (let ((doc (find-document docid)))
     (if doc
         (begin
-          (update-view! doc)
-          (let ((tbl (doc:view doc)))
+          (let ((tbl (doc:table doc)))
             (table:count-columns tbl)))
+        (error "No such document"))))
+
+(define (column-at-index docid index)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (let ((tbl (doc:table doc)))
+            (table:column-at-index tbl index)))
         (error "No such document"))))
 
 (define (count-rows docid)
@@ -207,7 +214,7 @@
         (begin
           (update-view! doc)
           (let* ((tbl (doc:table doc)))
-            (reduce + 0 (table:column-values-as-numbers tbl column-label))))
+            (reduce + 0.0 (table:column-values-as-numbers tbl column-label))))
         (error "No such document"))))
 
 (define (row-deleted? docid row-index)
@@ -235,8 +242,7 @@
   (let ((doc (find-document docid)))
     (if doc
         (begin
-          (update-view! doc)
-          (let* ((tbl (doc:view doc)))
+          (let* ((tbl (doc:table doc)))
             (table:compact! tbl)
             (doc:set-view-valid! doc #f)))
         (error "No such document"))))

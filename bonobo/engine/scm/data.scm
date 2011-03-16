@@ -206,6 +206,9 @@
   (column-sequence:element (table:column-sequence tbl)
                            (table:column-index tbl column-label)))
 
+(define (table:column-at-index tbl index)
+  (column:label (column-sequence:element (table:column-sequence tbl) index)))
+
 (define (table:row-at tbl row-index)
   (vector-ref (table:rows tbl) row-index))
 

@@ -158,6 +158,7 @@
     (test:expect 'test:document:new (document? doc2))
     (test:expect 'test:document:find-document (document? (find-document docid1)))
     (test:expect 'test:document:count-columns (= 5 (count-columns docid2)))
+    (test:expect 'test:document:column-at-index (string=? "Color" (column-at-index docid2 2)))
     (test:expect 'test:document:count-rows (= 4 (count-rows docid2)))
     (test:expect 'test:document:value-at (string=? "Rubble" (value-at docid2 "Last Name" 2)))
     (put-value-at! docid2 "Last Name" 2 "Stone")
@@ -224,4 +225,3 @@
   (newline)(newline))
 
 ;;; (run-all-tests)
-

@@ -36,7 +36,7 @@
 - (int)countColumns;
 - (int)countRows;
 - (NSString*)valueAtColumn:(NSString*)label andRow:(int)index;
-- (int)putValue:(NSString*)val atColumn:(NSString*)label andRow:(int)index;
+- (int)putValue:(NSString*)valStr atColumn:(NSString*)label andRow:(NSInteger)index;
 - (BOOL)isRowFinished:(int)index;
 - (int)markRow:(int)index finished:(BOOL)yesOrNo;
 - (int)addRow;
@@ -44,7 +44,7 @@
 - (BOOL)isColumnDeleted:(NSString*)label;
 - (int)markColumn:(NSString*)label deleted: (BOOL)yesOrNo;
 - (BOOL)columnHasTotal:(NSString*)label;
-- (int)columnTotal:(NSString*)label;
+- (double)columnTotal:(NSString*)label;
 - (BOOL)isRowDeleted:(int)index;
 - (int)markRow:(int)index deleted:(BOOL)yesOrNo;
 - (int)compact;
