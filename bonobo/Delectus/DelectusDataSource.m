@@ -326,8 +326,14 @@
         result=nil;
     } else {
         NSString* label = (NSString*)[aTableColumn identifier];
-        NSString* val = [self valueAtColumn:label andRow:rowIndex];
-        result = val;
+        if ([label isEqualTo:@"#"]){
+            result = [NSString stringWithFormat: @"%d",rowIndex];
+        }else if([label isEqualTo:@"?"]){
+            result=@"YES";
+        }else{
+            NSString* val = [self valueAtColumn:label andRow:rowIndex];
+            result = val;
+        }
     }
     return result;    
 }

@@ -37,6 +37,33 @@
 }
 
 - (void)setupColumns{
+     NSSize spacing;
+    spacing.width=1.0;
+    spacing.height=0.0;
+    [tableView setIntercellSpacing:spacing];
+    NSTableColumn* indexCol = [[NSTableColumn alloc] initWithIdentifier: @"#"];
+    NSTextFieldCell* indexCell = [[[NSTextFieldCell alloc] init] retain];
+    [indexCell setDrawsBackground: YES];
+    [indexCell setBackgroundColor: [NSColor lightGrayColor]];
+    [indexCell setTextColor: [NSColor whiteColor]];
+    [indexCell setAlignment: NSRightTextAlignment];
+    [indexCol setDataCell: indexCell];
+    [indexCol setEditable:NO];
+    [indexCol setMinWidth:24];
+    [indexCol setMaxWidth:40];
+    [[indexCol headerCell] setStringValue: @"#"];
+    [tableView addTableColumn: indexCol];
+    NSTableColumn* todoCol = [[[NSTableColumn alloc] initWithIdentifier: @"?"] retain];
+    NSButtonCell* todoCell = [[[NSButtonCell alloc] init] retain];
+    [todoCell setButtonType:NSSwitchButton];
+    [todoCell setTitle:@""];
+    [todoCell setBackgroundStyle: NSBackgroundStyleDark];
+    [todoCol setDataCell: todoCell];
+    [todoCol setMinWidth:24];
+    [todoCol setMaxWidth:24];
+    [[todoCol headerCell] setStringValue: @"?"];
+    [tableView addTableColumn: todoCol];
+    [todoCol setHidden:YES];
     NSArray* columnLabels = [dataSource collectColumns];
     int colcount = [columnLabels count];
     for(int i = 0;i<colcount;i++){
@@ -45,6 +72,8 @@
         [[col headerCell] setStringValue: label];
         [tableView addTableColumn: col];
     }
+    
+    [tableView setRowHeight:(24)];
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
@@ -61,7 +90,15 @@
 // IBActions
 // --------------------------------------------------------------------------------
 
-- (IBAction)toggleToDo:(id)sender{}
+- (IBAction)toggleToDo:(id)sender{
+    NSInteger state = [sender state];
+    NSTableColumn* todoCol = [tableView tableColumnWithIdentifier:@"?"];
+    if (state == NSOnState){
+        [todoCol setHidden:NO];
+    }else{
+        [todoCol setHidden:YES];
+    }
+}
 
 - (IBAction)addRow:(id)sender{}
 
