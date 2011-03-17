@@ -60,7 +60,9 @@
 
 (define (api:put-value-at! id column-label row-index val)
   (if-error $ERR_CANT_UPDATE
-            (put-value-at! id column-label row-index val)))
+            (begin
+              (put-value-at! id column-label row-index val)
+              $ERR_NO_ERROR)))
 
 (define (api:row-finished? id row-index)
   (if-error $VAL_NO
@@ -68,15 +70,21 @@
 
 (define (api:mark-row-finished! id row-index finished?)
   (if-error $ERR_CANT_UPDATE
-            (mark-row-finished! id row-index finished?)))
+            (begin
+              (mark-row-finished! id row-index finished?)
+              $ERR_NO_ERROR)))
 
 (define (api:add-row id)
   (if-error $ERR_CANT_UPDATE
-            (add-row! id)))
+            (begin
+              (add-row! id)
+              $ERR_NO_ERROR)))
 
 (define (api:add-column id column-label)
   (if-error $ERR_CANT_UPDATE
-            (add-column! id column-label)))
+            (begin
+              (add-column! id column-label)
+              $ERR_NO_ERROR)))
 
 (define (api:column-deleted? id column-label)
   (if-error $VAL_NO
@@ -84,7 +92,9 @@
 
 (define (api:mark-column-deleted! id column-label deleted?)
   (if-error $ERR_CANT_UPDATE
-            (mark-column-deleted! id column-label deleted?)))
+            (begin
+              (mark-column-deleted! id column-label deleted?)
+              $ERR_NO_ERROR)))
 
 (define (api:column-has-total? id column-label)
   (if-error $VAL_NO
@@ -100,15 +110,21 @@
 
 (define (api:mark-row-deleted! id row-index deleted?)
   (if-error $ERR_CANT_UPDATE
-            (mark-row-deleted! id row-index deleted?)))
+            (begin
+              (mark-row-deleted! id row-index deleted?)
+              $ERR_NO_ERROR)))
 
 (define (api:compact-delectus! id)
   (if-error $ERR_CANT_UPDATE
-            (compact! id)))
+            (begin
+              (compact! id)
+              $ERR_NO_ERROR)))
 
 (define (api:write-delectus-file id path)
   (if-error $ERR_CANT_WRITE
-            (write-delectus-file (find-document id) path)))
+            (begin
+              (write-delectus-file (find-document id) path)
+              $ERR_NO_ERROR)))
 
 (define (api:read-delectus-file path)
   (if-error $OBJ_NO_OID
@@ -116,7 +132,9 @@
 
 (define (api:write-delectus-csv id path)
   (if-error $ERR_CANT_WRITE
-            (write-csv-file (find-document id) path)))
+            (begin
+              (write-csv-file (find-document id) path)
+              $ERR_NO_ERROR)))
 
 (define (api:read-delectus-csv path)
   (if-error $OBJ_NO_OID

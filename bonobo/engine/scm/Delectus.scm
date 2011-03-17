@@ -45,11 +45,11 @@
           (api:put-value-at! id column-label row-index val))
 
 (c-define (c:row-finished? id row-index) (int int) 
-          char-string "is_row_finished" ""
+          bool "is_row_finished" ""
           (api:row-finished? id row-index))
 
-(c-define (c:mark-row-finished! id row-index finished?) (int int int) 
-          char-string "mark_row_finished" ""
+(c-define (c:mark-row-finished! id row-index finished?) (int int bool) 
+          int "mark_row_finished" ""
           (api:mark-row-finished! id row-index finished?))
 
 (c-define (c:add-row! id) (int) 

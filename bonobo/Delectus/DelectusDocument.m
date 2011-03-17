@@ -50,7 +50,7 @@
     [indexCol setDataCell: indexCell];
     [indexCol setEditable:NO];
     [indexCol setMinWidth:24];
-    [indexCol setMaxWidth:40];
+    [indexCol setMaxWidth:48];
     [[indexCol headerCell] setStringValue: @"#"];
     [tableView addTableColumn: indexCol];
     NSTableColumn* todoCol = [[[NSTableColumn alloc] initWithIdentifier: @"?"] retain];

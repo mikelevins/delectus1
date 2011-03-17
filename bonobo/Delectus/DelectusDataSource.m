@@ -141,7 +141,7 @@
     }else{
         char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
         char* val=(char*)[valStr cStringUsingEncoding: NSASCIIStringEncoding];
-        int result = put_value_at(documentID,colname,index,val);
+        int result = put_value_at(documentID,colname,(int)index,val);
         return result;
     }
 }
@@ -329,7 +329,10 @@
         if ([label isEqualTo:@"#"]){
             result = [NSString stringWithFormat: @"%d",rowIndex];
         }else if([label isEqualTo:@"?"]){
-            result=@"YES";
+            int index = (int)rowIndex;
+            BOOL isFinished = [self isRowFinished: index];
+            NSNumber* result = [NSNumber numberWithBool:isFinished];
+            return result;
         }else{
             NSString* val = [self valueAtColumn:label andRow:rowIndex];
             result = val;
@@ -341,7 +344,12 @@
 - (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{
     NSString* valStr = (NSString*)anObject;
     NSString* label = (NSString*)[aTableColumn identifier];
-    [self putValue:valStr atColumn:label andRow:rowIndex];
+    if([label isEqualTo:@"?"]){
+        BOOL yesOrNo = [anObject boolValue];
+        [self markRow:rowIndex finished:yesOrNo];
+    }else{
+        [self putValue:valStr atColumn:label andRow:rowIndex];
+    }
 }
 
 

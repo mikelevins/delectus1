@@ -126,7 +126,7 @@
                       (table:column-index tbl1 "Number") "2")
     (row:set-element! (table:row-at tbl1 3)
                       (table:column-index tbl1 "Number") "3")
-    (test:expect 'test:table:put-value-at! (table:numeric-column? tbl1 "Number"))
+    (test:expect 'test:table:numeric-column? (table:numeric-column? tbl1 "Number"))
     (test:expect 'test:table:mark-column-deleted:before (not (column:deleted? (table:column-at tbl1 "Number"))))
     (table:mark-column-deleted! tbl1 "Number" #t)
     (test:expect 'test:table:mark-column-deleted:true (column:deleted? (table:column-at tbl1 "Number")))
@@ -225,3 +225,8 @@
   (newline)(newline))
 
 ;;; (run-all-tests)
+
+;;; (define $test-path "/Users/mikel/Desktop/testdelectus.delectus")
+;;; (define $d1 (read-delectus-file $jr-path))
+;;; (value-at $d1 "costar" 0)
+;;; (put-value-at! $d1 "costar" 0 "Foo")

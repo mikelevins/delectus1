@@ -130,12 +130,10 @@
   (let ((doc (find-document docid)))
     (if doc
         (begin
-          (update-view! doc)
-          (let ((tbl (doc:view doc)))
+          (let* ((tbl (doc:view doc)))
             (row:set-element! (table:row-at tbl row-index)
                               (table:column-index tbl column-label)
-                              val)
-            (doc:set-view-valid! doc #f)))
+                              val)))
         (error "No such document"))))
 
 (define (row-finished? docid row-index)
@@ -143,7 +141,7 @@
     (if doc
         (begin
           (update-view! doc)
-          (let ((tbl (doc:view doc)))
+          (let* ((tbl (doc:view doc)))
             (row:finished? (table:row-at tbl row-index))))
         (error "No such document"))))
 

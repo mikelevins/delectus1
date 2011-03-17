@@ -19,6 +19,19 @@ void runTests(){
 	char* zip_csv="/Users/mikel/Projects/delectus/delectus/test-data/zipcode_10k.csv";
 	int d2 = read_delectus_csv(zip_csv);
 	printf("read_delectus_csv() -> %d\n",d2);
+    char* val1 = value_at(d2,"city",0);
+	printf("value_at(d2,city,0) -> %s\n",val1);
+    char* testval1 = "Frob City";
+    int result1 = put_value_at(d2,"city",0,testval1);
+	printf("put_value_at(d2,city,0,\"Frob City\") -> %d\n",result1);
+    char* testval2 =  value_at(d2,"city",0);
+    printf("value_at(d2,city,0) -> %s\n\n",testval2);
+    int result2 = mark_row_finished(d2,0,1);
+    printf("mark_row_finished(d2,0,YES) -> %d\n\n",result2);
+    int testval3 = is_row_finished(d2,0);
+    printf("is_row_finished(d2,0) -> %d\n\n",testval3);
+
+    
 }
 
 int main(int argc, char *argv[])
