@@ -137,8 +137,7 @@
     (table:mark-row-deleted! tbl1 2 #t)
     (test:expect 'test:table:mark-row-deleted:true (row:deleted? (table:row-at tbl1 2)))
     (table:mark-row-deleted! tbl1 2 #f)
-    (test:expect 'test:table:mark-row-deleted:false (not (row:deleted? (table:row-at tbl1 2))))
-    ))
+    (test:expect 'test:table:mark-row-deleted:false (not (row:deleted? (table:row-at tbl1 2))))))
 
 ;;; ----------------------------------------------------------------------
 ;;; documents
@@ -226,7 +225,13 @@
 
 ;;; (run-all-tests)
 
-;;; (define $test-path "/Users/mikel/Desktop/testdelectus.delectus")
-;;; (define $d1 (read-delectus-file $jr-path))
-;;; (value-at $d1 "costar" 0)
+;;; (define $test-path "/Users/mikel/Desktop/zipcode.delectus")
+;;; (define $d1 (read-delectus-file $test-path))
+;;; (value-at $d1 "city" 0)
 ;;; (put-value-at! $d1 "costar" 0 "Foo")
+;;; $d1
+;;; (define $doc (find-document $d1))
+;;; (document? $doc)
+;;; (table:column-labels (doc:table $doc))
+;;; (table:value-at (doc:table $doc) "city" 0)
+;;; (doc:view-valid? $doc)

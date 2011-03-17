@@ -44,8 +44,12 @@
   (let* ((raw (io:read-binary-file path))
          (data (u8vector->object raw))
          (doc (if (document? data)
-                  data
-                  (data->document data))))
+                  (begin
+                    (doc:set-view-valid! data #f)
+                    data)
+                  (let ((doc (data->document data)))
+                    (doc:set-view-valid! doc #f)
+                    doc))))
     (doc:register! (next-document-id) doc)))
 
 ;;; (define $jr-path "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
@@ -81,6 +85,7 @@
 (define (read-csv-file path)
   (let* ((table (csv:read path))
          (doc (doc:make table: table)))
+    (doc:set-view-valid! doc #f)
     (doc:register! (next-document-id) doc)))
 
 ;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
