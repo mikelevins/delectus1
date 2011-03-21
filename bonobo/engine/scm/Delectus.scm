@@ -69,7 +69,7 @@
           (api:mark-column-deleted! id column-label deleted?))
 
 (c-define (c:column-has-total? id column-label) (int char-string)
-          int "column_has_total" ""
+          bool "column_has_total" ""
           (api:column-has-total? id column-label))
 
 (c-define (c:column-total id column-label) (int char-string)

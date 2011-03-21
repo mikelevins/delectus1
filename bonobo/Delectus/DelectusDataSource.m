@@ -206,6 +206,10 @@
 - (BOOL)columnHasTotal:(NSString*)label{
     if (documentID==VAL_NO_DOCUMENT){
         return NO;
+    }else if([label isEqualTo:@"#"]){
+        return NO;
+    }else if([label isEqualTo:@"?"]){
+        return NO;
     }else{
         char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
         int result = column_has_total(documentID,colname);
@@ -215,6 +219,10 @@
 
 - (double)columnTotal:(NSString*)label{
     if (documentID==VAL_NO_DOCUMENT){
+        return 0.0;
+    }else if([label isEqualTo:@"#"]){
+        return 0.0;
+    }else if([label isEqualTo:@"?"]){
         return 0.0;
     }else{
         char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    

@@ -71,11 +71,9 @@
 							<string key="NSToolbarItemPaletteLabel">Rows</string>
 							<nil key="NSToolbarItemToolTip"/>
 							<object class="NSTextField" key="NSToolbarItemView" id="193904847">
-								<reference key="NSNextResponder"/>
+								<nil key="NSNextResponder"/>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{0, 14}, {38, 17}}</string>
-								<reference key="NSSuperview"/>
-								<reference key="NSNextKeyView"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="93852261">
 									<int key="NSCellFlags">68288064</int>
@@ -126,11 +124,9 @@
 							<string key="NSToolbarItemPaletteLabel">AddRow</string>
 							<string key="NSToolbarItemToolTip">Add a row</string>
 							<object class="NSButton" key="NSToolbarItemView" id="85649170">
-								<reference key="NSNextResponder"/>
+								<nil key="NSNextResponder"/>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{10, 14}, {32, 18}}</string>
-								<reference key="NSSuperview"/>
-								<reference key="NSNextKeyView"/>
 								<int key="NSTag">1</int>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="142395744">
@@ -174,11 +170,9 @@
 							<string key="NSToolbarItemPaletteLabel">Custom View</string>
 							<string key="NSToolbarItemToolTip">Show or hide the To-Do column</string>
 							<object class="NSButton" key="NSToolbarItemView" id="52013131">
-								<reference key="NSNextResponder"/>
+								<nil key="NSNextResponder"/>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{23, 14}, {32, 25}}</string>
-								<reference key="NSSuperview"/>
-								<reference key="NSNextKeyView"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="750219154">
 									<int key="NSCellFlags">67239424</int>
@@ -217,11 +211,9 @@
 							<string key="NSToolbarItemPaletteLabel">Del Col</string>
 							<string key="NSToolbarItemToolTip">Delete the selected column</string>
 							<object class="NSButton" key="NSToolbarItemView" id="391187664">
-								<reference key="NSNextResponder"/>
+								<nil key="NSNextResponder"/>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{7, 14}, {32, 18}}</string>
-								<reference key="NSSuperview"/>
-								<reference key="NSNextKeyView"/>
 								<int key="NSTag">4</int>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="795009156">
@@ -261,11 +253,9 @@
 							<string key="NSToolbarItemPaletteLabel">Columns</string>
 							<nil key="NSToolbarItemToolTip"/>
 							<object class="NSTextField" key="NSToolbarItemView" id="751539391">
-								<reference key="NSNextResponder"/>
+								<nil key="NSNextResponder"/>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{0, 14}, {68, 17}}</string>
-								<reference key="NSSuperview"/>
-								<reference key="NSNextKeyView"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="475556062">
 									<int key="NSCellFlags">68288064</int>
@@ -296,11 +286,9 @@
 							<string key="NSToolbarItemPaletteLabel">Add Col</string>
 							<string key="NSToolbarItemToolTip">Add a column</string>
 							<object class="NSButton" key="NSToolbarItemView" id="832644159">
-								<reference key="NSNextResponder"/>
+								<nil key="NSNextResponder"/>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{9, 14}, {32, 18}}</string>
-								<reference key="NSSuperview"/>
-								<reference key="NSNextKeyView"/>
 								<int key="NSTag">3</int>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="560441170">
@@ -337,11 +325,9 @@
 							<string key="NSToolbarItemPaletteLabel">Del Row</string>
 							<string key="NSToolbarItemToolTip">Delete the selected row</string>
 							<object class="NSButton" key="NSToolbarItemView" id="835689070">
-								<reference key="NSNextResponder"/>
+								<nil key="NSNextResponder"/>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{10, 14}, {31, 18}}</string>
-								<reference key="NSSuperview"/>
-								<reference key="NSNextKeyView"/>
 								<int key="NSTag">2</int>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="328120472">
@@ -474,7 +460,7 @@
 											<string key="NSFrameSize">{809, 367}</string>
 											<reference key="NSSuperview" ref="154016786"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="188504708"/>
+											<reference key="NSNextKeyView" ref="200969949"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSTableHeaderView" key="NSHeaderView" id="973189664">
 												<reference key="NSNextResponder" ref="200969949"/>
@@ -573,7 +559,7 @@
 							<string key="NSFrame">{{0, 50}, {826, 400}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="200969949"/>
+							<reference key="NSNextKeyView" ref="154016786"/>
 							<int key="NSsFlags">50</int>
 							<reference key="NSVScroller" ref="188504708"/>
 							<reference key="NSHScroller" ref="62182043"/>
@@ -596,7 +582,7 @@
 											<string key="NSFrameSize">{824, 22}</string>
 											<reference key="NSSuperview" ref="822658866"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="411279042"/>
+											<reference key="NSNextKeyView" ref="554195285"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="_NSCornerView" key="NSCornerView">
 												<nil key="NSNextResponder"/>
@@ -665,7 +651,7 @@
 							<string key="NSFrame">{{0, 50}, {826, 24}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="554195285"/>
+							<reference key="NSNextKeyView" ref="822658866"/>
 							<int key="NSsFlags">514</int>
 							<reference key="NSVScroller" ref="554195285"/>
 							<reference key="NSHScroller" ref="563129114"/>
@@ -700,7 +686,6 @@
 							<string key="NSFrame">{{774, 18}, {32, 25}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="845950390">
 								<int key="NSCellFlags">67239424</int>
@@ -966,14 +951,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">totalsView</string>
-						<reference key="source" ref="512844837"/>
-						<reference key="destination" ref="426099137"/>
-					</object>
-					<int key="connectionID">100350</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">tableScrollView</string>
 						<reference key="source" ref="512844837"/>
 						<reference key="destination" ref="1056854535"/>
@@ -987,6 +964,22 @@
 						<reference key="destination" ref="746296334"/>
 					</object>
 					<int key="connectionID">100366</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">totalsScrollView</string>
+						<reference key="source" ref="512844837"/>
+						<reference key="destination" ref="426099137"/>
+					</object>
+					<int key="connectionID">100369</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">totalsView</string>
+						<reference key="source" ref="512844837"/>
+						<reference key="destination" ref="988532898"/>
+					</object>
+					<int key="connectionID">100370</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1409,7 +1402,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">100368</int>
+			<int key="maxID">100370</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1477,6 +1470,7 @@
 						<string key="itemCountField">id</string>
 						<string key="tableScrollView">id</string>
 						<string key="tableView">NSTableView</string>
+						<string key="totalsScrollView">id</string>
 						<string key="totalsView">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -1503,6 +1497,10 @@
 						<object class="IBToOneOutletInfo" key="tableView">
 							<string key="name">tableView</string>
 							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="totalsScrollView">
+							<string key="name">totalsScrollView</string>
+							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="totalsView">
 							<string key="name">totalsView</string>

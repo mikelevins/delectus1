@@ -25,6 +25,39 @@
       next-doc-id)))
 
 ;;; ----------------------------------------------------------------------
+;;; column info cache
+;;; ----------------------------------------------------------------------
+;;; keep track of which columns are numeric
+
+(define $column-info-cache
+  (make-table test: eq?))
+
+(define (column-info . plist)
+  plist)
+
+(define (%fetch-column-info col)
+  (table-ref $column-info-cache col #f))
+
+(define (%put-column-info! col info)
+  (table-set! $column-info-cache col info))
+
+(define (get-column-info col key #!optional (default #f))
+  (let ((info (%fetch-column-info col)))
+    (if info
+        (let ((entry (assoc key info)))
+          (if entry (cdr entry) default))
+        default)))
+
+(define (set-column-info! col key val)
+  (let ((info (%fetch-column-info col)))
+    (if info
+        (let ((entry (assoc key info)))
+          (if entry
+              (set-cdr! entry val)
+              (%put-column-info! col (cons (cons key val) info))))
+        (%put-column-info! col (cons (cons key val) '())))))
+
+;;; ----------------------------------------------------------------------
 ;;; document data structure
 ;;; ----------------------------------------------------------------------
 
@@ -55,7 +88,20 @@
 (define (update-view! doc)
   (if (doc:view-valid? doc)
       doc
-      (begin
+      (let ((tbl (doc:table doc))
+            (col-labels (table:column-labels (doc:table doc))))
+        (for-each (lambda (lbl)
+                    (if (table:numeric-column? tbl lbl)
+                        (begin
+                          (set-column-info! (table:column-at tbl lbl) numeric: #t)
+                          (set-column-info! (table:column-at tbl lbl)
+                                            total: 
+                                            (reduce + 0.0 (table:column-values-as-numbers tbl lbl))))
+                        (begin
+                          (set-column-info! (table:column-at tbl lbl) numeric: #f)
+                          (set-column-info! (table:column-at tbl lbl)
+                                            total: #f))))
+                  col-labels)
         (doc:set-view! doc
                        (view:create (doc:table doc)
                                     description: (or (doc:view-description doc)
@@ -202,8 +248,9 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:table doc)))
-            (table:numeric-column? tbl column-label)))
+          (let* ((tbl (doc:table doc))
+                 (col (table:column-at tbl column-label)))
+            (get-column-info col numeric: #f)))
         (error "No such document"))))
 
 (define (column-total docid column-label)
@@ -211,8 +258,9 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:table doc)))
-            (reduce + 0.0 (table:column-values-as-numbers tbl column-label))))
+          (let* ((tbl (doc:table doc))
+                 (col (table:column-at tbl column-label)))
+            (get-column-info col total: #f)))
         (error "No such document"))))
 
 (define (row-deleted? docid row-index)

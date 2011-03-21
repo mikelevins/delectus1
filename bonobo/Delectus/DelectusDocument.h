@@ -14,10 +14,12 @@
     IBOutlet id documentWindow;
     IBOutlet NSTableView* tableView;
     IBOutlet id tableScrollView;
-    IBOutlet id totalsView;
+    IBOutlet NSTableView* totalsView;
+    IBOutlet id totalsScrollView;
     IBOutlet id itemCountField;    
     IBOutlet id filterField;    
     IBOutlet id dataSource;    
+    IBOutlet id totalsDataSource;    
 }
 
 // IBActions

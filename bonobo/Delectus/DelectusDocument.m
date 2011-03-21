@@ -9,6 +9,7 @@
 #import "DelectusDocument.h"
 #import "DelectusDelegate.h"
 #import "DelectusDataSource.h"
+#import "DelectusTotalsDataSource.h"
 #define ___VERSION 406000
 #include "gambit.h"
 #include "Delectus.h"
@@ -37,10 +38,14 @@
 }
 
 - (void)setupColumns{
-     NSSize spacing;
+    // tableview setup
+    NSSize spacing;
     spacing.width=1.0;
     spacing.height=0.0;
     [tableView setIntercellSpacing:spacing];
+    [totalsView setIntercellSpacing:spacing];
+    
+    // index column
     NSTableColumn* indexCol = [[NSTableColumn alloc] initWithIdentifier: @"#"];
     NSTextFieldCell* indexCell = [[[NSTextFieldCell alloc] init] retain];
     [indexCell setDrawsBackground: YES];
@@ -53,6 +58,8 @@
     [indexCol setMaxWidth:48];
     [[indexCol headerCell] setStringValue: @"#"];
     [tableView addTableColumn: indexCol];
+    
+    // to-do column
     NSTableColumn* todoCol = [[[NSTableColumn alloc] initWithIdentifier: @"?"] retain];
     NSButtonCell* todoCell = [[[NSButtonCell alloc] init] retain];
     [todoCell setButtonType:NSSwitchButton];
@@ -64,6 +71,8 @@
     [[todoCol headerCell] setStringValue: @"?"];
     [tableView addTableColumn: todoCol];
     [todoCol setHidden:YES];
+    
+    // columns
     NSArray* columnLabels = [dataSource collectColumns];
     int colcount = [columnLabels count];
     for(int i = 0;i<colcount;i++){
@@ -74,6 +83,27 @@
     }
     
     [tableView setRowHeight:(24)];
+    
+    // totals view
+    NSTableColumn* dummyIndexCol = [[NSTableColumn alloc] initWithIdentifier: @"#"];
+    NSTableColumn* dummyToDoCol = [[NSTableColumn alloc] initWithIdentifier: @"?"];
+    [dummyToDoCol setHidden:YES];
+    [totalsView addTableColumn: dummyIndexCol];
+    [totalsView addTableColumn: dummyToDoCol];
+    for(int i = 0;i<colcount;i++){
+        NSString* label = (NSString*)[columnLabels objectAtIndex:i];
+        NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
+        [[col headerCell] setStringValue: label];
+        [totalsView addTableColumn: col];
+    }
+    NSArray* tableCols=[tableView tableColumns];
+    NSArray* totalCols=[totalsView tableColumns];
+    int colCount = [tableCols count];
+    for(int j=0;j<colCount;j++){
+        NSTableColumn* tableCol = (NSTableColumn*)[tableCols objectAtIndex:j];
+        NSTableColumn* totalCol = (NSTableColumn*)[totalCols objectAtIndex:j];
+        [totalCol setWidth:[tableCol width]];
+    }
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
@@ -82,8 +112,10 @@
     if (dataSource==nil){
         dataSource=[[[NSApp delegate] newDelectus] retain];
     }
+    totalsDataSource=[[DelectusTotalsDataSource alloc] initWithDataSource: dataSource];
     [self setupColumns];
     [tableView setDataSource: dataSource];
+    [totalsView setDataSource: totalsDataSource];
 }
 
 // --------------------------------------------------------------------------------
@@ -92,11 +124,14 @@
 
 - (IBAction)toggleToDo:(id)sender{
     NSInteger state = [sender state];
-    NSTableColumn* todoCol = [tableView tableColumnWithIdentifier:@"?"];
+    NSTableColumn* todoCol1 = [tableView tableColumnWithIdentifier:@"?"];
+    NSTableColumn* todoCol2 = [totalsView tableColumnWithIdentifier:@"?"];
     if (state == NSOnState){
-        [todoCol setHidden:NO];
+        [todoCol1 setHidden:NO];
+        [todoCol2 setHidden:NO];
     }else{
-        [todoCol setHidden:YES];
+        [todoCol1 setHidden:YES];
+        [todoCol2 setHidden:YES];
     }
 }
 
@@ -112,15 +147,15 @@
     NSInteger state = [sender state];
     NSRect viewFrame;
     if (state == NSOnState){
-        [totalsView setHidden: NO];
-        [totalsView setNeedsDisplay:YES];
+        [totalsScrollView setHidden: NO];
+        [totalsScrollView setNeedsDisplay:YES];
         viewFrame = [tableScrollView frame];
         viewFrame.size.height-=24;
         viewFrame.origin.y+=24;
         [tableScrollView setFrame:viewFrame];
         [tableScrollView setNeedsDisplay:YES];
     }else{
-        [totalsView setHidden: YES];
+        [totalsScrollView setHidden: YES];
         viewFrame = [tableScrollView frame];
         viewFrame.size.height+=24;
         viewFrame.origin.y-=24;

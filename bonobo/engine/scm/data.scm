@@ -219,7 +219,9 @@
   (map %entry-number-value (%table-column-entries tbl column-label)))
 
 (define (table:numeric-column? tbl column-label)
-  (every? number? (table:column-values-as-numbers tbl column-label)))
+  (if (every? number? (table:column-values-as-numbers tbl column-label))
+      #t
+      #f))
 
 (define (table:add-row! tbl)
   (table:set-rows! tbl
