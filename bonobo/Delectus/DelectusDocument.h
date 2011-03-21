@@ -9,21 +9,17 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface DelectusDocument : NSDocument <NSTableViewDataSource>
+@interface DelectusDocument : NSDocument <NSTableViewDelegate>
 {
     IBOutlet id documentWindow;
     IBOutlet NSTableView* tableView;
     IBOutlet id tableScrollView;
-    IBOutlet NSTableView* totalsView;
-    IBOutlet id totalsScrollView;
     IBOutlet id itemCountField;    
     IBOutlet id filterField;    
     IBOutlet id dataSource;    
-    IBOutlet id totalsDataSource;    
 }
 
 // IBActions
-- (IBAction)toggleToDo:(id)sender;
 - (IBAction)addRow:(id)sender;
 - (IBAction)toggleRowDeleted:(id)sender;
 - (IBAction)addColumn:(id)sender;

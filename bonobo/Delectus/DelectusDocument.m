@@ -9,7 +9,6 @@
 #import "DelectusDocument.h"
 #import "DelectusDelegate.h"
 #import "DelectusDataSource.h"
-#import "DelectusTotalsDataSource.h"
 #define ___VERSION 406000
 #include "gambit.h"
 #include "Delectus.h"
@@ -37,42 +36,22 @@
     return @"DelectusDocument";
 }
 
-- (void)setupColumns{
+- (void)clearColumns{}
+
+- (void)setupSpacing{
     // tableview setup
     NSSize spacing;
     spacing.width=1.0;
     spacing.height=0.0;
     [tableView setIntercellSpacing:spacing];
-    [totalsView setIntercellSpacing:spacing];
-    
-    // index column
-    NSTableColumn* indexCol = [[NSTableColumn alloc] initWithIdentifier: @"#"];
-    NSTextFieldCell* indexCell = [[[NSTextFieldCell alloc] init] retain];
-    [indexCell setDrawsBackground: YES];
-    [indexCell setBackgroundColor: [NSColor lightGrayColor]];
-    [indexCell setTextColor: [NSColor whiteColor]];
-    [indexCell setAlignment: NSRightTextAlignment];
-    [indexCol setDataCell: indexCell];
-    [indexCol setEditable:NO];
-    [indexCol setMinWidth:24];
-    [indexCol setMaxWidth:48];
-    [[indexCol headerCell] setStringValue: @"#"];
-    [tableView addTableColumn: indexCol];
-    
-    // to-do column
-    NSTableColumn* todoCol = [[[NSTableColumn alloc] initWithIdentifier: @"?"] retain];
-    NSButtonCell* todoCell = [[[NSButtonCell alloc] init] retain];
-    [todoCell setButtonType:NSSwitchButton];
-    [todoCell setTitle:@""];
-    [todoCell setBackgroundStyle: NSBackgroundStyleDark];
-    [todoCol setDataCell: todoCell];
-    [todoCol setMinWidth:24];
-    [todoCol setMaxWidth:24];
-    [[todoCol headerCell] setStringValue: @"?"];
-    [tableView addTableColumn: todoCol];
-    [todoCol setHidden:YES];
-    
-    // columns
+}
+
+- (void)setupColumns{
+    [self setupSpacing];
+        
+    // main content columns
+    [tableView setAutosaveName:nil];
+    [tableView setAutosaveTableColumns:NO];
     NSArray* columnLabels = [dataSource collectColumns];
     int colcount = [columnLabels count];
     for(int i = 0;i<colcount;i++){
@@ -81,29 +60,8 @@
         [[col headerCell] setStringValue: label];
         [tableView addTableColumn: col];
     }
-    
-    [tableView setRowHeight:(24)];
-    
-    // totals view
-    NSTableColumn* dummyIndexCol = [[NSTableColumn alloc] initWithIdentifier: @"#"];
-    NSTableColumn* dummyToDoCol = [[NSTableColumn alloc] initWithIdentifier: @"?"];
-    [dummyToDoCol setHidden:YES];
-    [totalsView addTableColumn: dummyIndexCol];
-    [totalsView addTableColumn: dummyToDoCol];
-    for(int i = 0;i<colcount;i++){
-        NSString* label = (NSString*)[columnLabels objectAtIndex:i];
-        NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
-        [[col headerCell] setStringValue: label];
-        [totalsView addTableColumn: col];
-    }
-    NSArray* tableCols=[tableView tableColumns];
-    NSArray* totalCols=[totalsView tableColumns];
-    int colCount = [tableCols count];
-    for(int j=0;j<colCount;j++){
-        NSTableColumn* tableCol = (NSTableColumn*)[tableCols objectAtIndex:j];
-        NSTableColumn* totalCol = (NSTableColumn*)[totalCols objectAtIndex:j];
-        [totalCol setWidth:[tableCol width]];
-    }
+    [tableView setAutosaveName:@"delectus1.0"];
+    [tableView setAutosaveTableColumns:YES];
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
@@ -112,28 +70,14 @@
     if (dataSource==nil){
         dataSource=[[[NSApp delegate] newDelectus] retain];
     }
-    totalsDataSource=[[DelectusTotalsDataSource alloc] initWithDataSource: dataSource];
     [self setupColumns];
     [tableView setDataSource: dataSource];
-    [totalsView setDataSource: totalsDataSource];
+    [tableView setDelegate: self];
 }
 
 // --------------------------------------------------------------------------------
 // IBActions
 // --------------------------------------------------------------------------------
-
-- (IBAction)toggleToDo:(id)sender{
-    NSInteger state = [sender state];
-    NSTableColumn* todoCol1 = [tableView tableColumnWithIdentifier:@"?"];
-    NSTableColumn* todoCol2 = [totalsView tableColumnWithIdentifier:@"?"];
-    if (state == NSOnState){
-        [todoCol1 setHidden:NO];
-        [todoCol2 setHidden:NO];
-    }else{
-        [todoCol1 setHidden:YES];
-        [todoCol2 setHidden:YES];
-    }
-}
 
 - (IBAction)addRow:(id)sender{}
 
@@ -147,15 +91,12 @@
     NSInteger state = [sender state];
     NSRect viewFrame;
     if (state == NSOnState){
-        [totalsScrollView setHidden: NO];
-        [totalsScrollView setNeedsDisplay:YES];
         viewFrame = [tableScrollView frame];
         viewFrame.size.height-=24;
         viewFrame.origin.y+=24;
         [tableScrollView setFrame:viewFrame];
         [tableScrollView setNeedsDisplay:YES];
     }else{
-        [totalsScrollView setHidden: YES];
         viewFrame = [tableScrollView frame];
         viewFrame.size.height+=24;
         viewFrame.origin.y-=24;
