@@ -16,15 +16,22 @@
     IBOutlet id tableScrollView;
     IBOutlet id itemCountField;    
     IBOutlet id filterField;    
-    IBOutlet id dataSource;    
+    IBOutlet id dataSource;
+    
+    NSFont* contentFont;
 }
+
+// Handle font changes
+
+- (NSFont*)font;
+- (void)setFont:(NSFont*)newFont;
+- (void)changeFont:(id)sender;
 
 // IBActions
 - (IBAction)addRow:(id)sender;
 - (IBAction)toggleRowDeleted:(id)sender;
 - (IBAction)addColumn:(id)sender;
 - (IBAction)toggleColumnDeleted:(id)sender;
-- (IBAction)toggleTotals:(id)sender;
 - (IBAction)setFilter:(id)sender;
 - (IBAction)toggleShowDeleted:(id)sender;
 - (IBAction)emptyTrash:(id)sender;

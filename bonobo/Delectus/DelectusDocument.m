@@ -23,6 +23,7 @@
 {
     self = [super init];
     if (self) {
+        contentFont=[NSFont systemFontOfSize:12.0];
     }
     return self;
 }
@@ -53,11 +54,14 @@
     [tableView setAutosaveName:nil];
     [tableView setAutosaveTableColumns:NO];
     NSArray* columnLabels = [dataSource collectColumns];
+    NSFont* headerFont = [NSFont systemFontOfSize:12.0];
     int colcount = [columnLabels count];
     for(int i = 0;i<colcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
         NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
         [[col headerCell] setStringValue: label];
+        [[col headerCell] setFont:headerFont];
+        [[col dataCell] setFont:contentFont];
         [tableView addTableColumn: col];
     }
     [tableView setAutosaveName:@"delectus1.0"];
@@ -87,24 +91,6 @@
 
 - (IBAction)toggleColumnDeleted:(id)sender{}
 
-- (IBAction)toggleTotals:(id)sender{
-    NSInteger state = [sender state];
-    NSRect viewFrame;
-    if (state == NSOnState){
-        viewFrame = [tableScrollView frame];
-        viewFrame.size.height-=24;
-        viewFrame.origin.y+=24;
-        [tableScrollView setFrame:viewFrame];
-        [tableScrollView setNeedsDisplay:YES];
-    }else{
-        viewFrame = [tableScrollView frame];
-        viewFrame.size.height+=24;
-        viewFrame.origin.y-=24;
-        [tableScrollView setFrame:viewFrame];
-        [tableScrollView setNeedsDisplay:YES];
-    }
-}
-
 - (IBAction)setFilter:(id)sender{}
 
 - (IBAction)toggleShowDeleted:(id)sender{}
@@ -112,6 +98,36 @@
 - (IBAction)emptyTrash:(id)sender{}
 
 - (IBAction)renameColumn:(id)sender{}
+
+// --------------------------------------------------------------------------------
+// Handle font changes
+// --------------------------------------------------------------------------------
+
+- (NSFont*)font{
+    return contentFont;
+}
+
+- (void)setFont:(NSFont*)newFont{
+    contentFont = newFont;
+    NSArray* cols = [tableView tableColumns];
+    int colcount = [cols count];
+    for(int i = 0;i<colcount;i++){
+        NSTableColumn* col = [cols objectAtIndex:i];
+        [[col dataCell] setFont:newFont];
+    }
+    [tableView setRowHeight:[newFont pointSize]*1.8];
+    [tableView setNeedsDisplay:YES];
+}
+
+- (void)changeFont:(id)sender
+{    
+    NSFont *oldFont = [self font];
+    NSFont *newFont = [sender convertFont:oldFont];
+    [self setFont:newFont];
+    return;
+
+}
+
 
 // --------------------------------------------------------------------------------
 // NSDocument APIs
