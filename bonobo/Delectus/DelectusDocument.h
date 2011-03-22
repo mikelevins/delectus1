@@ -17,6 +17,11 @@
     IBOutlet id itemCountField;    
     IBOutlet id filterField;    
     IBOutlet id dataSource;
+    IBOutlet id addColumnButton;
+    IBOutlet id delColumnButton;
+    IBOutlet id addRowButton;
+    IBOutlet id delRowButton;
+    IBOutlet id showDeletedButton;
     
     NSFont* contentFont;
 }

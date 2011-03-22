@@ -76,7 +76,7 @@
     }else{
         vStr=nil;
     }
-    return vStr;
+    return [vStr autorelease];
 }
 
 - (NSString*)version{
@@ -302,7 +302,7 @@
                 for(int i=0;i<colcount;i++){
                     lbl = column_at_index(documentID,i);
                     if(lbl!=NULL){
-                        NSString* label = [NSString stringWithCString:lbl encoding: NSASCIIStringEncoding];
+                        NSString* label = [self convertToNSString: lbl];
                         [cols addObject:label];
                     }
                 }
@@ -329,24 +329,13 @@
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{
-    NSString* result;
     if (documentID==VAL_NO_DOCUMENT){
-        result=nil;
+        return nil;
     } else {
         NSString* label = (NSString*)[aTableColumn identifier];
-        if ([label isEqualTo:@"#"]){
-            result = [NSString stringWithFormat: @"%d",rowIndex];
-        }else if([label isEqualTo:@"?"]){
-            int index = (int)rowIndex;
-            BOOL isFinished = [self isRowFinished: index];
-            NSNumber* result = [NSNumber numberWithBool:isFinished];
-            return result;
-        }else{
-            NSString* val = [self valueAtColumn:label andRow:rowIndex];
-            result = val;
-        }
+        NSString* val = [self valueAtColumn:label andRow:rowIndex];
+        return val;
     }
-    return result;    
 }
 
 - (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{

@@ -30,7 +30,7 @@
 }
 
 - (DelectusDataSource*)newDelectus{
-    DelectusDataSource* src = [[DelectusDataSource alloc] initWithDocumentID:0];
+    DelectusDataSource* src = [[[DelectusDataSource alloc] initWithDocumentID:0] retain];
     return src;
 }
 
@@ -42,7 +42,7 @@
         // error! unable to read the file
         return nil;
     }else{
-        DelectusDataSource* src = [[DelectusDataSource alloc] initWithDocumentID:docid];
+        DelectusDataSource* src = [[[DelectusDataSource alloc] initWithDocumentID:docid] autorelease];
         return src;
     }
 }
@@ -55,7 +55,7 @@
         // error! unable to read the file
         return nil;
     }else{
-        DelectusDataSource* src = [[DelectusDataSource alloc] initWithDocumentID:docid];
+        DelectusDataSource* src = [[[DelectusDataSource alloc] initWithDocumentID:docid] autorelease];
         return src;
     }
 }

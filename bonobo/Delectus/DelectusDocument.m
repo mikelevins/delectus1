@@ -59,6 +59,7 @@
     for(int i = 0;i<colcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
         NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
+        [col retain];
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
         [[col dataCell] setFont:contentFont];
@@ -143,7 +144,7 @@
         DelectusDataSource* src=[[NSApp delegate] readCSVFile:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
-            *outError = [NSError errorWithDomain:errStr code:2 userInfo:errDict];
+            *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
             return NO;
         }else{
             dataSource=[src retain];
@@ -155,7 +156,7 @@
         DelectusDataSource* src=[[NSApp delegate] readDelectusFile:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
-            *outError = [NSError errorWithDomain:errStr code:2 userInfo:errDict];
+            *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
             return NO;
         }else{
             dataSource=[src retain];
@@ -165,7 +166,7 @@
         errStr=@"FileFormatError";
         errMsg=@"Unrecognized file type";
         errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
-        *outError = [NSError errorWithDomain:errStr code:2 userInfo:errDict];
+        *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
         return NO;
     }    
 }
@@ -177,7 +178,7 @@
         return YES;
     }else{
          errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
-        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:result userInfo:errDict];
+        *outError = [[NSError errorWithDomain:@"DelectusSaveError" code:result userInfo:errDict] autorelease];
         return NO;
     }
 }
@@ -191,7 +192,7 @@
         return YES;
     }else{
         errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
-        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:result userInfo:errDict];
+        *outError = [[NSError errorWithDomain:@"DelectusSaveError" code:result userInfo:errDict] autorelease];
         return NO;
     }
 }
@@ -207,7 +208,7 @@
         return result;
     }else{
         errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey, nil];
-        *outError = [NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict];
+        *outError = [[NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict] autorelease];
         return NO;
     }
     return NO; // default--should never be reached
