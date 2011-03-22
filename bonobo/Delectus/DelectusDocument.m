@@ -25,6 +25,9 @@
     if (self) {
         contentFont=[NSFont systemFontOfSize:12.0];
         filterText=nil;
+        sortColumn=nil;
+        sortOrder=SORT_NONE;
+        showDeleted=NO;
     }
     return self;
 }
@@ -84,10 +87,7 @@
 }
 
 - (void)updateDataView{
-    BOOL include_deleted = NO; // TODO: fetch this from user-supplied state
-    NSString* sort_column = nil; // TODO: fetch this from user-supplied state
-    int sort_order = SORT_NONE;  // TODO: fetch this from user-supplied state
-    [dataSource getViewIncludingDeleted:include_deleted withSortColumn:sort_column andSortOrder:sort_order andFilterText:filterText];
+    [dataSource getViewIncludingDeleted:showDeleted withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
     [tableView reloadData];
     [self updateDisplay];
 }
@@ -107,6 +107,8 @@
     }
     [tableView setDataSource: dataSource];
     [tableView setDelegate: self];
+    [tableView setTarget:self];
+    [tableView setAction:@selector(clickColumn:)];    
     [addColumnButton setTarget:self];
     [delColumnButton setTarget:self];
     [addRowButton setTarget: self];
@@ -120,19 +122,33 @@
 // IBActions
 // --------------------------------------------------------------------------------
 
-- (IBAction)addRow:(id)sender{}
+- (IBAction)addRow:(id)sender{
+    NSRunAlertPanel(@"Add",@"Adding a row",@"Okay", nil, nil);
+}
 
-- (IBAction)toggleRowDeleted:(id)sender{}
+- (IBAction)toggleRowDeleted:(id)sender{
+    NSRunAlertPanel(@"Delete",@"Deleting a row",@"Okay", nil, nil);
+}
 
-- (IBAction)addColumn:(id)sender{}
+- (IBAction)addColumn:(id)sender{
+    NSRunAlertPanel(@"Add",@"Adding a column",@"Okay", nil, nil);
+}
 
-- (IBAction)toggleColumnDeleted:(id)sender{}
+- (IBAction)toggleColumnDeleted:(id)sender{
+    NSRunAlertPanel(@"Delete",@"Deleting a column",@"Okay", nil, nil);
+}
 
-- (IBAction)toggleShowDeleted:(id)sender{}
+- (IBAction)toggleShowDeleted:(id)sender{
+    NSRunAlertPanel(@"Show/Hide",@"Show or hide deleted items",@"Okay", nil, nil);
+}
 
-- (IBAction)emptyTrash:(id)sender{}
+- (IBAction)emptyTrash:(id)sender{
+    NSRunAlertPanel(@"Purge",@"Purging deleted items",@"Okay", nil, nil);
+}
 
-- (IBAction)renameColumn:(id)sender{}
+- (IBAction)renameColumn:(id)sender{
+    NSRunAlertPanel(@"Rename",@"Renaming a column",@"Okay", nil, nil);
+}
 
 - (IBAction)setFilter:(id)sender{
     NSSearchField* searchField = (NSSearchField*)sender;
@@ -140,6 +156,40 @@
     [self updateDataView];
 }
 
+-(void)advanceSortForColumn:(NSTableColumn*)aColumn{
+    NSString* nextLabel = [aColumn identifier];
+    if([nextLabel isEqualTo: sortColumn]){
+        if (sortOrder == SORT_ASCENDING){
+            sortOrder=SORT_DESCENDING;
+            [tableView setIndicatorImage:[NSImage imageNamed: @"NSDescendingSortIndicator"] inTableColumn:aColumn];
+        } else if (sortOrder == SORT_DESCENDING){
+            sortOrder=SORT_NONE;
+            [tableView setIndicatorImage:nil inTableColumn:aColumn];
+        } else {
+            sortOrder=SORT_ASCENDING;
+            [tableView setIndicatorImage:[NSImage imageNamed: @"NSAscendingSortIndicator"] inTableColumn:aColumn];
+        }
+    }else{
+        NSTableColumn* lastCol = [tableView tableColumnWithIdentifier: sortColumn];
+        [tableView setIndicatorImage:nil inTableColumn:lastCol];
+        sortColumn = nextLabel;
+        sortOrder = SORT_ASCENDING;
+        [tableView setIndicatorImage:[NSImage imageNamed: @"NSAscendingSortIndicator"] inTableColumn:aColumn];
+    }
+    [self updateDataView];    
+}
+
+- (void)clickColumn:(id)sender{
+    if([sender clickedRow] == -1){
+        NSInteger col_index = [sender clickedColumn];
+        NSArray* cols = [sender tableColumns];
+        NSTableColumn* col = (NSTableColumn*)[cols objectAtIndex: col_index];
+        [sender selectColumnIndexes:[NSIndexSet indexSetWithIndex: col_index] byExtendingSelection:NO];
+        [self advanceSortForColumn:col];
+    } else{
+        [sender editColumn:[sender clickedColumn] row:[sender clickedRow] withEvent:nil  select:YES];
+    }
+}
 
 // --------------------------------------------------------------------------------
 // Handle font changes
@@ -254,6 +304,35 @@
     }
     return NO; // default--should never be reached
 }
+
+// ----------------------------------------
+// NSTableView delegate methods
+// ----------------------------------------
+
+- (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{
+    NSString* label = [aTableColumn identifier];
+    BOOL isColDeleted = [dataSource isColumnDeleted:label];
+    BOOL isRowDeleted = [dataSource isRowDeleted:rowIndex];
+    BOOL isCellDeleted = (isColDeleted||isRowDeleted);
+    BOOL isRowEven = ((rowIndex%2)==0);
+    if(isCellDeleted){
+        NSColor* cellColor;
+        if(isRowEven){
+            cellColor=[NSColor colorWithCalibratedHue:0.0 saturation:0.25 brightness:1.0 alpha:1.0];
+        }else{
+            cellColor=[NSColor colorWithCalibratedHue:0.0 saturation:0.50 brightness:1.0 alpha:1.0];
+        }
+        [aCell setBackgroundColor: cellColor];
+        [aCell setDrawsBackground: YES];
+        [aCell setEditable:NO];
+        [aCell setSelectable:NO];
+    } else {
+        [aCell setDrawsBackground: NO];
+        [aCell setEditable:YES];
+        [aCell setSelectable:YES];
+    }
+}
+
 
 
 @end

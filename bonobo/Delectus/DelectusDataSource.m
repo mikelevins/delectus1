@@ -188,8 +188,8 @@
         return NO;
     }else{
         char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
-        int result = is_column_deleted(documentID,colname);
-        return (BOOL)result;
+        BOOL result = is_column_deleted(documentID,colname);
+        return result;
     }
 }
 
@@ -235,8 +235,8 @@
     if (documentID==VAL_NO_DOCUMENT){
         return NO;
     }else{
-        int result = is_row_deleted(documentID,index);
-        return (BOOL)result;
+        BOOL result = is_row_deleted(documentID,index);
+        return result;
     }
 }
 

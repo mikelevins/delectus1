@@ -25,6 +25,9 @@
     
     NSFont* contentFont;
     NSString* filterText;
+    NSString* sortColumn;
+    int sortOrder;
+    BOOL showDeleted;
 }
 
 // Handle font changes
