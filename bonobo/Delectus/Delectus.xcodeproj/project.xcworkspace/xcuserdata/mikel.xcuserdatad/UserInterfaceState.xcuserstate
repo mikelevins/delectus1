@@ -8231,7 +8231,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>559</integer>
+					<integer>558</integer>
 				</dict>
 			</array>
 		</dict>
@@ -8324,11 +8324,11 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>553</integer>
+					<integer>547</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>554</integer>
+					<integer>553</integer>
 				</dict>
 			</array>
 		</dict>
@@ -8373,8 +8373,7 @@
 				</dict>
 			</array>
 		</dict>
-		<integer>-2</integer>
-		<string>IBStructureViewController</string>
+		<integer>100333</integer>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -8385,22 +8384,22 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>555</integer>
+					<integer>554</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>556</integer>
+					<integer>555</integer>
 				</dict>
 			</array>
 			<key>NS.objects</key>
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>557</integer>
+					<integer>556</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>558</integer>
+					<integer>557</integer>
 				</dict>
 			</array>
 		</dict>
@@ -8460,15 +8459,15 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>560</integer>
+					<integer>559</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>562</integer>
+					<integer>561</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>553</integer>
+					<integer>563</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
@@ -8493,7 +8492,7 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>561</integer>
+					<integer>560</integer>
 				</dict>
 			</array>
 		</dict>
@@ -8508,11 +8507,12 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>563</integer>
+					<integer>562</integer>
 				</dict>
 			</array>
 		</dict>
 		<integer>419</integer>
+		<string>IBStructureViewController</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -8523,11 +8523,11 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>555</integer>
+					<integer>554</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>556</integer>
+					<integer>555</integer>
 				</dict>
 			</array>
 			<key>NS.objects</key>
@@ -16223,9 +16223,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322456473.15256602</real>
-		<string>{2768, 1843}</string>
-		<string>{8901, 0}</string>
+		<real>322503994.02799797</real>
+		<string>{2499, 1823}</string>
+		<string>{3096, 42}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -17019,9 +17019,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322413922.140441</real>
+		<real>322504095.33216</real>
 		<string>{0, 2138}</string>
-		<string>{1262, 12}</string>
+		<string>{657, 132}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -19541,9 +19541,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322455601.61777699</real>
-		<string>{888, 2023}</string>
-		<string>{1597, 0}</string>
+		<real>322517839.650105</real>
+		<string>{2109, 1969}</string>
+		<string>{3142, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -21408,9 +21408,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322454376.57805198</real>
-		<string>{0, 1042}</string>
-		<string>{575, 0}</string>
+		<real>322505517.20754999</real>
+		<string>{0, 1068}</string>
+		<string>{638, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -22959,7 +22959,7 @@
 				<integer>1455</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>322456450.42815202</real>
+			<real>322517781.84657401</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -22970,7 +22970,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 10:14 PM</string>
+		<string>Today at 3:16 PM</string>
 		<integer>106</integer>
 		<dict>
 			<key>$class</key>
@@ -23205,19 +23205,19 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
+					<integer>1489</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
+					<integer>1491</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
 					<integer>1390</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
 					<integer>1396</integer>
-				</dict>
-				<dict>
-					<key>CF$UID</key>
-					<integer>1488</integer>
-				</dict>
-				<dict>
-					<key>CF$UID</key>
-					<integer>1490</integer>
 				</dict>
 			</array>
 		</dict>
@@ -23238,7 +23238,7 @@
 				<integer>1478</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.m</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.m</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -23256,7 +23256,7 @@
 				<integer>1480</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.m</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.h</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -23274,7 +23274,7 @@
 				<integer>1482</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDelegate.m</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/DelectusDocument.xib</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -23292,7 +23292,7 @@
 				<integer>1484</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.h</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.h</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -23308,6 +23308,42 @@
 			<dict>
 				<key>CF$UID</key>
 				<integer>1486</integer>
+			</dict>
+		</dict>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.m</string>
+		<dict>
+			<key>$class</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>113</integer>
+			</dict>
+			<key>NS.base</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>0</integer>
+			</dict>
+			<key>NS.relative</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>1488</integer>
+			</dict>
+		</dict>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDelegate.m</string>
+		<dict>
+			<key>$class</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>113</integer>
+			</dict>
+			<key>NS.base</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>0</integer>
+			</dict>
+			<key>NS.relative</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>1490</integer>
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/main.m</string>
@@ -23328,42 +23364,6 @@
 				<integer>1357</integer>
 			</dict>
 		</dict>
-		<dict>
-			<key>$class</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>113</integer>
-			</dict>
-			<key>NS.base</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>0</integer>
-			</dict>
-			<key>NS.relative</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>1489</integer>
-			</dict>
-		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/DelectusDocument.xib</string>
-		<dict>
-			<key>$class</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>113</integer>
-			</dict>
-			<key>NS.base</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>0</integer>
-			</dict>
-			<key>NS.relative</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>1491</integer>
-			</dict>
-		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/MainMenu.xib</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -29004,7 +29004,7 @@
 				<integer>1788</integer>
 			</dict>
 		</dict>
-		<string>DelectusDataSource.m</string>
+		<string>DelectusDocument.m</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -29055,7 +29055,7 @@
 				<integer>57</integer>
 			</dict>
 			<key>NS.string</key>
-			<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.m</string>
+			<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.m</string>
 		</dict>
 		<dict>
 			<key>$class</key>
@@ -29102,10 +29102,10 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322456473.153162</real>
-		<string>{2768, 1843}</string>
-		<string>{8901, 0}</string>
-		<string>-tableView:objectValueForTableColumn:row:</string>
+		<real>322517839.65068901</real>
+		<string>{2109, 1969}</string>
+		<string>{3142, 0}</string>
+		<string>-windowControllerDidLoadNib:</string>
 		<string>Xcode.IDEKit.EditorDocument.SourceCode</string>
 		<dict>
 			<key>$class</key>
@@ -29124,7 +29124,7 @@
 				<integer>1802</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.m</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.m</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -31525,7 +31525,7 @@
 		</dict>
 		<string>IDEUtilitiesArea</string>
 		<real>260</real>
-		<string>DelectusDataSource.m</string>
+		<string>DelectusDocument.m</string>
 		<dict>
 			<key>$class</key>
 			<dict>

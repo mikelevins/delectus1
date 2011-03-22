@@ -43,7 +43,7 @@
                        filter-text: filter-text))))
 
 (define (api:count-columns id)
-  (if-error $VAL_NO
+  (if-error 0
             (count-columns id)))
 
 (define (api:column-at-index id index)
@@ -51,7 +51,7 @@
             (column-at-index id index)))
 
 (define (api:count-rows id)
-  (if-error $VAL_NO
+  (if-error 0
             (count-rows id)))
 
 (define (api:value-at id column-label row-index)

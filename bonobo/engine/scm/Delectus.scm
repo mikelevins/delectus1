@@ -32,7 +32,8 @@
           char-string "column_at_index" ""
           (api:column-at-index id index))
 
-(c-define (c:get-view id include-deleted? sort-column sort-order filter-text) (int int char-string int char-string)
+(c-define (c:get-view id include-deleted? sort-column sort-order filter-text) 
+          (int bool char-string int char-string)
           int "get_view" ""
           (api:get-view id include-deleted? sort-column sort-order filter-text))
 

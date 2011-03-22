@@ -24,6 +24,7 @@
     self = [super init];
     if (self) {
         contentFont=[NSFont systemFontOfSize:12.0];
+        filterText=nil;
     }
     return self;
 }
@@ -37,8 +38,6 @@
     return @"DelectusDocument";
 }
 
-- (void)clearColumns{}
-
 - (void)setupSpacing{
     // tableview setup
     NSSize spacing;
@@ -49,8 +48,6 @@
 
 - (void)setupColumns{
     [self setupSpacing];
-        
-    // main content columns
     [tableView setAutosaveName:nil];
     [tableView setAutosaveTableColumns:NO];
     NSArray* columnLabels = [dataSource collectColumns];
@@ -69,15 +66,54 @@
     [tableView setAutosaveTableColumns:YES];
 }
 
+- (void)discardColumns{
+    NSArray* cols=[tableView tableColumns];
+    int colcount = [cols count];
+    for(int i = 0;i<colcount;i++){
+        NSTableColumn* col = [cols objectAtIndex:i];
+        [tableView removeTableColumn: col];
+        [col release];
+    }
+}
+
+- (void)updateDisplay{
+    int rowCount = [tableView numberOfRows];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",rowCount]];
+    [tableView setNeedsDisplay:YES];
+    [itemCountField setNeedsDisplay:YES];
+}
+
+- (void)updateDataView{
+    BOOL include_deleted = NO; // TODO: fetch this from user-supplied state
+    NSString* sort_column = nil; // TODO: fetch this from user-supplied state
+    int sort_order = SORT_NONE;  // TODO: fetch this from user-supplied state
+    [dataSource getViewIncludingDeleted:include_deleted withSortColumn:sort_column andSortOrder:sort_order andFilterText:filterText];
+    [tableView reloadData];
+    [self updateDisplay];
+}
+
+- (void)rebuildDisplay{
+    [self discardColumns];
+    [self setupColumns];
+    [self updateDataView];
+    [self updateDisplay];
+}
+
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
     [super windowControllerDidLoadNib:aController];
     if (dataSource==nil){
         dataSource=[[[NSApp delegate] newDelectus] retain];
     }
-    [self setupColumns];
     [tableView setDataSource: dataSource];
     [tableView setDelegate: self];
+    [addColumnButton setTarget:self];
+    [delColumnButton setTarget:self];
+    [addRowButton setTarget: self];
+    [delRowButton setTarget: self];
+    [showDeletedButton setTarget: self];
+    [self rebuildDisplay];
+    
 }
 
 // --------------------------------------------------------------------------------
@@ -92,13 +128,18 @@
 
 - (IBAction)toggleColumnDeleted:(id)sender{}
 
-- (IBAction)setFilter:(id)sender{}
-
 - (IBAction)toggleShowDeleted:(id)sender{}
 
 - (IBAction)emptyTrash:(id)sender{}
 
 - (IBAction)renameColumn:(id)sender{}
+
+- (IBAction)setFilter:(id)sender{
+    NSSearchField* searchField = (NSSearchField*)sender;
+    filterText = [[searchField cell] stringValue];
+    [self updateDataView];
+}
+
 
 // --------------------------------------------------------------------------------
 // Handle font changes

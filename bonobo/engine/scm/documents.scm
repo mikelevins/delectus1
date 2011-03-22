@@ -134,7 +134,8 @@
     (if doc
         (begin
           (doc:set-view-description! doc description)
-          (doc:set-view-valid! doc #f))
+          (doc:set-view-valid! doc #f)
+          docid)
         (error "No such document"))))
 
 (define (count-columns docid)

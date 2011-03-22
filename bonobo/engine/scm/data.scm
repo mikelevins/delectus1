@@ -79,7 +79,9 @@
   (row:set-entries! seq (vector-add-last (row:entries seq) (entry:make val))))
 
 (define (row:match-text? row text)
-  (vector-some? (lambda (e)(string-contains-ci? (entry:value e) text))
+  (vector-some? (lambda (e)
+                  (let ((v (entry:value e)))
+                    (and (string? v)(string-contains-ci? v text))))
                 (row:entries row))) 
 
 (define (row:count-elements row)

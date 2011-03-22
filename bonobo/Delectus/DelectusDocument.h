@@ -24,6 +24,7 @@
     IBOutlet id showDeletedButton;
     
     NSFont* contentFont;
+    NSString* filterText;
 }
 
 // Handle font changes

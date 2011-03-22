@@ -235,3 +235,12 @@
 ;;; (table:column-labels (doc:table $doc))
 ;;; (table:value-at (doc:table $doc) "city" 0)
 ;;; (doc:view-valid? $doc)
+
+;;; (define $jrpath "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
+;;; (define $jr (read-delectus-file $jrpath))
+;;; $jr
+;;; (define $jrdoc (find-document $jr))
+;;; (document? $jrdoc)
+;;; (count-columns $jr)
+;;; (count-rows $jr)
+;;; (table:column-labels (doc:table $jrdoc) $jr)
