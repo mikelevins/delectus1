@@ -22,12 +22,12 @@
   (if thing
       (if (string? thing)
           (if (string=? thing "")
-              0
+              #f
               (string->number thing))
           (if (null? thing)
-              0
+              #f
               (error "Invalid entry value" thing)))
-      0))
+      #f))
 
 (define (entry:make val)
   (%make-entry val (%->entry-number-value val)))
@@ -67,6 +67,19 @@
 
 (define (row:element-as-number seq index)
   (%entry-number-value (vector-ref (row:entries seq) index)))
+
+(define (row:element-for-numeric-sort row col-index)
+  (or (row:element-as-number row col-index)
+      $max-sort-fixnum))
+
+(define (row:element-for-string-sort row col-index)
+  (let ((s (row:element row col-index)))
+    (if (or (not s)
+            (not (string? s))
+            (zero? (string-length s))
+            (string-every? char-whitespace? s))
+        $max-sort-string
+        s)))
 
 (define (row:position seq val)
   (vector-position (lambda (elt v)(string-ci=? (entry:value elt) v))

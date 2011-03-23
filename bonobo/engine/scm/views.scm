@@ -51,8 +51,8 @@
   (let* ((col-index (table:column-index tbl sort-column))
          (numeric-column? (table:numeric-column? tbl sort-column))
          (accessor (if numeric-column?
-                       (lambda (row)(row:element-as-number row col-index))
-                       (lambda (row)(row:element row col-index))))
+                       (lambda (row)(row:element-for-numeric-sort row col-index))
+                       (lambda (row)(row:element-for-string-sort row col-index))))
          (compare (if numeric-column?
                       ;; numeric sort
                       (if (= sort-order $SORT_ASCENDING)

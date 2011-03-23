@@ -86,3 +86,11 @@
                                           (outer-loop (+ i 1)))))
                                 (outer-loop (+ i 1))))))))))))
 
+(define (string-every? pred s)
+  (let ((strlen (string-length s)))
+    (let loop ((i 0))
+      (if (< i strlen)
+          (if (pred (string-ref s i))
+              (loop (+ i 1))
+              #f)
+          #t))))

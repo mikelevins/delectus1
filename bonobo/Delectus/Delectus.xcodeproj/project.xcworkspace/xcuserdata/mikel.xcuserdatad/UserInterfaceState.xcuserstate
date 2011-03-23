@@ -19541,8 +19541,8 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322523492.557841</real>
-		<string>{3761, 2544}</string>
+		<real>322546553.36328501</real>
+		<string>{3761, 1918}</string>
 		<string>{5336, 0}</string>
 		<dict>
 			<key>$class</key>
@@ -22959,7 +22959,7 @@
 				<integer>1455</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>322523447.53076798</real>
+			<real>322546432.60413301</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -22970,7 +22970,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 4:50 PM</string>
+		<string>Today at 11:13 PM</string>
 		<integer>106</integer>
 		<dict>
 			<key>$class</key>
@@ -28583,7 +28583,7 @@
 		<string>IDEOrderedWorkspaceTabControllers</string>
 		<string>IDEWorkspaceTabController_B95EDEE2-B515-4A65-B8D8-F0C20FBAA111</string>
 		<string>IDEActiveWorkspaceTabController</string>
-		<string>{{5, 5}, {1911, 1173}}</string>
+		<string>{{-1, 5}, {1911, 1173}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -28736,7 +28736,7 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>31</integer>
+					<integer>146</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
@@ -29111,8 +29111,8 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322523492.55857402</real>
-		<string>{3761, 2544}</string>
+		<real>322546553.36404198</real>
+		<string>{3761, 1918}</string>
 		<string>{5336, 0}</string>
 		<string>-advanceSortForColumn:</string>
 		<string>Xcode.IDEKit.EditorDocument.SourceCode</string>
@@ -29148,7 +29148,7 @@
 				</dict>
 			</array>
 		</dict>
-		<string>{{0, 0}, {1391, 1097}}</string>
+		<string>{{0, 0}, {1391, 859}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>

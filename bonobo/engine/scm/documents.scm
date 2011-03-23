@@ -88,25 +88,26 @@
 (define (update-view! doc)
   (if (doc:view-valid? doc)
       doc
-      (let ((tbl (doc:table doc))
-            (col-labels (table:column-labels (doc:table doc))))
-        (for-each (lambda (lbl)
-                    (if (table:numeric-column? tbl lbl)
-                        (begin
-                          (set-column-info! (table:column-at tbl lbl) numeric: #t)
-                          (set-column-info! (table:column-at tbl lbl)
-                                            total: 
-                                            (reduce + 0.0 (table:column-values-as-numbers tbl lbl))))
-                        (begin
-                          (set-column-info! (table:column-at tbl lbl) numeric: #f)
-                          (set-column-info! (table:column-at tbl lbl)
-                                            total: #f))))
-                  col-labels)
+      (let ((tbl (doc:table doc)))
         (doc:set-view! doc
                        (view:create (doc:table doc)
                                     description: (or (doc:view-description doc)
                                                      (view:default-description))))
         (doc:set-view-valid! doc #t)
+        (let* ((v (doc:view doc))
+               (col-labels (table:column-labels v)))
+          (for-each (lambda (lbl)
+                      (if (table:numeric-column? v lbl)
+                          (begin
+                            (set-column-info! (table:column-at v lbl) numeric: #t)
+                            (set-column-info! (table:column-at v lbl)
+                                              total: 
+                                              (reduce + 0.0 (table:column-values-as-numbers v lbl))))
+                          (begin
+                            (set-column-info! (table:column-at v lbl) numeric: #f)
+                            (set-column-info! (table:column-at v lbl)
+                                              total: #f))))
+                    col-labels))
         doc)))
 
 ;;; ----------------------------------------------------------------------
