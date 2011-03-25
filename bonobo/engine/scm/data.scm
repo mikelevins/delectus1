@@ -218,8 +218,11 @@
   (column-sequence:position (table:column-sequence tbl) column-label))
 
 (define (table:column-at tbl column-label)
-  (column-sequence:element (table:column-sequence tbl)
-                           (table:column-index tbl column-label)))
+  (let ((index (table:column-index tbl column-label)))
+    (if index
+        (column-sequence:element (table:column-sequence tbl)
+                                 index)
+        #f)))
 
 (define (table:column-at-index tbl index)
   (column:label (column-sequence:element (table:column-sequence tbl) index)))
@@ -241,7 +244,7 @@
 (define (table:add-row! tbl)
   (table:set-rows! tbl
                    (vector-add-last (table:rows tbl)
-                                    (row:make (repeat (table:count-columns tbl) '()))))
+                                    (row:make (repeat (table:count-columns tbl) #f))))
   tbl)
 
 (define (table:add-column! tbl column-label)

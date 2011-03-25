@@ -38,6 +38,7 @@ extern int mark_row_finished(int id, int row_index, int finished);
 extern int add_row (int id);
 extern int add_column (int oid, char* label);
 extern bool is_column_deleted (int id, char* column_label);
+extern bool is_duplicate_label (int id, char* column_label);
 extern int mark_column_deleted (int id, char* column_label, int deleted);
 extern int column_has_total (int id, char* column_label);
 extern double column_total (int id, char* column_label);

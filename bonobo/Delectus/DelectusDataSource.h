@@ -39,6 +39,7 @@
 - (int)addRow;
 - (int)addColumn:(NSString*)label;
 - (BOOL)isColumnDeleted:(NSString*)label;
+- (BOOL)isDuplicateLabel:(NSString*)label;
 - (int)markColumn:(NSString*)label deleted: (BOOL)yesOrNo;
 - (BOOL)columnHasTotal:(NSString*)label;
 - (double)columnTotal:(NSString*)label;

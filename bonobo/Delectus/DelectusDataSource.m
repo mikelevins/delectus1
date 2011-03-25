@@ -193,6 +193,16 @@
     }
 }
 
+- (BOOL)isDuplicateLabel:(NSString*)label{
+    if (documentID==VAL_NO_DOCUMENT){
+        return NO;
+    }else{
+        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
+        BOOL result = is_column_deleted(documentID,colname);
+        return result;
+    }
+}
+
 - (int)markColumn:(NSString*)label deleted: (BOOL)yesOrNo{
     if (documentID==VAL_NO_DOCUMENT){
         return ERR_NO_DOCUMENT;

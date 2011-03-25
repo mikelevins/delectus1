@@ -8,26 +8,24 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "DelectusDataSource.h"
 
 @interface DelectusDocument : NSDocument <NSTableViewDelegate>
 {
     IBOutlet id documentWindow;
     IBOutlet NSTableView* tableView;
+    IBOutlet id addColumnSheet;
+    IBOutlet id addColumnLabelField;
     IBOutlet id tableScrollView;
     IBOutlet id itemCountField;    
     IBOutlet id filterField;    
-    IBOutlet id dataSource;
+    IBOutlet DelectusDataSource* dataSource;
     IBOutlet id addColumnButton;
     IBOutlet id delColumnButton;
     IBOutlet id addRowButton;
     IBOutlet id delRowButton;
     IBOutlet id showDeletedButton;
-    
     NSFont* contentFont;
-    NSString* filterText;
-    NSString* sortColumn;
-    int sortOrder;
-    BOOL showDeleted;
 }
 
 // Handle font changes
@@ -45,7 +43,11 @@
 - (IBAction)toggleShowDeleted:(id)sender;
 - (IBAction)emptyTrash:(id)sender;
 - (IBAction)renameColumn:(id)sender;
+- (IBAction)acceptNewColumn:(id)sender;
 
+// handle sheets
+
+- (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
 
 
 @end

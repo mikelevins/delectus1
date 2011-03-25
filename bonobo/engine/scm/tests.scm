@@ -246,3 +246,6 @@
 ;;; (table:column-labels (doc:table $jrdoc))
 ;;; (get-view $jr description: (view:description sort-column: "Length" sort-order: $SORT_ASCENDING))
 ;;; (value-at $jr "Length" 0)
+;;; (add-row! $jr)
+
+;;; (define $d1 (new-delectus))

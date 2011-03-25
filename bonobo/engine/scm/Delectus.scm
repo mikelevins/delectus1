@@ -69,6 +69,10 @@
           int "mark_column_deleted" ""
           (api:mark-column-deleted! id column-label deleted?))
 
+(c-define (c:duplicate-label? id column-label) (int char-string)
+          bool "is_duplicate_label" ""
+          (api:duplicate-label? id column-label))
+
 (c-define (c:column-has-total? id column-label) (int char-string)
           bool "column_has_total" ""
           (api:column-has-total? id column-label))

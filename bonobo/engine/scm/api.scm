@@ -90,6 +90,10 @@
   (if-error $VAL_NO
             (column-deleted? id column-label)))
 
+(define (api:duplicate-label? id column-label)
+  (if-error $VAL_YES
+            (duplicate-label? id column-label)))
+
 (define (api:mark-column-deleted! id column-label deleted?)
   (if-error $ERR_CANT_UPDATE
             (begin

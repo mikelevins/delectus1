@@ -169,9 +169,14 @@
     (if doc
         (begin
           (update-view! doc)
-          (let ((tbl (doc:view doc)))
-            (row:element (table:row-at tbl row-index)
-                         (table:column-index tbl column-label))))
+          (let* ((tbl (doc:view doc))
+                 (val (row:element (table:row-at tbl row-index)
+                                   (table:column-index tbl column-label))))
+            (if val
+                (if (string? val)
+                    val
+                    $VAL_NO_VALUE)
+                $VAL_NO_VALUE)))
         (error "No such document"))))
 
 (define (put-value-at! docid column-label row-index val)
@@ -211,7 +216,8 @@
           (update-view! doc)
           (let ((tbl (doc:table doc)))
             (table:add-row! tbl)
-            (doc:set-view-valid! doc #f)))
+            (doc:set-view-valid! doc #f)
+            $ERR_NO_ERROR))
         (error "No such document"))))
 
 (define (add-column! docid column-label)
@@ -232,6 +238,17 @@
           (let* ((tbl (doc:table doc))
                  (col (table:column-at tbl column-label)))
             (column:deleted? col)))
+        (error "No such document"))))
+
+(define (duplicate-label? docid column-label)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (let* ((tbl (doc:table doc))
+                 (col (table:column-at tbl column-label)))
+            (if col
+                $VAL_YES
+                $VAL_NO)))
         (error "No such document"))))
 
 (define (mark-column-deleted! docid column-label deleted?)

@@ -24,10 +24,6 @@
     self = [super init];
     if (self) {
         contentFont=[NSFont systemFontOfSize:12.0];
-        filterText=nil;
-        sortColumn=nil;
-        sortOrder=SORT_NONE;
-        showDeleted=NO;
     }
     return self;
 }
@@ -53,10 +49,19 @@
     [self setupSpacing];
     [tableView setAutosaveName:nil];
     [tableView setAutosaveTableColumns:NO];
+    int colcount = [tableView numberOfColumns];
+    if(colcount>0){
+        NSArray* cols = [tableView tableColumns];
+        for(int i=(colcount-1);i>=0;i--){
+            NSTableColumn* col = [cols objectAtIndex:i];
+            [tableView removeTableColumn:col];
+            [col release];
+        }
+    }
     NSArray* columnLabels = [dataSource collectColumns];
     NSFont* headerFont = [NSFont systemFontOfSize:12.0];
-    int colcount = [columnLabels count];
-    for(int i = 0;i<colcount;i++){
+    int labelcount = [columnLabels count];
+    for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
         NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
         [col retain];
@@ -87,7 +92,6 @@
 }
 
 - (void)updateDataView{
-    [dataSource getViewIncludingDeleted:showDeleted withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
     [tableView reloadData];
     [self updateDisplay];
 }
@@ -123,7 +127,23 @@
 // --------------------------------------------------------------------------------
 
 - (IBAction)addRow:(id)sender{
-    NSRunAlertPanel(@"Add",@"Adding a row",@"Okay", nil, nil);
+    int err = [dataSource addRow];
+    if (err == ERR_NO_ERROR){
+        [self setupColumns];
+        int colcount = [dataSource countColumns];
+        NSLog(@"dataSource == %@",dataSource);
+        NSLog(@"dataSource column count: %d",colcount);
+        int vcolcount = [tableView numberOfColumns];
+        NSLog(@"view column count: %d",vcolcount);
+        int rowcount = [dataSource countRows];
+        NSLog(@"dataSource row count: %d",rowcount);
+        [tableView reloadData];
+        int vrowcount = [tableView numberOfRows];
+        NSLog(@"view row count: %d",vrowcount);
+    }else{
+        NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
+        NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
+    }
 }
 
 - (IBAction)toggleRowDeleted:(id)sender{
@@ -131,7 +151,11 @@
 }
 
 - (IBAction)addColumn:(id)sender{
-    NSRunAlertPanel(@"Add",@"Adding a column",@"Okay", nil, nil);
+    [NSApp beginSheet: addColumnSheet 
+       modalForWindow: documentWindow 
+        modalDelegate: self 
+       didEndSelector: @selector(sheetDidEnd:returnCode:contextInfo:) 
+          contextInfo: @"AddColumn"];
 }
 
 - (IBAction)toggleColumnDeleted:(id)sender{
@@ -152,11 +176,11 @@
 
 - (IBAction)setFilter:(id)sender{
     NSSearchField* searchField = (NSSearchField*)sender;
-    filterText = [[searchField cell] stringValue];
     [self updateDataView];
 }
 
 -(void)advanceSortForColumn:(NSTableColumn*)aColumn{
+    NSString* currentLabel = [dataSource sortColumn];
     NSString* nextLabel = [aColumn identifier];
     if([nextLabel isEqualTo: sortColumn]){
         if (sortOrder == SORT_ASCENDING){
@@ -189,6 +213,10 @@
     } else{
         [sender editColumn:[sender clickedColumn] row:[sender clickedRow] withEvent:nil  select:YES];
     }
+}
+
+- (IBAction)acceptNewColumn:(id)sender{
+    [NSApp endSheet:addColumnSheet];
 }
 
 // --------------------------------------------------------------------------------
@@ -334,5 +362,29 @@
 }
 
 
+// handle sheets
+
+- (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo{
+    [sheet orderOut:self];
+    
+    NSString* commandStr = (NSString*)contextInfo;
+    if([commandStr isEqualTo: @"AddColumn"]){
+        NSString* lbl = [addColumnLabelField stringValue];
+        BOOL isDup = [dataSource isDuplicateLabel: lbl];
+        if (isDup){
+            NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",lbl];
+            NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
+        } else {
+            int err = [dataSource addColumn:lbl];
+            if (err == ERR_NO_ERROR){
+                [self setupColumns];
+                [tableView reloadData];
+            }else{
+                NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
+                NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
+            }
+        }
+    }
+}
 
 @end
