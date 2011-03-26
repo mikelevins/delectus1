@@ -90,6 +90,7 @@
     [delRowButton setTarget: self];
     [showDeletedButton setTarget: self];
     [self setupColumns];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
 }
 
 // --------------------------------------------------------------------------------
@@ -99,8 +100,14 @@
 - (IBAction)addRow:(id)sender{
     int err = [dataSource addRow];
     if (err == ERR_NO_ERROR){
-        [self setupColumns];
         [tableView reloadData];
+        int rowCount = [tableView numberOfRows];
+        if(rowCount>0){
+            [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
+            [tableView scrollRowToVisible:(rowCount-1)];
+        }
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
     }else{
         NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
         NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
@@ -142,6 +149,7 @@
     NSString* filterText = [filterField stringValue];
     [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
     [tableView reloadData];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
 }
 
 -(void)advanceSortForColumn:(NSTableColumn*)aColumn{
@@ -168,6 +176,7 @@
     }
     [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:nextLabel andSortOrder:sortOrder andFilterText:[filterField stringValue]];
     [tableView reloadData];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
 }
 
 - (void)clickColumn:(id)sender{
@@ -347,6 +356,12 @@
             if (err == ERR_NO_ERROR){
                 [self setupColumns];
                 [tableView reloadData];
+                int colCount = [tableView numberOfColumns];
+                if(colCount>0){
+                    [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];
+                    [tableView scrollColumnToVisible:(colCount-1)];
+                }
+                [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
             }else{
                 NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
                 NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);

@@ -8438,11 +8438,11 @@
 			<array>
 				<dict>
 					<key>CF$UID</key>
-					<integer>560</integer>
+					<integer>85</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>85</integer>
+					<integer>560</integer>
 				</dict>
 			</array>
 		</dict>
@@ -19556,9 +19556,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322810204.93508101</real>
-		<string>{3724, 2741}</string>
-		<string>{4475, 0}</string>
+		<real>322811971.84467</real>
+		<string>{1945, 2446}</string>
+		<string>{3081, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -21423,9 +21423,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322808989.76725602</real>
+		<real>322811297.87100798</real>
 		<string>{0, 1316}</string>
-		<string>{477, 11}</string>
+		<string>{441, 14}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -22967,7 +22967,7 @@
 				<integer>1449</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>322810170.01847702</real>
+			<real>322811944.791282</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -22978,7 +22978,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 12:29 AM</string>
+		<string>Today at 12:59 AM</string>
 		<integer>106</integer>
 		<dict>
 			<key>$class</key>
@@ -23282,7 +23282,7 @@
 				<integer>1476</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.m</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/DelectusDocument.xib</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -23300,7 +23300,7 @@
 				<integer>1478</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.h</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.m</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -23318,7 +23318,7 @@
 				<integer>1480</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/DelectusDocument.xib</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDataSource.h</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -30207,10 +30207,10 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322810204.93572301</real>
-		<string>{3724, 2741}</string>
-		<string>{4475, 0}</string>
-		<string>-setFilter:</string>
+		<real>322811971.845388</real>
+		<string>{1945, 2446}</string>
+		<string>{3081, 0}</string>
+		<string>-addRow:</string>
 		<string>Xcode.IDEKit.EditorDocument.SourceCode</string>
 		<dict>
 			<key>$class</key>
