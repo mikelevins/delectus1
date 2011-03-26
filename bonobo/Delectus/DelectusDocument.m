@@ -81,7 +81,6 @@
         dataSource=[[[NSApp delegate] newDelectus] retain];
     }
     [tableView setDataSource: dataSource];
-    NSLog(@"dataSource==%@",dataSource);
     [tableView setDelegate: self];
     [tableView setTarget:self];
     [tableView setAction:@selector(clickColumn:)];    
@@ -137,12 +136,12 @@
 }
 
 - (IBAction)setFilter:(id)sender{
-    NSSearchField* searchField = (NSSearchField*)sender;
 }
 
 -(void)advanceSortForColumn:(NSTableColumn*)aColumn{
     NSString* sortColumn = [dataSource sortColumn];
     int sortOrder = [dataSource sortOrder];
+    BOOL includeDeleted = [dataSource includeDeleted];
     NSString* nextLabel = [aColumn identifier];
     if([nextLabel isEqualTo: sortColumn]){
         if (sortOrder == SORT_ASCENDING){
@@ -157,20 +156,24 @@
         }
     }else{
         NSTableColumn* lastCol = [tableView tableColumnWithIdentifier: sortColumn];
+        sortOrder=SORT_ASCENDING;
         [tableView setIndicatorImage:nil inTableColumn:lastCol];
         [tableView setIndicatorImage:[NSImage imageNamed: @"NSAscendingSortIndicator"] inTableColumn:aColumn];
     }
+    [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:nextLabel andSortOrder:sortOrder andFilterText:[filterField stringValue]];
+    [tableView reloadData];
 }
 
 - (void)clickColumn:(id)sender{
-    if([sender clickedRow] == -1){
+    BOOL inRow = [sender clickedRow] > -1;
+    BOOL inCol = [sender clickedColumn] > -1;
+    if(inRow){
+        [sender editColumn:[sender clickedColumn] row:[sender clickedRow] withEvent:nil  select:YES];
+    }else if(inCol){
         NSInteger col_index = [sender clickedColumn];
         NSArray* cols = [sender tableColumns];
         NSTableColumn* col = (NSTableColumn*)[cols objectAtIndex: col_index];
-        [sender selectColumnIndexes:[NSIndexSet indexSetWithIndex: col_index] byExtendingSelection:NO];
         [self advanceSortForColumn:col];
-    } else{
-        [sender editColumn:[sender clickedColumn] row:[sender clickedRow] withEvent:nil  select:YES];
     }
 }
 

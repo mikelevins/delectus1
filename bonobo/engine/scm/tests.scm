@@ -240,12 +240,9 @@
 
 ;;; (define $jrpath "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
 ;;; (define $jr (read-delectus-file $jrpath))
-;;; $jr
-;;; (count-columns $jr)
 ;;; (count-rows $jr)
-;;; (table:column-labels (doc:table $jrdoc))
-;;; (get-view $jr description: (view:description sort-column: "Length" sort-order: $SORT_ASCENDING))
-;;; (value-at $jr "Length" 0)
+;;; (get-view $jr description: (view:description sort-column: "Title" sort-order: $SORT_DESCENDING))
+;;; (value-at $jr "Title" 0)
 ;;; (add-row! $jr)
 
 ;;; (define $d1 (new-delectus))
