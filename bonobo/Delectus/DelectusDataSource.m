@@ -105,6 +105,36 @@
     }
 }
 
+- (NSString*)sortColumn{
+    char* lbl = sort_column(documentID);
+    if (lbl==NULL){
+        return nil;
+    }else{
+        NSString* result = [self convertToNSString:lbl];
+        return result;
+    }
+}
+
+- (int)sortOrder{
+    int ord = sort_order(documentID);
+    return ord;
+}
+
+- (BOOL)includeDeleted{
+    BOOL inc = include_deleted(documentID);
+    return inc;
+}
+
+- (NSString*)filterText{
+    char* tx = filter_text(documentID);
+    if (tx==NULL){
+        return nil;
+    }else{
+        NSString* result = [self convertToNSString:tx];
+        return result;
+    }
+}
+
 - (NSString*)columnAtIndex:(int)index{
     if (documentID==VAL_NO_DOCUMENT){
         return nil;

@@ -46,6 +46,22 @@
   (if-error 0
             (count-columns id)))
 
+(define (api:sort-column id)
+  (if-error $VAL_NO_VALUE
+            (sort-column id)))
+
+(define (api:sort-order id)
+  (if-error $SORT_NONE
+            (sort-order id)))
+
+(define (api:include-deleted? id)
+  (if-error $VAL_NO
+            (include-deleted? id)))
+
+(define (api:filter-text id)
+  (if-error $VAL_NO_VALUE
+            (filter-text id)))
+
 (define (api:column-at-index id index)
   (if-error $OBJ_NO_OID
             (column-at-index id index)))

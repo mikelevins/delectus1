@@ -31,6 +31,10 @@
 - (NSString*)version;
 - (int)getViewIncludingDeleted:(BOOL)yesOrNo withSortColumn:(NSString*)label andSortOrder:(int)order andFilterText:(NSString*)text;
 - (int)countColumns;
+- (NSString*)sortColumn;
+- (int)sortOrder;
+- (BOOL)includeDeleted;
+- (NSString*)filterText;
 - (int)countRows;
 - (NSString*)valueAtColumn:(NSString*)label andRow:(int)index;
 - (int)putValue:(NSString*)valStr atColumn:(NSString*)label andRow:(NSInteger)index;

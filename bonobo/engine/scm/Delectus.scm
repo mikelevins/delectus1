@@ -28,6 +28,22 @@
           int "count_columns" ""
           (api:count-columns id))
 
+(c-define (c:sort-column id) (int) 
+          char-string "sort_column" ""
+          (api:sort-column id))
+
+(c-define (c:sort-order id) (int) 
+          int "sort_order" ""
+          (api:sort-order id))
+
+(c-define (c:include-deleted? id) (int) 
+          bool "include_deleted" ""
+          (api:include-deleted? id))
+
+(c-define (c:filter-text id) (int) 
+          char-string "filter_text" ""
+          (api:filter-text id))
+
 (c-define (c:column-at-index id index) (int int) 
           char-string "column_at_index" ""
           (api:column-at-index id index))

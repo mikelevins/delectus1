@@ -67,23 +67,14 @@
   (table doc:table)
   (view doc:view doc:set-view!)
   (view-valid doc:view-valid? doc:set-view-valid!)
-  (view-description doc:view-description doc:set-view-description!)
-  (include-deleted? doc:include-deleted? doc:set-include-deleted!)
-  (filter-text doc:filter-text doc:set-filter-text!)
-  (sort-column doc:sort-column doc:set-sort-column!)
-  (sort-order doc:sort-order doc:set-sort-order!))
+  (view-description doc:view-description doc:set-view-description!))
 
 (define (doc:make #!key
                   (table (table:make))
                   (view #f)
                   (view-valid #f)
-                  (view-description (view:default-description))
-                  (include-deleted #f)
-                  (filter-text #f)
-                  (sort-column #f)
-                  (sort-order #f))
-  (%make-document table view view-valid view-description include-deleted
-                  filter-text sort-column sort-order))
+                  (view-description (view:default-description)))
+  (%make-document table view view-valid view-description))
 
 (define (update-view! doc)
   (if (doc:view-valid? doc)
@@ -145,6 +136,43 @@
         (begin
           (let ((tbl (doc:table doc)))
             (table:count-columns tbl)))
+        (error "No such document"))))
+
+(define (sort-column docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((view-desc (doc:view-description doc)))
+            (view-description:sort-column view-desc)))
+        (error "No such document"))))
+
+(define (sort-order docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((view-desc (doc:view-description doc)))
+            (or (view-description:sort-order view-desc)
+                $SORT_NONE)))
+        (error "No such document"))))
+
+(define (include-deleted? docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((view-desc (doc:view-description doc)))
+            (view-description:include-deleted? view-desc)))
+        (error "No such document"))))
+
+(define (filter-text docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let* ((view-desc (doc:view-description doc)))
+            (view-description:filter-text view-desc)))
         (error "No such document"))))
 
 (define (column-at-index docid index)

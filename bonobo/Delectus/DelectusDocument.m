@@ -74,35 +74,6 @@
     [tableView setAutosaveTableColumns:YES];
 }
 
-- (void)discardColumns{
-    NSArray* cols=[tableView tableColumns];
-    int colcount = [cols count];
-    for(int i = 0;i<colcount;i++){
-        NSTableColumn* col = [cols objectAtIndex:i];
-        [tableView removeTableColumn: col];
-        [col release];
-    }
-}
-
-- (void)updateDisplay{
-    int rowCount = [tableView numberOfRows];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",rowCount]];
-    [tableView setNeedsDisplay:YES];
-    [itemCountField setNeedsDisplay:YES];
-}
-
-- (void)updateDataView{
-    [tableView reloadData];
-    [self updateDisplay];
-}
-
-- (void)rebuildDisplay{
-    [self discardColumns];
-    [self setupColumns];
-    [self updateDataView];
-    [self updateDisplay];
-}
-
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
     [super windowControllerDidLoadNib:aController];
@@ -110,6 +81,7 @@
         dataSource=[[[NSApp delegate] newDelectus] retain];
     }
     [tableView setDataSource: dataSource];
+    NSLog(@"dataSource==%@",dataSource);
     [tableView setDelegate: self];
     [tableView setTarget:self];
     [tableView setAction:@selector(clickColumn:)];    
@@ -118,8 +90,7 @@
     [addRowButton setTarget: self];
     [delRowButton setTarget: self];
     [showDeletedButton setTarget: self];
-    [self rebuildDisplay];
-    
+    [self setupColumns];
 }
 
 // --------------------------------------------------------------------------------
@@ -130,16 +101,7 @@
     int err = [dataSource addRow];
     if (err == ERR_NO_ERROR){
         [self setupColumns];
-        int colcount = [dataSource countColumns];
-        NSLog(@"dataSource == %@",dataSource);
-        NSLog(@"dataSource column count: %d",colcount);
-        int vcolcount = [tableView numberOfColumns];
-        NSLog(@"view column count: %d",vcolcount);
-        int rowcount = [dataSource countRows];
-        NSLog(@"dataSource row count: %d",rowcount);
         [tableView reloadData];
-        int vrowcount = [tableView numberOfRows];
-        NSLog(@"view row count: %d",vrowcount);
     }else{
         NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
         NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
@@ -176,11 +138,11 @@
 
 - (IBAction)setFilter:(id)sender{
     NSSearchField* searchField = (NSSearchField*)sender;
-    [self updateDataView];
 }
 
 -(void)advanceSortForColumn:(NSTableColumn*)aColumn{
-    NSString* currentLabel = [dataSource sortColumn];
+    NSString* sortColumn = [dataSource sortColumn];
+    int sortOrder = [dataSource sortOrder];
     NSString* nextLabel = [aColumn identifier];
     if([nextLabel isEqualTo: sortColumn]){
         if (sortOrder == SORT_ASCENDING){
@@ -196,11 +158,8 @@
     }else{
         NSTableColumn* lastCol = [tableView tableColumnWithIdentifier: sortColumn];
         [tableView setIndicatorImage:nil inTableColumn:lastCol];
-        sortColumn = nextLabel;
-        sortOrder = SORT_ASCENDING;
         [tableView setIndicatorImage:[NSImage imageNamed: @"NSAscendingSortIndicator"] inTableColumn:aColumn];
     }
-    [self updateDataView];    
 }
 
 - (void)clickColumn:(id)sender{
