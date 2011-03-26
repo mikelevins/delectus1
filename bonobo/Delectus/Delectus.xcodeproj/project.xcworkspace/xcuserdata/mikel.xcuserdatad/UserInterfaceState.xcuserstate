@@ -19556,9 +19556,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322809256.78561002</real>
-		<string>{3964, 2542}</string>
-		<string>{4112, 0}</string>
+		<real>322810204.93508101</real>
+		<string>{3724, 2741}</string>
+		<string>{4475, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -22967,7 +22967,7 @@
 				<integer>1449</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>322809236.21947801</real>
+			<real>322810170.01847702</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -22978,7 +22978,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 12:13 AM</string>
+		<string>Today at 12:29 AM</string>
 		<integer>106</integer>
 		<dict>
 			<key>$class</key>
@@ -30207,9 +30207,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>322809256.78659201</real>
-		<string>{3964, 2542}</string>
-		<string>{4112, 0}</string>
+		<real>322810204.93572301</real>
+		<string>{3724, 2741}</string>
+		<string>{4475, 0}</string>
 		<string>-setFilter:</string>
 		<string>Xcode.IDEKit.EditorDocument.SourceCode</string>
 		<dict>

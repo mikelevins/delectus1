@@ -136,6 +136,12 @@
 }
 
 - (IBAction)setFilter:(id)sender{
+    NSString* sortColumn = [dataSource sortColumn];
+    int sortOrder = [dataSource sortOrder];
+    BOOL includeDeleted = [dataSource includeDeleted];
+    NSString* filterText = [filterField stringValue];
+    [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
+    [tableView reloadData];
 }
 
 -(void)advanceSortForColumn:(NSTableColumn*)aColumn{

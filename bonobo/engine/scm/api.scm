@@ -34,13 +34,20 @@
 
 (define (api:get-view id include-deleted? sort-column sort-order filter-text)
   (if-error $OBJ_NO_OID
-            (get-view id
-                      description:
-                      (view:description
-                       include-deleted: include-deleted?
-                       sort-column: sort-column
-                       sort-order: sort-order
-                       filter-text: filter-text))))
+            (let ((filter-text (if filter-text
+                                   (if (string? filter-text)
+                                       (if (> (string-length filter-text) 0)
+                                           filter-text
+                                           #f)
+                                       #f)
+                                   #f)))
+              (get-view id
+                        description:
+                        (view:description
+                         include-deleted: include-deleted?
+                         sort-column: sort-column
+                         sort-order: sort-order
+                         filter-text: filter-text)))))
 
 (define (api:count-columns id)
   (if-error 0
