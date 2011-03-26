@@ -211,8 +211,22 @@
 (define (table:count-columns tbl)
   (column-sequence:length (table:column-sequence tbl)))
 
+(define (table:count-deleted-columns tbl)
+  (let ((count 0))
+    (vector-for-each (lambda (c)(if (column:deleted? c)
+                                    (set! count (+ count 1))))
+                     (column-sequence:columns (table:column-sequence tbl)))
+    count))
+
 (define (table:count-rows tbl)
   (vector-length (table:rows tbl)))
+
+(define (table:count-deleted-rows tbl)
+  (let ((count 0))
+    (vector-for-each (lambda (r)(if (row:deleted? r)
+                                    (set! count (+ count 1))))
+                     (table:rows tbl))
+    count))
 
 (define (table:column-index tbl column-label)
   (column-sequence:position (table:column-sequence tbl) column-label))

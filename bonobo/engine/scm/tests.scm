@@ -245,4 +245,5 @@
 ;;; (value-at $jr "Title" 0)
 ;;; (add-row! $jr)
 
-;;; (define $d1 (new-delectus))
+;;; (api:count-deleted-columns $jr)
+;;; (api:mark-column-deleted! $jr "Title" #t)

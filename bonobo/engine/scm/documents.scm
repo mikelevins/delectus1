@@ -138,6 +138,14 @@
             (table:count-columns tbl)))
         (error "No such document"))))
 
+(define (count-deleted-columns docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (let ((tbl (doc:table doc)))
+            (table:count-deleted-columns tbl)))
+        (error "No such document"))))
+
 (define (sort-column docid)
   (let ((doc (find-document docid)))
     (if doc
@@ -190,6 +198,14 @@
           (update-view! doc)
           (let ((tbl (doc:view doc)))
             (table:count-rows tbl)))
+        (error "No such document"))))
+
+(define (count-deleted-rows docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (let ((tbl (doc:table doc)))
+            (table:count-deleted-rows tbl)))
         (error "No such document"))))
 
 (define (value-at docid column-label row-index)

@@ -24,9 +24,17 @@
           int "count_rows" ""
           (api:count-rows id))
 
+(c-define (c:count-deleted-rows id) (int) 
+          int "count_deleted_rows" ""
+          (api:count-deleted-rows id))
+
 (c-define (c:count-columns id) (int) 
           int "count_columns" ""
           (api:count-columns id))
+
+(c-define (c:count-deleted-columns id) (int) 
+          int "count_deleted_columns" ""
+          (api:count-deleted-columns id))
 
 (c-define (c:sort-column id) (int) 
           char-string "sort_column" ""

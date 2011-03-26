@@ -19,6 +19,8 @@
     IBOutlet id tableScrollView;
     IBOutlet id itemCountField;    
     IBOutlet id filterField;    
+    IBOutlet id deletedColsField;    
+    IBOutlet id deletedRowsField;    
     IBOutlet DelectusDataSource* dataSource;
     IBOutlet id addColumnButton;
     IBOutlet id delColumnButton;

@@ -29,12 +29,14 @@ extern char* version ();
 extern int new_delectus ();
 extern int get_view(int id, bool include_deleted, char* sort_column, int sort_order, char* filter_text);
 extern int count_columns (int id);
+extern int count_deleted_columns (int id);
 extern char* sort_column (int id);
 extern int sort_order (int id);
 extern bool include_deleted (int id);
 extern char* filter_text (int id);
 extern char* column_at_index (int id,int index);
 extern int count_rows (int id);
+extern int count_deleted_rows (int id);
 extern char* value_at (int id, char* column_label, int row_index); // returns a value id
 extern int put_value_at (int id, char* column_label, int row_index, char* value);
 extern int is_row_finished(int id, int row_index);

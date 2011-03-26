@@ -31,11 +31,13 @@
 - (NSString*)version;
 - (int)getViewIncludingDeleted:(BOOL)yesOrNo withSortColumn:(NSString*)label andSortOrder:(int)order andFilterText:(NSString*)text;
 - (int)countColumns;
+- (int)countDeletedColumns;
 - (NSString*)sortColumn;
 - (int)sortOrder;
 - (BOOL)includeDeleted;
 - (NSString*)filterText;
 - (int)countRows;
+- (int)countDeletedRows;
 - (NSString*)valueAtColumn:(NSString*)label andRow:(int)index;
 - (int)putValue:(NSString*)valStr atColumn:(NSString*)label andRow:(NSInteger)index;
 - (BOOL)isRowFinished:(int)index;

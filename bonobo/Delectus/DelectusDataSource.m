@@ -105,6 +105,15 @@
     }
 }
 
+- (int)countDeletedColumns{
+    if (documentID==VAL_NO_DOCUMENT){
+        return 0;
+    }else{
+        int colCount = count_deleted_columns(documentID);
+        return colCount;
+    }
+}
+
 - (NSString*)sortColumn{
     char* lbl = sort_column(documentID);
     if (lbl==NULL){
@@ -151,6 +160,15 @@
     }else{
         int result = count_rows(documentID);
         return result;
+    }
+}
+
+- (int)countDeletedRows{
+    if (documentID==VAL_NO_DOCUMENT){
+        return 0;
+    }else{
+        int rowCount = count_deleted_rows(documentID);
+        return rowCount;
     }
 }
 

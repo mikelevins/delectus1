@@ -53,6 +53,10 @@
   (if-error 0
             (count-columns id)))
 
+(define (api:count-deleted-columns id)
+  (if-error 0
+            (count-deleted-columns id)))
+
 (define (api:sort-column id)
   (if-error $VAL_NO_VALUE
             (sort-column id)))
@@ -76,6 +80,10 @@
 (define (api:count-rows id)
   (if-error 0
             (count-rows id)))
+
+(define (api:count-deleted-rows id)
+  (if-error 0
+            (count-deleted-rows id)))
 
 (define (api:value-at id column-label row-index)
   (if-error $VAL_NO_VALUE
