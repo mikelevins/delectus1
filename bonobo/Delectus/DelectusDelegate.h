@@ -10,11 +10,14 @@
 #import "DelectusDataSource.h"
 
 @interface DelectusDelegate : NSObject {
+    NSFont* contentFont;
 }
 
 - (DelectusDataSource*)newDelectus;
 - (DelectusDataSource*)readDelectusFile:(NSURL*)url;
 - (DelectusDataSource*)readCSVFile:(NSURL*)url;
+- (void)setContentFont:(NSFont*)newFont;
+- (NSFont*)contentFont;
 
 
 @end

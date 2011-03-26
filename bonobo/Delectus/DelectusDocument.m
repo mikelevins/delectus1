@@ -23,7 +23,6 @@
 {
     self = [super init];
     if (self) {
-        contentFont=[NSFont systemFontOfSize:12.0];
     }
     return self;
 }
@@ -61,6 +60,7 @@
     NSArray* columnLabels = [dataSource collectColumns];
     BOOL includeDeleted = [dataSource includeDeleted];
     NSFont* headerFont = [NSFont systemFontOfSize:12.0];
+    NSFont* contentFont = [[NSApp delegate] contentFont];
     int labelcount = [columnLabels count];
     for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
@@ -70,6 +70,7 @@
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
         [[col dataCell] setFont:contentFont];
+        [tableView setRowHeight:(1.8*[contentFont pointSize])];
         [tableView addTableColumn: col];
         if(includeDeleted){
             [col setHidden:NO];
@@ -219,6 +220,7 @@
         [deletedColsField setHidden:YES];
         [deletedRowsField setHidden:YES];
     }
+    [tableView deselectAll: self];
 }
 
 - (IBAction)emptyTrash:(id)sender{
@@ -291,12 +293,8 @@
 // Handle font changes
 // --------------------------------------------------------------------------------
 
-- (NSFont*)font{
-    return contentFont;
-}
-
 - (void)setFont:(NSFont*)newFont{
-    contentFont = newFont;
+    [[NSApp delegate] setContentFont: newFont];
     NSArray* cols = [tableView tableColumns];
     int colcount = [cols count];
     for(int i = 0;i<colcount;i++){
@@ -309,13 +307,11 @@
 
 - (void)changeFont:(id)sender
 {    
-    NSFont *oldFont = [self font];
+    NSFont *oldFont = [[NSApp delegate] contentFont];
     NSFont *newFont = [sender convertFont:oldFont];
     [self setFont:newFont];
     return;
-
 }
-
 
 // --------------------------------------------------------------------------------
 // NSDocument APIs

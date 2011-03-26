@@ -18,9 +18,15 @@
 {
     self = [super init];
     if (self) {
-        // Initialization code here.
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        float fontSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"DelectusContentFontSize"];
+        if(fontSize==0){
+            contentFont = [[NSFont userFontOfSize:12.0]retain];
+        }else{
+            contentFont = [[NSFont userFontOfSize:fontSize] retain];
+        }
+
     }
-    
     return self;
 }
 
@@ -59,5 +65,17 @@
         return src;
     }
 }
+
+- (void)setContentFont:(NSFont*)newFont{
+    contentFont = newFont;
+    CGFloat size = [contentFont pointSize];
+    [[NSUserDefaults standardUserDefaults] setFloat:size forKey:@"DelectusContentFontSize"];    
+    [[NSUserDefaults standardUserDefaults] synchronize];    
+}
+
+- (NSFont*)contentFont{
+    return contentFont;
+}
+
 
 @end

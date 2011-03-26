@@ -27,12 +27,10 @@
     IBOutlet id addRowButton;
     IBOutlet id delRowButton;
     IBOutlet id showDeletedButton;
-    NSFont* contentFont;
 }
 
 // Handle font changes
 
-- (NSFont*)font;
 - (void)setFont:(NSFont*)newFont;
 - (void)changeFont:(id)sender;
 

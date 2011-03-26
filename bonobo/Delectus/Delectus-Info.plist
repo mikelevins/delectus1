@@ -7,8 +7,6 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
-			<key>NSDocumentClass</key>
-			<string>DelectusDocument</string>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>csv</string>
@@ -17,6 +15,8 @@
 			<string>csv</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>DelectusDocument</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
