@@ -300,7 +300,7 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:view doc))
+          (let* ((tbl (doc:table doc))
                  (col (table:column-at tbl column-label)))
             (column:set-deleted! col (if deleted? #t #f))
             (doc:set-view-valid! doc #f)))

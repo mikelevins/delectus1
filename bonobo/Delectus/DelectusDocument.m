@@ -9,6 +9,7 @@
 #import "DelectusDocument.h"
 #import "DelectusDelegate.h"
 #import "DelectusDataSource.h"
+#import "DelectusPrintView.h"
 #define ___VERSION 406000
 #include "gambit.h"
 #include "Delectus.h"
@@ -107,6 +108,27 @@
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
 
+- (void)printShowingPrintPanel:(BOOL)showPanels {
+    NSSize paperSize = [[self printInfo] paperSize];
+    NSRect boundsRect = NSMakeRect(0,0,(3*paperSize.width/4),1);
+    NSView *printView = [[DelectusPrintView alloc] initWithFrame:boundsRect withDataSource:dataSource andDocumentName:[self displayName]];
+    // enable pagination
+    [[self printInfo] setHorizontalPagination: NSAutoPagination];
+    [[self printInfo] setVerticalPagination: NSAutoPagination];
+    // Construct the print operation and setup Print panel
+    NSPrintOperation *op = [NSPrintOperation
+                            printOperationWithView:printView
+                            printInfo:[self printInfo]];
+    //    [op setShowPanels:showPanels];
+    [op setShowsPrintPanel:YES];
+    
+    // Run operation, which shows the Print panel if showPanels was YES
+    [self runModalPrintOperation:op
+                        delegate:nil
+                  didRunSelector:NULL
+                     contextInfo:NULL];
+}
+
 // --------------------------------------------------------------------------------
 // IBActions
 // --------------------------------------------------------------------------------
@@ -136,10 +158,17 @@
         // any active cells to end editing
         [documentWindow makeFirstResponder: nil];
         // Then mark the row
-        [dataSource markRow:rowIndex deleted: ![dataSource isRowDeleted: rowIndex]];
+        if([dataSource isRowDeleted: rowIndex]){
+            [dataSource markRow:rowIndex deleted:NO];
+        }else{
+            [dataSource markRow:rowIndex deleted:YES];
+        }
         [self updateChangeCount: NSChangeDone];
         [tableView reloadData];
         [tableView deselectAll: self];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+        [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
 }
 
@@ -161,20 +190,28 @@
         // any active cells to end editing
         [documentWindow makeFirstResponder: nil];
         // Then mark the column
-        [dataSource markColumn:label deleted: ![dataSource isColumnDeleted: label]];
-        BOOL isColDeleted = [dataSource isColumnDeleted:label];
-        if(includeDeleted){
-            [col setHidden:NO];
+        BOOL isColDeleted1 = [dataSource isColumnDeleted: label];
+        if(isColDeleted1){
+            [dataSource markColumn:label deleted:NO];
         }else{
-            if(isColDeleted){
-                [col setHidden:YES];
-            }else{
-                [col setHidden:NO];
-            }
+            [dataSource markColumn:label deleted:YES];
         }
+        BOOL isColDeleted2 = [dataSource isColumnDeleted:label];
+        if(isColDeleted2){
+            if(includeDeleted){
+                [col setHidden:NO];
+            }else{
+                [col setHidden:YES];
+            }
+        }else{
+            [col setHidden:NO];
+        }
+        
         [self updateChangeCount: NSChangeDone];
         [tableView reloadData];
         [tableView deselectAll: self];
+        [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+        [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
 }
 
@@ -224,7 +261,20 @@
 }
 
 - (IBAction)emptyTrash:(id)sender{
-    NSRunAlertPanel(@"Purge",@"Purging deleted items",@"Okay", nil, nil);
+    // first make the window take over FirstResponder status, to force 
+    // any active cells to end editing
+    [documentWindow makeFirstResponder: nil];
+    int deletedRows = [dataSource countDeletedRows];
+    int deletedColumns = [dataSource countDeletedColumns];
+    if((deletedRows>0)||(deletedColumns>0)){
+        [dataSource compact];
+        [self updateChangeCount: NSChangeDone];
+    }
+    [tableView reloadData];
+    [tableView deselectAll: self];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+    [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
 
 - (IBAction)renameColumn:(id)sender{

@@ -24,7 +24,7 @@
 				<string>delectus</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string></string>
+			<string>DelectusDoc.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>delectus</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -40,7 +40,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string></string>
+	<string>Delectus.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.mikelevins.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -50,11 +50,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0rc1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1.0rc1</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
@@ -63,5 +63,9 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Delectus.help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>DelectusHelp</string>
 </dict>
 </plist>

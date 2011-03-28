@@ -32,6 +32,7 @@
 - (int)getViewIncludingDeleted:(BOOL)yesOrNo withSortColumn:(NSString*)label andSortOrder:(int)order andFilterText:(NSString*)text;
 - (int)countColumns;
 - (int)countDeletedColumns;
+- (NSArray*)collectColumns;
 - (NSString*)sortColumn;
 - (int)sortOrder;
 - (BOOL)includeDeleted;

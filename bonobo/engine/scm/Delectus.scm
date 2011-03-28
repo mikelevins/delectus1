@@ -89,7 +89,7 @@
           bool "is_column_deleted" ""
           (api:column-deleted? id column-label))
 
-(c-define (c:mark-column-deleted! id column-label deleted?) (int char-string int)
+(c-define (c:mark-column-deleted! id column-label deleted?) (int char-string bool)
           int "mark_column_deleted" ""
           (api:mark-column-deleted! id column-label deleted?))
 
@@ -109,7 +109,7 @@
           bool "is_row_deleted" ""
           (api:row-deleted? id row-index))
 
-(c-define (c:mark-row-deleted! id row-index deleted?) (int int int)
+(c-define (c:mark-row-deleted! id row-index deleted?) (int int bool)
           int "mark_row_deleted" ""
           (api:mark-row-deleted! id row-index deleted?))
 
