@@ -8,9 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import "DelectusDataSource.h"
+#import "DelectusDocument.h"
 
 @interface DelectusDelegate : NSObject {
     NSFont* contentFont;
+    IBOutlet id addRowMenu;
+    IBOutlet id deleteRowMenu;
+    IBOutlet id addColumnMenu;
+    IBOutlet id deleteColumnMenu;
+    IBOutlet id renameColumnMenu;
+    IBOutlet id showDeletedItemsMenu;
+    IBOutlet id purgeDeletedItemsMenu;
 }
 
 - (DelectusDataSource*)newDelectus;
@@ -18,6 +26,7 @@
 - (DelectusDataSource*)readCSVFile:(NSURL*)url;
 - (void)setContentFont:(NSFont*)newFont;
 - (NSFont*)contentFont;
+- (void)updateUIForDocument:(DelectusDocument*)doc withSelectedColumn:(NSInteger)colIndex andRow:(NSInteger)rowIndex;
 
 
 @end

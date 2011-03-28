@@ -29,6 +29,12 @@
     IBOutlet id showDeletedButton;
 }
 
+// Accessors
+
+- (NSTableView*)tableView;
+- (DelectusDataSource*)dataSource;
+- (BOOL)deletedItemsAreShown;
+
 // Handle font changes
 
 - (void)setFont:(NSFont*)newFont;
@@ -48,6 +54,10 @@
 // handle sheets
 
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
+
+// track selection changes
+
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification;
 
 
 @end

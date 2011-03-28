@@ -7,6 +7,7 @@
 //
 
 #import "DelectusDelegate.h"
+#import "DelectusDataSource.h"
 #define ___VERSION 406000
 #include "gambit.h"
 #include "Delectus.h"
@@ -75,6 +76,53 @@
 
 - (NSFont*)contentFont{
     return contentFont;
+}
+
+- (void)updateUIForDocument:(DelectusDocument*)doc withSelectedColumn:(NSInteger)colIndex andRow:(NSInteger)rowIndex{
+    BOOL includeDeleted = [doc deletedItemsAreShown];
+    if(includeDeleted){
+        [showDeletedItemsMenu setTitle:@"Hide Deleted Items"];
+    }else{
+        [showDeletedItemsMenu setTitle:@"Show Deleted Items"];
+    }
+    
+    if(rowIndex>(-1)){
+        [deleteRowMenu setEnabled:YES];
+        BOOL isRowDeleted = [[doc dataSource] isRowDeleted:rowIndex];
+        if(isRowDeleted){
+            [deleteRowMenu setTitle:@"Undelete Row"];
+        }else{
+            [deleteRowMenu setTitle:@"Delete Row"];
+        }
+    }else{
+        [deleteRowMenu setTitle:@"Delete Row"];
+        [deleteRowMenu setEnabled:NO];
+    }
+    
+
+    if(colIndex>(-1)){
+        NSTableColumn* col = [[[doc tableView] tableColumns] objectAtIndex: colIndex];
+        NSString* label = [col identifier];
+        [deleteColumnMenu setEnabled:YES];
+        [renameColumnMenu setEnabled:YES];
+        BOOL isColumnDeleted = [[doc dataSource] isColumnDeleted:label];
+        if(isColumnDeleted){
+            [deleteColumnMenu setTitle:@"Undelete Column"];
+        }else{
+            [deleteColumnMenu setTitle:@"Delete Column"];
+        }
+    }else{
+        [renameColumnMenu setEnabled:NO];
+        [deleteColumnMenu setTitle:@"Delete Column"];
+        [deleteColumnMenu setEnabled:NO];
+    }
+    
+    int deletedCount = [[doc dataSource] countDeletedRows]+[[doc dataSource] countDeletedColumns];
+    if(deletedCount>0){
+        [purgeDeletedItemsMenu setEnabled:YES];
+    }else{
+        [purgeDeletedItemsMenu setEnabled:NO];
+    }
 }
 
 

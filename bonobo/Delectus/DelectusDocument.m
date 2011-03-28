@@ -16,6 +16,7 @@
 
 @implementation DelectusDocument
 
+#pragma mark - init
 // --------------------------------------------------------------------------------
 // init
 // --------------------------------------------------------------------------------
@@ -28,6 +29,25 @@
     return self;
 }
 
+#pragma mark - accessors
+// --------------------------------------------------------------------------------
+// Accessors
+// --------------------------------------------------------------------------------
+
+- (NSTableView*)tableView{
+    return tableView;
+}
+
+- (DelectusDataSource*)dataSource{
+    return dataSource;
+}
+
+- (BOOL)deletedItemsAreShown{
+    return [showDeletedButton state];
+}
+
+
+#pragma mark - window init
 // --------------------------------------------------------------------------------
 // Window init
 // --------------------------------------------------------------------------------
@@ -87,6 +107,23 @@
     [tableView setAutosaveTableColumns:YES];
 }
 
+- (void)updateUIForSelectionChange{
+    BOOL isAColumnSelected = ([tableView selectedColumn] != -1);
+    BOOL isARowSelected = ([tableView selectedRow] != -1);
+    if(isAColumnSelected){
+        [delColumnButton setEnabled:YES];
+    }else{
+        [delColumnButton setEnabled:NO];
+    }
+    if(isARowSelected){
+        [delRowButton setEnabled: YES];
+    }else{
+        [delRowButton setEnabled: NO];
+    }
+    [[NSApp delegate] updateUIForDocument:self withSelectedColumn: [tableView selectedColumn] andRow:[tableView selectedRow]];
+}
+
+
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
     [super windowControllerDidLoadNib:aController];
@@ -103,9 +140,11 @@
     [delRowButton setTarget: self];
     [showDeletedButton setTarget: self];
     [self setupColumns];
+    [self updateUIForSelectionChange];
     [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
+    
 }
 
 - (void)printShowingPrintPanel:(BOOL)showPanels {
@@ -129,6 +168,7 @@
                      contextInfo:NULL];
 }
 
+#pragma mark - IBActions
 // --------------------------------------------------------------------------------
 // IBActions
 // --------------------------------------------------------------------------------
@@ -258,6 +298,7 @@
         [deletedRowsField setHidden:YES];
     }
     [tableView deselectAll: self];
+    [self updateUIForSelectionChange];
 }
 
 - (IBAction)emptyTrash:(id)sender{
@@ -292,6 +333,11 @@
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
+
+#pragma mark - Clicking columns
+// --------------------------------------------------------------------------------
+// Clicking columns
+// --------------------------------------------------------------------------------
 
 -(void)advanceSortForColumn:(NSTableColumn*)aColumn{
     NSString* sortColumn = [dataSource sortColumn];
@@ -339,8 +385,9 @@
     [NSApp endSheet:addColumnSheet];
 }
 
+#pragma mark - Handling font changes
 // --------------------------------------------------------------------------------
-// Handle font changes
+// Handling font changes
 // --------------------------------------------------------------------------------
 
 - (void)setFont:(NSFont*)newFont{
@@ -363,6 +410,7 @@
     return;
 }
 
+#pragma mark - NSDocument APIs
 // --------------------------------------------------------------------------------
 // NSDocument APIs
 // --------------------------------------------------------------------------------
@@ -447,6 +495,7 @@
     return NO; // default--should never be reached
 }
 
+#pragma mark - NSTableView delegate methods
 // ----------------------------------------
 // NSTableView delegate methods
 // ----------------------------------------
@@ -474,7 +523,6 @@
         [aCell setSelectable:YES];
     }
 }
-
 
 // handle sheets
 
@@ -508,5 +556,13 @@
         }
     }
 }
+
+// track selection changes
+
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification{
+    [self updateUIForSelectionChange];
+}
+
+
 
 @end
