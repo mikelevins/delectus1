@@ -173,17 +173,50 @@
     (test:expect 'test:document:add-column! (= 6 (count-columns docid2)))
     (test:expect 'test:document:column-deleted? (not (column-deleted? docid2 "Test")))
     (mark-column-deleted! docid2 "Test" #t)
+    (get-view docid2 description: (view:description include-deleted: #t))
     (test:expect 'test:document:mark-column-deleted! (column-deleted? docid2 "Test"))
     (test:expect 'test:document:row-deleted? (not (row-deleted? docid2 4)))
     (let ((r (table:row-at (doc:table doc2) 4)))
       (mark-row-deleted! docid2 4 #t)
       (test:expect 'test:document:mark-row-deleted! (row:deleted? r)))
     (test:expect 'test:document:column-has-total?:false (not (column-has-total? docid2 "Color")))
+    (get-view docid2 description: (view:description include-deleted: #f))
     (test:expect 'test:document:column-has-total?:true (column-has-total? docid2 "Age"))
     (test:expect 'test:document:column-total (= 126 (column-total docid2 "Age")))
     (compact! docid2)
     (test:expect 'test:document:compact!:rows (= 4 (count-rows docid2)))
     (test:expect 'test:document:compact!:columns (= 5 (count-columns docid2)))))
+
+;;; ----------------------------------------------------------------------
+;;; delete, undelete, and compact
+;;; ----------------------------------------------------------------------
+
+(define $ulabels '("Number" "Name" "Color" "Shape" "Size"))
+(define $urow-vals0 '("0" "Fred" "Orange" "Round" "Huge"))
+(define $urow-vals1 '("1" "Wilma" "White" "Tall" "Tiny"))
+(define $urow-vals2 '("2" "Barney" "Brown" "Square" "Medium"))
+(define $urow-vals3 '("3" "Betty" "Blue" "Bumpy" "Small"))
+
+(define (test:updates)
+  (let* ((doc (doc:make table: (table:make columns: $ulabels
+                                           rows: (list $urow-vals0 $urow-vals1 $urow-vals2 $urow-vals3))))
+         (docid (doc:register! (next-document-id) doc)))
+    (test:expect 'test:updates:value-at1 (= 5 (count-columns docid)))
+    (test:expect 'test:updates:value-at2 (string=? "0" (value-at docid "Number" 0)))
+    (mark-column-deleted! docid "Number" #t)
+    (test:expect 'test:updates:value-at3 (= 4 (count-columns docid)))
+    (test:expect 'test:updates:value-at4 (not (value-at docid "Number" 0)))
+    (get-view docid description: (view:description include-deleted: #t))
+    (test:expect 'test:updates:value-at5 (string=? "0"  (value-at docid "Number" 0)))
+    (get-view docid description: (view:description include-deleted: #f))
+    (test:expect 'test:updates:value-at6 (not (value-at docid "Number" 0)))
+    (compact! docid)
+    (get-view docid description: (view:description include-deleted: #t))
+    (test:expect 'test:updates:value-at7 (= 4 (count-columns docid)))
+    (test:expect 'test:updates:value-at8 (not (value-at docid "Number" 0)))
+    ))
+
+;;; (begin (newline)(test:updates)(newline))
 
 ;;; ----------------------------------------------------------------------
 ;;; test runner
@@ -223,23 +256,17 @@
   (newline)
   (test:document)
 
+  (newline)(newline)
+  (display "  Updates:")
+  (newline)
+  (test:updates)
+
   (newline)(newline))
 
 ;;; (run-all-tests)
 
-;;; (define $test-path "/Users/mikel/Desktop/zipcode.delectus")
-;;; (define $d1 (read-delectus-file $test-path))
-;;; (value-at $d1 "city" 0)
-;;; (put-value-at! $d1 "costar" 0 "Foo")
-;;; $d1
-;;; (define $doc (find-document $d1))
-;;; (document? $doc)
-;;; (table:column-labels (doc:table $doc))
-;;; (table:value-at (doc:table $doc) "city" 0)
-;;; (doc:view-valid? $doc)
-
 ;;; (define $jrpath "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
 ;;; (define $jr (read-delectus-file $jrpath))
-;;; (mark-column-deleted! $jr "Title" #t)
-;;; (mark-column-deleted! $jr "Title" #f)
-;;; (api:column-deleted? $jr "Title")
+;;; (api:get-view $jr #f #f #f #f)
+
+

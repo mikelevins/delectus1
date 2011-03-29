@@ -57,6 +57,10 @@
   (if-error 0
             (count-deleted-columns id)))
 
+(define (api:column-at-index id index)
+  (if-error $VAL_NO_VALUE
+            (column-at-index id index)))
+
 (define (api:sort-column id)
   (if-error $VAL_NO_VALUE
             (sort-column id)))
@@ -69,13 +73,13 @@
   (if-error $VAL_NO
             (include-deleted? id)))
 
+(define (api:has-deleted? id)
+  (if-error $VAL_NO
+            (has-deleted? id)))
+
 (define (api:filter-text id)
   (if-error $VAL_NO_VALUE
             (filter-text id)))
-
-(define (api:column-at-index id index)
-  (if-error $OBJ_NO_OID
-            (column-at-index id index)))
 
 (define (api:count-rows id)
   (if-error 0

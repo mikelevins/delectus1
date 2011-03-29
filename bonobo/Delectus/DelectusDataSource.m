@@ -107,10 +107,10 @@
 
 - (int)countDeletedColumns{
     if (documentID==VAL_NO_DOCUMENT){
-        return 0;
+        return ERR_NO_DOCUMENT;
     }else{
-        int colCount = count_deleted_columns(documentID);
-        return colCount;
+        int result = count_deleted_columns(documentID);
+        return result;
     }
 }
 
@@ -144,16 +144,6 @@
     }
 }
 
-- (NSString*)columnAtIndex:(int)index{
-    if (documentID==VAL_NO_DOCUMENT){
-        return nil;
-    }else{
-        char* lbl=column_at_index(documentID,index);
-        NSString* result = [self convertToNSString:lbl];
-        return result;
-    }
-}
-
 - (int)countRows{
     if (documentID==VAL_NO_DOCUMENT){
         return ERR_NO_DOCUMENT;
@@ -165,10 +155,10 @@
 
 - (int)countDeletedRows{
     if (documentID==VAL_NO_DOCUMENT){
-        return 0;
+        return ERR_NO_DOCUMENT;
     }else{
-        int rowCount = count_deleted_rows(documentID);
-        return rowCount;
+        int result = count_deleted_rows(documentID);
+        return result;
     }
 }
 
@@ -315,6 +305,12 @@
         return result;
     }
 }
+
+- (BOOL)hasDeleted{
+    BOOL yesOrNo = has_deleted(documentID);
+    return yesOrNo;
+}
+
 
 - (int)writeDelectusFile:(NSURL*)url{
     if (documentID==VAL_NO_DOCUMENT){

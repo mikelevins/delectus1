@@ -50,6 +50,7 @@
 - (IBAction)emptyTrash:(id)sender;
 - (IBAction)renameColumn:(id)sender;
 - (IBAction)acceptNewColumn:(id)sender;
+- (IBAction)performShowDeletedClick:(id)sender;
 
 // handle sheets
 

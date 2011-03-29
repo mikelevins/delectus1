@@ -213,8 +213,7 @@
 
 (define (table:count-deleted-columns tbl)
   (let ((count 0))
-    (vector-for-each (lambda (c)(if (column:deleted? c)
-                                    (set! count (+ count 1))))
+    (vector-for-each (lambda (c)(if (column:deleted? c)(set! count (+ count 1))))
                      (column-sequence:columns (table:column-sequence tbl)))
     count))
 
@@ -223,8 +222,7 @@
 
 (define (table:count-deleted-rows tbl)
   (let ((count 0))
-    (vector-for-each (lambda (r)(if (row:deleted? r)
-                                    (set! count (+ count 1))))
+    (vector-for-each (lambda (r)(if (row:deleted? r)(set! count (+ count 1))))
                      (table:rows tbl))
     count))
 
@@ -276,6 +274,15 @@
                        deleted?))
 
 (define (table:value-at tbl column-label row-index)
-  (row:element (table:row-at tbl row-index)
-               (table:column-index tbl column-label)))
+  (let ((col-index (table:column-index tbl column-label)))
+    (if col-index
+        (row:element (table:row-at tbl row-index)
+                     col-index)
+        #f)))
+
+(define (table:has-deleted? tbl)
+  (or (vector-some? column:deleted?
+                    (column-sequence:columns (table:column-sequence tbl)))
+      (vector-some? row:deleted?
+                    (table:rows tbl))))
 

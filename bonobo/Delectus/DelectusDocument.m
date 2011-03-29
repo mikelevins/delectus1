@@ -223,40 +223,35 @@
 - (IBAction)toggleColumnDeleted:(id)sender{
     int colIndex=[tableView selectedColumn];
     if(colIndex>=0){
-        BOOL includeDeleted = [dataSource includeDeleted];
+        [documentWindow makeFirstResponder: nil];
         NSTableColumn* col = (NSTableColumn*)[[tableView tableColumns] objectAtIndex: colIndex];
         NSString* label = (NSString*)[col identifier];
-        // first make the window take over FirstResponder status, to force 
-        // any active cells to end editing
-        [documentWindow makeFirstResponder: nil];
         // Then mark the column
-        BOOL isColDeleted1 = [dataSource isColumnDeleted: label];
-        if(isColDeleted1){
+        BOOL isColDeleted = [dataSource isColumnDeleted: label];
+        if(isColDeleted){
             [dataSource markColumn:label deleted:NO];
+            [col setHidden:NO];
         }else{
             [dataSource markColumn:label deleted:YES];
-        }
-        BOOL isColDeleted2 = [dataSource isColumnDeleted:label];
-        if(isColDeleted2){
-            if(includeDeleted){
+            if([self deletedItemsAreShown]){
                 [col setHidden:NO];
             }else{
                 [col setHidden:YES];
             }
-        }else{
-            [col setHidden:NO];
         }
         
         [self updateChangeCount: NSChangeDone];
         [tableView reloadData];
         [tableView deselectAll: self];
+        [tableView setNeedsDisplay:YES];
+        [[tableView headerView] setNeedsDisplay:YES];
         [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
         [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
 }
 
 - (IBAction)toggleShowDeleted:(id)sender{
-    if([sender state]==NSOnState){
+    if([showDeletedButton state]==NSOnState){
         NSString* sortColumn = [dataSource sortColumn];
         int sortOrder = [dataSource sortOrder];
         NSString* filterText = [filterField stringValue];
@@ -297,25 +292,30 @@
         [deletedColsField setHidden:YES];
         [deletedRowsField setHidden:YES];
     }
+    [tableView reloadData];
     [tableView deselectAll: self];
+    [tableView setNeedsDisplay:YES];
     [self updateUIForSelectionChange];
 }
 
+- (IBAction)performShowDeletedClick:(id)sender{
+    [[showDeletedButton cell] performClick:sender];
+}
+
 - (IBAction)emptyTrash:(id)sender{
-    // first make the window take over FirstResponder status, to force 
-    // any active cells to end editing
-    [documentWindow makeFirstResponder: nil];
     int deletedRows = [dataSource countDeletedRows];
     int deletedColumns = [dataSource countDeletedColumns];
     if((deletedRows>0)||(deletedColumns>0)){
+        [documentWindow makeFirstResponder: nil]; // ends cell editing
         [dataSource compact];
         [self updateChangeCount: NSChangeDone];
+        [self setupColumns];
+        [tableView reloadData];
+        [self updateUIForSelectionChange];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+        [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
-    [tableView reloadData];
-    [tableView deselectAll: self];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
-    [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
-    [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
 
 - (IBAction)renameColumn:(id)sender{

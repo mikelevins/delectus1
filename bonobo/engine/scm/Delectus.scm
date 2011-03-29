@@ -36,6 +36,10 @@
           int "count_deleted_columns" ""
           (api:count-deleted-columns id))
 
+(c-define (c:column-at-index id i) (int int) 
+          char-string "column_at_index" ""
+          (api:column-at-index id i))
+
 (c-define (c:sort-column id) (int) 
           char-string "sort_column" ""
           (api:sort-column id))
@@ -48,13 +52,13 @@
           bool "include_deleted" ""
           (api:include-deleted? id))
 
+(c-define (c:has-deleted? id) (int) 
+          bool "has_deleted" ""
+          (api:has-deleted? id))
+
 (c-define (c:filter-text id) (int) 
           char-string "filter_text" ""
           (api:filter-text id))
-
-(c-define (c:column-at-index id index) (int int) 
-          char-string "column_at_index" ""
-          (api:column-at-index id index))
 
 (c-define (c:get-view id include-deleted? sort-column sort-order filter-text) 
           (int bool char-string int char-string)
@@ -132,3 +136,5 @@
 (c-define (c:read-delectus-csv path)(char-string)
           int "read_delectus_csv" ""
           (api:read-delectus-csv path))
+
+

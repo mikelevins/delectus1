@@ -889,6 +889,62 @@
 					</object>
 					<int key="connectionID">604</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">addRow:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="487934518"/>
+					</object>
+					<int key="connectionID">605</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleRowDeleted:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="749701961"/>
+					</object>
+					<int key="connectionID">606</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">addColumn:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="860735712"/>
+					</object>
+					<int key="connectionID">607</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleColumnDeleted:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="125285224"/>
+					</object>
+					<int key="connectionID">608</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">renameColumn:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="915740921"/>
+					</object>
+					<int key="connectionID">609</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">emptyTrash:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="498228354"/>
+					</object>
+					<int key="connectionID">611</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performShowDeletedClick:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="387763861"/>
+					</object>
+					<int key="connectionID">612</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1456,6 +1512,7 @@
 					<string>58.ImportedFromIB2</string>
 					<string>586.IBPluginDependency</string>
 					<string>587.IBPluginDependency</string>
+					<string>588.IBPluginDependency</string>
 					<string>589.IBPluginDependency</string>
 					<string>590.IBPluginDependency</string>
 					<string>591.IBPluginDependency</string>
@@ -1594,6 +1651,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -1633,11 +1691,19 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">604</int>
+			<int key="maxID">612</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">DelectusDataSource</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/DelectusDataSource.h</string>
+					</object>
+				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">DelectusDelegate</string>
 					<string key="superclassName">NSObject</string>
@@ -1711,6 +1777,225 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/DelectusDelegate.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">DelectusDocument</string>
+					<string key="superclassName">NSDocument</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>acceptNewColumn:</string>
+							<string>addColumn:</string>
+							<string>addRow:</string>
+							<string>emptyTrash:</string>
+							<string>performShowDeletedClick:</string>
+							<string>renameColumn:</string>
+							<string>setFilter:</string>
+							<string>toggleColumnDeleted:</string>
+							<string>toggleRowDeleted:</string>
+							<string>toggleShowDeleted:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>acceptNewColumn:</string>
+							<string>addColumn:</string>
+							<string>addRow:</string>
+							<string>emptyTrash:</string>
+							<string>performShowDeletedClick:</string>
+							<string>renameColumn:</string>
+							<string>setFilter:</string>
+							<string>toggleColumnDeleted:</string>
+							<string>toggleRowDeleted:</string>
+							<string>toggleShowDeleted:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">acceptNewColumn:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addColumn:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addRow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">emptyTrash:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">performShowDeletedClick:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">renameColumn:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">setFilter:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleColumnDeleted:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleRowDeleted:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleShowDeleted:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addColumnButton</string>
+							<string>addColumnLabelField</string>
+							<string>addColumnSheet</string>
+							<string>addRowButton</string>
+							<string>dataSource</string>
+							<string>delColumnButton</string>
+							<string>delRowButton</string>
+							<string>deletedColsField</string>
+							<string>deletedRowsField</string>
+							<string>documentWindow</string>
+							<string>filterField</string>
+							<string>itemCountField</string>
+							<string>showDeletedButton</string>
+							<string>tableScrollView</string>
+							<string>tableView</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>DelectusDataSource</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>NSTableView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addColumnButton</string>
+							<string>addColumnLabelField</string>
+							<string>addColumnSheet</string>
+							<string>addRowButton</string>
+							<string>dataSource</string>
+							<string>delColumnButton</string>
+							<string>delRowButton</string>
+							<string>deletedColsField</string>
+							<string>deletedRowsField</string>
+							<string>documentWindow</string>
+							<string>filterField</string>
+							<string>itemCountField</string>
+							<string>showDeletedButton</string>
+							<string>tableScrollView</string>
+							<string>tableView</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">addColumnButton</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">addColumnLabelField</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">addColumnSheet</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">addRowButton</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataSource</string>
+								<string key="candidateClassName">DelectusDataSource</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">delColumnButton</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">delRowButton</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">deletedColsField</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">deletedRowsField</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">documentWindow</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">filterField</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">itemCountField</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">showDeletedButton</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableScrollView</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableView</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/DelectusDocument.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

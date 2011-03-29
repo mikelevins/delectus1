@@ -53,6 +53,7 @@
 - (BOOL)isRowDeleted:(int)index;
 - (int)markRow:(int)index deleted:(BOOL)yesOrNo;
 - (int)compact;
+- (BOOL)hasDeleted;
 - (int)writeDelectusFile:(NSURL*)url;
 - (int)writeDelectusCSV:(NSURL*)url;
 

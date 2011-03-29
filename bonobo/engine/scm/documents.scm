@@ -134,8 +134,9 @@
   (let ((doc (find-document docid)))
     (if doc
         (begin
-          (let ((tbl (doc:table doc)))
-            (table:count-columns tbl)))
+          (update-view! doc)
+          (let ((v (doc:view doc)))
+            (table:count-columns v)))
         (error "No such document"))))
 
 (define (count-deleted-columns docid)
@@ -144,6 +145,15 @@
         (begin
           (let ((tbl (doc:table doc)))
             (table:count-deleted-columns tbl)))
+        (error "No such document"))))
+
+(define (column-at-index docid index)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let ((v (doc:view doc)))
+            (table:column-at-index v index)))
         (error "No such document"))))
 
 (define (sort-column docid)
@@ -174,6 +184,15 @@
             (view-description:include-deleted? view-desc)))
         (error "No such document"))))
 
+(define (has-deleted? docid)
+  (let ((doc (find-document docid)))
+    (if doc
+        (begin
+          (update-view! doc)
+          (let ((tbl (doc:table doc)))
+            (table:has-deleted? tbl)))
+        (error "No such document"))))
+
 (define (filter-text docid)
   (let ((doc (find-document docid)))
     (if doc
@@ -181,14 +200,6 @@
           (update-view! doc)
           (let* ((view-desc (doc:view-description doc)))
             (view-description:filter-text view-desc)))
-        (error "No such document"))))
-
-(define (column-at-index docid index)
-  (let ((doc (find-document docid)))
-    (if doc
-        (begin
-          (let ((tbl (doc:table doc)))
-            (table:column-at-index tbl index)))
         (error "No such document"))))
 
 (define (count-rows docid)
@@ -213,9 +224,11 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:view doc))
-                 (val (row:element (table:row-at tbl row-index)
-                                   (table:column-index tbl column-label))))
+          (let* ((v (doc:view doc))
+                 (col-index (table:column-index v column-label))
+                 (val (if col-index 
+                          (row:element (table:row-at v row-index) col-index)
+                          #f)))
             (if val
                 (if (string? val)
                     val
@@ -227,10 +240,12 @@
   (let ((doc (find-document docid)))
     (if doc
         (begin
-          (let* ((tbl (doc:view doc)))
-            (row:set-element! (table:row-at tbl row-index)
-                              (table:column-index tbl column-label)
-                              val)))
+          (update-view! doc)
+          (let* ((v (doc:view doc))
+                 (col-index (table:column-index v column-label)))
+            (if col-index
+                (row:set-element! (table:row-at v row-index) col-index val)
+                (error "No such column"))))
         (error "No such document"))))
 
 (define (row-finished? docid row-index)
@@ -279,9 +294,11 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:table doc))
-                 (col (table:column-at tbl column-label)))
-            (column:deleted? col)))
+          (let* ((v (doc:view doc))
+                 (col (table:column-at v column-label)))
+            (if col
+                (column:deleted? col)
+                (error "No such column"))))
         (error "No such document"))))
 
 (define (duplicate-label? docid column-label)
@@ -300,10 +317,13 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:table doc))
-                 (col (table:column-at tbl column-label)))
-            (column:set-deleted! col (if deleted? #t #f))
-            (doc:set-view-valid! doc #f)))
+          (let* ((v (doc:view doc))
+                 (col (table:column-at v column-label)))
+            (if col
+                (begin
+                  (column:set-deleted! col (if deleted? #t #f))
+                  (doc:set-view-valid! doc #f))
+                (error "No such column"))))
         (error "No such document"))))
 
 (define (column-has-total? docid column-label)
@@ -311,9 +331,11 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:table doc))
-                 (col (table:column-at tbl column-label)))
-            (get-column-info col numeric: #f)))
+          (let* ((v (doc:view doc))
+                 (col (table:column-at v column-label)))
+            (if col
+                (get-column-info col numeric: #f)
+                (error "No such column"))))
         (error "No such document"))))
 
 (define (column-total docid column-label)
@@ -321,9 +343,11 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:table doc))
-                 (col (table:column-at tbl column-label)))
-            (get-column-info col total: #f)))
+          (let* ((v (doc:view doc))
+                 (col (table:column-at v column-label)))
+            (if col
+                (get-column-info col total: #f)
+                (error "No such column"))))
         (error "No such document"))))
 
 (define (row-deleted? docid row-index)
@@ -331,9 +355,11 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:view doc))
-                 (row (table:row-at tbl row-index)))
-            (row:deleted? row)))
+          (let* ((v (doc:view doc))
+                 (row (table:row-at v row-index)))
+            (if row
+                (row:deleted? row)
+                (error "No such row"))))
         (error "No such document"))))
 
 (define (mark-row-deleted! docid row-index deleted?)
@@ -341,10 +367,13 @@
     (if doc
         (begin
           (update-view! doc)
-          (let* ((tbl (doc:view doc))
-                 (row (table:row-at tbl row-index)))
-            (row:set-deleted! row (if deleted? #t #f))
-            (doc:set-view-valid! doc #f)))
+          (let* ((v (doc:view doc))
+                 (row (table:row-at v row-index)))
+            (if row
+                (begin
+                  (row:set-deleted! row (if deleted? #t #f))
+                  (doc:set-view-valid! doc #f))
+                (error "No such row"))))
         (error "No such document"))))
 
 (define (compact! docid)

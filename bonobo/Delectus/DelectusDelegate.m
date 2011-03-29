@@ -117,8 +117,8 @@
         [deleteColumnMenu setEnabled:NO];
     }
     
-    int deletedCount = [[doc dataSource] countDeletedRows]+[[doc dataSource] countDeletedColumns];
-    if(deletedCount>0){
+    BOOL hasDeleted = [[doc dataSource] hasDeleted];
+    if(hasDeleted){
         [purgeDeletedItemsMenu setEnabled:YES];
     }else{
         [purgeDeletedItemsMenu setEnabled:NO];
