@@ -4,20 +4,38 @@ GSC_INC=${GAMBIT_HOME}/include
 GSC_LIB=${GAMBIT_HOME}/lib
 GCC = gcc
 
-SCHEME_SOURCES = scm/Sort.scm scm/api.scm scm/constants.scm scm/csv.scm \
-                 scm/data.scm scm/documents.scm scm/functions.scm \
-                 scm/io-formats.scm scm/io.scm scm/lists.scm scm/strings.scm \
-                 scm/uuid.scm scm/vectors.scm scm/views.scm scm/Delectus.scm
+SCHEME_SOURCES = scm/base/constants.scm \
+		 scm/lib/lists.scm scm/lib/vectors.scm scm/lib/strings.scm \
+                 scm/lib/Sort.scm scm/lib/sort-keys.scm scm/lib/filter-keys.scm \
+		 scm/lib/functions.scm \
+	         scm/api/api.scm \
+                 scm/data/entries.scm scm/data/rows.scm scm/data/columns.scm \
+                 scm/data/tables.scm scm/data/views.scm scm/data/registry.scm \
+                 scm/api/engine.scm \
+                 scm/io/csv.scm scm/io/io-formats.scm scm/io/io.scm  \
+                 scm/api/Delectus.scm
 
-C_SOURCES = scm/Sort.c scm/api.c scm/constants.c scm/csv.c \
-            scm/data.c scm/documents.c scm/functions.c \
-            scm/io-formats.c scm/io.c scm/lists.c scm/strings.c \
-            scm/uuid.c scm/vectors.c scm/views.c scm/Delectus.c scm/Delectus_.c
+C_SOURCES = scm/base/constants.c \
+            scm/lib/lists.c scm/lib/vectors.c scm/lib/strings.c \
+            scm/lib/Sort.c scm/lib/sort-keys.c scm/lib/filter-keys.c \
+            scm/lib/functions.c \
+            scm/api/api.c \
+            scm/data/entries.c scm/data/rows.c scm/data/columns.c \
+            scm/data/tables.c scm/data/views.c scm/data/registry.c \
+            scm/api/engine.c \
+            scm/io/csv.c scm/io/io-formats.c scm/io/io.c  \
+            scm/api/Delectus.c scm/api/Delectus_.c
 
-OBJECTS = Sort.o api.o constants.o csv.o \
-          data.o documents.o functions.o \
-          io-formats.o io.o lists.o strings.o \
-          uuid.o vectors.o views.o Delectus.o Delectus_.o
+OBJECTS = constants.o \
+          lists.o vectors.o strings.o \
+          Sort.o sort-keys.o filter-keys.o \
+          functions.o \
+          api.o \
+          entries.o rows.o columns.o \
+          tables.o views.o registry.o \
+          engine.o \
+          csv.o io-formats.o io.o  \
+          Delectus.o Delectus_.o
 
 PRODUCT = libDelectus.a
 

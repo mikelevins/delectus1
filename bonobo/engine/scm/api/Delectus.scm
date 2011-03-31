@@ -8,10 +8,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; ---------------------------------------------------------------------
-;;; 
-;;; ---------------------------------------------------------------------
-
 (c-define (c:version) () 
           char-string "version" ""
           (api:version))
@@ -19,6 +15,11 @@
 (c-define (c:new-delectus) () 
           int "new_delectus" ""
           (api:new-delectus))
+
+(c-define (c:update-view! id include-deleted? sort-column sort-order filter-text) 
+          (int bool char-string int char-string)
+          int "update_view" ""
+          (api:update-view! id include-deleted? sort-column sort-order filter-text))
 
 (c-define (c:count-rows id) (int) 
           int "count_rows" ""
@@ -60,11 +61,6 @@
           char-string "filter_text" ""
           (api:filter-text id))
 
-(c-define (c:get-view id include-deleted? sort-column sort-order filter-text) 
-          (int bool char-string int char-string)
-          int "get_view" ""
-          (api:get-view id include-deleted? sort-column sort-order filter-text))
-
 (c-define (c:value-at id column-label row-index) (int char-string int) 
           char-string "value_at" ""
           (api:value-at id column-label row-index))
@@ -73,21 +69,13 @@
           int "put_value_at" ""
           (api:put-value-at! id column-label row-index val))
 
-(c-define (c:row-finished? id row-index) (int int) 
-          bool "is_row_finished" ""
-          (api:row-finished? id row-index))
-
-(c-define (c:mark-row-finished! id row-index finished?) (int int bool) 
-          int "mark_row_finished" ""
-          (api:mark-row-finished! id row-index finished?))
-
 (c-define (c:add-row! id) (int) 
           int "add_row" ""
-          (api:add-row id))
+          (api:add-row! id))
 
-(c-define (c:add-column id column-label) (int char-string) 
+(c-define (c:add-column! id column-label) (int char-string) 
           int "add_column" ""
-          (api:add-column id column-label))
+          (api:add-column! id column-label))
 
 (c-define (c:column-deleted? id column-label) (int char-string)
           bool "is_column_deleted" ""
@@ -100,14 +88,6 @@
 (c-define (c:duplicate-label? id column-label) (int char-string)
           bool "is_duplicate_label" ""
           (api:duplicate-label? id column-label))
-
-(c-define (c:column-has-total? id column-label) (int char-string)
-          bool "column_has_total" ""
-          (api:column-has-total? id column-label))
-
-(c-define (c:column-total id column-label) (int char-string)
-          double "column_total" ""
-          (api:column-total id column-label))
 
 (c-define (c:row-deleted? id row-index) (int int)
           bool "is_row_deleted" ""

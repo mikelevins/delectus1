@@ -3,7 +3,7 @@
 //  Delectus
 //
 //  Created by mikel on 3/12/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 mikel evins. All rights reserved.
 //
 
 #import "DelectusDocument.h"
@@ -66,43 +66,32 @@
 }
 
 - (void)setupColumns{
-    [self setupSpacing];
     [tableView setAutosaveName:nil];
     [tableView setAutosaveTableColumns:NO];
     int colcount = [tableView numberOfColumns];
     if(colcount>0){
-        NSArray* cols = [tableView tableColumns];
-        for(int i=(colcount-1);i>=0;i--){
+        NSArray* cols = [NSArray arrayWithArray:[tableView tableColumns]];
+        for(int i=0;i<colcount;i++){
             NSTableColumn* col = [cols objectAtIndex:i];
             [tableView removeTableColumn:col];
             [col release];
         }
     }
+    [self setupSpacing];
     NSArray* columnLabels = [dataSource collectColumns];
-    BOOL includeDeleted = [dataSource includeDeleted];
-    NSFont* headerFont = [NSFont systemFontOfSize:12.0];
+    NSFont* headerFont = [NSFont systemFontOfSize:13.0];
     NSFont* contentFont = [[NSApp delegate] contentFont];
     int labelcount = [columnLabels count];
     for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
         NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
-        BOOL isColDeleted = [dataSource isColumnDeleted:label];
         [col retain];
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
         [[col dataCell] setFont:contentFont];
-        [tableView setRowHeight:(1.8*[contentFont pointSize])];
         [tableView addTableColumn: col];
-        if(includeDeleted){
-            [col setHidden:NO];
-        }else{
-            if(isColDeleted){
-                [col setHidden:YES];
-            }else{
-                [col setHidden:NO];
-            }
-        }
     }
+    [tableView setRowHeight:(1.8*[contentFont pointSize])];
     [tableView setAutosaveName:@"delectus1.0"];
     [tableView setAutosaveTableColumns:YES];
 }
@@ -230,71 +219,38 @@
         BOOL isColDeleted = [dataSource isColumnDeleted: label];
         if(isColDeleted){
             [dataSource markColumn:label deleted:NO];
-            [col setHidden:NO];
         }else{
             [dataSource markColumn:label deleted:YES];
-            if([self deletedItemsAreShown]){
-                [col setHidden:NO];
-            }else{
-                [col setHidden:YES];
-            }
         }
         
         [self updateChangeCount: NSChangeDone];
+        [self setupColumns];
         [tableView reloadData];
         [tableView deselectAll: self];
-        [tableView setNeedsDisplay:YES];
-        [[tableView headerView] setNeedsDisplay:YES];
         [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
         [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
 }
 
 - (IBAction)toggleShowDeleted:(id)sender{
+    NSString* sortColumn = [dataSource sortColumn];
+    int sortOrder = [dataSource sortOrder];
+    NSString* filterText = [filterField stringValue];
     if([showDeletedButton state]==NSOnState){
-        NSString* sortColumn = [dataSource sortColumn];
-        int sortOrder = [dataSource sortOrder];
-        NSString* filterText = [filterField stringValue];
         [dataSource getViewIncludingDeleted:YES withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
-        [tableView reloadData];
-        NSArray* cols = [tableView tableColumns];
-        int colCount = [cols count];
-        for(int i=0;i<colCount;i++){
-            NSTableColumn* col=[cols objectAtIndex:i];
-            [col setHidden:NO];
-        }
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
-        [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
-        [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
         [deletedColsField setHidden:NO];
         [deletedRowsField setHidden:NO];
     }else{
-        NSString* sortColumn = [dataSource sortColumn];
-        int sortOrder = [dataSource sortOrder];
-        NSString* filterText = [filterField stringValue];
         [dataSource getViewIncludingDeleted:NO withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
-        [tableView reloadData];
-        NSArray* cols = [tableView tableColumns];
-        int colCount = [cols count];
-        for(int i=0;i<colCount;i++){
-            NSTableColumn* col=[cols objectAtIndex:i];
-            NSString* label = [col identifier];
-            BOOL isDeleted = [dataSource isColumnDeleted:label];
-            if(isDeleted){                
-                [col setHidden:YES];
-            }else{
-                [col setHidden:NO];
-            }
-        }
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
-        [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
-        [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
         [deletedColsField setHidden:YES];
         [deletedRowsField setHidden:YES];
     }
+    [self setupColumns];
     [tableView reloadData];
     [tableView deselectAll: self];
-    [tableView setNeedsDisplay:YES];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+    [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     [self updateUIForSelectionChange];
 }
 
@@ -350,6 +306,7 @@
             [tableView setIndicatorImage:[NSImage imageNamed: @"NSDescendingSortIndicator"] inTableColumn:aColumn];
         } else if (sortOrder == SORT_DESCENDING){
             sortOrder=SORT_NONE;
+            nextLabel=nil;
             [tableView setIndicatorImage:nil inTableColumn:aColumn];
         } else {
             sortOrder=SORT_ASCENDING;

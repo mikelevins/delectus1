@@ -91,7 +91,7 @@
     }else{
         char* sortcol = (char*)[label cStringUsingEncoding:NSASCIIStringEncoding];
         char* filtertext = (char*)[text cStringUsingEncoding:NSASCIIStringEncoding];
-        int result = get_view(documentID, (int)yesOrNo, sortcol, order, filtertext);
+        int result = update_view(documentID, (int)yesOrNo, sortcol, order, filtertext);
         return result;
     }
 }
@@ -184,24 +184,6 @@
     }
 }
 
-- (BOOL)isRowFinished:(int)index{
-    if (documentID==VAL_NO_DOCUMENT){
-        return NO;
-    }else{
-        int answer = is_row_finished(documentID,index);
-        return (BOOL)answer;
-    }
-}
-
-- (int)markRow:(int)index finished:(BOOL)yesOrNo{
-    if (documentID==VAL_NO_DOCUMENT){
-        return ERR_NO_DOCUMENT;
-    }else{
-        int result = mark_row_finished(documentID,index,(int)yesOrNo);
-        return result;
-    }
-}
-
 - (int)addRow{
     if (documentID==VAL_NO_DOCUMENT){
         return ERR_NO_DOCUMENT;
@@ -247,34 +229,6 @@
     }else{
         char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
         int result = mark_column_deleted(documentID,colname,yesOrNo);
-        return result;
-    }
-}
-
-- (BOOL)columnHasTotal:(NSString*)label{
-    if (documentID==VAL_NO_DOCUMENT){
-        return NO;
-    }else if([label isEqualTo:@"#"]){
-        return NO;
-    }else if([label isEqualTo:@"?"]){
-        return NO;
-    }else{
-        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
-        int result = column_has_total(documentID,colname);
-        return (BOOL)result;
-    }
-}
-
-- (double)columnTotal:(NSString*)label{
-    if (documentID==VAL_NO_DOCUMENT){
-        return 0.0;
-    }else if([label isEqualTo:@"#"]){
-        return 0.0;
-    }else if([label isEqualTo:@"?"]){
-        return 0.0;
-    }else{
-        char* colname = (char*)[label cStringUsingEncoding: NSASCIIStringEncoding];    
-        double result = column_total(documentID,colname);
         return result;
     }
 }
@@ -395,12 +349,7 @@
 - (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{
     NSString* valStr = (NSString*)anObject;
     NSString* label = (NSString*)[aTableColumn identifier];
-    if([label isEqualTo:@"?"]){
-        BOOL yesOrNo = [anObject boolValue];
-        [self markRow:rowIndex finished:yesOrNo];
-    }else{
-        [self putValue:valStr atColumn:label andRow:rowIndex];
-    }
+    [self putValue:valStr atColumn:label andRow:rowIndex];
 }
 
 

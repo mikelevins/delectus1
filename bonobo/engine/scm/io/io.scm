@@ -43,14 +43,10 @@
 (define (read-delectus-file path)
   (let* ((raw (io:read-binary-file path))
          (data (u8vector->object raw))
-         (doc (if (document? data)
-                  (begin
-                    (doc:set-view-valid! data #f)
-                    data)
-                  (let ((doc (data->document data)))
-                    (doc:set-view-valid! doc #f)
-                    doc))))
-    (doc:register! (next-document-id) doc)))
+         (tbl (if (delectus-table? data)
+                  data
+                  (data->table data))))
+    (reg:register-delectus! tbl)))
 
 ;;; (define $jr-path "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
 ;;; (define $jr (read-delectus-file $jr-path))
@@ -59,16 +55,14 @@
 ;;; writing delectus files
 ;;; ----------------------------------------------------------------------
 
-(define (write-delectus-file doc dest-path)
+(define (write-delectus-file tbl dest-path)
   (let* ((out #f))
     (dynamic-wind
         (lambda () (set! out (open-output-file dest-path)))
         (lambda () 
-          (doc:set-view! doc #f)
-          (let* ((bytes (object->u8vector doc))
+          (let* ((bytes (object->u8vector tbl))
                  (bytecount (u8vector-length bytes)))
-            (write-subu8vector bytes 0 bytecount out))
-          (doc:set-view-valid! doc #f))
+            (write-subu8vector bytes 0 bytecount out)))
         (lambda () (close-output-port out)))
     dest-path))
 
@@ -83,10 +77,8 @@
 ;;; ======================================================================
 
 (define (read-csv-file path)
-  (let* ((table (csv:read path))
-         (doc (doc:make table: table)))
-    (doc:set-view-valid! doc #f)
-    (doc:register! (next-document-id) doc)))
+  (let* ((table (csv:read path)))
+    (reg:register-delectus! table)))
 
 ;;; (define $zip-path "/Users/mikel/Projects/delectus/delectus/test-data/zipcode.csv")
 ;;; (define $zipid (read-csv-file $zip-path))
@@ -98,8 +90,8 @@
 ;;; (define $doc (read-csv-file $in-path))
 ;;; (api:write-delectus-csv $doc $out-path)
 
-(define (write-columns-csv file-view out)
-  (let* ((cols (table:column-labels file-view)))
+(define (write-columns-csv tbl out)
+  (let* ((cols (table:column-labels tbl)))
     (write (car cols) out)
     (for-each (lambda (col)
                 (write-char #\, out)
@@ -120,18 +112,17 @@
                       (write (row:element r i) out)
                       (loop (+ i 1))))))))))
 
-(define (write-view-csv file-view out)
-  (write-columns-csv file-view out)
+(define (write-table-csv tbl out)
+  (write-columns-csv tbl out)
   (vector-for-each (lambda (r)(write-row-csv r out)(newline out))
-                   (table:rows file-view)))
+                   (table:rows tbl)))
 
-(define (write-csv-file doc dest-path)
+(define (write-csv-file tbl dest-path)
   (let ((out #f))
     (dynamic-wind
         (lambda () (set! out (open-output-file dest-path)))
         (lambda () 
-          (let ((file-view (view:create (doc:table doc) description: (view:default-description))))
-            (write-view-csv file-view out)))
+          (write-table-csv tbl out))
         (lambda () (close-output-port out))))
   dest-path)
 

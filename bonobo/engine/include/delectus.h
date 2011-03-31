@@ -27,7 +27,7 @@
 
 extern char* version ();
 extern int new_delectus ();
-extern int get_view(int id, bool include_deleted, char* sort_column, int sort_order, char* filter_text);
+extern int update_view(int id, bool include_deleted, char* sort_column, int sort_order, char* filter_text);
 extern int count_columns (int id);
 extern int count_deleted_columns (int id);
 extern char* column_at_index (int id, int index);
@@ -40,15 +40,11 @@ extern int count_rows (int id);
 extern int count_deleted_rows (int id);
 extern char* value_at (int id, char* column_label, int row_index); // returns a value id
 extern int put_value_at (int id, char* column_label, int row_index, char* value);
-extern int is_row_finished(int id, int row_index);
-extern int mark_row_finished(int id, int row_index, int finished);
 extern int add_row (int id);
 extern int add_column (int oid, char* label);
 extern bool is_column_deleted (int id, char* column_label);
 extern bool is_duplicate_label (int id, char* column_label);
 extern int mark_column_deleted (int id, char* column_label, int deleted);
-extern int column_has_total (int id, char* column_label);
-extern double column_total (int id, char* column_label);
 extern bool is_row_deleted (int id, int row_index);
 extern int mark_row_deleted (int id, int row_index, int deleted);
 extern int compact_delectus (int id);

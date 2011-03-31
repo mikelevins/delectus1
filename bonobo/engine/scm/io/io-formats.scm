@@ -39,7 +39,7 @@
 
 (define (delectus-format data)
   (cond
-   ((document? data) $delectus-format-1.0)
+   ((table? data) $delectus-format-1.0)
    ((io:alpha-1-format? data) $delectus-format-alpha-1)
    ((io:alpha-2-format? data) $delectus-format-alpha-2)
    ((io:alpha-4-format? data) $delectus-format-alpha-4)
@@ -57,9 +57,8 @@
                        (vector-ref data 1)))
          (colseq (%make-column-sequence (list->vector columns)))
          (rows (map (lambda (r)(%make-row (map entry:make (vector-ref r 2)) #f #f)) 
-                    (vector-ref data 2)))
-         (tbl (%make-delectus-table colseq (list->vector rows))))
-    (%make-document tbl #f #f #f)))
+                    (vector-ref data 2))))
+    (%make-delectus-table colseq (list->vector rows))))
 
 (define (io:from-format-alpha-2 data)
   (let* ((columns (map (lambda (c)(column:make (vector-ref c 1))) 
@@ -69,9 +68,8 @@
                       (%make-row (map (lambda (f) (entry:make (vector-ref f 1))) ; fields
                                       (vector-ref r 1))
                                  #f #f)) 
-                    (vector-ref data 6)))
-         (tbl (%make-delectus-table colseq (list->vector rows))))
-    (%make-document tbl #f #f #f)))
+                    (vector-ref data 6))))
+    (%make-delectus-table colseq (list->vector rows))))
 
 (define (io:from-format-alpha-4 data) 
   (let* ((columns (map (lambda (c)(column:make (vector-ref c 1))) 
@@ -81,9 +79,8 @@
                       (%make-row (map (lambda (f) (entry:make (vector-ref f 1)))
                                       (vector-ref r 1))
                                  #f #f)) 
-                    (vector-ref data 6)))
-         (tbl (%make-delectus-table colseq (list->vector rows))))
-    (%make-document tbl #f #f #f)))
+                    (vector-ref data 6))))
+    (%make-delectus-table colseq (list->vector rows))))
 
 (define (io:from-format-beta-2 data) 
   (let* ((format-version (vector-ref data 1))
@@ -98,9 +95,8 @@
                                            fields-data))
                              (rdel? (vector-ref rdata 2)))
                         (%make-row (list->vector entries) #f #f))) 
-                    rows-data))
-         (tbl (%make-delectus-table colseq (list->vector rows))))
-    (%make-document tbl #f #f #f)))
+                    rows-data)))
+    (%make-delectus-table colseq (list->vector rows))))
 
 (table-set! $data-converters $delectus-format-alpha-1 io:from-format-alpha-1)
 (table-set! $data-converters $delectus-format-alpha-2 io:from-format-alpha-2)
@@ -110,7 +106,7 @@
 (define (converter-for-format data)
   (table-ref $data-converters (delectus-format data) #f))
 
-(define (data->document data)
+(define (data->table data)
   (let ((converter (converter-for-format data)))
     (converter data)))
 
