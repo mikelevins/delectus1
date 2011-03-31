@@ -27,6 +27,7 @@
     IBOutlet id addRowButton;
     IBOutlet id delRowButton;
     IBOutlet id showDeletedButton;
+    NSMutableDictionary* columnInfo;
 }
 
 // Accessors

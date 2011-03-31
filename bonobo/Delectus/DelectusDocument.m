@@ -25,6 +25,8 @@
 {
     self = [super init];
     if (self) {
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        columnInfo = [[NSMutableDictionary dictionaryWithCapacity:8] retain];
     }
     return self;
 }
@@ -57,6 +59,29 @@
     return @"DelectusDocument";
 }
 
+- (void)recordColumnInfo{
+    int colcount = [tableView numberOfColumns];
+    if(colcount>0){
+        NSArray* cols = [tableView tableColumns];
+        for(int i=0;i<colcount;i++){
+            NSTableColumn* col = [cols objectAtIndex:i];
+            NSString* label = [col identifier];
+            NSNumber* colWidth = [NSNumber numberWithFloat:[col width]];
+            [columnInfo setValue:colWidth forKey: label];
+        }
+    }
+    
+    NSURL* docURL = [self fileURL];
+    if (docURL!=NULL){
+        NSString* docPath = [docURL path];
+        NSDictionary* oldColumnInfoDict = (NSDictionary*)[[NSUserDefaults standardUserDefaults] objectForKey:@"DelectusColumnInfoDict"];
+        NSMutableDictionary* newColumnInfoDict = [NSMutableDictionary dictionaryWithCapacity:(colcount+[oldColumnInfoDict count])];
+        [newColumnInfoDict addEntriesFromDictionary:oldColumnInfoDict];
+        [newColumnInfoDict setValue:columnInfo forKey: docPath];
+        [[NSUserDefaults standardUserDefaults] setObject:newColumnInfoDict forKey:@"DelectusColumnInfoDict"];
+    }
+}
+
 - (void)setupSpacing{
     // tableview setup
     NSSize spacing;
@@ -76,6 +101,15 @@
         }
     }
     [self setupSpacing];
+    NSDictionary* columnInfoDict = (NSDictionary*)[[NSUserDefaults standardUserDefaults] objectForKey:@"DelectusColumnInfoDict"];
+    if(columnInfoDict!=NULL){
+        NSURL* docURL = [self fileURL];
+        NSString* docStr = [docURL path];
+        NSDictionary* savedColumnInfo = [columnInfoDict objectForKey:docStr];
+        if(savedColumnInfo!=NULL){
+            [columnInfo addEntriesFromDictionary:savedColumnInfo];
+        }
+    }
     NSArray* columnLabels = [dataSource collectColumns];
     NSFont* headerFont = [NSFont systemFontOfSize:13.0];
     NSFont* contentFont = [[NSApp delegate] contentFont];
@@ -87,6 +121,14 @@
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
         [[col dataCell] setFont:contentFont];
+        [col setMinWidth:64.0];
+        [col setMaxWidth:600.0];
+        NSNumber* colWidth = [columnInfo objectForKey:label];
+        if(colWidth==NULL){
+            [col setWidth:196.0];
+        }else{
+            [col setWidth:[colWidth floatValue]];
+        }
         [tableView addTableColumn: col];
     }
     [tableView setRowHeight:(1.8*[contentFont pointSize])];
@@ -515,6 +557,11 @@
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification{
     [self updateUIForSelectionChange];
 }
+
+- (void)tableViewColumnDidResize:(NSNotification *)aNotification{
+    [self recordColumnInfo];
+}
+
 
 
 
