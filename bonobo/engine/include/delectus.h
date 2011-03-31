@@ -46,7 +46,7 @@ extern bool is_column_deleted (int id, char* column_label);
 extern bool is_duplicate_label (int id, char* column_label);
 extern int mark_column_deleted (int id, char* column_label, int deleted);
 extern bool is_row_deleted (int id, int row_index);
-extern int mark_row_deleted (int id, int row_index, int deleted);
+extern int mark_row_deleted (int id, int row_index, bool deleted);
 extern int compact_delectus (int id);
 extern int write_delectus_file (int id, char* path);
 extern int read_delectus_file (char* path);

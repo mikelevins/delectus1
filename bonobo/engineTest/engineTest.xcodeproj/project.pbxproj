@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8DD76FAC0486AB0100D96B5E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.c */; settings = {ATTRIBUTES = (); }; };
+		8DD76FAC0486AB0100D96B5E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76FB00486AB0100D96B5E /* engineTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6A0FF2C0290799A04C91782 /* engineTest.1 */; };
 		97F48973132FEF15000CC6BA /* libgambc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97F48972132FEF15000CC6BA /* libgambc.a */; };
 		97F48975132FEF2A000CC6BA /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97F48974132FEF2A000CC6BA /* libDelectus.a */; };
@@ -27,7 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		08FB7796FE84155DC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		08FB7796FE84155DC02AAC07 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* engineTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = engineTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		97F48971132FEEEF000CC6BA /* Delectus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../engine/include/Delectus.h; sourceTree = SOURCE_ROOT; };
 		97F48972132FEF15000CC6BA /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = /usr/local/gambit/MacOSX/lib/libgambc.a; sourceTree = "<absolute>"; };
@@ -65,7 +65,7 @@
 			children = (
 				97F48976132FEF48000CC6BA /* gambit.h */,
 				97F48971132FEEEF000CC6BA /* Delectus.h */,
-				08FB7796FE84155DC02AAC07 /* main.c */,
+				08FB7796FE84155DC02AAC07 /* main.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -145,7 +145,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DD76FAC0486AB0100D96B5E /* main.c in Sources */,
+				8DD76FAC0486AB0100D96B5E /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,5 +28,4 @@
 - (NSFont*)contentFont;
 - (void)updateUIForDocument:(DelectusDocument*)doc withSelectedColumn:(NSInteger)colIndex andRow:(NSInteger)rowIndex;
 
-
 @end

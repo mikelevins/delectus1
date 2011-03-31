@@ -1,3 +1,4 @@
+#import <Cocoa/Cocoa.h>
 #define ___VERSION 406000
 #include "gambit.h"
 #include "Delectus.h"
@@ -16,21 +17,27 @@ void runTests(){
 	printf("version() -> %s\n",v);
 	int d1 = new_delectus();
 	printf("new_delectus() -> %d\n",d1);
-	char* zip_csv="/Users/mikel/Projects/delectus/delectus/test-data/zipcode_10k.csv";
-	int d2 = read_delectus_csv(zip_csv);
-	printf("read_delectus_csv() -> %d\n",d2);
-    char* val1 = value_at(d2,"city",0);
-	printf("value_at(d2,city,0) -> %s\n",val1);
-    char* testval1 = "Frob City";
-    int result1 = put_value_at(d2,"city",0,testval1);
-	printf("put_value_at(d2,city,0,\"Frob City\") -> %d\n",result1);
-    char* testval2 =  value_at(d2,"city",0);
-    printf("value_at(d2,city,0) -> %s\n\n",testval2);
-    int result2 = mark_row_finished(d2,0,1);
-    printf("mark_row_finished(d2,0,YES) -> %d\n\n",result2);
-    int testval3 = is_row_finished(d2,0);
-    printf("is_row_finished(d2,0) -> %d\n\n",testval3);
-
+	add_column(d1,"foo");
+	add_row(d1);
+	put_value_at(d1, "foo", 0, "apple");
+	char*val=value_at(d1, "foo", 0);
+	printf("test value == %s\n",val);
+	BOOL yesOrNo1 = is_row_deleted(d1, 0);
+	if(yesOrNo1){
+		printf("is_row_deleted->YES\n");
+	}else{
+		printf("is_row_deleted->NO\n");
+	}
+	printf("marking row deleted...\n");
+	int err = mark_row_deleted(d1, 0, YES);
+	printf("err == %d\n",err);
+	BOOL yesOrNo2 = is_row_deleted(d1, 0);
+	if(yesOrNo2){
+		printf("is_row_deleted->YES\n");
+	}else{
+		printf("is_row_deleted->NO\n");
+	}
+	
     
 }
 

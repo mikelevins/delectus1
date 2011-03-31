@@ -143,3 +143,13 @@
 ;;; (test:duplicate-label?)
 ;;; (test:row-deleted?)
 ;;; (test:compact-delectus!)
+
+(define $d1 (api:new-delectus))
+(api:add-column! $d1 "foo")
+(api:add-row! $d1)
+(api:mark-row-deleted! $d1 0 #t)
+(let ((sort-column (api:sort-column $d1))
+      (sort-order (api:sort-order $d1))
+      (filter-text (api:filter-text $d1)))
+  (api:update-view! $d1 #t sort-column sort-order filter-text))
+(api:row-deleted? $d1 0)

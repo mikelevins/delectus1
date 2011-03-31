@@ -237,11 +237,10 @@
 						<reference ref="339568728"/>
 						<reference ref="949858412"/>
 					</array>
-					<array class="NSMutableArray" key="NSToolbarIBDefaultItems">
+					<array key="NSToolbarIBDefaultItems">
 						<reference ref="949858412"/>
 						<reference ref="339568728"/>
 						<reference ref="267393002"/>
-						<reference ref="398847882"/>
 					</array>
 					<array class="NSMutableArray" key="NSToolbarIBSelectableItems"/>
 				</object>
@@ -304,7 +303,7 @@
 												</object>
 											</object>
 											<double key="NSRowHeight">20</double>
-											<int key="NSTvFlags">-675282944</int>
+											<int key="NSTvFlags">-742391808</int>
 											<reference key="NSDelegate"/>
 											<reference key="NSDataSource"/>
 											<string key="NSAutosaveName">delectus</string>
@@ -312,7 +311,7 @@
 											<int key="NSColumnAutoresizingStyle">0</int>
 											<int key="NSDraggingSourceMaskForLocal">15</int>
 											<int key="NSDraggingSourceMaskForNonLocal">0</int>
-											<bool key="NSAllowsTypeSelect">YES</bool>
+											<bool key="NSAllowsTypeSelect">NO</bool>
 											<int key="NSTableViewDraggingDestinationStyle">0</int>
 										</object>
 									</array>
@@ -366,7 +365,7 @@
 							<string key="NSFrame">{{0, 61}, {826, 389}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
+							<reference key="NSNextKeyView" ref="154016786"/>
 							<int key="NSsFlags">50</int>
 							<reference key="NSVScroller" ref="188504708"/>
 							<reference key="NSHScroller" ref="62182043"/>
@@ -389,7 +388,7 @@
 											<string key="NSFrame">{{48, 20}, {25, 15}}</string>
 											<reference key="NSSuperview" ref="363414352"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="407070697"/>
+											<reference key="NSNextKeyView"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSButtonCell" key="NSCell" id="771687267">
 												<int key="NSCellFlags">-2080244224</int>
@@ -400,29 +399,6 @@
 												<int key="NSButtonFlags">-2033958657</int>
 												<int key="NSButtonFlags2">163</int>
 												<reference key="NSNormalImage" ref="184740532"/>
-												<string key="NSAlternateContents"/>
-												<string key="NSKeyEquivalent"/>
-												<int key="NSPeriodicDelay">400</int>
-												<int key="NSPeriodicInterval">75</int>
-											</object>
-										</object>
-										<object class="NSButton" id="407070697">
-											<reference key="NSNextResponder" ref="363414352"/>
-											<int key="NSvFlags">268</int>
-											<string key="NSFrame">{{83, 20}, {25, 15}}</string>
-											<reference key="NSSuperview" ref="363414352"/>
-											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="772488530"/>
-											<bool key="NSEnabled">YES</bool>
-											<object class="NSButtonCell" key="NSCell" id="711449199">
-												<int key="NSCellFlags">-2080244224</int>
-												<int key="NSCellFlags2">134479872</int>
-												<string key="NSContents"/>
-												<reference key="NSSupport" ref="22"/>
-												<reference key="NSControlView" ref="407070697"/>
-												<int key="NSButtonFlags">-2033958657</int>
-												<int key="NSButtonFlags2">163</int>
-												<reference key="NSNormalImage" ref="380318833"/>
 												<string key="NSAlternateContents"/>
 												<string key="NSKeyEquivalent"/>
 												<int key="NSPeriodicDelay">400</int>
@@ -632,7 +608,6 @@
 							<string key="NSFrame">{{770, 21}, {32, 25}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="845950390">
 								<int key="NSCellFlags">67239424</int>
@@ -683,7 +658,6 @@
 							<string key="NSFrame">{{601, 20}, {160, 14}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="920862187">
 								<int key="NSCellFlags">68288064</int>
@@ -881,7 +855,7 @@
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<object class="NSView" key="NSWindowView" id="396237333">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSTextField" id="970302048">
@@ -946,7 +920,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{346, 12}, {96, 32}}</string>
 							<reference key="NSSuperview" ref="396237333"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="232307403">
 								<int key="NSCellFlags">67239424</int>
@@ -964,7 +937,6 @@
 						</object>
 					</array>
 					<string key="NSFrame">{{7, 11}, {456, 110}}</string>
-					<reference key="NSSuperview"/>
 					<reference key="NSNextKeyView" ref="970302048"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
@@ -1071,14 +1043,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">delRowButton</string>
-						<reference key="source" ref="512844837"/>
-						<reference key="destination" ref="407070697"/>
-					</object>
-					<int key="connectionID">100428</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">showDeletedButton</string>
 						<reference key="source" ref="512844837"/>
 						<reference key="destination" ref="1014849523"/>
@@ -1100,14 +1064,6 @@
 						<reference key="destination" ref="62525875"/>
 					</object>
 					<int key="connectionID">100431</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleRowDeleted:</string>
-						<reference key="source" ref="512844837"/>
-						<reference key="destination" ref="407070697"/>
-					</object>
-					<int key="connectionID">100432</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1262,7 +1218,6 @@
 						<int key="objectID">100387</int>
 						<reference key="object" ref="630023085"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="407070697"/>
 							<reference ref="187024790"/>
 							<reference ref="62525875"/>
 						</array>
@@ -1280,19 +1235,6 @@
 						<int key="objectID">100372</int>
 						<reference key="object" ref="771687267"/>
 						<reference key="parent" ref="62525875"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">100373</int>
-						<reference key="object" ref="407070697"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="711449199"/>
-						</array>
-						<reference key="parent" ref="630023085"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">100374</int>
-						<reference key="object" ref="711449199"/>
-						<reference key="parent" ref="407070697"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">100388</int>
@@ -1631,16 +1573,6 @@
 				</object>
 				<string key="100371.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="100372.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<object class="NSMutableDictionary" key="100373.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">ToolTip</string>
-					<object class="IBToolTipAttribute" key="NS.object.0">
-						<string key="name">ToolTip</string>
-						<reference key="object" ref="407070697"/>
-						<string key="toolTip">Delete the selected row</string>
-					</object>
-				</object>
-				<string key="100373.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="100374.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<object class="NSMutableDictionary" key="100383.IBAttributePlaceholdersKey">
 					<string key="NS.key.0">ToolTip</string>
 					<object class="IBToolTipAttribute" key="NS.object.0">
@@ -1734,6 +1666,7 @@
 						<string key="addColumn:">id</string>
 						<string key="addRow:">id</string>
 						<string key="emptyTrash:">id</string>
+						<string key="performShowDeletedClick:">id</string>
 						<string key="renameColumn:">id</string>
 						<string key="setFilter:">id</string>
 						<string key="toggleColumnDeleted:">id</string>
@@ -1755,6 +1688,10 @@
 						</object>
 						<object class="IBActionInfo" key="emptyTrash:">
 							<string key="name">emptyTrash:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="performShowDeletedClick:">
+							<string key="name">performShowDeletedClick:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="renameColumn:">

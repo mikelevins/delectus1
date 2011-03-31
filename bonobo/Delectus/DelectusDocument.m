@@ -66,8 +66,6 @@
 }
 
 - (void)setupColumns{
-    [tableView setAutosaveName:nil];
-    [tableView setAutosaveTableColumns:NO];
     int colcount = [tableView numberOfColumns];
     if(colcount>0){
         NSArray* cols = [NSArray arrayWithArray:[tableView tableColumns]];
@@ -92,8 +90,6 @@
         [tableView addTableColumn: col];
     }
     [tableView setRowHeight:(1.8*[contentFont pointSize])];
-    [tableView setAutosaveName:@"delectus1.0"];
-    [tableView setAutosaveTableColumns:YES];
 }
 
 - (void)updateUIForSelectionChange{
@@ -236,6 +232,7 @@
     NSString* sortColumn = [dataSource sortColumn];
     int sortOrder = [dataSource sortOrder];
     NSString* filterText = [filterField stringValue];
+    [tableView deselectAll: self];
     if([showDeletedButton state]==NSOnState){
         [dataSource getViewIncludingDeleted:YES withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
         [deletedColsField setHidden:NO];
@@ -247,11 +244,10 @@
     }
     [self setupColumns];
     [tableView reloadData];
-    [tableView deselectAll: self];
+    [self updateUIForSelectionChange];
     [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
-    [self updateUIForSelectionChange];
 }
 
 - (IBAction)performShowDeletedClick:(id)sender{

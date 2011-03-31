@@ -215,11 +215,12 @@
     (if vw
         (let ((tbl (reg:find-table id)))
           (if tbl
-              (let ((row (table:row-at tbl row-index)))
+              (let* ((rindex (vector-ref (view:row-indexes vw) row-index))
+                     (row (table:row-at tbl rindex)))
                 (if row
                     (row:deleted? row)
                     (error "No such row" row-index)))
-              (error "No such table" id)))
+              (error "No such view" id)))
         (error "No such view" id))))
 
 (define (eng:mark-row-deleted! id row-index deleted?)
