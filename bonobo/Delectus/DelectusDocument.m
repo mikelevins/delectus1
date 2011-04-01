@@ -263,20 +263,26 @@
 // --------------------------------------------------------------------------------
 
 - (IBAction)addRow:(id)sender{
-    int err = [dataSource addRow];
-    if (err == ERR_NO_ERROR){
-        [self updateChangeCount: NSChangeDone];
-        [tableView reloadData];
-        int rowCount = [tableView numberOfRows];
-        if(rowCount>0){
-            [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
-            [tableView scrollRowToVisible:(rowCount-1)];
+    NSInteger colCount = [dataSource countColumns];
+    if(colCount>0){
+        int err = [dataSource addRow];
+        if (err == ERR_NO_ERROR){
+            [self updateChangeCount: NSChangeDone];
+            [tableView reloadData];
+            int rowCount = [tableView numberOfRows];
+            if(rowCount>0){
+                [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
+                [tableView scrollRowToVisible:(rowCount-1)];
+            }
+            [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+            [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+            [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
+        }else{
+            NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
+            NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
         }
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
-        [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
-        [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }else{
-        NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
+        NSString* msg = [NSString stringWithFormat: @"Can't add a row with no columns!"];
         NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
     }
 }
@@ -607,6 +613,7 @@
                 [self updateChangeCount: NSChangeDone];
                 [self setupColumns];
                 [tableView reloadData];
+                [self recordColumnInfo];
                 int colCount = [tableView numberOfColumns];
                 if(colCount>0){
                     [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];

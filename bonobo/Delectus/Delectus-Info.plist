@@ -39,6 +39,10 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Delectus.help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>DelectusHelp</string>
 	<key>CFBundleIconFile</key>
 	<string>Delectus.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -49,12 +53,14 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleDisplayName</key>
+	<string></string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0rc1</string>
+	<string>1.0rc2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0rc1</string>
+	<string>build 206</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
@@ -63,9 +69,5 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>Delectus.help</string>
-	<key>CFBundleHelpBookName</key>
-	<string>DelectusHelp</string>
 </dict>
 </plist>

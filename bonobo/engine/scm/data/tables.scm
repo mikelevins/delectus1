@@ -118,7 +118,7 @@
 
 (define (table:add-column! tbl column-label)
   (column-sequence:add-element! (table:column-sequence tbl) column-label)
-  (vector-for-each (lambda (row)(row:add-element! row '()))
+  (vector-for-each (lambda (row)(row:add-element! row #f))
             (table:rows tbl))
   tbl)
 
