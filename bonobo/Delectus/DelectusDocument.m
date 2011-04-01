@@ -61,15 +61,25 @@
 
 - (void)recordColumnInfo{
     int colcount = [tableView numberOfColumns];
+    NSMutableDictionary* newWidthInfo=[NSMutableDictionary dictionaryWithCapacity:colcount];
+    NSMutableArray* newOrderInfo=[NSMutableArray array];
     if(colcount>0){
         NSArray* cols = [tableView tableColumns];
         for(int i=0;i<colcount;i++){
             NSTableColumn* col = [cols objectAtIndex:i];
             NSString* label = [col identifier];
             NSNumber* colWidth = [NSNumber numberWithFloat:[col width]];
-            [columnInfo setValue:colWidth forKey: label];
+            [newWidthInfo setValue:colWidth forKey: label];
+            [newOrderInfo addObject:label];
         }
     }
+    
+    if(columnInfo==NULL){
+        columnInfo = [[NSMutableDictionary dictionaryWithCapacity:2] retain]; 
+    }
+    
+    [columnInfo setObject:newWidthInfo forKey:@"widthInfo"];
+    [columnInfo setObject:newOrderInfo forKey:@"orderInfo"];
     
     NSURL* docURL = [self fileURL];
     if (docURL!=NULL){
@@ -110,20 +120,46 @@
             [columnInfo addEntriesFromDictionary:savedColumnInfo];
         }
     }
-    NSArray* columnLabels = [dataSource collectColumns];
+    
+    NSArray* sourceLabels = [dataSource collectColumns];
+    NSArray* savedLabels = [columnInfo objectForKey:@"orderInfo"];
+    NSDictionary* savedWidths = [columnInfo objectForKey:@"widthInfo"];
+    
+    NSMutableArray* columnLabels = [[NSMutableArray arrayWithArray:savedLabels] retain];
+    //remove labels that are in the saved set but not in the source set
+    for(int i=([columnLabels count]-1);i>=0;i--){
+        NSString* lbl = [columnLabels objectAtIndex:i];
+        NSInteger foundIndex = [sourceLabels indexOfObject:lbl];
+        if(foundIndex==NSNotFound){[columnLabels removeObjectAtIndex:i];}
+    }
+    // add labels that are in the source set but not in the saved set
+    for(int j=0;j<[sourceLabels count];j++){
+        NSString* lbl = [sourceLabels objectAtIndex:j];
+        NSInteger foundIndex = [columnLabels indexOfObject:lbl];
+        if(foundIndex==NSNotFound){[columnLabels addObject:lbl];}
+    }
+        
     NSFont* headerFont = [NSFont systemFontOfSize:13.0];
     NSFont* contentFont = [[NSApp delegate] contentFont];
     int labelcount = [columnLabels count];
     for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
         NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
+        NSNumber* colWidth;
+        if(savedWidths==NULL){
+            colWidth=[NSNumber numberWithFloat:190.0];            
+        }else{
+            colWidth=[savedWidths objectForKey:label];
+            if(colWidth==NULL){
+                colWidth=[NSNumber numberWithFloat:190.0];            
+            }
+        }
         [col retain];
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
         [[col dataCell] setFont:contentFont];
         [col setMinWidth:64.0];
         [col setMaxWidth:600.0];
-        NSNumber* colWidth = [columnInfo objectForKey:label];
         if(colWidth==NULL){
             [col setWidth:196.0];
         }else{
@@ -563,6 +599,8 @@
 }
 
 
-
+- (void)tableViewColumnDidMove:(NSNotification *)aNotification{
+    [self recordColumnInfo];
+}
 
 @end

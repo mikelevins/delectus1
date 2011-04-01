@@ -21359,9 +21359,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>323296774.62341398</real>
-		<string>{1288, 2508}</string>
-		<string>{1723, 0}</string>
+		<real>323320875.81752998</real>
+		<string>{22161, 2510}</string>
+		<string>{24668, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -24855,7 +24855,7 @@
 				<integer>1562</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>323296661.91829199</real>
+			<real>323320835.752303</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -24866,7 +24866,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 3:37 PM</string>
+		<string>Today at 10:20 PM</string>
 		<integer>106</integer>
 		<dict>
 			<key>$class</key>
@@ -32702,10 +32702,10 @@
 				</dict>
 			</array>
 		</dict>
-		<real>323296774.62431598</real>
-		<string>{1288, 2508}</string>
-		<string>{1723, 0}</string>
-		<string>-recordColumnInfo</string>
+		<real>323320875.818609</real>
+		<string>{22161, 2510}</string>
+		<string>{24668, 0}</string>
+		<string>-tableViewColumnDidMove:</string>
 		<string>Xcode.IDEKit.EditorDocument.SourceCode</string>
 		<dict>
 			<key>$class</key>
@@ -34382,7 +34382,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>2112</integer>
+					<integer>2111</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
