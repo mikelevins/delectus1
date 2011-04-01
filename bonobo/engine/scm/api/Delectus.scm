@@ -77,6 +77,10 @@
           int "add_column" ""
           (api:add-column! id column-label))
 
+(c-define (c:rename-column! id old-label new-label) (int char-string char-string) 
+          int "rename_column" ""
+          (api:rename-column! id old-label new-label))
+
 (c-define (c:column-deleted? id column-label) (int char-string)
           bool "is_column_deleted" ""
           (api:column-deleted? id column-label))

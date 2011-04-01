@@ -276,7 +276,7 @@
 							<array>
 								<array>
 									<integer>11</integer>
-									<integer>8</integer>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -330,12 +330,12 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>97F489CA132FF3AF000CC6BA</string>
+										<string>97A40EE01345AB6F00950C2B</string>
 										<key>history</key>
 										<array>
 											<string>97853DC5132B7DA9008D485C</string>
 											<string>97F48961132FECAA000CC6BA</string>
-											<string>97F48962132FECAA000CC6BA</string>
+											<string>97F489CA132FF3AF000CC6BA</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -347,14 +347,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1621, 878}}</string>
+								<string>{{0, 0}, {1621, 874}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 55 1920 1123 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>878pt</string>
+							<string>874pt</string>
 						</dict>
 						<dict>
 							<key>BecomeActive</key>
@@ -369,14 +369,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 883}, {1621, 199}}</string>
+								<string>{{0, 879}, {1621, 203}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 55 1920 1123 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>199pt</string>
+							<string>203pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -395,9 +395,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>97F48942132FE86A000CC6BA</string>
+				<string>97A40EDD1345AB6F00950C2B</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>97F48943132FE86A000CC6BA</string>
+				<string>97A40EDE1345AB6F00950C2B</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -535,11 +535,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>97F4894D132FE86A000CC6BA</string>
-		<string>97F4894E132FE86A000CC6BA</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>9702B8E7132B47C2002CAC0F</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/Delectus.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -620,7 +616,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>9702B8E7132B47C2002CAC0F</string>
-				<string>97F48944132FE86A000CC6BA</string>
+				<string>97A40EDF1345AB6F00950C2B</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

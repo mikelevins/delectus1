@@ -74,10 +74,8 @@
                ((eqv? sort-order $SORT_DESCENDING) >)
                (else (error "Invalid sort order" sort-order)))))
     (lambda (row1 row2)
-      (comp (or (row:element-as-number row1 sort-column-index)
-                $max-sort-fixnum)
-            (or (row:element-as-number row2 sort-column-index)
-                $max-sort-fixnum)))))
+      (comp (row:element-for-numeric-sort row1 sort-column-index)
+            (row:element-for-numeric-sort row2 sort-column-index)))))
 
 (define (%view-row-lexicographic-comparator table sort-column-index sort-order)
   (let ((comp (cond
@@ -85,10 +83,8 @@
                ((eqv? sort-order $SORT_DESCENDING) string-ci>?)
                (else (error "Invalid sort order" sort-order)))))
     (lambda (row1 row2)
-      (comp (or (row:element row1 sort-column-index)
-                $max-sort-string)
-            (or (row:element row2 sort-column-index)
-                $max-sort-string)))))
+      (comp (row:element-for-string-sort row1 sort-column-index)
+            (row:element-for-string-sort row2 sort-column-index)))))
 
 (define (%view-sort-row-indexes table row-indexes sort-column sort-order)
   (if (and sort-column sort-order)

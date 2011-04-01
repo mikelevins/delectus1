@@ -9,6 +9,7 @@
 #import "DelectusDocument.h"
 #import "DelectusDelegate.h"
 #import "DelectusDataSource.h"
+#import "DelectusDataCell.h"
 #import "DelectusPrintView.h"
 #define ___VERSION 406000
 #include "gambit.h"
@@ -46,6 +47,14 @@
 
 - (BOOL)deletedItemsAreShown{
     return [showDeletedButton state];
+}
+
+- (BOOL)isPristine{
+    BOOL result=YES;
+    if([self isDocumentEdited]){result=NO;}
+    if([tableView numberOfColumns]>0){result=NO;};
+    if([tableView numberOfRows]>0){result=NO;};
+    return result;
 }
 
 
@@ -89,6 +98,15 @@
         [newColumnInfoDict addEntriesFromDictionary:oldColumnInfoDict];
         [newColumnInfoDict setValue:columnInfo forKey: docPath];
         [[NSUserDefaults standardUserDefaults] setObject:newColumnInfoDict forKey:@"DelectusColumnInfoDict"];
+    }
+}
+
+- (void) closePristineDocuments:sender {
+    int i;
+    NSArray* docs = [[NSDocumentController sharedDocumentController] documents];
+    for(i=0;i<[docs count];i++){
+        DelectusDocument* doc = (DelectusDocument*)[docs objectAtIndex:i];
+        if ([doc isPristine]&&(doc!=sender)){[doc close];}
     }
 }
 
@@ -157,6 +175,7 @@
         [col retain];
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
+        [col setDataCell:[[DelectusDataCell alloc] init]];
         [[col dataCell] setFont:contentFont];
         [col setMinWidth:64.0];
         [col setMaxWidth:600.0];
@@ -189,6 +208,7 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
+    [self closePristineDocuments:self];
     [super windowControllerDidLoadNib:aController];
     if (dataSource==nil){
         dataSource=[[[NSApp delegate] newDelectus] retain];
@@ -207,7 +227,13 @@
     [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
-    
+    // make sure this doc ends up in front
+    NSArray* controllers = [self windowControllers];
+    if([controllers count]>0){
+        NSWindowController* controller = (NSWindowController*)[controllers objectAtIndex:0];
+        NSWindow* win = [controller window];
+        [win makeKeyAndOrderFront: self];
+    }    
 }
 
 - (void)printShowingPrintPanel:(BOOL)showPanels {
@@ -239,6 +265,7 @@
 - (IBAction)addRow:(id)sender{
     int err = [dataSource addRow];
     if (err == ERR_NO_ERROR){
+        [self updateChangeCount: NSChangeDone];
         [tableView reloadData];
         int rowCount = [tableView numberOfRows];
         if(rowCount>0){
@@ -296,7 +323,6 @@
         }else{
             [dataSource markColumn:label deleted:YES];
         }
-        
         [self updateChangeCount: NSChangeDone];
         [self setupColumns];
         [tableView reloadData];
@@ -349,7 +375,11 @@
 }
 
 - (IBAction)renameColumn:(id)sender{
-    NSRunAlertPanel(@"Rename",@"Renaming a column",@"Okay", nil, nil);
+    [NSApp beginSheet: addColumnSheet 
+       modalForWindow: documentWindow 
+        modalDelegate: self 
+       didEndSelector: @selector(sheetDidEnd:returnCode:contextInfo:) 
+          contextInfo: @"RenameColumn"];
 }
 
 - (IBAction)setFilter:(id)sender{
@@ -460,6 +490,7 @@
             return NO;
         }else{
             dataSource=[src retain];
+            [self updateChangeCount: NSChangeDone];
             return YES;
         }
     } else if ([typeName isEqualToString: @"delectus"]) {
@@ -472,6 +503,7 @@
             return NO;
         }else{
             dataSource=[src retain];
+            [self updateChangeCount: NSChangeDone];
             return YES;
         }
     } else {
@@ -538,6 +570,7 @@
     BOOL isCellDeleted = (isColDeleted||isRowDeleted);
     BOOL isRowEven = ((rowIndex%2)==0);
     if(isCellDeleted){
+        [[aTableColumn dataCell] setIsRenderingDeleted:YES];
         NSColor* cellColor;
         if(isRowEven){
             cellColor=[NSColor colorWithCalibratedHue:0.0 saturation:0.25 brightness:1.0 alpha:1.0];
@@ -549,6 +582,7 @@
         [aCell setEditable:NO];
         [aCell setSelectable:NO];
     } else {
+        [[aTableColumn dataCell] setIsRenderingDeleted:NO];
         [aCell setDrawsBackground: NO];
         [aCell setEditable:YES];
         [aCell setSelectable:YES];
@@ -570,6 +604,7 @@
         } else {
             int err = [dataSource addColumn:lbl];
             if (err == ERR_NO_ERROR){
+                [self updateChangeCount: NSChangeDone];
                 [self setupColumns];
                 [tableView reloadData];
                 int colCount = [tableView numberOfColumns];
@@ -584,6 +619,35 @@
                 NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
                 NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
             }
+        }
+    } else if([commandStr isEqualTo: @"RenameColumn"]){
+        NSInteger colIndex = [tableView selectedColumn];
+        if (colIndex>(-1)){
+            NSTableColumn* col = [[tableView tableColumns] objectAtIndex:colIndex];
+            NSString* oldlbl = [col identifier];
+            NSString* newlbl = [addColumnLabelField stringValue];
+            BOOL isDup = [dataSource isDuplicateLabel: newlbl];
+            if(isDup && (![newlbl isEqualTo: oldlbl])){
+                NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",newlbl];
+                NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+            }else{
+                int err = [dataSource renameColumn:oldlbl to:newlbl];
+                if (err == ERR_NO_ERROR){
+                    [self updateChangeCount: NSChangeDone];
+                    [self setupColumns];
+                    [tableView reloadData];
+                    [self recordColumnInfo];
+                    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+                    [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+                    [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
+                }else{
+                    NSString* msg = [NSString stringWithFormat: @"There was an error changing the column name to '%@'",newlbl];
+                    NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+                }
+            }
+        }else{
+            NSString* msg = [NSString stringWithFormat: @"Error: no column selected"];
+            NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
         }
     }
 }

@@ -15,7 +15,7 @@
 (define-type column
   id: 788DB6EF-0829-41EA-BF23-F0B977978672
   constructor: %make-column
-  (label column:label)
+  (label column:label column:set-label!)
   (deleted? column:deleted? column:set-deleted!))
 
 (define (column:make label #!key (deleted #f))

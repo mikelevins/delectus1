@@ -42,6 +42,7 @@ extern char* value_at (int id, char* column_label, int row_index); // returns a 
 extern int put_value_at (int id, char* column_label, int row_index, char* value);
 extern int add_row (int id);
 extern int add_column (int oid, char* label);
+extern int rename_column (int oid, char* oldlabel, char* newlabel);
 extern bool is_column_deleted (int id, char* column_label);
 extern bool is_duplicate_label (int id, char* column_label);
 extern int mark_column_deleted (int id, char* column_label, int deleted);

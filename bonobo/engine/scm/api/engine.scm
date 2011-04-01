@@ -166,6 +166,25 @@
               (error "No such table" id)))
         (error "No such view" id))))
 
+(define (eng:rename-column! id old-label new-label)
+  (let ((vw (reg:find-view id)))
+    (if vw
+        (let ((tbl (reg:find-table id)))
+          (if tbl
+              (let ((include-deleted (view:include-deleted? vw))
+                    (sort-column (view:sort-column vw))
+                    (sort-order (view:sort-order vw))
+                    (filter-text (view:filter-text vw)))
+                (table:rename-column! tbl old-label new-label)
+                (eng:update-view! id 
+                                  include-deleted: include-deleted
+                                  sort-column: #f
+                                  sort-order: #f
+                                  filter-text: filter-text)
+                $ERR_NO_ERROR)
+              (error "No such table" id)))
+        (error "No such view" id))))
+
 (define (eng:column-deleted? id column-label)
   (let ((vw (reg:find-view id)))
     (if vw

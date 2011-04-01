@@ -122,6 +122,11 @@
             (table:rows tbl))
   tbl)
 
+(define (table:rename-column! tbl old-label new-label)
+  (let ((col (table:column-at tbl old-label)))
+    (column:set-label! col new-label))
+  tbl)
+
 (define (table:mark-column-deleted! tbl column-label deleted?)
   (column:set-deleted! (table:column-at tbl column-label)
                        deleted?))

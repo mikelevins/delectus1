@@ -203,6 +203,18 @@
     }
 }
 
+- (int)renameColumn:(NSString*)oldlbl to:(NSString*)newlbl{
+    if (documentID==VAL_NO_DOCUMENT){
+        return ERR_NO_DOCUMENT;
+    }else{
+        char* oldcolname = (char*)[oldlbl cStringUsingEncoding: NSASCIIStringEncoding];    
+        char* newcolname = (char*)[newlbl cStringUsingEncoding: NSASCIIStringEncoding];    
+        int result = rename_column(documentID,oldcolname,newcolname);
+        return result;
+    }
+}
+
+
 - (BOOL)isColumnDeleted:(NSString*)label{
     if (documentID==VAL_NO_DOCUMENT){
         return NO;

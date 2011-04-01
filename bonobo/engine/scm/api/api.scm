@@ -138,6 +138,13 @@
                             (eng:add-column! id column-label)
                             $ERR_NO_ERROR))))
 
+(define (api:rename-column! id old-label new-label)
+  (require-type 'int
+                (if-error $ERR_CANT_UPDATE
+                          (begin
+                            (eng:rename-column! id old-label new-label)
+                            $ERR_NO_ERROR))))
+
 (define (api:column-deleted? id column-label)
   (require-type 'bool
                 (if-error $VAL_NO

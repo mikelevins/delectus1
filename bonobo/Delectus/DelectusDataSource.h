@@ -43,6 +43,7 @@
 - (int)putValue:(NSString*)valStr atColumn:(NSString*)label andRow:(NSInteger)index;
 - (int)addRow;
 - (int)addColumn:(NSString*)label;
+- (int)renameColumn:(NSString*)oldlbl to:(NSString*)newlbl;
 - (BOOL)isColumnDeleted:(NSString*)label;
 - (BOOL)isDuplicateLabel:(NSString*)label;
 - (int)markColumn:(NSString*)label deleted: (BOOL)yesOrNo;

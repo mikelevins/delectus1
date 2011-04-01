@@ -17,54 +17,42 @@
           with a label at the top. The label can be anything you like
           (as long as there isn't another column with the same
           label), and you can add as many columns as you like to a
-          Delectus document. You can also remove columns at any time.</p>
+          Delectus document. You can  remove a column at any time.</p>
 
           <p>To add a column, click the <strong>Add Column</strong> (the "<strong>+</strong>")
           button at the top right corner of the Delectus window:</p>
 
           <p><img src='../images/add_col.png'/></p>
 
-          <p>Click the <strong>Add Column</strong> button and Delectus asks you for a label
-          for the new column. After you supply a label, Delectus creates  the new column.</p>
+          <p>When you click the <strong>Add Column</strong> button, Delectus asks you for a label
+          for the new column. After you supply a label, Delectus creates  the new column. If you give it a label that's already in use in your list, then Delectus refuses it and displays a message explaining that you can't use a label if it's already being used.</p>
 
 		<h1>Removing Columns</h1>
 
-          <p>You can remove a column using the <strong>Delete
-          Column ("<strong>-</strong>")</strong> button. Simply click the label at the top of the column you want to delete, and then click the </p> "<strong>-</strong>" button. Delectus removes the selected column.
+          <p>You can remove a column using the <strong>List</strong> menu. Select the column you want to delete, then pull down the <strong>List</strong> menu and choose <strong>Delete Column</strong>. Delectus removes the selected column. If no column is selected then Delectus doesn't enable the <strong>Delete Column</strong> item.</p>
 
-          <p>If you try it now, you might notice that as soon as you
-          delete the column, the <strong>Trash Button</strong> at the
-          bottom left corner of the window changes its
-          appearance. Instead of an empty trash basket, it shows a
-          full one. That's to let you know that the document has
-          deleted items. If you click the <strong>Trash
-          Button</strong>, it shows all the deleted items in red, and
-          it displays the message, "Deleted items are red". Click it
-          again, and the deleted items, and the message,
-          disappear.</p>
-
-          <h2>Emptying the Trash</h2>
-
-          <p>You might be wondering, "why are those items still in the
-          document, if I deleted them?" Delectus doesn't completely
-          destroy them when you delete them. It keeps them around in
-          the Trash, in case you delete something by mistake and want
-          to get it back. If you really want to make sure that
-          deleted items are gone forever, pull down the "File" menu
-          and choose "Empty Trash." Delectus permanently removes all
-          the items that are in the trash. Make sure you really want
-          to remove them, because once Delectus empties the Trash, it
-          has no way to get those items back.</p>
-          
 		<h1>Renaming Columns</h1>
 
         <p>What if you decide that you want to change one of the
         column labels? It's easy to do: click the label at the top of
-        the column to select it, then pull down the "Edit" menu and
-        choose "Rename Column". Delectus asks you for a new
-        label. After it accepts the new label, it changes the column
-        to use it in place of the old one. Remember: a document cannot
-        have two columns with the same label.</p>
+        the column to select it, then pull down the <strong>List</strong> menu and
+        choose <strong>Rename Column</strong>. Delectus asks you for a new
+        label, and then changes the column to use it. Remember: a document cannot
+        have two columns with the same label. If you try to rename a column to use a label that's already in use, Delectus refuses.</p>
+        
+		<h1>Names of Deleted Columns</h1>
+
+        <p>When you delete a column, Delectus doesn't really remove it completely. It marks the column deleted and hides it, but it keeps the data, in case you change your mind. You can see if there are any deleted columns in your document by clicking the <strong>Show Deleted Items</strong> button at the bottom right corner of the window.</p>
+        
+         <p><img src='../images/show_deleted.png'/></p>
+
+	<p>Click the <strong>Show Deleted Items</strong> button to turn it on, and it reveals any deleted columns and rows in the document. It also displays a count of deleted columns and rows next to the button. Deleted items are displayed in red.</p>
+	
+	<p>Because Delectus doesn't really remove a column when you delete it, you can't reuse the label of a deleted column. The column doesn't show up in your list unless you turn on the <strong>Show Deleted Items</strong> button, but it's still there in the document, so Delectus can't reuse the label.</p>
+	
+	<p>If you want to permanently remove any deleted items that may be in your document, you can use the <strong>Purge Deleted Items</strong> menu: pull down the <strong>List</strong> menu and choose <strong>Purge Deleted Items</strong>. Delectus displays a dialog to give you a chance to change your mind before permanently removing the items; if you confirm, then it removes all deleted columns and rows. Make sure that's what you want to do; once you confirm that you want to purge the deleted items, they're gone forever.</p>
+	
+	<p>After you've purged deleted items, the column labels are no longer in use, and you can reuse them if you like.</p>
 
 		</div>
     </body>
