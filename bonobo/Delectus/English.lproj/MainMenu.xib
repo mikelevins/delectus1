@@ -411,7 +411,7 @@
 								<object class="NSMenuItem" id="487934518">
 									<reference key="NSMenu" ref="1009967743"/>
 									<string key="NSTitle">Add Row</string>
-									<string key="NSKeyEquiv"/>
+									<string key="NSKeyEquiv">r</string>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="1033313550"/>
 									<reference key="NSMixedImage" ref="310636482"/>
@@ -419,7 +419,7 @@
 								<object class="NSMenuItem" id="749701961">
 									<reference key="NSMenu" ref="1009967743"/>
 									<string key="NSTitle">Delete Row</string>
-									<string key="NSKeyEquiv"/>
+									<string key="NSKeyEquiv"></string>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="1033313550"/>
 									<reference key="NSMixedImage" ref="310636482"/>
@@ -453,7 +453,7 @@
 								<object class="NSMenuItem" id="915740921">
 									<reference key="NSMenu" ref="1009967743"/>
 									<string key="NSTitle">Rename Column</string>
-									<string key="NSKeyEquiv"/>
+									<string key="NSKeyEquiv">l</string>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="1033313550"/>
 									<reference key="NSMixedImage" ref="310636482"/>
