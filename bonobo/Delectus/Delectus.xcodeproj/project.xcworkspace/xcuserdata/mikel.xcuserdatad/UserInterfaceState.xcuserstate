@@ -7923,7 +7923,7 @@
 			</dict>
 		</dict>
 		<string>file://localhost/Users/mikel/Library/Developer/Xcode/DerivedData/Delectus-fhqpudbdvwbrpdczuckkkfldtpux/Build/Products/Debug/Delectus.app/</string>
-		<real>323677743.090352</real>
+		<real>323678207.57623899</real>
 		<dict>
 			<key>$classes</key>
 			<array>
@@ -8749,8 +8749,8 @@
 				</dict>
 			</array>
 		</dict>
-		<integer>29</integer>
 		<integer>587</integer>
+		<integer>29</integer>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -21736,9 +21736,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>323677443.43629003</real>
-		<string>{8555, 2897}</string>
-		<string>{10156, 0}</string>
+		<real>323682588.662799</real>
+		<string>{8555, 2895}</string>
+		<string>{10115, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -25192,7 +25192,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>1596</integer>
+					<integer>1544</integer>
 				</dict>
 			</array>
 		</dict>
@@ -25446,7 +25446,7 @@
 				<integer>1612</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>323677769.92336899</real>
+			<real>323682449.18610102</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -25457,7 +25457,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 1:29 AM</string>
+		<string>Today at 2:47 AM</string>
 		<integer>106</integer>
 		<dict>
 			<key>$class</key>
@@ -25737,15 +25737,15 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>1644</integer>
-				</dict>
-				<dict>
-					<key>CF$UID</key>
 					<integer>1645</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>1647</integer>
+					<integer>1646</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
+					<integer>1648</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
@@ -25800,7 +25800,7 @@
 				<integer>1642</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/InfoPlist.strings</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.m</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -25815,9 +25815,10 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>1538</integer>
+				<integer>1644</integer>
 			</dict>
 		</dict>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/MainMenu.xib</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -25849,10 +25850,10 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>1646</integer>
+				<integer>1647</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/DelectusDocument.m</string>
+		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/InfoPlist.strings</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -25867,10 +25868,9 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>1648</integer>
+				<integer>1538</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/mikel/Projects/delectus/delectus/bonobo/Delectus/English.lproj/MainMenu.xib</string>
 		<dict>
 			<key>$class</key>
 			<dict>
