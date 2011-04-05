@@ -56,11 +56,11 @@
 	<key>CFBundleDisplayName</key>
 	<string></string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0rc3</string>
+	<string>1.0rc4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>build 209</string>
+	<string>build 211</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
