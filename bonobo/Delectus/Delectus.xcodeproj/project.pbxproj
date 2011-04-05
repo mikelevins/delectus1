@@ -325,6 +325,7 @@
 					"\"$(SRCROOT)/../engine\"",
 					/usr/local/gambit/MacOSX/lib,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = Delectus;
 			};
 			name = Debug;
@@ -344,6 +345,7 @@
 					"\"$(SRCROOT)/../engine\"",
 					/usr/local/gambit/MacOSX/lib,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = Delectus;
 			};
 			name = Release;
