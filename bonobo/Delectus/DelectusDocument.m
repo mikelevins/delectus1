@@ -271,8 +271,9 @@
             [tableView reloadData];
             int rowCount = [tableView numberOfRows];
             if(rowCount>0){
-                [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
                 [tableView scrollRowToVisible:(rowCount-1)];
+                [tableView editColumn:0 row:(rowCount-1) withEvent:nil select:YES];
+                //[tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
             }
             [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
             [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
