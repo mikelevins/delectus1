@@ -318,12 +318,13 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
+				HEADER_SEARCH_PATHS = /usr/local/gambit/MacOSX/current/include/;
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					/usr/local/gambit/MacOSX/lib,
+					/usr/local/gambit/MacOSX/current/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = Delectus;
@@ -338,12 +339,13 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
+				HEADER_SEARCH_PATHS = /usr/local/gambit/MacOSX/current/include/;
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					/usr/local/gambit/MacOSX/lib,
+					/usr/local/gambit/MacOSX/current/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = Delectus;

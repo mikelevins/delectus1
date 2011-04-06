@@ -1,4 +1,4 @@
-GAMBIT_HOME=/usr/local/gambit/MacOSX
+GAMBIT_HOME=/usr/local/gambit/MacOSX/current
 GSC=${GAMBIT_HOME}/bin/gsc
 GSC_INC=${GAMBIT_HOME}/include
 GSC_LIB=${GAMBIT_HOME}/lib

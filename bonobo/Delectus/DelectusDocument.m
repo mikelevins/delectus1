@@ -11,7 +11,7 @@
 #import "DelectusDataSource.h"
 #import "DelectusDataCell.h"
 #import "DelectusPrintView.h"
-#define ___VERSION 406000
+#define ___VERSION 406001
 #include "gambit.h"
 #include "Delectus.h"
 
@@ -177,6 +177,8 @@
         [[col headerCell] setFont:headerFont];
         [col setDataCell:[[DelectusDataCell alloc] init]];
         [[col dataCell] setFont:contentFont];
+        [[col dataCell] setLineBreakMode:NSLineBreakByCharWrapping];
+        [[col dataCell] setTruncatesLastVisibleLine:YES];
         [col setMinWidth:64.0];
         [col setMaxWidth:600.0];
         if(colWidth==NULL){

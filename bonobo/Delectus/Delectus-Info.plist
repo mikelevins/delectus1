@@ -4,20 +4,10 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDisplayName</key>
+	<string></string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>csv</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>csv</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>DelectusDocument</string>
-		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
@@ -27,10 +17,18 @@
 			<string>DelectusDoc.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>delectus</string>
-			<key>CFBundleTypeOSTypes</key>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>DelectusDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>????</string>
+				<string>csv</string>
 			</array>
+			<key>CFBundleTypeName</key>
+			<string>csv</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
@@ -53,14 +51,14 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleDisplayName</key>
-	<string></string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0rc4</string>
+	<string>1.0rc6</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array/>
 	<key>CFBundleVersion</key>
-	<string>build 211</string>
+	<string>build 212a</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
@@ -69,5 +67,11 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSServices</key>
+	<array/>
+	<key>UTExportedTypeDeclarations</key>
+	<array/>
+	<key>UTImportedTypeDeclarations</key>
+	<array/>
 </dict>
 </plist>

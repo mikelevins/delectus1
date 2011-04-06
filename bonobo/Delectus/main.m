@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#define ___VERSION 406000
+#define ___VERSION 406001
 #include "gambit.h"
 #include "Delectus.h"
 
