@@ -44,7 +44,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Delectus.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.mikelevins.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.mikelevins.delectus</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -58,11 +58,13 @@
 	<key>CFBundleURLTypes</key>
 	<array/>
 	<key>CFBundleVersion</key>
-	<string>build 215</string>
+	<string>build 216</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2010, 2011, mikel evins</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -73,7 +75,5 @@
 	<array/>
 	<key>UTImportedTypeDeclarations</key>
 	<array/>
-	<key>NSHumanReadableCopyright</key>
-	<string>© 2010, 2011, mikel evins</string>
 </dict>
 </plist>
