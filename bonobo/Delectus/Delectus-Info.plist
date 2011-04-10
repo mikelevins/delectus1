@@ -58,7 +58,7 @@
 	<key>CFBundleURLTypes</key>
 	<array/>
 	<key>CFBundleVersion</key>
-	<string>build 214</string>
+	<string>build 215</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
@@ -73,5 +73,7 @@
 	<array/>
 	<key>UTImportedTypeDeclarations</key>
 	<array/>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2010, 2011, mikel evins</string>
 </dict>
 </plist>
