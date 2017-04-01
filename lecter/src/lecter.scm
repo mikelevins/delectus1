@@ -43,9 +43,8 @@
                                                      (let ((format-name (delectus-format-number->name format-number)))
                                                        (write format-name)
                                                        (newline)))))
-              ((equal? option "--convert") (begin (newline)
-                                                  (display "not yet implemented")
-                                                  (newline)))
+              ((equal? option "--convert") (let* ((path (list-ref args 1)))
+                                             (write (delectus->lisp path))))
               (else (print-lecter-usage))))))
 
 
