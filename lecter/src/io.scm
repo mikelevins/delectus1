@@ -12,6 +12,12 @@
 ;;; general utilities
 ;;; ======================================================================
 
+(define (%concat-chunks chunk more-chunks)
+  (if (null? more-chunks)
+      chunk
+      (let ((new-chunk (u8vector-append chunk (car more-chunks))))
+        (%concat-chunks new-chunk (cdr more-chunks)))))
+
 (define (io:read-binary-file path)
   (let* ((in #f)
          (data-bytes #f)
@@ -29,7 +35,7 @@
         (lambda () (close-input-port in)))
     ;; convert the bytes to a scheme object and return it
     (if (not (null? chunks))
-        (apply u8vector-append chunks)
+        (%concat-chunks (car chunks)(cdr chunks))
         #f)))
 
 ;;; ======================================================================
@@ -186,6 +192,15 @@
   (string-append src-path ".csv"))
 
 ;;; ======================================================================
+;;; file formats
+;;; ======================================================================
+
+(define (delectus-file-format path)
+  (let* ((raw (io:read-binary-file path))
+         (data (u8vector->object raw)))
+    (delectus-format data)))
+
+;;; ======================================================================
 ;;; delectus->lisp
 ;;; ======================================================================
 
@@ -201,11 +216,15 @@
 
 (define (rows->lisp tbl)
   (map (lambda (row)
-         (let* ((deleted? (if (row:deleted? row)'T 'NIL))
+         (let* ((deleted? (if (row:deleted? row) 'T 'NIL))
                 (entries (vector->list (row:entries row)))
                 (items (map (lambda (entry)
-                              (list 'VALUE (if (entry:value entry) 'T 'NIL)
-                                    'NUMBER-VALUE (if (%entry-number-value entry) 'T 'NIL)))
+                              (let ((val (entry:value entry))
+                                    (numval (%entry-number-value entry)))
+                                (list 'VALUE (if val
+                                                 (if (true? val) 'T val)
+                                                 'NIL)
+                                      'NUMBER-VALUE (or numval 'NIL))))
                             entries)))
            (list 'DELETED deleted?
                  'ENTRIES items)))
@@ -229,6 +248,21 @@
         (begin (format "~%Not a Delectus 1.x file: ~s" src-path)
                (format "~%No conversion performed.~%")
                $ERR_BAD_FORMAT))))
+
+
+(define (%if-error-aux errval thunk)
+  (let ((handler (lambda (err) errval)))
+    (with-exception-catcher handler thunk)))
+
+(define-macro (if-error errval . body)
+  `(%if-error-aux ,errval 
+                  (lambda () ,@body)))
+
+(define (delectus-format-version src-path)
+  (if-error "INVALID"
+            (let* ((raw (io:read-binary-file src-path))
+                   (data (u8vector->object raw)))
+              (delectus-format data))))
 
 ;;; (define $inpath "/Users/mikel/Workshop/src/delectus/delectus_convert/testdata/Movies.delectus")
 ;;; (cadr (delectus->lisp $inpath))

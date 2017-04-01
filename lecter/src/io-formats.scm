@@ -39,12 +39,20 @@
 
 (define (delectus-format data)
   (cond
-   ((table? data) $delectus-format-1.0)
+   ((delectus-table? data) $delectus-format-1.0)
    ((io:alpha-1-format? data) $delectus-format-alpha-1)
    ((io:alpha-2-format? data) $delectus-format-alpha-2)
    ((io:alpha-4-format? data) $delectus-format-alpha-4)
    ((io:beta-2-format? data) $delectus-format-beta-2)
    (else #f)))
+
+(define (delectus-format-number->name format-number)
+  (cond ((equal? format-number $delectus-format-alpha-1) "delectus-format-alpha-1")
+        ((equal? format-number $delectus-format-alpha-2) "delectus-format-alpha-2")
+        ((equal? format-number $delectus-format-alpha-4) "delectus-format-alpha-4")
+        ((equal? format-number $delectus-format-beta-2) "delectus-format-beta-2")
+        ((equal? format-number $delectus-format-1.0) "delectus-format-1.0")
+        (else "INVALID")))
 
 ;;; ----------------------------------------------------------------------
 ;;; converting delectus formats
