@@ -10,8 +10,6 @@
 
 (in-package :delectus)
 
-
-
 (defmethod read-delectus-sexp-file ((path pathname))
   "Read a .sexp file (a Delectus 1.x file in s-expression format)"
   (let* ((filetype (pathname-type path)))

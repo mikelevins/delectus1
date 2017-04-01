@@ -11,4 +11,4 @@
 (in-package :cl-user)
 
 (defpackage #:delectus
-  (:use #:cl))
+  (:use #:cl #:sqlite))
