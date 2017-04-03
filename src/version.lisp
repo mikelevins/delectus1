@@ -28,8 +28,7 @@
           +delectus-patch-version+
           +delectus-build-number+))
 
-(defparameter +delectus-format-major-version+ 5)
-(defparameter +delectus-format-minor-version+ 0)
+(defparameter +delectus-format-version+ 5)
 
 (defun delectus-format-version-string ()
   (format nil "~A.~A"

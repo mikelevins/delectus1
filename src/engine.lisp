@@ -16,10 +16,8 @@
       "The type extension of the Delectus file must be \"delectus2\"; found ~S" file-type)
     (with-open-database (db path)
       (with-transaction db
-        (execute-non-query db "create table delectus (major_version integer, minor_version integer)")
-        (execute-non-query db "insert into delectus (major_version, minor_version) values (?, ?)" 
-                           +delectus-format-major-version+
-                           +delectus-format-minor-version+)
+        (execute-non-query db "create table delectus (format_version integer)")
+        (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
         (execute-non-query db "create table contents (rowid integer primary key) without rowid")))
     path))
 
