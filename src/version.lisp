@@ -32,5 +32,4 @@
 
 (defun delectus-format-version-string ()
   (format nil "~A.~A"
-          +delectus-format-major-version+
-          +delectus-format-minor-version+))
+          +delectus-format-version+))

@@ -10,53 +10,22 @@
 
 (in-package :delectus)
 
-(defmethod make-delectus-file ((path pathname))
-  (let ((file-type (pathname-type path)))
-    (assert (equalp "delectus2" file-type)()
-      "The type extension of the Delectus file must be \"delectus2\"; found ~S" file-type)
-    (with-open-database (db path)
-      (with-transaction db
-        (execute-non-query db "create table delectus (format_version integer)")
-        (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
-        (execute-non-query db "create table contents (rowid integer primary key) without rowid")))
-    path))
+;;; ---------------------------------------------------------------------
+;;; store
+;;; ---------------------------------------------------------------------
+;;; a class that represents data storage
 
-(defmethod make-delectus-file ((path string))
-  (make-delectus-file (pathname path)))
+;;; store
+;;; ---------------------------------------------------------------------
+(defclass store ()
+  (;; a reference to the database in which data are stored
+   (db-handle :reader db-handle :initform nil :initarg :db-handle)
+   ;; the pathname of the backing file, or ":memory:" if it's an in-memory db
+   (db-path :reader db-path :initform nil :initarg :db-path)))
 
-(defmethod delectus-file-version ((path pathname))
-  (with-open-database (db path)
-    (with-transaction db
-      (let ((table-name (execute-single db "SELECT name FROM sqlite_master WHERE type='table' AND name='delectus'")))
-        (if table-name
-            (let ((version-numbers (execute-to-list db "SELECT * FROM delectus")))
-              (if version-numbers
-                  (first version-numbers)
-                nil))
-          nil)))))
-
-(defmethod delectus-file-version ((path string))
-  (delectus-file-version (pathname path)))
-
-(defmethod add-column ((path pathname)(label string))
-  (with-open-database (db path)
-    (with-transaction db
-      (let ((sql (format nil "ALTER TABLE contents ADD COLUMN ~A string" label)))
-        (execute-non-query db sql))
-      label)))
-
-(defmethod add-column ((path string)(label string))
-  (add-column (pathname path) label))
-
-(defmethod all-rows ((path pathname))
-  (with-open-database (db path)
-    (with-transaction db
-      (execute-to-list db "select * from contents"))))
-
-(defmethod all-rows ((path string))
-  (all-rows (pathname path)))
-
-;;; (make-delectus-file "/Users/mikel/Desktop/tmp.delectus2")
-;;; (delectus-file-version "/Users/mikel/Desktop/tmp.delectus2")
-;;; (add-column "/Users/mikel/Desktop/tmp.delectus2" "Name")
-;;; (all-rows "/Users/mikel/Desktop/tmp.delectus2")
+(defmethod initialize-instance :after ((store store) &rest initargs &key &allow-other-keys)
+  (if (db-path store)
+      ;; create the database file
+      ()
+    ;; create an in-memory database
+    ()))

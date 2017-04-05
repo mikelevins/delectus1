@@ -18,7 +18,7 @@
     :description "Delectus: a list manager"
     :author "mikel evins <mevins@me.com>"
     :license "Apache 2.0" :serial t
-    :depends-on (:sqlite)
+    :depends-on (:sqlite :sxql)
     :components ((:module "src" :serial t
                           :components ((:file "package")
                                        (:file "version")
