@@ -34,11 +34,6 @@
 (defmethod create-delectus-file ((path string))
   (create-delectus-file (pathname path)))
 
-;;; TODO: check whether the path names a valid delectus file
-;;; - it exists
-;;; - it's a file
-;;; - it's a SQLite file
-;;; - it contains the proper Delectus tables
 (defmethod valid-delectus-file? ((path pathname))
   (and (probe-file path)
        (uiop/pathname:file-pathname-p path)
