@@ -73,3 +73,9 @@
           (error "File is not a valid Delectus store: ~A" store-path))
       (create-delectus-file store-path))))
 
+(defmethod contents-columns ((path pathname))
+  (with-open-database (db path)
+    (execute-to-list db "pragma table_info(contents)")))
+
+(defmethod contents-columns ((path string))
+  (contents-columns (pathname path)))
