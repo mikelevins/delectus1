@@ -73,6 +73,22 @@
           (error "File is not a valid Delectus store: ~A" store-path))
       (create-delectus-file store-path))))
 
+
+;;; contents-columns ((path pathname))
+;;; ---------------------------------------------------------------------
+;;; returns a list of column descriptions. each column description has
+;;; the following format:
+;;; (column-index column-name column-type notnull default-value primary-key?)
+;;; the fields of the description are as follows:
+;;; - field        type        notes
+;;; ----------------------------------------------
+;;; - column-index  integer    order added, indexed from 0
+;;; - column-name   string     string label
+;;; - column-type   string     string SQLite type-name
+;;; - notnull       0|1        1 if NULL values are allowed
+;;; - default-value string|NIL either a string value or NIL
+;;; - primary-key?  0|1        1 if the column is used in computing the primary key
+
 (defmethod contents-columns ((path pathname))
   (with-open-database (db path)
     (execute-to-list db "pragma table_info(contents)")))
