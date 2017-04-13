@@ -134,6 +134,12 @@
                     (let ((add-sql (format nil "ALTER TABLE \"contents\" ADD COLUMN ~S" label))
                           (delete-sql "DELETE FROM \"column_order\""))
                       (execute-non-query db add-sql)
+                      ;; now update the column order to include the new column
+                      ;; TODO: this implementation discards the old column order and
+                      ;; uses the actual order of columns from the contents table
+                      ;; in order to enable column_order to record user preferences
+                      ;; this must be changed to preserve the old order and restore it
+                      ;; with the new column added to the end
                       (execute-non-query db delete-sql)
                       (let ((contents-labels (let ((column-descriptions (execute-to-list db "pragma table_info(contents)")))
                                                (mapcar #'second
