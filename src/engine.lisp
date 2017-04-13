@@ -125,3 +125,23 @@
 (defmethod column-order ((path string))
   (column-order (pathname path)))
 
+;;; add-column (path label)
+;;; ---------------------------------------------------------------------
+
+(defmethod add-column ((path pathname)(label string))
+  (with-open-database (db path)
+    (handler-case (with-open-database (db path)
+                    (let ((add-sql (format nil "ALTER TABLE \"contents\" ADD COLUMN ~S" label))
+                          (delete-sql "DELETE FROM \"column_order\""))
+                      (execute-non-query db add-sql)
+                      (execute-non-query db delete-sql)
+                      (let ((contents-labels (let ((column-descriptions (execute-to-list db "pragma table_info(contents)")))
+                                               (mapcar #'second
+                                                       column-descriptions))))
+                        (dolist (lbl contents-labels)
+                          (execute-non-query db "insert into column_order (column_name) values (?)" lbl))))
+                    t)
+      (sqlite-error (err) (warn "Column already exists: ~S" label) nil))))
+
+(defmethod add-column ((path string)(label string))
+  (add-column (pathname path) label))
