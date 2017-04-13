@@ -28,6 +28,8 @@
       (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
       (execute-non-query db "create table contents (rowid integer primary key, deleted boolean)")
       (execute-non-query db "create table column_order (column_name string)")
+      (execute-non-query db "insert into column_order (column_name) values (?)" "rowid")
+      (execute-non-query db "insert into column_order (column_name) values (?)" "deleted")
       (execute-non-query db "create table deleted_columns (column_name string)")))
   path)
 
@@ -95,3 +97,31 @@
 
 (defmethod contents-columns ((path string))
   (contents-columns (pathname path)))
+
+(defmethod contents-labels ((path pathname))
+  (let ((column-descriptions (contents-columns path)))
+    (mapcar #'second
+            column-descriptions)))
+
+(defmethod contents-labels ((path string))
+  (contents-labels (pathname path)))
+
+;;; column-order ((path pathname))
+;;; ---------------------------------------------------------------------
+;;; returns the current column order of the Delectus store.  the
+;;; column order is a list of column labels in the order they should
+;;; appear in results when retrieving the contents of the store. In
+;;; other words, a SELECT that retrieves rows from the "contents"
+;;; table should request the columns in
+;;; the same order as the labels in column-order
+
+(defmethod column-order ((path pathname))
+  (with-open-database (db path)
+    ;; query returns matching rows as a list of lists
+    (let ((rows (execute-to-list db "select column_name from column_order")))
+      ;; return the single result from each row
+      (mapcar #'car rows))))
+
+(defmethod column-order ((path string))
+  (column-order (pathname path)))
+
