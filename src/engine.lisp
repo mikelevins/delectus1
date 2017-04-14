@@ -21,6 +21,11 @@
   (;; a reference to the database in which data are stored
    (db-path :reader db-path :initform nil :initarg :db-path)))
 
+;;; create-delectus-file ((path pathname))
+;;; ---------------------------------------------------------------------
+;;; TODO: figure out how to factor out the common part of the
+;;;       store-creation code so that it's not duplicated between this
+;;;       function and CONVERT-DELECTUS-SEXP-FILE
 (defmethod create-delectus-file ((path pathname))
   (with-open-database (db path)
     (with-transaction db
@@ -29,6 +34,8 @@
       (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
       ;; table: contents - stores document data
       (execute-non-query db "create table contents (deleted boolean)")
+      ;; table: notes - stores user-defined notes about the store document
+      (execute-non-query db "create table notes (timestamp, subject, author, note)")
       ;; table: column_order - stores the user-defined column order
       (execute-non-query db "create table column_order (column_name string)")
       (execute-non-query db "insert into column_order (column_name) values (?)" "deleted")

@@ -62,6 +62,11 @@
 
 ;;; (defparameter $data (read-delectus-sexp-file "/Users/mikel/Desktop/raw-delectus-data.sexp"))
 
+;;; convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
+;;; ---------------------------------------------------------------------
+;;; TODO: figure out how to factor out the common part of the
+;;;       store-creation code so that it's not duplicated between this
+;;;       function and CREATE-DELECTUS-FILE
 (defmethod convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
   (let* ((in-basename (pathname-name path))
          (outpath (or outpath
@@ -95,6 +100,8 @@
                 (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
                 ;; table: contents - stores document data
                 (execute-non-query db create-contents-sql)
+                ;; table: notes - stores user-defined notes about the store document
+                (execute-non-query db "create table notes (timestamp, subject, author, note)")
                 ;; table: column_order - stores the user-defined column order
                 (execute-non-query db "create table column_order (column_name string)")
                 (dolist (lbl column-labels)
