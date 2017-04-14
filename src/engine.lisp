@@ -24,12 +24,15 @@
 (defmethod create-delectus-file ((path pathname))
   (with-open-database (db path)
     (with-transaction db
+      ;; table: delectus - identifies format version
       (execute-non-query db "create table delectus (format_version integer)")
       (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
-      (execute-non-query db "create table contents (rowid integer primary key, deleted boolean)")
+      ;; table: contents - stores document data
+      (execute-non-query db "create table contents (deleted boolean)")
+      ;; table: column_order - stores the user-defined column order
       (execute-non-query db "create table column_order (column_name string)")
-      (execute-non-query db "insert into column_order (column_name) values (?)" "rowid")
       (execute-non-query db "insert into column_order (column_name) values (?)" "deleted")
+      ;; table: deleted_columns - stores labels of columns that are present but marked deleted
       (execute-non-query db "create table deleted_columns (column_name string)")))
   path)
 
