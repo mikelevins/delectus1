@@ -64,9 +64,6 @@
 
 ;;; convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
 ;;; ---------------------------------------------------------------------
-;;; TODO: figure out how to factor out the common part of the
-;;;       store-creation code so that it's not duplicated between this
-;;;       function and CREATE-DELECTUS-FILE
 (defmethod convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
   (let* ((in-basename (pathname-name path))
          (outpath (or outpath
@@ -89,25 +86,14 @@
                            collect (cons (car tail)(cadr tail))))
                  (deleted-pairs (remove-if-not #'(lambda (pair)(cdr pair))
                                                pairs))
-                 (column-labels (cons "deleted" (mapcar #'car pairs)))
-                 (deleted-labels (mapcar #'car deleted-pairs))
-                 (create-contents-sql (format nil "create table contents (~{~a~^, ~})"
-                                              column-labels)))
+                 (column-labels (mapcar #'car pairs))
+                 (deleted-labels (mapcar #'car deleted-pairs)))
+            (create-delectus-file outpath)
             (with-open-database (db outpath)
               (with-transaction db
-                ;; table: delectus - identifies format version
-                (execute-non-query db "create table delectus (format_version integer)")
-                (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
-                ;; table: contents - stores document data
-                (execute-non-query db create-contents-sql)
-                ;; table: notes - stores user-defined notes about the store document
-                (execute-non-query db "create table notes (timestamp, subject, author, note)")
-                ;; table: column_order - stores the user-defined column order
-                (execute-non-query db "create table column_order (column_name string)")
                 (dolist (lbl column-labels)
+                  (execute-non-query db (format nil "ALTER TABLE \"contents\" ADD COLUMN ~S" lbl))
                   (execute-non-query db "insert into column_order (column_name) values (?)" lbl))
-                ;; table: deleted_columns - stores labels of columns that are present but marked deleted
-                (execute-non-query db "create table deleted_columns (column_name string)")
                 (dolist (lbl deleted-labels)
                   (execute-non-query db "insert into deleted_columns (column_name) values (?)" lbl))
                 ;; read and insert rows

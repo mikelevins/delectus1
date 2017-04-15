@@ -23,9 +23,6 @@
 
 ;;; create-delectus-file ((path pathname))
 ;;; ---------------------------------------------------------------------
-;;; TODO: figure out how to factor out the common part of the
-;;;       store-creation code so that it's not duplicated between this
-;;;       function and CONVERT-DELECTUS-SEXP-FILE
 (defmethod create-delectus-file ((path pathname))
   (with-open-database (db path)
     (with-transaction db
@@ -137,7 +134,6 @@
 
 ;;; add-column (path label)
 ;;; ---------------------------------------------------------------------
-
 (defmethod add-column ((path pathname)(label string))
   (with-open-database (db path)
     (handler-case (with-open-database (db path)
