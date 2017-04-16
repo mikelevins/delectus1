@@ -24,12 +24,14 @@
   (display "                            # or INVALID if it's not a recognized Delectus format")(newline)
   (display "  lecter --sexp # prints the Delectus data to stdio as s-expressions")(newline))
 
-(define (->sexp path)
+(define (write-sexp path)
   (let* ((data (delectus->lisp path))
          (columns-tail (member 'COLUMNS data))
          (columns (if columns-tail (cadr columns-tail) '()))
          (rows-tail (member 'ROWS data))
          (rows (if rows-tail (cadr rows-tail) '())))
+    (display ":DELECTUS :SEXP")
+    (newline)
     (display ":COLUMNS")
     (newline)
     (display "((")
@@ -38,7 +40,7 @@
     (for-each (lambda (column)
                 (newline)
                 (let ((label (car column))
-                      (deleted? (not (null? (cdr column)))))
+                      (deleted? (cdr column)))
                   (if deleted?
                       (begin (display "(")
                              (write label)
@@ -62,7 +64,7 @@
                 (display ")"))
               rows)))
 
-(define (->csv path)
+(define (write-csv path)
   (delectus->csv path))
 
 (let ((args (cdr (command-line))))
@@ -84,8 +86,8 @@
                                                      (let ((format-name (delectus-format-number->name format-number)))
                                                        (write format-name)
                                                        (newline)))))
-              ((equal? option "--sexp") (->sexp (list-ref args 1)))
-              ((equal? option "--csv") (->csv (list-ref args 1)))
+              ((equal? option "--sexp") (write-sexp (list-ref args 1)))
+              ((equal? option "--csv") (write-csv (list-ref args 1)))
               (else (print-lecter-usage))))))
 
 

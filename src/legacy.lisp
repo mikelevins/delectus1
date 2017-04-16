@@ -42,18 +42,27 @@
                                      :name (pathname-name path)
                                      :type "delectus2"))))
     (with-open-file (in path :direction :input)
-      (let ((column-sentinel nil))
-        ;; remove the :COLUMNS sentinel value
-        (setf column-sentinel (read in))
-        (assert (eql :COLUMNS column-sentinel)() "File format error: Expected :COLUMNS but found ~S"
-          column-sentinel)
-        ;; columns format:
+      (let ((sentinel nil))
+        ;;
+        ;; 1. check the file-format sentinels
+        ;; remove the :DELECTUS sentinel
+        (setf sentinel (read in))
+        (assert (eql :DELECTUS sentinel)() "File format error: Expected :DELECTUS but found ~S" sentinel)
+        ;; remove the :SEXP sentinel
+        (setf sentinel (read in))
+        (assert (eql :SEXP sentinel)() "File format error: Expected :SEXP but found ~S" sentinel)
+        ;; remove the :COLUMNS sentinel
+        (setf sentinel (read in))
+        (assert (eql :COLUMNS sentinel)() "File format error: Expected :COLUMNS but found ~S" sentinel)
+        ;;
+        ;; 2. read columns
+        ;; format:
         ;; (("Label" [:DELETED]) ...)
-        (let ((columns (read in))
-              ;; remove the :ROWS sentinel value
-              (rows-sentinel (read in)))
-          (assert (eql :ROWS rows-sentinel)() "File format error: Expected :ROWS but found ~S"
-            rows-sentinel)
+        (let ((columns (read in)))
+          ;; remove the :ROWS sentinel
+          (setf sentinel (read in))
+          (assert (eql :ROWS sentinel)() "File format error: Expected :ROWS but found ~S" sentinel)
+          ;; 3. Read and convert rows
           (flet ((deleted-column? (col)(eql :deleted (second col))))
             ;; remove the "deleted" label; Delectus always creates that one automatically
             (let* ((column-labels (remove "deleted" (mapcar #'first columns) :test #'equal))
