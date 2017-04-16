@@ -157,3 +157,24 @@
 
 (defmethod add-column ((path string)(label string))
   (add-column (pathname path) label))
+
+;;; ---------------------------------------------------------------------
+;;; db accessors
+;;; ---------------------------------------------------------------------
+
+(defun visible-delectus-columns (document-path)
+  (remove "deleted" (contents-labels document-path)
+          :test #'equal))
+
+
+(defun visible-delectus-rows (document-path)
+  (let* ((column-labels (visible-delectus-columns document-path))
+         (select-sql (format nil "select ~{\"~A\"~^, ~} from contents" column-labels)))
+    (with-open-database (db document-path)
+      (execute-to-list db select-sql))))
+
+
+#|
+(with-open-database (db "/Users/mikel/Desktop/junior-movies.delectus2")
+  (execute-to-list db "select \"Title\",\"Star\" from contents limit 4"))
+|#

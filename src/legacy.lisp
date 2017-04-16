@@ -36,8 +36,7 @@
 ;;; convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
 ;;; ---------------------------------------------------------------------
 (defmethod convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
-  (let* ((in-basename (pathname-name path))
-         (outpath (or outpath
+  (let* ((outpath (or outpath
                       (make-pathname :directory (pathname-directory path)
                                      :name (pathname-name path)
                                      :type "delectus2"))))

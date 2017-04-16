@@ -23,7 +23,8 @@
                           :components ((:file "package")
                                        (:file "version")
                                        (:file "legacy")
-                                       (:file "engine")))))
+                                       (:file "engine")
+                                       (:file "capi")))))
 
 
 ;;; (asdf:load-system :delectus)
