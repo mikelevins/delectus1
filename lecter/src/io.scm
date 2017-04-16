@@ -209,8 +209,10 @@
          (cols (vector->list (column-sequence:columns colseq)))
          (items (map (lambda (col)
                        (let ((label (column:label col))
-                             (deleted (if (column:deleted? col) 'T 'NIL)))
-                         (list 'LABEL label 'DELETED deleted)))
+                             (deleted (column:deleted? col)))
+                         (if deleted
+                             (list label 'DELETED)
+                             (list label))))
                      cols)))
     items))
 
@@ -218,16 +220,9 @@
   (map (lambda (row)
          (let* ((deleted? (if (row:deleted? row) 'T 'NIL))
                 (entries (vector->list (row:entries row)))
-                (items (map (lambda (entry)
-                              (let ((val (entry:value entry))
-                                    (numval (%entry-number-value entry)))
-                                (list 'VALUE (if val
-                                                 (if (true? val) 'T val)
-                                                 'NIL)
-                                      'NUMBER-VALUE (or numval 'NIL))))
+                (items (map (lambda (entry)(entry:value entry))
                             entries)))
-           (list 'DELETED deleted?
-                 'ENTRIES items)))
+           (cons deleted? items)))
        (vector->list (table:rows tbl))))
 
 (define (table->lisp tbl)
@@ -264,8 +259,8 @@
                    (data (u8vector->object raw)))
               (delectus-format data))))
 
-;;; (define $inpath "/Users/mikel/Workshop/src/delectus/delectus_convert/testdata/Movies.delectus")
-;;; (cadr (delectus->lisp $inpath))
+;;; (define $inpath "/Users/mikel/Workshop/src/delectus/lecter/test-data/junior-movies.delectus")
+;;; (define $data (delectus->lisp $inpath))
 
 (define (file-readable? src-path)
   (and (> (string-length src-path) 0)
