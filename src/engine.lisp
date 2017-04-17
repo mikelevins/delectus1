@@ -132,6 +132,23 @@
 (defmethod column-order ((path string))
   (column-order (pathname path)))
 
+;;; (column-order "/Users/mikel/Desktop/junior-movies.delectus2")
+
+;;; deleted-columns ((path pathname))
+;;; ---------------------------------------------------------------------
+;;; returns the labels of columnsmarked deleted
+(defmethod deleted-columns ((path pathname))
+  (with-open-database (db path)
+    ;; query returns matching rows as a list of lists
+    (let ((rows (execute-to-list db "select column_name from deleted_columns")))
+      ;; return the single result from each row
+      (mapcar #'car rows))))
+
+(defmethod deleted-columns ((path string))
+  (deleted-columns (pathname path)))
+
+;;; (deleted-columns "/Users/mikel/Desktop/junior-movies.delectus2")
+
 ;;; add-column (path label)
 ;;; ---------------------------------------------------------------------
 (defmethod add-column ((path pathname)(label string))
@@ -166,15 +183,37 @@
   (remove "deleted" (contents-labels document-path)
           :test #'equal))
 
+;;; visible-delectus-columns ((path pathname))
+;;; ---------------------------------------------------------------------
+;;; returns the columns that are not deleted, excluding the "deleted" column
+(defun visible-delectus-columns (document-path)
+  (let ((deleta (cons "deleted" (deleted-columns document-path)))
+        (cols (column-order document-path)))
+    (loop for del in deleta do (setf cols (remove del cols :test #'string=)))
+    cols))
+
+;;; (visible-delectus-columns "/Users/mikel/Desktop/Movies.delectus2")
+;;; (visible-delectus-columns "/Users/mikel/Desktop/junior-movies.delectus2")
 
 (defun visible-delectus-rows (document-path)
   (let* ((column-labels (visible-delectus-columns document-path))
-         (select-sql (format nil "select ~{\"~A\"~^, ~} from contents" column-labels)))
+         (select-sql (format nil "select ~{\"~A\"~^, ~} from contents where deleted = 0" column-labels)))
     (with-open-database (db document-path)
       (execute-to-list db select-sql))))
 
+(defun count-all-rows (document-path)
+  (with-open-database (db document-path)
+    (first (first (execute-to-list db "select Count(*) from contents")))))
 
-#|
-(with-open-database (db "/Users/mikel/Desktop/junior-movies.delectus2")
-  (execute-to-list db "select \"Title\",\"Star\" from contents limit 4"))
-|#
+;;; (count-all-rows "/Users/mikel/Desktop/zipcode_20k.delectus2")
+;;; (count-all-rows "/Users/mikel/Desktop/Movies.delectus2")
+;;; (count-all-rows "/Users/mikel/Desktop/junior-movies.delectus2")
+
+;;; filters out deleted rows
+(defun count-visible-rows (document-path)
+  (with-open-database (db document-path)
+    (first (first (execute-to-list db "select Count(*) from contents where deleted = 0")))))
+
+;;; (count-visible-rows "/Users/mikel/Desktop/zipcode_20k.delectus2")
+;;; (count-visible-rows "/Users/mikel/Desktop/Movies.delectus2")
+;;; (count-visible-rows "/Users/mikel/Desktop/junior-movies.delectus2")

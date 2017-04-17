@@ -21,11 +21,12 @@
                   :header-args '(:selection-callback :sort)
                   :sort-descriptions (compute-column-sort-descriptions interface)
                   :columns (compute-column-descriptions interface)
-                  :items (visible-delectus-rows (document-path interface))))
+                  :items (visible-delectus-rows (document-path interface)))
+   (count-pane title-pane :reader count-pane :text (format nil "~A items" (length (visible-delectus-rows (document-path interface))))))
 
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (main-layout column-layout '(contents-pane)
+   (main-layout column-layout '(contents-pane count-pane)
                 :reader main-layout :border 4))
 
   
@@ -54,8 +55,6 @@
                                                  :sort 'string-lessp
                                                  :reverse-sort 'string-greaterp))))
 
-;;; (setf $doc (contain (make-instance 'delectus-ui)))
+;;; (time (setf $doc (contain (make-instance 'delectus-ui :document-path "/Users/mikel/Desktop/Movies.delectus2"))))
 ;;; (time (setf $doc (contain (make-instance 'delectus-ui :document-path "/Users/mikel/Desktop/junior-movies.delectus2"))))
-;;; (visible-delectus-columns "/Users/mikel/Desktop/junior-movies.delectus2")
-
 ;;; (time (setf $doc (contain (make-instance 'delectus-ui :document-path "/Users/mikel/Desktop/zipcode_20k.delectus2"))))
