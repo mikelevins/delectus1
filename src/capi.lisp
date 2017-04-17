@@ -10,29 +10,6 @@
 
 (in-package :delectus)
 
-;;; TODO: this interim implementation only works with the
-;;;       junior's movie files; have to fogire out how
-;;;       to construct sort descriptions for arbitrary
-;;;       databases
-(defparameter *sort-descriptions*
-  (list
-   (capi:make-sorting-description :type "Title"
-                                  :key 'first
-                                  :sort 'string-lessp
-                                  :reverse-sort 'string-greaterp)
-   (capi:make-sorting-description :type "Star"
-                                  :key 'second
-                                  :sort 'string-lessp
-                                  :reverse-sort 'string-greaterp)
-   (capi:make-sorting-description :type "Costar"
-                                  :key 'third
-                                  :sort 'string-lessp
-                                  :reverse-sort 'string-greaterp)
-   (capi:make-sorting-description :type "Subject"
-                                  :key 'fourth
-                                  :sort 'string-lessp
-                                  :reverse-sort 'string-greaterp)))
-
 (define-interface delectus-ui ()
   ;; -- slots ---------------------------------------------
   ((document-path :accessor document-path :initform nil :initarg :document-path))
@@ -42,7 +19,7 @@
    (contents-pane multi-column-list-panel :reader contents-pane
                   :alternating-background t
                   :header-args '(:selection-callback :sort)
-                  :sort-descriptions *sort-descriptions*
+                  :sort-descriptions (compute-column-sort-descriptions interface)
                   :columns (compute-column-descriptions interface)
                   :items (visible-delectus-rows (document-path interface))))
 
@@ -65,6 +42,17 @@
   (let* ((column-labels (visible-delectus-columns (document-path ui))))
     (mapcar (lambda (lbl) `(:title ,lbl :default-width 96))
             column-labels)))
+
+(defun element-getter (n)
+  #'(lambda (it)(elt it n)))
+
+(defmethod compute-column-sort-descriptions ((ui delectus-ui))
+  (let* ((column-labels (visible-delectus-columns (document-path ui))))
+    (loop for i from 0 below (length column-labels)
+          collect (capi:make-sorting-description :type (elt column-labels i)
+                                                 :key (element-getter i)
+                                                 :sort 'string-lessp
+                                                 :reverse-sort 'string-greaterp))))
 
 ;;; (setf $doc (contain (make-instance 'delectus-ui)))
 ;;; (time (setf $doc (contain (make-instance 'delectus-ui :document-path "/Users/mikel/Desktop/junior-movies.delectus2"))))
