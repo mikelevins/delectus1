@@ -57,3 +57,5 @@
 ;;; (setf $doc (contain (make-instance 'delectus-ui)))
 ;;; (time (setf $doc (contain (make-instance 'delectus-ui :document-path "/Users/mikel/Desktop/junior-movies.delectus2"))))
 ;;; (visible-delectus-columns "/Users/mikel/Desktop/junior-movies.delectus2")
+
+;;; (time (setf $doc (contain (make-instance 'delectus-ui :document-path "/Users/mikel/Desktop/zipcode_20k.delectus2"))))

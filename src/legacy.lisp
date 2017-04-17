@@ -91,3 +91,34 @@
 
 ;;; (convert-delectus-sexp-file "/Users/mikel/Desktop/junior-movies.sexp")
 ;;; (convert-delectus-sexp-file "/Users/mikel/Desktop/Movies.sexp")
+
+;;; convert-delectus-csv-file ((path pathname) &optional (outpath nil))
+;;; ---------------------------------------------------------------------
+;;; TODO: decide how to handle edge cases in case we want to import arbitrary CSV:
+;;;  1. what if the file has a "deleted" column?
+;;;  2. how do we know whether to treat the first row as column labels?
+(defmethod convert-delectus-csv-file ((path pathname) &optional (outpath nil))
+  (let* ((outpath (or outpath
+                      (make-pathname :directory (pathname-directory path)
+                                     :name (pathname-name path)
+                                     :type "delectus2"))))
+    (with-open-file (in path :direction :input)
+      (with-rfc4180-csv-syntax ()
+        (let ((column-labels (read-csv-line in)))
+          (create-delectus-file outpath)
+          (with-open-database (db outpath)
+            (with-transaction db
+              (dolist (lbl column-labels)
+                (execute-non-query db (format nil "ALTER TABLE \"contents\" ADD COLUMN ~S" lbl))
+                (execute-non-query db "insert into column_order (column_name) values (?)" lbl))
+              ;; read and insert rows
+              (loop for row = (read-csv-line in) then (read-csv-line in)
+                    while row
+                    do (let* ((fields (cons 0 row)) ; add False for the "deleted" column
+                              (insert-sql (format nil "insert into contents values (~{~s~^, ~})" fields)))
+                         (execute-non-query db insert-sql))))))))))
+
+(defmethod convert-delectus-csv-file ((path string) &optional (outpath nil))
+  (convert-delectus-csv-file (pathname path) outpath))
+
+;;; (time (convert-delectus-csv-file "/Users/mikel/Workshop/src/delectus/lecter/test-data/zipcode_20k.csv"))
