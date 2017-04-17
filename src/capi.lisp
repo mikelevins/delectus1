@@ -53,7 +53,8 @@
 
   
   ;; -- defaults ---------------------------------------------
-  (:default-initargs :layout 'main-layout))
+  (:default-initargs :layout 'main-layout
+   :width 800 :height 600))
 
 (defmethod initialize-instance :after ((ui delectus-ui) &rest initargs &key &allow-other-keys)
   (assert (document-path ui)() "You must supply the pathname of a Delectus 2.x document to create a Delectus window")
