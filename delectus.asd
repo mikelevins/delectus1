@@ -26,6 +26,7 @@
                                        (:file "engine")
                                        (:file "store")
                                        (:file "document")
+                                       (:file "command")
                                        #+capi (:file "view-capi")
                                        ))))
 
