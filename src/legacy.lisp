@@ -77,12 +77,13 @@
                   ;; read and insert rows
                   (loop for row = (read in nil nil) then (read in nil nil)
                         while row
-                        do (let* ((fields (mapcar (lambda (field)
+                        do (let* ((lbls (cons "deleted" column-labels))
+                                  (fields (mapcar (lambda (field)
                                                     (cond ((equal T field) "1")
                                                           ((equal NIL field) "0")
                                                           (t field)))
                                                   row))
-                                  (insert-sql (format nil "insert into contents values (~{~s~^, ~})" fields)))
+                                  (insert-sql (format nil "insert into contents (~{~s~^, ~}) values (~{~s~^, ~})" lbls fields)))
                              (execute-non-query db insert-sql))))))))))
     outpath))
 
@@ -95,7 +96,7 @@
 ;;; convert-delectus-csv-file ((path pathname) &optional (outpath nil))
 ;;; ---------------------------------------------------------------------
 ;;; TODO: decide how to handle edge cases in case we want to import arbitrary CSV:
-;;;  1. what if the file has a "deleted" column?
+;;;  1. what if the file already has a "deleted" column?
 ;;;  2. how do we know whether to treat the first row as column labels?
 (defmethod convert-delectus-csv-file ((path pathname) &optional (outpath nil))
   (let* ((outpath (or outpath
@@ -114,8 +115,9 @@
               ;; read and insert rows
               (loop for row = (read-csv-line in) then (read-csv-line in)
                     while row
-                    do (let* ((fields (cons 0 row)) ; add False for the "deleted" column
-                              (insert-sql (format nil "insert into contents values (~{~s~^, ~})" fields)))
+                    do (let* ((lbls (cons "deleted" column-labels))
+                              (fields (cons 0 row)) ; add False for the "deleted" column
+                              (insert-sql (format nil "insert into contents (~{~s~^, ~}) values (~{~s~^, ~})" lbls fields)))
                          (execute-non-query db insert-sql))))))))))
 
 (defmethod convert-delectus-csv-file ((path string) &optional (outpath nil))

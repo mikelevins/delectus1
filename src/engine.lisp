@@ -19,7 +19,7 @@
       (execute-non-query db "create table delectus (format_version integer)")
       (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
       ;; table: contents - stores document data
-      (execute-non-query db "create table contents (deleted boolean)")
+      (execute-non-query db "create table contents (rowid integer primary key, deleted boolean)")
       ;; table: notes - stores user-defined notes about the store document
       (execute-non-query db "create table notes (timestamp, subject, author, note)")
       ;; table: column_order - stores the user-defined column order
