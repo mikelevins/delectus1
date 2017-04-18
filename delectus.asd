@@ -24,7 +24,10 @@
                                        (:file "version")
                                        (:file "legacy")
                                        (:file "engine")
-                                       (:file "capi")))))
+                                       (:file "store")
+                                       (:file "document")
+                                       #+capi (:file "view-capi")
+                                       ))))
 
 
 ;;; (asdf:load-system :delectus)
