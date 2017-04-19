@@ -108,6 +108,12 @@
 ;;; (define $doc (read-csv-file $in-path))
 ;;; (api:write-delectus-csv $doc $out-path)
 
+(define (value->csv val)
+  (cond ((equal? #t val) "True")
+        ((equal? #f val) "")
+        ((equal? '() val) "")
+        (else val)))
+
 (define (write-columns-csv tbl out)
   (let* ((cols (table:column-labels tbl)))
     (write (car cols) out)
@@ -130,26 +136,26 @@
   (let ((eltcount (vector-length (row:entries r))))
     (if (> eltcount 0)
         (begin
-          (write (or (row:element r 0) "") out)
+          (write (value->csv (row:element r 0)) out)
           (if (> eltcount 1)
               (let loop ((i 1))
                 (if (< i eltcount)
                     (begin
                       (write-char #\, out)
-                      (write (or (row:element r i) "") out)
+                      (write (value->csv (row:element r i)) out)
                       (loop (+ i 1))))))))))
 
 (define (print-row-csv r)
   (let ((eltcount (vector-length (row:entries r))))
     (if (> eltcount 0)
         (begin
-          (write (or (row:element r 0) ""))
+          (write (value->csv (row:element r 0)))
           (if (> eltcount 1)
               (let loop ((i 1))
                 (if (< i eltcount)
                     (begin
                       (write-char #\,)
-                      (write (or (row:element r i) ""))
+                      (write (value->csv (row:element r i)))
                       (loop (+ i 1))))))))))
 
 (define (write-table-csv tbl out)
@@ -216,6 +222,12 @@
 ;;; delectus->lisp
 ;;; ======================================================================
 
+(define (value->lisp val)
+  (cond ((equal? #t val) "True")
+        ((equal? #f val) "")
+        ((equal? '() val) "")
+        (else val)))
+
 (define (columns->lisp tbl)
   (let* ((colseq (table:column-sequence tbl))
          (cols (vector->list (column-sequence:columns colseq))))
@@ -225,7 +237,7 @@
 (define (rows->lisp tbl)
   (map (lambda (row)
          (let* ((entries (vector->list (row:entries row))))
-           (map (lambda (entry)(entry:value entry))
+           (map (lambda (entry)(value->lisp (entry:value entry)))
                 entries)))
        (vector->list (table:rows tbl))))
 

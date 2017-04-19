@@ -31,8 +31,9 @@
 ;;; to Delectus 2 data suitable for storage in a SQLite file.
 
 (defmethod sexp-val->delectus-val (val) val)
-(defmethod sexp-val->delectus-val ((val (eql NIL))) 0)
-(defmethod sexp-val->delectus-val ((val (eql T))) 1)
+
+(defmethod sexp-val->delectus-val ((val symbol)) 
+  (symbol-name val))
 
 ;;; convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
 ;;; ---------------------------------------------------------------------
