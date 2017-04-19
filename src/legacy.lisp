@@ -60,7 +60,7 @@
           (setf sentinel (read in))
           (assert (eql :ROWS sentinel)() "File format error: Expected :ROWS but found ~S" sentinel)
           ;; 3. Read and convert rows
-          (let* ((column-labels (mapcar #'first columns)))
+          (let* ((column-labels columns))
             (create-delectus-file outpath column-labels)
             (with-open-database (db outpath)
               (with-transaction db
@@ -96,8 +96,8 @@
               ;; read and insert rows
               (loop for row = (read-csv-line in) then (read-csv-line in)
                     while row
-                    do (let* ((lbls (cons "deleted" column-labels)) ; add the "deleted" column
-                              (fields (cons 0 row)) ; add a false for the "deleted" column
+                    do (let* ((lbls column-labels) ; add the "deleted" column
+                              (fields row) ; add a false for the "deleted" column
                               (insert-sql (format nil "insert into contents (~{~s~^, ~}) values (~{~s~^, ~})" lbls fields)))
                          (execute-non-query db insert-sql))))))))))
 

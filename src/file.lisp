@@ -26,9 +26,9 @@
         ;;        columns are (rowid deleted [user-supplied column labels])
         (if column-labels
             (execute-non-query db (format nil
-                                          "create table contents (rowid integer primary key, deleted boolean, ~{~s~^, ~})"
+                                          "create table contents (rowid integer primary key, deleted boolean not null default 0, ~{~s~^, ~})"
                                           column-labels))
-          (execute-non-query db "create table contents (rowid integer primary key, deleted boolean)"))
+          (execute-non-query db "create table contents (rowid integer primary key, deleted boolean not null default 0)"))
         ;; table: notes - stores user-defined notes about the store document
         (execute-non-query db "create table notes (timestamp, subject, author, note)")
         ;; table: column_order - stores the user-defined column order
