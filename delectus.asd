@@ -22,6 +22,7 @@
     :components ((:module "src" :serial t
                           :components ((:file "package")
                                        (:file "version")
+                                       (:file "utils")
                                        (:file "legacy")
                                        (:file "file")
                                        (:file "store")

@@ -22,3 +22,19 @@
   ((data-path :accessor data-path :initform nil :initarg :data-path)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
+
+(defmethod store-column-labels ((store store))
+  (with-open-database (db (data-path store))
+    (with-transaction db
+      (mapcar #'first (execute-to-list db "select * from column_order")))))
+
+(defmethod store-deleted-labels ((store store))
+  (with-open-database (db (data-path store))
+    (with-transaction db
+      (execute-to-list db "select * from deleted_columns"))))
+
+(defmethod store-nondeleted-rows ((store store))
+  (with-open-database (db (data-path store))
+    (with-transaction db
+      (execute-to-list db "select * from contents where deleted = 0"))))
+

@@ -20,3 +20,14 @@
    (undo-stack :accessor undo-stack :initform nil)
    (redo-stack :accessor redo-stack :initform nil)))
 
+(defmethod visible-column-labels ((document document))
+  (let* ((all-labels (store-column-labels (store document)))
+         (deleted-labels (store-deleted-labels (store document))))
+    (list-difference all-labels deleted-labels :test #'equalp)))
+
+(defmethod visible-rows ((document document))
+  (store-nondeleted-rows (store document)))
+
+;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
+;;; (defparameter $doc (make-instance 'document :store $store))
+

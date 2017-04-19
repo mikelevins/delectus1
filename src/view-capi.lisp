@@ -16,16 +16,14 @@
 
 (define-interface delectus-ui ()
   ;; -- slots ---------------------------------------------
-  ((document-path :accessor document-path :initform nil :initarg :document-path))
+  ((document :accessor document :initform nil :initarg :document))
 
   ;; -- panes ---------------------------------------------
   (:panes
    (contents-pane multi-column-list-panel :reader contents-pane
                   :alternating-background t
-                  :columns (compute-column-descriptions interface)
-                  :items `(("Home Sweet Home" "Joe" "blah blah")
-                           ("Another Title" "A. Nother Author" "various gibberish")
-                           ("Duke" "L. Lington" "she doob e")))
+                  :columns (compute-column-descriptions document)
+                  :items (compute-visible-rows document))
    (count-pane title-pane :reader count-pane :text (format nil "some items")))
   
   ;; -- layouts ---------------------------------------------
@@ -38,5 +36,20 @@
   (:default-initargs :layout 'main-layout
    :width 800 :height 600))
 
-(defmethod compute-column-descriptions ((ui delectus-ui))
-  `((:title "Title" :default-width 96)(:title "Byline" :default-width 96)(:title "Credits" :default-width 96)))
+;;; dummy method
+(defmethod compute-column-descriptions ((document null))
+  `((:title "" :default-width 96)))
+
+(defmethod compute-column-descriptions ((document document))
+  (let* ((column-labels (visible-column-labels document)))
+    (mapcar (lambda (lbl) `(:title ,lbl :default-width 96))
+            column-labels)))
+
+
+
+(defmethod compute-visible-rows ((document null)) nil)
+
+(defmethod compute-visible-rows ((document document))
+  (visible-rows document))
+
+
