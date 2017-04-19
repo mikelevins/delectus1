@@ -33,6 +33,10 @@
 ;;; The legacy code reads a file in this format and converts the data
 ;;; to Delectus 2 data suitable for storage in a SQLite file.
 
+(defmethod sexp-val->delectus-val (val) val)
+(defmethod sexp-val->delectus-val ((val (eql NIL))) 0)
+(defmethod sexp-val->delectus-val ((val (eql T))) 1)
+
 ;;; convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
 ;;; ---------------------------------------------------------------------
 (defmethod convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
@@ -42,7 +46,6 @@
                                      :type "delectus2"))))
     (with-open-file (in path :direction :input)
       (let ((sentinel nil))
-        ;;
         ;; 1. check the file-format sentinels
         ;; remove the :DELECTUS sentinel
         (setf sentinel (read in))
@@ -55,36 +58,24 @@
         (assert (eql :COLUMNS sentinel)() "File format error: Expected :COLUMNS but found ~S" sentinel)
         ;;
         ;; 2. read columns
-        ;; format:
-        ;; (("Label" [:DELETED]) ...)
         (let ((columns (read in)))
           ;; remove the :ROWS sentinel
           (setf sentinel (read in))
           (assert (eql :ROWS sentinel)() "File format error: Expected :ROWS but found ~S" sentinel)
           ;; 3. Read and convert rows
-          (flet ((deleted-column? (col)(eql :deleted (second col))))
-            ;; remove the "deleted" label; Delectus always creates that one automatically
-            (let* ((column-labels (remove "deleted" (mapcar #'first columns) :test #'equal))
-                   (deleted-labels (mapcar #'first (remove-if-not #'deleted-column? columns))))
-              (create-delectus-file outpath)
-              (with-open-database (db outpath)
-                (with-transaction db
-                  (dolist (lbl column-labels)
-                    (execute-non-query db (format nil "ALTER TABLE \"contents\" ADD COLUMN ~S" lbl))
-                    (execute-non-query db "insert into column_order (column_name) values (?)" lbl))
-                  (dolist (lbl deleted-labels)
-                    (execute-non-query db "insert into deleted_columns (column_name) values (?)" lbl))
-                  ;; read and insert rows
-                  (loop for row = (read in nil nil) then (read in nil nil)
-                        while row
-                        do (let* ((lbls (cons "deleted" column-labels))
-                                  (fields (mapcar (lambda (field)
-                                                    (cond ((equal T field) "1")
-                                                          ((equal NIL field) "0")
-                                                          (t field)))
-                                                  row))
-                                  (insert-sql (format nil "insert into contents (~{~s~^, ~}) values (~{~s~^, ~})" lbls fields)))
-                             (execute-non-query db insert-sql))))))))))
+          (let* ((column-labels (mapcar #'first columns))
+                 ;; collect labels that are marked :DELETED
+                 (deleted-labels (mapcar #'first (remove-if-not (lambda (col)(equal :DELETED (second col)))
+                                                                columns))))
+            (create-delectus-file outpath column-labels deleted-labels)
+            (with-open-database (db outpath)
+              (with-transaction db
+                ;; read and insert rows
+                (loop for row = (read in nil nil nil) then (read in nil nil nil)
+                      while row
+                      do (let* ((fields (mapcar #'sexp-val->delectus-val row))
+                                (insert-sql (format nil "insert into contents (~{~s~^, ~}) values (~{~s~^, ~})" column-labels fields)))
+                           (execute-non-query db insert-sql)))))))))
     outpath))
 
 (defmethod convert-delectus-sexp-file ((path string) &optional (outpath nil))
@@ -96,8 +87,7 @@
 ;;; convert-delectus-csv-file ((path pathname) &optional (outpath nil))
 ;;; ---------------------------------------------------------------------
 ;;; TODO: decide how to handle edge cases in case we want to import arbitrary CSV:
-;;;  1. what if the file already has a "deleted" column?
-;;;  2. how do we know whether to treat the first row as column labels?
+;;;  1. how do we know whether to treat the first row as column labels?
 (defmethod convert-delectus-csv-file ((path pathname) &optional (outpath nil))
   (let* ((outpath (or outpath
                       (make-pathname :directory (pathname-directory path)
@@ -106,21 +96,18 @@
     (with-open-file (in path :direction :input)
       (with-rfc4180-csv-syntax ()
         (let ((column-labels (read-csv-line in)))
-          (create-delectus-file outpath)
+          (create-delectus-file outpath column-labels)
           (with-open-database (db outpath)
             (with-transaction db
-              (dolist (lbl column-labels)
-                (execute-non-query db (format nil "ALTER TABLE \"contents\" ADD COLUMN ~S" lbl))
-                (execute-non-query db "insert into column_order (column_name) values (?)" lbl))
               ;; read and insert rows
               (loop for row = (read-csv-line in) then (read-csv-line in)
                     while row
-                    do (let* ((lbls (cons "deleted" column-labels))
-                              (fields (cons 0 row)) ; add False for the "deleted" column
+                    do (let* ((lbls (cons "deleted" column-labels)) ; add the "deleted" column
+                              (fields (cons 0 row)) ; add a false for the "deleted" column
                               (insert-sql (format nil "insert into contents (~{~s~^, ~}) values (~{~s~^, ~})" lbls fields)))
                          (execute-non-query db insert-sql))))))))))
 
 (defmethod convert-delectus-csv-file ((path string) &optional (outpath nil))
   (convert-delectus-csv-file (pathname path) outpath))
 
-;;; (time (convert-delectus-csv-file "/Users/mikel/Workshop/src/delectus/lecter/test-data/zipcode_20k.csv"))
+;;; (time (convert-delectus-csv-file "/Users/mikel/Workshop/src/delectus/lecter/test-data/zipcode_20k.csv" "/Users/mikel/Desktop/zipcode_20k.delectus2"))
