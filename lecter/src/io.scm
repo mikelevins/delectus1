@@ -79,6 +79,18 @@
 ;;; (define $ziptest (read-delectus-file $ziptest-path))
 
 ;;; ======================================================================
+;;; compaction
+;;; ======================================================================
+;;; creates a copy of a delectus table without deleted data, for
+;;; export formats
+
+(define (compacted-delectus-table tbl)
+  (let* ((old-data (object->u8vector tbl))
+         (new-table (u8vector->object old-data)))
+    (table:compact! new-table)
+    new-table))
+
+;;; ======================================================================
 ;;; CSV I/O
 ;;; ======================================================================
 
@@ -171,8 +183,8 @@
          (data (u8vector->object raw))
          (converter (converter-for-format data))
          (tbl (if (delectus-table? data)
-                  data
-                  (data->table data))))
+                  (compacted-delectus-table data)
+                  (compacted-delectus-table (data->table data)))))
     (if tbl
         (print-table-csv tbl)
         (begin (format "~%Not a Delectus 1.x file: ~s" src-path)
@@ -206,8 +218,7 @@
 
 (define (columns->lisp tbl)
   (let* ((colseq (table:column-sequence tbl))
-         (cols (filter (lambda (col)(not (column:deleted? col)))
-                       (vector->list (column-sequence:columns colseq)))))
+         (cols (vector->list (column-sequence:columns colseq))))
     (map (lambda (col)(column:label col))
          cols)))
 
@@ -216,8 +227,7 @@
          (let* ((entries (vector->list (row:entries row))))
            (map (lambda (entry)(entry:value entry))
                 entries)))
-       (filter (lambda (row)(not (row:deleted? row)))
-               (vector->list (table:rows tbl)))))
+       (vector->list (table:rows tbl))))
 
 (define (table->lisp tbl)
   (let* ((cols (columns->lisp tbl))
@@ -230,8 +240,8 @@
          (data (u8vector->object raw))
          (converter (converter-for-format data))
          (tbl (if (delectus-table? data)
-                  data
-                  (data->table data))))
+                  (compacted-delectus-table data)
+                  (compacted-delectus-table (data->table data)))))
     (if tbl
         (table->lisp tbl)
         (begin (format "~%Not a Delectus 1.x file: ~s" src-path)

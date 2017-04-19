@@ -14,21 +14,18 @@
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
 ;;; lecter converts Delectus 1.x files to text files containing
-;;; Delectus data in s-expression format. We then read these sexp files
-;;; and convert the data to Delectus 2.0.
+;;; (non-deleted) Delectus data in s-expression format. We then read
+;;; these sexp files and convert the data to Delectus 2.0.
 ;;;
 ;;; The data layout in sexp files is like this:
 ;;;
 ;;; :COLUMNS (
-;;; ("Column Label" [DELETED])
+;;; "Column Label"
 ;;; ... repeated for the number of columns
 ;;; )
 ;;; :ROWS
-;;; ([T|NIL] value1 value2 ...)
+;;; (value1 value2 ...)
 ;;; ... 
-;;;
-;;; The symbol DELETED appears in a column's cons if the column is marked deleted
-;;; The first element of a row is T is the row is marked deleted, NIL otherwise
 ;;;
 ;;; The legacy code reads a file in this format and converts the data
 ;;; to Delectus 2 data suitable for storage in a SQLite file.
@@ -63,11 +60,8 @@
           (setf sentinel (read in))
           (assert (eql :ROWS sentinel)() "File format error: Expected :ROWS but found ~S" sentinel)
           ;; 3. Read and convert rows
-          (let* ((column-labels (mapcar #'first columns))
-                 ;; collect labels that are marked :DELETED
-                 (deleted-labels (mapcar #'first (remove-if-not (lambda (col)(equal :DELETED (second col)))
-                                                                columns))))
-            (create-delectus-file outpath column-labels deleted-labels)
+          (let* ((column-labels (mapcar #'first columns)))
+            (create-delectus-file outpath column-labels)
             (with-open-database (db outpath)
               (with-transaction db
                 ;; read and insert rows
