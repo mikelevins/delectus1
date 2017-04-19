@@ -16,6 +16,7 @@
 
 (defclass document ()
   ((store :accessor store :initform nil :initarg :store)
+   (command-queue :accessor command-queue :initform nil)
    (undo-stack :accessor undo-stack :initform nil)
    (redo-stack :accessor redo-stack :initform nil)))
 

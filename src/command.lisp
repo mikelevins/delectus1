@@ -17,3 +17,4 @@
 ;;; interaction with the model. commands are posted to the document,
 ;;; which then executes them against the model.
 
+(defclass command ()())
