@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          engine.lisp
+;;;; Name:          file.lisp
 ;;;; Project:       Delectus 2
-;;;; Purpose:       the Delectus 2 storage engine
+;;;; Purpose:       managing Delectus store files
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2017 by mikel evins
 ;;;;
