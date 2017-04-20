@@ -11,15 +11,6 @@
 (in-package :delectus)
 
 ;;; ---------------------------------------------------------------------
-;;; system-column-labels
-;;; ---------------------------------------------------------------------
-;;; columns that every delectus contents table possesses, regardless
-;;; of what columns a user supplies.
-
-(defparameter +system-column-labels+
-  '("rowid" "deleted"))
-
-;;; ---------------------------------------------------------------------
 ;;; store files
 ;;; ---------------------------------------------------------------------
 ;;; a delectus store file is a SQLite3 file with the following tables:
@@ -80,7 +71,6 @@
         (execute-non-query db "create table notes (timestamp, subject, author, note)")
         ;; table: column_order - stores the user-defined column order
         (execute-non-query db "create table column_order (column_name string)")
-        (execute-non-query db "insert into column_order (column_name) values (?)" "deleted")
         (dolist (lbl column-labels)
           (execute-non-query db "insert into column_order (column_name) values (?)" lbl))
         ;; table: deleted_columns - stores labels of columns that are present but marked deleted

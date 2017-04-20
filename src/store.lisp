@@ -10,6 +10,16 @@
 
 (in-package :delectus)
 
+
+;;; ---------------------------------------------------------------------
+;;; system-column-labels
+;;; ---------------------------------------------------------------------
+;;; columns that every delectus contents table possesses, regardless
+;;; of what columns a user supplies.
+
+(defparameter +system-column-labels+
+  '("rowid" "deleted"))
+
 ;;; ---------------------------------------------------------------------
 ;;; store
 ;;; ---------------------------------------------------------------------
@@ -26,15 +36,21 @@
 (defmethod store-column-labels ((store store))
   (with-open-database (db (data-path store))
     (with-transaction db
-      (mapcar #'first (execute-to-list db "select * from column_order")))))
+      (append +system-column-labels+
+              (mapcar #'first (execute-to-list db "select * from column_order"))))))
 
 (defmethod store-deleted-labels ((store store))
   (with-open-database (db (data-path store))
     (with-transaction db
       (execute-to-list db "select * from deleted_columns"))))
 
-(defmethod store-nondeleted-rows ((store store))
+(defmethod store-nondeleted-rows ((store store) &optional (column-labels nil))
   (with-open-database (db (data-path store))
     (with-transaction db
-      (execute-to-list db "select * from contents where deleted = 0"))))
+      (if column-labels
+          (execute-to-list db (format nil "select ~{~s~^, ~} from contents where deleted = 0"
+                                      column-labels))
+        (execute-to-list db "select * from contents where deleted = 0")))))
+
+
 

@@ -22,11 +22,12 @@
 
 (defmethod visible-column-labels ((document document))
   (let* ((all-labels (store-column-labels (store document)))
-         (deleted-labels (store-deleted-labels (store document))))
-    (list-difference all-labels deleted-labels :test #'equalp)))
+         (hidden-labels (append +system-column-labels+
+                                (store-deleted-labels (store document)))))
+    (list-difference all-labels hidden-labels :test #'equalp)))
 
-(defmethod visible-rows ((document document))
-  (store-nondeleted-rows (store document)))
+(defmethod visible-rows ((document document) &optional (column-labels nil))
+  (store-nondeleted-rows (store document) column-labels))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
