@@ -50,6 +50,7 @@
 (defmethod compute-visible-rows ((document null)) nil)
 
 (defmethod compute-visible-rows ((document document))
-  (visible-rows document))
+  (visible-rows document
+                (visible-column-labels document)))
 
 
