@@ -10,8 +10,55 @@
 
 (in-package :delectus)
 
+;;; ---------------------------------------------------------------------
+;;; system-column-labels
+;;; ---------------------------------------------------------------------
+;;; columns that every delectus contents table possesses, regardless
+;;; of what columns a user supplies.
+
+(defparameter +system-column-labels+
+  '("rowid" "deleted"))
+
+;;; ---------------------------------------------------------------------
+;;; store files
+;;; ---------------------------------------------------------------------
+;;; a delectus store file is a SQLite3 file with the following tables:
+;;;
+;;; - delectus (format_version) 
+;;;   the format_version column contains the version number of the
+;;;   file format. The version format is semantic versioning i.j.k...
+;;;   with as many numbers i,j,k as needed in subsequent rows.
+;;;
+;;; - contents (rowid, deleted, label*)
+;;;   where rowid is a monotonic unique index, deleted is a boolean
+;;;   row marker, and label* is user-supplied columns
+;;;
+;;; - notes (timestamp, subject, author, note)
+;;;   contains arbitrary user-supplied notes marked with a
+;;;   timestamp and an optional subject and author
+;;; 
+;;; - column_order (column_name string)
+;;;   lists the user-defined column labels in user-defined order.  by
+;;;   default the columns appear in order of creation, but users can
+;;;   reorder them. views always fetch columns in the order recorded
+;;;   in column_order.
+;;;
+;;; - deleted_columns (column_name string)
+;;;   the labels of columns marked deleted, one per row. empty by
+;;;   default. When a user marks a column deleted it is added to
+;;;   this table. If a column is undeleted or permanently deleted
+;;;   (that is, dropped from the table) its label is removed from
+;;;   deleted_columns
+;;;
+;;;   the system columns and the deleted columns are together termed
+;;;   *** hidden columns ***. 
+;;;
+;;;   *** visible columns *** are all columns except the hidden
+;;;   columns.
+
 ;;; create-delectus-file ((path pathname))
 ;;; ---------------------------------------------------------------------
+;;; 
 (defmethod create-delectus-file ((path pathname) &optional (column-labels nil)(deleted-labels nil))
   (assert (equalp column-labels (remove-duplicates column-labels :test #'equal))()
     "Duplicate column labels in ~S" column-labels)
