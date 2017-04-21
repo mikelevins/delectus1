@@ -14,7 +14,15 @@
 ;;; view classes
 ;;; ---------------------------------------------------------------------
 
-(define-interface delectus-ui ()
+;;; TODO: change the sort implementation
+;;; currently it uses the built-in CAPI sort feature but that will
+;;; sort only what's actually in the pane.  In order to get the best
+;;; results with dbs that are too large to display all at once I
+;;; should instead have a click in the header re-fetch the contents
+;;; with an ORDER BY clause in the SQL.  That way the results will be
+;;; sorted on the entire column even when only a fraction of the rows
+;;; are displayed.
+(define-interface document-window ()
   ;; -- slots ---------------------------------------------
   ((document :accessor document :initform nil :initarg :document))
 
@@ -57,7 +65,7 @@
 (defun element-getter (n)
   #'(lambda (it)(elt it n)))
 
-(defmethod compute-column-sort-descriptions ((ui delectus-ui))
+(defmethod compute-column-sort-descriptions ((ui document-window))
   (let* ((column-labels (visible-column-labels (document ui))))
     (loop for i from 0 below (length column-labels)
           collect (capi:make-sorting-description :type (elt column-labels i)
