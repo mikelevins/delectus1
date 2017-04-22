@@ -29,6 +29,7 @@
 (define-interface document-window ()
   ;; -- slots ---------------------------------------------
   ((document :accessor document :initform nil :initarg :document)
+   (item-count :accessor item-count :initform 0) ; computed from select results
    (item-count-limit :accessor item-count-limit :initform 256 :initarg :item-count-limit)
    (item-start-index :accessor item-start-index :initform 0 :initarg :item-start-index))
 
@@ -36,12 +37,9 @@
   (:panes
    (contents-pane multi-column-list-panel :reader contents-pane
                   :alternating-background t
-                  :header-args '(:selection-callback :sort)
-                  :sort-descriptions (compute-column-sort-descriptions interface)
                   :columns (compute-column-descriptions document)
                   :items (compute-visible-rows document :count-limit item-count-limit :start-index item-start-index))
-   (count-pane title-pane :reader count-pane 
-               :text (compute-item-count-text interface))
+   (count-pane title-pane :reader count-pane)
    (add-row-button push-button :reader add-row-button :title "Add a row" :text "+")
    (add-column-button push-button :reader add-column-button :title "Add a column" :text "+")
    (filter-input text-input-pane :reader filter-input))
@@ -64,6 +62,12 @@
    :window-styles '(:textured-background)
    :width 800 :height 600))
 
+(defmethod initialize-instance :after ((window document-window) &rest initargs &key &allow-other-keys)
+  (setf (item-count window)
+        (length (collection-items (contents-pane window))))
+  (setf (title-pane-text (count-pane window))
+        (compute-item-count-text window)))
+
 ;;; dummy method
 (defmethod compute-column-descriptions ((document null))
   `((:title "" :default-width 96)))
@@ -73,7 +77,9 @@
     (mapcar (lambda (lbl) `(:title ,lbl :default-width 96))
             column-labels)))
 
-(defmethod compute-visible-rows ((document null) &key (count-limit nil)(start-index 0)) nil)
+(defmethod compute-visible-rows ((document null) &key (count-limit nil)(start-index 0)) 
+  (declare (ignore count-limit start-index))
+  nil)
 
 (defmethod compute-visible-rows ((document document) &key (count-limit nil)(start-index 0))
   (visible-rows document
@@ -84,28 +90,14 @@
 (defun element-getter (n)
   #'(lambda (it)(elt it n)))
 
-(defmethod compute-column-sort-descriptions ((ui document-window))
-  (let* ((column-labels (visible-column-labels (document ui))))
-    (loop for i from 0 below (length column-labels)
-          collect (capi:make-sorting-description :type (elt column-labels i)
-                                                 :key (element-getter i)
-                                                 :sort 'string-lessp
-                                                 :reverse-sort 'string-greaterp))))
-
-
 (defmethod compute-item-count-text ((window document-window))
-  (let* ((start-index (item-start-index window))
-         (store-row-count (store-nondeleted-row-count (store (document window))))
-         ;; TODO: cache row fetches so we can count the results instead of
-         ;; fetching rows to display and separately fetching to count
-         (fetched-row-count (length (compute-visible-rows (document window)
-                                                          :count-limit (item-count-limit window)
-                                                          :start-index (item-start-index window)))))
+  (let ((store-row-count (store-nondeleted-row-count (store (document window)))))
     (format nil "Items ~A to ~A of ~A items"
-            start-index 
-            (1- (+ start-index fetched-row-count))
+            (item-start-index window) 
+            (1- (+ (item-start-index window)
+                   (item-count window)))
             store-row-count)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
-;;; (defparameter $ui (contain (make-instance 'document-window :document $doc :item-start-index 0)))
+;;; (defparameter $ui (contain (make-instance 'document-window :document $doc :item-start-index 17)))
