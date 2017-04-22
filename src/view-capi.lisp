@@ -36,8 +36,8 @@
                   :items (compute-visible-rows document))
    (count-pane title-pane :reader count-pane 
                :text (format nil "~A items" (length (compute-visible-rows (document interface)))))
-   (add-row-button push-button :reader add-row-button :text "+")
-   (add-column-button push-button :reader add-column-button :text "+")
+   (add-row-button push-button :reader add-row-button :title "Add a row" :text "+")
+   (add-column-button push-button :reader add-column-button :title "Add a column" :text "+")
    (filter-input text-input-pane :reader filter-input))
   
   ;; -- layouts ---------------------------------------------
