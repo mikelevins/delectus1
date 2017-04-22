@@ -10,6 +10,10 @@
 
 (in-package :delectus)
 
+;;; Cocoa system icons from Delectus 1:
+;;; add row button: NSListViewTemplate
+;;; add column button: NSColumnViewTemplate
+
 ;;; ---------------------------------------------------------------------
 ;;; view classes
 ;;; ---------------------------------------------------------------------
@@ -24,7 +28,9 @@
 ;;; are displayed.
 (define-interface document-window ()
   ;; -- slots ---------------------------------------------
-  ((document :accessor document :initform nil :initarg :document))
+  ((document :accessor document :initform nil :initarg :document)
+   (item-count-limit :accessor item-count-limit :initform 256 :initarg :item-count-limit)
+   (item-start-index :accessor item-start-index :initform 0 :initarg :item-start-index))
 
   ;; -- panes ---------------------------------------------
   (:panes
@@ -71,7 +77,9 @@
 
 (defmethod compute-visible-rows ((document document))
   (visible-rows document
-                (visible-column-labels document)))
+                :column-labels (visible-column-labels document)
+                :count-limit (item-count-limit document)
+                :start-index (item-start-index document)))
 
 (defun element-getter (n)
   #'(lambda (it)(elt it n)))
@@ -87,7 +95,3 @@
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
-
-;;; Cocoa system icons from Delectus 1:
-;;; add row button: NSListViewTemplate
-;;; add column button: NSColumnViewTemplate

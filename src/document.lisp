@@ -26,8 +26,8 @@
                                 (store-deleted-labels (store document)))))
     (list-difference all-labels hidden-labels :test #'equalp)))
 
-(defmethod visible-rows ((document document) &optional (column-labels nil))
-  (store-nondeleted-rows (store document) column-labels))
+(defmethod visible-rows ((document document) &key (column-labels nil)(count-limit nil)(start-index 0))
+  (store-nondeleted-rows (store document) :column-labels column-labels :count-limit count-limit :start-index start-index))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))

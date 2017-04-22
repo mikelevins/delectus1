@@ -44,13 +44,23 @@
     (with-transaction db
       (execute-to-list db "select * from deleted_columns"))))
 
-(defmethod store-nondeleted-rows ((store store) &optional (column-labels nil))
-  (with-open-database (db (data-path store))
-    (with-transaction db
-      (if column-labels
-          (execute-to-list db (format nil "select ~{~s~^, ~} from contents where deleted = 0"
-                                      column-labels))
-        (execute-to-list db "select * from contents where deleted = 0")))))
+(defmethod store-nondeleted-rows ((store store) &key
+                                  (column-labels nil)
+                                  (count-limit nil)
+                                  (start-index 0))
+  (let* ((selector (if column-labels
+                       (format nil " ~{~s~^, ~} " column-labels)
+                     " * "))
+         (limit-expr (if count-limit
+                         (format nil " limit ~A " count-limit)
+                       ""))
+         (offset-expr (if count-limit
+                          (format nil " offset ~A " start-index)
+                        "")))
+    (with-open-database (db (data-path store))
+      (with-transaction db
+        (execute-to-list db (format nil "select ~A from contents where deleted = 0 ~A ~A"
+                                    selector limit-expr offset-expr))))))
 
 
 
