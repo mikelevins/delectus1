@@ -39,9 +39,9 @@
                   :header-args '(:selection-callback :sort)
                   :sort-descriptions (compute-column-sort-descriptions interface)
                   :columns (compute-column-descriptions document)
-                  :items (compute-visible-rows document))
+                  :items (compute-visible-rows document :count-limit item-count-limit :start-index item-start-index))
    (count-pane title-pane :reader count-pane 
-               :text (format nil "~A items" (length (compute-visible-rows (document interface)))))
+               :text (compute-item-count-text interface))
    (add-row-button push-button :reader add-row-button :title "Add a row" :text "+")
    (add-column-button push-button :reader add-column-button :title "Add a column" :text "+")
    (filter-input text-input-pane :reader filter-input))
@@ -73,13 +73,13 @@
     (mapcar (lambda (lbl) `(:title ,lbl :default-width 96))
             column-labels)))
 
-(defmethod compute-visible-rows ((document null)) nil)
+(defmethod compute-visible-rows ((document null) &key (count-limit nil)(start-index 0)) nil)
 
-(defmethod compute-visible-rows ((document document))
+(defmethod compute-visible-rows ((document document) &key (count-limit nil)(start-index 0))
   (visible-rows document
                 :column-labels (visible-column-labels document)
-                :count-limit (item-count-limit document)
-                :start-index (item-start-index document)))
+                :count-limit count-limit
+                :start-index start-index))
 
 (defun element-getter (n)
   #'(lambda (it)(elt it n)))
@@ -92,6 +92,20 @@
                                                  :sort 'string-lessp
                                                  :reverse-sort 'string-greaterp))))
 
+
+(defmethod compute-item-count-text ((window document-window))
+  (let* ((start-index (item-start-index window))
+         (store-row-count (store-nondeleted-row-count (store (document window))))
+         ;; TODO: cache row fetches so we can count the results instead of
+         ;; fetching rows to display and separately fetching to count
+         (fetched-row-count (length (compute-visible-rows (document window)
+                                                          :count-limit (item-count-limit window)
+                                                          :start-index (item-start-index window)))))
+    (format nil "Items ~A to ~A of ~A"
+            (1+ start-index) 
+            (+ start-index fetched-row-count)
+            store-row-count)))
+
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
-;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
+;;; (defparameter $ui (contain (make-instance 'document-window :document $doc :item-start-index 0)))

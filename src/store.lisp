@@ -62,5 +62,15 @@
         (execute-to-list db (format nil "select ~A from contents where deleted = 0 ~A ~A"
                                     selector limit-expr offset-expr))))))
 
+(defmethod store-total-row-count ((store store))
+  (with-open-database (db (data-path store))
+    (with-transaction db
+      (first (first (execute-to-list db "select Count(*) from contents"))))))
 
+(defmethod store-nondeleted-row-count ((store store))
+  (with-open-database (db (data-path store))
+    (with-transaction db
+      (first (first (execute-to-list db "select Count(*) from contents where deleted = 0"))))))
+
+;;; (store-nondeleted-row-count $store)
 
