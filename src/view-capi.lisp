@@ -37,7 +37,8 @@
    (count-pane title-pane :reader count-pane 
                :text (format nil "~A items" (length (compute-visible-rows (document interface)))))
    (add-row-button push-button :reader add-row-button :text "+")
-   (add-column-button push-button :reader add-column-button :text "+"))
+   (add-column-button push-button :reader add-column-button :text "+")
+   (filter-input text-input-pane :reader filter-input))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
@@ -45,7 +46,7 @@
                   :visible-min-height 48
                   :visible-max-height 48
                   :reader header-layout :border 4)
-   (footer-layout row-layout '(add-row-button count-pane)
+   (footer-layout row-layout '(add-row-button nil count-pane filter-input nil)
                   :visible-min-height 48
                   :visible-max-height 48
                   :reader footer-layout :border 4)
@@ -86,3 +87,7 @@
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
+
+;;; Cocoa system icons from Delectus 1:
+;;; add row button: NSListViewTemplate
+;;; add column button: NSColumnViewTemplate
