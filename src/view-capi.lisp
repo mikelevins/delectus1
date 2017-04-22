@@ -101,9 +101,9 @@
          (fetched-row-count (length (compute-visible-rows (document window)
                                                           :count-limit (item-count-limit window)
                                                           :start-index (item-start-index window)))))
-    (format nil "Items ~A to ~A of ~A"
-            (1+ start-index) 
-            (+ start-index fetched-row-count)
+    (format nil "Items ~A to ~A of ~A items"
+            start-index 
+            (1- (+ start-index fetched-row-count))
             store-row-count)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
