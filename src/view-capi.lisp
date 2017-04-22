@@ -40,20 +40,33 @@
                   :columns (compute-column-descriptions document)
                   :items (compute-visible-rows document :count-limit item-count-limit :start-index item-start-index))
    (count-pane title-pane :reader count-pane)
-   (add-row-button push-button :reader add-row-button :title "Add a row" :text "+")
+   (total-count-pane title-pane :reader total-count-pane)
+   (add-row-button push-button :reader add-row-button :title "Add a row" :title-position :right :text "+")
    (add-column-button push-button :reader add-column-button :title "Add a column" :text "+")
-   (filter-input text-input-pane :reader filter-input))
+   (filter-input text-input-pane :reader filter-input
+                 :title "Filter"
+                 :visible-min-width 196)
+   (previous-page-button push-button :reader previous-page-button :text "<")
+   (next-page-button push-button :reader next-page-button :text ">"))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
    (header-layout row-layout '(nil add-column-button)
-                  :visible-min-height 48
-                  :visible-max-height 48
+                  :adjust :center
+                  :visible-min-height 40
+                  :visible-max-height 40
                   :reader header-layout :border 4)
-   (footer-layout row-layout '(add-row-button nil count-pane filter-input nil)
-                  :visible-min-height 48
-                  :visible-max-height 48
-                  :reader footer-layout :border 4)
+   (paging-layout row-layout '(add-row-button nil previous-page-button count-pane next-page-button nil total-count-pane)
+                  :adjust :center
+                  :visible-min-height 36
+                  :visible-max-height 36
+                  :reader paging-layout :border 4)
+   (filter-layout row-layout '(nil filter-input nil)
+                  :adjust :center
+                  :visible-min-height 36
+                  :visible-max-height 36
+                  :reader filter-layout :border 4)
+   (footer-layout column-layout '(paging-layout filter-layout))
    (main-layout column-layout '(header-layout contents-pane footer-layout)
                 :reader main-layout :border 4))
   
@@ -66,7 +79,9 @@
   (setf (item-count window)
         (length (collection-items (contents-pane window))))
   (setf (title-pane-text (count-pane window))
-        (compute-item-count-text window)))
+        (compute-item-count-text window))
+  (setf (title-pane-text (total-count-pane window))
+        (format nil "~A items" (store-nondeleted-row-count (store (document window))))))
 
 ;;; dummy method
 (defmethod compute-column-descriptions ((document null))
@@ -91,12 +106,10 @@
   #'(lambda (it)(elt it n)))
 
 (defmethod compute-item-count-text ((window document-window))
-  (let ((store-row-count (store-nondeleted-row-count (store (document window)))))
-    (format nil "Items ~A to ~A of ~A items"
-            (item-start-index window) 
-            (1- (+ (item-start-index window)
-                   (item-count window)))
-            store-row-count)))
+  (format nil "Items ~A-~A"
+          (item-start-index window) 
+          (1- (+ (item-start-index window)
+                 (item-count window)))))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
