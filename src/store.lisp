@@ -10,7 +10,6 @@
 
 (in-package :delectus)
 
-
 ;;; ---------------------------------------------------------------------
 ;;; system-column-labels
 ;;; ---------------------------------------------------------------------
@@ -44,7 +43,20 @@
     (with-transaction db
       (execute-to-list db "select * from deleted_columns"))))
 
-(defmethod store-get-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(include-deleted nil))
+(defmethod visible-column-labels ((store store))
+  (let* ((all-labels (store-column-labels store))
+         (hidden-labels (append +system-column-labels+
+                                (store-deleted-labels store))))
+    (list-difference all-labels hidden-labels :test #'equalp)))
+
+(defun build-sql-text-filter (filter-text cols)
+  (reduce #'(lambda (l r)(concatenate 'string l r))
+          (interpose " OR "
+                     (loop for col in cols collect (format nil "\"~A\" LIKE \"%~A%\"" col filter-text)))))
+
+;;; (format t "~%~%~A" (build-sql-text-filter "Fif" (visible-column-labels $store)))
+
+(defmethod store-get-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(include-deleted nil)(filter-text ""))
   (let* ((selector (if column-labels
                        (format nil " ~{~s~^, ~} " column-labels)
                      " * "))
@@ -53,14 +65,24 @@
                        ""))
          (offset-expr (if count-limit
                           (format nil " offset ~A " start-index)
-                        "")))
+                        ""))
+         (like-expr (if (and filter-text (not (equal "" filter-text)))
+                        (let ((cols (or column-labels (visible-column-labels store))))
+                          (build-sql-text-filter filter-text cols))
+                      nil)))
     (with-open-database (db (data-path store))
       (with-transaction db
         (if include-deleted
-            (execute-to-list db (format nil "select ~A from contents ~A ~A"
-                                        selector limit-expr offset-expr))
-          (execute-to-list db (format nil "select ~A from contents where deleted = 0 ~A ~A"
-                                      selector limit-expr offset-expr)))))))
+            (if like-expr
+                (execute-to-list db (format nil "select ~A from contents WHERE ~A ~A ~A"
+                                            selector like-expr limit-expr offset-expr))
+              (execute-to-list db (format nil "select ~A from contents ~A ~A"
+                                          selector limit-expr offset-expr)))
+          (if like-expr
+              (execute-to-list db (format nil "select ~A from contents where deleted = 0 AND ~A ~A ~A"
+                                          selector like-expr limit-expr offset-expr))
+            (execute-to-list db (format nil "select ~A from contents where deleted = 0 ~A ~A"
+                                          selector limit-expr offset-expr))))))))
 
 (defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(include-deleted nil))
   (length (store-get-rows store
@@ -70,5 +92,5 @@
                           :include-deleted include-deleted)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
-;;; (store-get-rows $store :column-labels '("Title") :count-limit 5 :start-index 200 :include-deleted t)
+;;; (store-get-rows $store :column-labels '("Title") :count-limit 5 :start-index 200 :include-deleted t :filter-text "F")
 ;;; (time (store-count-rows $store :start-index 300 :count-limit 1000))

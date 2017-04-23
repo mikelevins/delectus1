@@ -23,3 +23,11 @@
                                   target-list :test test)
                           :test test))))
     (discard sublist src-list :test test)))
+
+(defun interpose (it things)
+  (if (null (cdr things))
+      things
+    (cons (car things)
+          (cons it
+                (interpose it (cdr things))))))
+
