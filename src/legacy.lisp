@@ -107,7 +107,9 @@
 
 ;;; shell: lecter --csv test-data/junior-movies.delectus > ~/Desktop/junior-movies.csv
 ;;; (time (convert-delectus-csv-file "/Users/mikel/Desktop/junior-movies.csv" "/Users/mikel/Desktop/junior-movies.delectus2"))
+
 ;;; shell: lecter --csv test-data/Movies.delectus > ~/Desktop/Movies.csv
 ;;; (time (convert-delectus-csv-file "/Users/mikel/Desktop/Movies.csv" "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (time (convert-delectus-sexp-file "/Users/mikel/Desktop/Movies.sexp" "/Users/mikel/Desktop/Movies.delectus2"))
+
 ;;; (time (convert-delectus-csv-file "/Users/mikel/Desktop/zipcode_20k.csv" "/Users/mikel/Desktop/zipcode.delectus2"))
