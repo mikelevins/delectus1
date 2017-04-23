@@ -39,7 +39,6 @@
                   :columns (compute-column-descriptions interface)
                   :items (compute-visible-rows interface))
    (count-pane title-pane :reader count-pane)
-   (total-count-pane title-pane :reader total-count-pane)
    (add-row-button push-button :reader add-row-button :title "Add a row" :title-position :right :text "+")
    (add-column-button push-button :reader add-column-button :title "Add a column" :text "+")
    (filter-input text-input-pane :reader filter-input
@@ -52,21 +51,18 @@
   ;; -- layouts ---------------------------------------------
   (:layouts
    (header-layout row-layout '(nil add-column-button)
-                  :adjust :center
+                  :adjust :bottom
                   :visible-min-height 40
                   :visible-max-height 40
                   :reader header-layout :border 4)
-   (paging-layout row-layout '(add-row-button nil previous-page-button count-pane next-page-button nil total-count-pane)
-                  :adjust :center
+   (pager-layout row-layout '(previous-page-button count-pane next-page-button)
+                 :reader pager-layout
+                 :adjust :center)
+   (footer-layout row-layout '(add-row-button nil filter-input nil pager-layout)
+                  :adjust :bottom
                   :visible-min-height 36
                   :visible-max-height 36
                   :reader paging-layout :border 4)
-   (filter-layout row-layout '(nil filter-input nil)
-                  :adjust :center
-                  :visible-min-height 36
-                  :visible-max-height 36
-                  :reader filter-layout :border 4)
-   (footer-layout column-layout '(paging-layout filter-layout))
    (main-layout column-layout '(header-layout contents-pane footer-layout)
                 :reader main-layout :border 4))
   
@@ -77,9 +73,7 @@
 
 (defmethod initialize-instance :after ((window document-window) &rest initargs &key &allow-other-keys)
   (setf (title-pane-text (count-pane window))
-        (compute-item-count-text window))
-  (setf (title-pane-text (total-count-pane window))
-        (format nil "~A items" (store-count-rows (store (document window))))))
+        (compute-item-count-text window)))
 
 (defmethod filter-text ((window document-window))
   (text-input-pane-text (filter-input window)))
@@ -100,19 +94,23 @@
   #'(lambda (it)(elt it n)))
 
 (defmethod compute-item-count-text ((window document-window))
-  (format nil "Items ~A-~A"
-          (item-start-index window) 
-          (1- (+ (item-start-index window)
-                 (length (compute-visible-rows window))))))
+  (format nil "Items ~A-~A (of ~A)"
+          (1+ (item-start-index window)) 
+          (+ (item-start-index window)
+             (length (compute-visible-rows window)))
+          (store-count-rows (store (document window)))))
 
 (defun handle-changed-filter-text (text filter-input window caret-position)
+  (declare (ignore text filter-input caret-position))
   (setf (collection-items (contents-pane window))
         (compute-visible-rows window)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
+
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/zipcode.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
+
 

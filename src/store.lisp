@@ -16,8 +16,7 @@
 ;;; columns that every delectus contents table possesses, regardless
 ;;; of what columns a user supplies.
 
-(defparameter +system-column-labels+
-  '("rowid" "deleted"))
+(defparameter +system-column-labels+ '("rowid"))
 
 ;;; ---------------------------------------------------------------------
 ;;; store
@@ -38,16 +37,8 @@
       (append +system-column-labels+
               (mapcar #'first (execute-to-list db "select * from column_order"))))))
 
-(defmethod store-deleted-labels ((store store))
-  (with-open-database (db (data-path store))
-    (with-transaction db
-      (execute-to-list db "select * from deleted_columns"))))
-
 (defmethod visible-column-labels ((store store))
-  (let* ((all-labels (store-column-labels store))
-         (hidden-labels (append +system-column-labels+
-                                (store-deleted-labels store))))
-    (list-difference all-labels hidden-labels :test #'equalp)))
+  (store-column-labels store))
 
 (defun build-sql-text-filter (filter-text cols)
   (reduce #'(lambda (l r)(concatenate 'string l r))
@@ -56,7 +47,7 @@
 
 ;;; (format t "~%~%~A" (build-sql-text-filter "Fif" (visible-column-labels $store)))
 
-(defmethod store-get-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(include-deleted nil)(filter-text ""))
+(defmethod store-get-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(filter-text ""))
   (let* ((selector (if column-labels
                        (format nil " ~{~s~^, ~} " column-labels)
                      " * "))
@@ -72,25 +63,18 @@
                       nil)))
     (with-open-database (db (data-path store))
       (with-transaction db
-        (if include-deleted
-            (if like-expr
-                (execute-to-list db (format nil "select ~A from contents WHERE ~A ~A ~A"
-                                            selector like-expr limit-expr offset-expr))
-              (execute-to-list db (format nil "select ~A from contents ~A ~A"
-                                          selector limit-expr offset-expr)))
-          (if like-expr
-              (execute-to-list db (format nil "select ~A from contents where deleted = 0 AND ~A ~A ~A"
-                                          selector like-expr limit-expr offset-expr))
-            (execute-to-list db (format nil "select ~A from contents where deleted = 0 ~A ~A"
-                                          selector limit-expr offset-expr))))))))
+        (if like-expr
+            (execute-to-list db (format nil "select ~A from contents WHERE ~A ~A ~A"
+                                        selector like-expr limit-expr offset-expr))
+          (execute-to-list db (format nil "select ~A from contents ~A ~A"
+                                      selector limit-expr offset-expr)))))))
 
-(defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(include-deleted nil))
+(defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0))
   (length (store-get-rows store
                           :column-labels column-labels
                           :count-limit count-limit
-                          :start-index start-index
-                          :include-deleted include-deleted)))
+                          :start-index start-index)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
-;;; (store-get-rows $store :column-labels '("Title") :count-limit 5 :start-index 200 :include-deleted t :filter-text "F")
+;;; (store-get-rows $store :column-labels '("Title") :count-limit 5 :start-index 200 :filter-text "F")
 ;;; (time (store-count-rows $store :start-index 300 :count-limit 1000))

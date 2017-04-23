@@ -28,7 +28,6 @@
                   :column-labels column-labels 
                   :count-limit count-limit
                   :start-index start-index
-                  :include-deleted nil
                   :filter-text filter-text))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
