@@ -44,10 +44,7 @@
     (with-transaction db
       (execute-to-list db "select * from deleted_columns"))))
 
-(defmethod store-nondeleted-rows ((store store) &key
-                                  (column-labels nil)
-                                  (count-limit nil)
-                                  (start-index 0))
+(defmethod store-get-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(include-deleted nil))
   (let* ((selector (if column-labels
                        (format nil " ~{~s~^, ~} " column-labels)
                      " * "))
@@ -59,18 +56,19 @@
                         "")))
     (with-open-database (db (data-path store))
       (with-transaction db
-        (execute-to-list db (format nil "select ~A from contents where deleted = 0 ~A ~A"
-                                    selector limit-expr offset-expr))))))
+        (if include-deleted
+            (execute-to-list db (format nil "select ~A from contents ~A ~A"
+                                        selector limit-expr offset-expr))
+          (execute-to-list db (format nil "select ~A from contents where deleted = 0 ~A ~A"
+                                      selector limit-expr offset-expr)))))))
 
-(defmethod store-total-row-count ((store store))
-  (with-open-database (db (data-path store))
-    (with-transaction db
-      (first (first (execute-to-list db "select Count(*) from contents"))))))
+(defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(include-deleted nil))
+  (length (store-get-rows store
+                          :column-labels column-labels
+                          :count-limit count-limit
+                          :start-index start-index
+                          :include-deleted include-deleted)))
 
-(defmethod store-nondeleted-row-count ((store store))
-  (with-open-database (db (data-path store))
-    (with-transaction db
-      (first (first (execute-to-list db "select Count(*) from contents where deleted = 0"))))))
-
-;;; (store-nondeleted-row-count $store)
-
+;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
+;;; (store-get-rows $store :column-labels '("Title") :count-limit 5 :start-index 200 :include-deleted t)
+;;; (time (store-count-rows $store :start-index 300 :count-limit 1000))

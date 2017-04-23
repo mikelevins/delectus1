@@ -29,7 +29,6 @@
 (define-interface document-window ()
   ;; -- slots ---------------------------------------------
   ((document :accessor document :initform nil :initarg :document)
-   (item-count :accessor item-count :initform 0) ; computed from select results
    (item-count-limit :accessor item-count-limit :initform 256 :initarg :item-count-limit)
    (item-start-index :accessor item-start-index :initform 0 :initarg :item-start-index))
 
@@ -37,8 +36,8 @@
   (:panes
    (contents-pane multi-column-list-panel :reader contents-pane
                   :alternating-background t
-                  :columns (compute-column-descriptions document)
-                  :items (compute-visible-rows document :count-limit item-count-limit :start-index item-start-index))
+                  :columns (compute-column-descriptions interface)
+                  :items (compute-visible-rows interface))
    (count-pane title-pane :reader count-pane)
    (total-count-pane title-pane :reader total-count-pane)
    (add-row-button push-button :reader add-row-button :title "Add a row" :title-position :right :text "+")
@@ -76,31 +75,22 @@
    :width 800 :height 600))
 
 (defmethod initialize-instance :after ((window document-window) &rest initargs &key &allow-other-keys)
-  (setf (item-count window)
-        (length (collection-items (contents-pane window))))
   (setf (title-pane-text (count-pane window))
         (compute-item-count-text window))
   (setf (title-pane-text (total-count-pane window))
-        (format nil "~A items" (store-nondeleted-row-count (store (document window))))))
+        (format nil "~A items" (store-count-rows (store (document window))))))
 
-;;; dummy method
-(defmethod compute-column-descriptions ((document null))
-  `((:title "" :default-width 96)))
 
-(defmethod compute-column-descriptions ((document document))
-  (let* ((column-labels (visible-column-labels document)))
+(defmethod compute-column-descriptions ((window document-window))
+  (let* ((column-labels (visible-column-labels (document window))))
     (mapcar (lambda (lbl) `(:title ,lbl :default-width 96))
             column-labels)))
 
-(defmethod compute-visible-rows ((document null) &key (count-limit nil)(start-index 0)) 
-  (declare (ignore count-limit start-index))
-  nil)
-
-(defmethod compute-visible-rows ((document document) &key (count-limit nil)(start-index 0))
-  (visible-rows document
-                :column-labels (visible-column-labels document)
-                :count-limit count-limit
-                :start-index start-index))
+(defmethod compute-visible-rows ((window document-window))
+  (visible-rows (document window)
+                :column-labels (visible-column-labels (document window))
+                :count-limit (item-count-limit window)
+                :start-index (item-start-index window)))
 
 (defun element-getter (n)
   #'(lambda (it)(elt it n)))
@@ -109,7 +99,7 @@
   (format nil "Items ~A-~A"
           (item-start-index window) 
           (1- (+ (item-start-index window)
-                 (item-count window)))))
+                 (length (compute-visible-rows window))))))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
