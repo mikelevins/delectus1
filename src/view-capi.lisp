@@ -45,8 +45,12 @@
                  :title "Filter"
                  :visible-min-width 196
                  :text-change-callback 'handle-changed-filter-text)
-   (previous-page-button push-button :reader previous-page-button :text "<")
-   (next-page-button push-button :reader next-page-button :text ">"))
+   (previous-page-button push-button :reader previous-page-button :text "<"
+                         :callback-type :interface
+                         :callback 'handle-go-previous)
+   (next-page-button push-button :reader next-page-button :text ">"
+                     :callback-type :interface
+                     :callback 'handle-go-next))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
@@ -108,6 +112,25 @@
   (declare (ignore text filter-input caret-position))
   (setf (collection-items (contents-pane window))
         (compute-visible-rows window)))
+
+(defun handle-go-previous (window)
+  (let* ((next-start (- (item-start-index window)(item-count-limit window))))
+    (setf (item-start-index window)
+          (max next-start 0))
+    (setf (collection-items (contents-pane window))
+          (compute-visible-rows window))
+    (setf (title-pane-text (count-pane window))
+          (compute-item-count-text window))))
+
+(defun handle-go-next (window)
+  (let* ((next-start (+ (item-start-index window)(item-count-limit window)))
+         (last-index (1- (store-count-all-rows (store (document window))))))
+    (setf (item-start-index window)
+          (min next-start last-index))
+    (setf (collection-items (contents-pane window))
+          (compute-visible-rows window))
+    (setf (title-pane-text (count-pane window))
+          (compute-item-count-text window))))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
