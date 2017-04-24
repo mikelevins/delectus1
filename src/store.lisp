@@ -18,6 +18,8 @@
 
 (defparameter +system-column-labels+ '("rowid"))
 
+(defparameter +reserved-column-labels '("rowid" "oid" "_rowid_" "id"))
+
 ;;; ---------------------------------------------------------------------
 ;;; store
 ;;; ---------------------------------------------------------------------
