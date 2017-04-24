@@ -52,8 +52,8 @@
         ;; table: contents - stores document data
         ;;        columns are (rowid [user-supplied column labels])
         (if column-labels
-            (execute-non-query db (format nil "create table contents (rowid integer primary key, ~{~s~^, ~})" column-labels))
-          (execute-non-query db "create table contents (rowid integer primary key)"))
+            (execute-non-query db (format nil "create table contents (rowid INTEGER PRIMARY KEY, ~{~s~^, ~})" column-labels))
+          (execute-non-query db "create table contents (rowid INTEGER PRIMARY KEY)"))
         ;; table: notes - stores user-defined notes about the store document
         (execute-non-query db "create table notes (timestamp, subject, author, note)")
         ;; table: column_order - stores the user-defined column order
