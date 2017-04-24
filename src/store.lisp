@@ -54,7 +54,7 @@
          (limit-expr (if count-limit
                          (format nil " limit ~A " count-limit)
                        ""))
-         (offset-expr (if count-limit
+         (offset-expr (if start-index
                           (format nil " offset ~A " start-index)
                         ""))
          (like-expr (if (and filter-text (not (equal "" filter-text)))
@@ -69,12 +69,20 @@
           (execute-to-list db (format nil "select ~A from contents ~A ~A"
                                       selector limit-expr offset-expr)))))))
 
-(defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0))
-  (length (store-get-rows store
-                          :column-labels column-labels
-                          :count-limit count-limit
-                          :start-index start-index)))
+(defmethod store-count-all-rows ((store store))
+  (with-open-database (db (data-path store))
+    (with-transaction db
+      (first (first (execute-to-list db (format nil "select Count(*) from contents")))))))
+
+(defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(filter-text ""))
+  (let* ((result-rows (store-get-rows store 
+                                      :column-labels column-labels
+                                      :count-limit count-limit
+                                      :start-index start-index
+                                      :filter-text filter-text)))
+    (length result-rows)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (store-get-rows $store :column-labels '("Title") :count-limit 5 :start-index 200 :filter-text "F")
-;;; (time (store-count-rows $store :start-index 300 :count-limit 1000))
+;;; (time (store-count-rows $store :start-index 1000))
+

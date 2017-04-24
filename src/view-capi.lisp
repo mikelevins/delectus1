@@ -29,7 +29,7 @@
 (define-interface document-window ()
   ;; -- slots ---------------------------------------------
   ((document :accessor document :initform nil :initarg :document)
-   (item-count-limit :accessor item-count-limit :initform 20000 :initarg :item-count-limit)
+   (item-count-limit :accessor item-count-limit :initform 256 :initarg :item-count-limit)
    (item-start-index :accessor item-start-index :initform 0 :initarg :item-start-index))
 
   ;; -- panes ---------------------------------------------
@@ -98,7 +98,7 @@
           (1+ (item-start-index window)) 
           (+ (item-start-index window)
              (length (compute-visible-rows window)))
-          (store-count-rows (store (document window)))))
+          (store-count-all-rows (store (document window)))))
 
 (defun handle-changed-filter-text (text filter-input window caret-position)
   (declare (ignore text filter-input caret-position))
