@@ -50,26 +50,25 @@
 ;;; (format t "~%~%~A" (build-sql-text-filter "Fif" (visible-column-labels $store)))
 
 (defmethod store-get-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(filter-text ""))
-  (let* ((selector (if column-labels
-                       (format nil " ~{~s~^, ~} " column-labels)
-                     " * "))
+  (let* ((column-order (or column-labels (visible-column-labels store)))
+         (selector (format nil " ~{~s~^, ~} " column-order))
          (limit-expr (if count-limit
                          (format nil " limit ~A " count-limit)
                        ""))
-         (offset-expr (if start-index
+         (offset-expr (if count-limit
                           (format nil " offset ~A " start-index)
                         ""))
          (like-expr (if (and filter-text (not (equal "" filter-text)))
-                        (let ((cols (or column-labels (visible-column-labels store))))
-                          (build-sql-text-filter filter-text cols))
-                      nil)))
+                        (build-sql-text-filter filter-text column-order)
+                      nil))
+         (query (if like-expr
+                    (format nil "select ~A from contents WHERE ~A ~A ~A"
+                            selector like-expr limit-expr offset-expr)
+                  (format nil "select ~A from contents ~A ~A"
+                          selector limit-expr offset-expr))))
     (with-open-database (db (data-path store))
       (with-transaction db
-        (if like-expr
-            (execute-to-list db (format nil "select ~A from contents WHERE ~A ~A ~A"
-                                        selector like-expr limit-expr offset-expr))
-          (execute-to-list db (format nil "select ~A from contents ~A ~A"
-                                      selector limit-expr offset-expr)))))))
+        (execute-to-list db query)))))
 
 (defmethod store-count-all-rows ((store store))
   (with-open-database (db (data-path store))
@@ -77,14 +76,26 @@
       (first (first (execute-to-list db (format nil "select Count(*) from contents")))))))
 
 (defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(filter-text ""))
-  (let* ((result-rows (store-get-rows store 
-                                      :column-labels column-labels
-                                      :count-limit count-limit
-                                      :start-index start-index
-                                      :filter-text filter-text)))
-    (length result-rows)))
+  (let* ((column-order (or column-labels (visible-column-labels store)))
+         (limit-expr (if count-limit
+                         (format nil " limit ~A " count-limit)
+                       ""))
+         (offset-expr (if count-limit
+                          (format nil " offset ~A " start-index)
+                        ""))
+         (like-expr (if (and filter-text (not (equal "" filter-text)))
+                        (build-sql-text-filter filter-text column-order)
+                      nil))
+         (query (if like-expr
+                    (format nil "select count(*) from (select * from contents WHERE ~A ~A ~A)"
+                            like-expr limit-expr offset-expr)
+                  (format nil "select count(*) from (select * from contents ~A ~A)"
+                          limit-expr offset-expr))))
+    (with-open-database (db (data-path store))
+      (with-transaction db
+        (first (first (execute-to-list db query)))))))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
-;;; (store-get-rows $store :column-labels '("Title") :count-limit 5 :start-index 200 :filter-text "F")
-;;; (time (store-count-rows $store :start-index 1000))
+;;; (store-get-rows $store :column-labels '("Title") :count-limit 50  :filter-text "Fo")
+;;; (time (store-count-rows $store :start-index 900 :filter-text "f"))
 

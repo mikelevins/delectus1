@@ -76,6 +76,9 @@
    :width 800 :height 600))
 
 (defmethod initialize-instance :after ((window document-window) &rest initargs &key &allow-other-keys)
+  (refresh-document-window window))
+
+(defmethod update-pager-text ((window document-window))
   (setf (title-pane-text (count-pane window))
         (compute-item-count-text window)))
 
@@ -98,39 +101,19 @@
                 :start-index (item-start-index window)
                 :filter-text (filter-text window)))
 
-(defun element-getter (n)
-  #'(lambda (it)(elt it n)))
-
 (defmethod compute-item-count-text ((window document-window))
   (format nil "Items ~A-~A (of ~A)"
-          (1+ (item-start-index window)) 
-          (+ (item-start-index window)
-             (length (compute-visible-rows window)))
-          (store-count-all-rows (store (document window)))))
+          ))
 
 (defun handle-changed-filter-text (text filter-input window caret-position)
   (declare (ignore text filter-input caret-position))
-  (setf (collection-items (contents-pane window))
-        (compute-visible-rows window)))
+  )
 
 (defun handle-go-previous (window)
-  (let* ((next-start (- (item-start-index window)(item-count-limit window))))
-    (setf (item-start-index window)
-          (max next-start 0))
-    (setf (collection-items (contents-pane window))
-          (compute-visible-rows window))
-    (setf (title-pane-text (count-pane window))
-          (compute-item-count-text window))))
+  )
 
 (defun handle-go-next (window)
-  (let* ((next-start (+ (item-start-index window)(item-count-limit window)))
-         (last-index (1- (store-count-all-rows (store (document window))))))
-    (setf (item-start-index window)
-          (min next-start last-index))
-    (setf (collection-items (contents-pane window))
-          (compute-visible-rows window))
-    (setf (title-pane-text (count-pane window))
-          (compute-item-count-text window))))
+  )
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
