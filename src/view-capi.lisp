@@ -76,7 +76,12 @@
    :width 800 :height 600))
 
 (defmethod initialize-instance :after ((window document-window) &rest initargs &key &allow-other-keys)
-  (refresh-document-window window))
+  (update-collection-rows window)
+  (update-pager-text window))
+
+(defmethod update-collection-rows ((window document-window))
+  (setf (collection-items (contents-pane window))
+        (compute-visible-rows window)))
 
 (defmethod update-pager-text ((window document-window))
   (setf (title-pane-text (count-pane window))
@@ -103,17 +108,41 @@
 
 (defmethod compute-item-count-text ((window document-window))
   (format nil "Items ~A-~A (of ~A)"
-          ))
+          (item-start-index window)
+          (+ (item-start-index window)
+             (length (collection-items (contents-pane window))))
+          (store-count-rows (store (document window))
+                            :filter-text (filter-text window))))
 
 (defun handle-changed-filter-text (text filter-input window caret-position)
   (declare (ignore text filter-input caret-position))
-  )
+  (setf (item-start-index window) 0)
+  (update-collection-rows window)
+  (update-pager-text window))
 
 (defun handle-go-previous (window)
-  )
+  (let* ((old-start-index (item-start-index window))
+         (delta (item-count-limit window))
+         (computed-new-start-index (- old-start-index delta))
+         (new-start-index (max 0 computed-new-start-index)))
+    (setf (item-start-index window)
+          new-start-index)
+    (update-collection-rows window)
+    (update-pager-text window)))
 
 (defun handle-go-next (window)
-  )
+  (let* ((old-start-index (item-start-index window))
+         (delta (item-count-limit window))
+         (computed-new-start-index (+ old-start-index delta))
+         (selected-row-count (store-count-rows (store (document window))
+                                               :filter-text (filter-text window)))
+         (new-start-index (if (>= computed-new-start-index selected-row-count)
+                              old-start-index
+                            computed-new-start-index)))
+    (setf (item-start-index window)
+          new-start-index)
+    (update-collection-rows window)
+    (update-pager-text window)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
