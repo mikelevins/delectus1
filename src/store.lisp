@@ -75,27 +75,19 @@
     (with-transaction db
       (first (first (execute-to-list db (format nil "select Count(*) from contents")))))))
 
-(defmethod store-count-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(filter-text ""))
+(defmethod store-count-rows ((store store) &key (column-labels nil)(filter-text ""))
   (let* ((column-order (or column-labels (visible-column-labels store)))
-         (limit-expr (if count-limit
-                         (format nil " limit ~A " count-limit)
-                       ""))
-         (offset-expr (if count-limit
-                          (format nil " offset ~A " start-index)
-                        ""))
          (like-expr (if (and filter-text (not (equal "" filter-text)))
                         (build-sql-text-filter filter-text column-order)
                       nil))
          (query (if like-expr
-                    (format nil "select count(*) from (select * from contents WHERE ~A ~A ~A)"
-                            like-expr limit-expr offset-expr)
-                  (format nil "select count(*) from (select * from contents ~A ~A)"
-                          limit-expr offset-expr))))
+                    (format nil "select count(*) from (select * from contents WHERE ~A )" like-expr)
+                  (format nil "select count(*) from (select * from contents)"))))
     (with-open-database (db (data-path store))
       (with-transaction db
         (first (first (execute-to-list db query)))))))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (store-get-rows $store :column-labels '("Title") :count-limit 50  :filter-text "Fo")
-;;; (time (store-count-rows $store :start-index 900 :filter-text "f"))
+;;; (time (store-count-rows $store))
 
