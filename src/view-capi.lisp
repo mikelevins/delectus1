@@ -44,7 +44,8 @@
                   :header-args '(:selection-callback handle-column-selection :callback-type :item-interface)
                   :alternating-background t
                   :columns (compute-column-descriptions interface)
-                  :items (compute-visible-rows interface))
+                  :items (compute-visible-rows interface)
+                  :auto-reset-column-widths nil)
    (count-pane title-pane :reader count-pane)
    (add-row-button push-button :reader add-row-button :title "Add a row" :title-position :right :text "+")
    (add-column-button push-button :reader add-column-button :title "Add a column" :text "+")
