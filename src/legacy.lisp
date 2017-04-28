@@ -113,3 +113,4 @@
 ;;; (time (convert-delectus-sexp-file "/Users/mikel/Desktop/Movies.sexp" "/Users/mikel/Desktop/Movies.delectus2"))
 
 ;;; (time (convert-delectus-csv-file "/Users/mikel/Desktop/zipcode_20k.csv" "/Users/mikel/Desktop/zipcode.delectus2"))
+;;; (time (convert-delectus-csv-file "/Users/mikel/Workshop/src/delectus/test-data/zip_codes_states.csv" "/Users/mikel/Desktop/zip_codes_states.delectus2"))

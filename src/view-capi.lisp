@@ -184,6 +184,6 @@
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
 
-;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/zipcode.delectus2"))
+;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/zip_codes_states.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
