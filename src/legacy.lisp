@@ -81,7 +81,7 @@
           (assert (eql :ROWS sentinel)() "File format error: Expected :ROWS but found ~S" sentinel)
           ;; 3. Read and convert rows
           (let* ((column-labels columns))
-            (create-delectus-file outpath column-labels)
+            (delectus.file:create-delectus-file outpath column-labels)
             (with-open-database (db outpath)
               (with-transaction db
                 ;; read and insert rows
@@ -110,7 +110,7 @@
     (with-open-file (in path :direction :input)
       (with-rfc4180-csv-syntax ()
         (let ((column-labels (read-csv-line in)))
-          (create-delectus-file outpath column-labels)
+          (delectus.file:create-delectus-file outpath column-labels)
           (with-open-database (db outpath)
             (with-transaction db
               ;; read and insert rows

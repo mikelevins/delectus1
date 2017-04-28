@@ -122,8 +122,8 @@
           (1+ (item-start-index window))
           (+ (item-start-index window)
              (length (collection-items (contents-pane window))))
-          (store-count-rows (store (document window))
-                            :filter-text (filter-text window))))
+          (delectus.store:store-count-rows (store (document window))
+                                           :filter-text (filter-text window))))
 
 (defun handle-changed-filter-text (text filter-input window caret-position)
   (declare (ignore text filter-input caret-position))
@@ -145,8 +145,8 @@
   (let* ((old-start-index (item-start-index window))
          (delta (item-count-limit window))
          (computed-new-start-index (+ old-start-index delta))
-         (selected-row-count (store-count-rows (store (document window))
-                                               :filter-text (filter-text window)))
+         (selected-row-count (delectus.store:store-count-rows (store (document window))
+                                                              :filter-text (filter-text window)))
          (new-start-index (if (>= computed-new-start-index selected-row-count)
                               old-start-index
                             computed-new-start-index)))
@@ -169,10 +169,10 @@
     (update-collection-rows window)
     (update-pager-text window)))
 
-;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
+;;; (defparameter $store (make-instance 'delectus.store:store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
 
-;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/zip_codes_states.delectus2"))
+;;; (defparameter $store (make-instance 'delectus.store:store :data-path "/Users/mikel/Desktop/zip_codes_states.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))

@@ -21,7 +21,7 @@
    (redo-stack :accessor redo-stack :initform nil)))
 
 (defmethod visible-column-labels ((document document))
-  (visible-column-labels (store document)))
+  (delectus.store:store-get-column-labels (store document)))
 
 (defmethod visible-rows ((document document) &key 
                          (column-labels nil)
@@ -30,13 +30,13 @@
                          (filter-text "")
                          (sort-column "rowid")
                          (sort-order :ascending))
-  (store-get-rows (store document) 
-                  :column-labels column-labels 
-                  :count-limit count-limit
-                  :start-index start-index
-                  :filter-text filter-text
-                  :sort-column sort-column
-                  :sort-order sort-order))
+  (delectus.store:store-get-rows (store document) 
+                                 :column-labels column-labels 
+                                 :count-limit count-limit
+                                 :start-index start-index
+                                 :filter-text filter-text
+                                 :sort-column sort-column
+                                 :sort-order sort-order))
 
 
 

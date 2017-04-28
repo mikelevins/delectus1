@@ -57,16 +57,43 @@
    #:interpose
    ))
 
+;;; delectus.file
+;;; ---------------------------------------------------------------------
+;;; utilities for creating and populating Delectus 2 store files
+
+(defpackage #:delectus.file
+  (:use #:cl #:sqlite #:fare-csv)
+  (:export 
+   #:create-delectus-file
+   #:probe-delectus-file
+   ))
+
+
 ;;; delectus.legacy
 ;;; ---------------------------------------------------------------------
 ;;; utilities for converting files in old versions of Delectus formats
 ;;; to the current version.
 
 (defpackage #:delectus.legacy
-  (:use #:cl)
+  (:use #:cl #:sqlite #:fare-csv)
   (:export 
    #:convert-delectus-sexp-file
    #:convert-delectus-csv-file
+   ))
+
+
+;;; delectus.store
+;;; ---------------------------------------------------------------------
+;;; classes and functions for interacting with document data stored in 
+;;; Delectus files
+
+(defpackage #:delectus.store
+  (:use #:cl #:sqlite)
+  (:export 
+   #:store
+   #:store-count-rows
+   #:store-get-column-labels
+   #:store-get-rows
    ))
 
 
