@@ -97,3 +97,16 @@
    ))
 
 
+
+;;; delectus.document
+;;; ---------------------------------------------------------------------
+;;; classes and functions for interacting with the Delectus document model
+
+(defpackage #:delectus.document
+  (:use #:cl)
+  (:export 
+   #:document
+   #:store
+   #:visible-column-labels
+   #:visible-rows
+   ))
