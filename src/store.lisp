@@ -49,9 +49,19 @@
 
 ;;; (format t "~%~%~A" (build-sql-text-filter "Fif" (visible-column-labels $store)))
 
-(defmethod store-get-rows ((store store) &key (column-labels nil)(count-limit nil)(start-index 0)(filter-text ""))
+(defmethod store-get-rows ((store store) &key 
+                           (column-labels nil)
+                           (count-limit nil)
+                           (start-index 0)
+                           (filter-text "")
+                           (sort-column "rowid")
+                           (sort-order :ascending))
   (let* ((column-order (or column-labels (visible-column-labels store)))
          (selector (format nil " ~{~s~^, ~} " column-order))
+         (order-by-expr (format nil " ORDER BY \"~A\" ~A" 
+                                sort-column
+                                (if (equal :descending sort-order)
+                                    "DESC" "ASC")))
          (limit-expr (if count-limit
                          (format nil " limit ~A " count-limit)
                        ""))
@@ -62,10 +72,10 @@
                         (build-sql-text-filter filter-text column-order)
                       nil))
          (query (if like-expr
-                    (format nil "select ~A from contents WHERE ~A ~A ~A"
-                            selector like-expr limit-expr offset-expr)
-                  (format nil "select ~A from contents ~A ~A"
-                          selector limit-expr offset-expr))))
+                    (format nil "select ~A from contents WHERE ~A ~A ~A ~A"
+                            selector like-expr order-by-expr limit-expr offset-expr)
+                  (format nil "select ~A from contents ~A ~A ~A"
+                          selector order-by-expr limit-expr offset-expr))))
     (with-open-database (db (data-path store))
       (with-transaction db
         (execute-to-list db query)))))

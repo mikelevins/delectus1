@@ -29,12 +29,15 @@
 (define-interface document-window ()
   ;; -- slots ---------------------------------------------
   ((document :accessor document :initform nil :initarg :document)
+   (sort-column :accessor sort-column :initform nil :initarg :sort-column)
+   (sort-order :accessor sort-order :initform nil :initarg :sort-order) ; NIL | :ascending | :descending
    (item-count-limit :accessor item-count-limit :initform 256 :initarg :item-count-limit)
    (item-start-index :accessor item-start-index :initform 0 :initarg :item-start-index))
 
   ;; -- panes ---------------------------------------------
   (:panes
    (contents-pane multi-column-list-panel :reader contents-pane
+                  :header-args '(:selection-callback handle-column-selection :callback-type :item-interface)
                   :alternating-background t
                   :columns (compute-column-descriptions interface)
                   :items (compute-visible-rows interface))
@@ -104,11 +107,13 @@
                 :column-labels (visible-column-labels (document window))
                 :count-limit (item-count-limit window)
                 :start-index (item-start-index window)
-                :filter-text (filter-text window)))
+                :filter-text (filter-text window)
+                :sort-column (sort-column window)
+                :sort-order (sort-order window)))
 
 (defmethod compute-item-count-text ((window document-window))
   (format nil "Items ~A-~A (of ~A)"
-          (item-start-index window)
+          (1+ (item-start-index window))
           (+ (item-start-index window)
              (length (collection-items (contents-pane window))))
           (store-count-rows (store (document window))
@@ -141,6 +146,20 @@
                             computed-new-start-index)))
     (setf (item-start-index window)
           new-start-index)
+    (update-collection-rows window)
+    (update-pager-text window)))
+
+(defun handle-column-selection (window selected-column)
+  (let* ((old-sort-column (sort-column window))
+         (old-sort-order (sort-order window))
+         (new-sort-column selected-column))
+    (if (equalp new-sort-column old-sort-column)
+        (if (equal :ascending old-sort-order)
+            (setf (sort-order window) :descending)
+          (setf (sort-order window) :ascending))
+      (setf (sort-column window) new-sort-column
+            (sort-order window) :ascending))
+    (setf (item-start-index window) 0)
     (update-collection-rows window)
     (update-pager-text window)))
 
