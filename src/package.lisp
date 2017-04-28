@@ -97,7 +97,6 @@
    ))
 
 
-
 ;;; delectus.document
 ;;; ---------------------------------------------------------------------
 ;;; classes and functions for interacting with the Delectus document model
@@ -110,3 +109,26 @@
    #:visible-column-labels
    #:visible-rows
    ))
+
+
+;;; delectus.command
+;;; ---------------------------------------------------------------------
+;;; classes and functions that command the Delectus document to carry
+;;; out user instructions
+
+(defpackage #:delectus.command
+  (:use #:cl)
+  (:export 
+   #:command
+   ))
+
+;;; delectus.capi
+;;; ---------------------------------------------------------------------
+;;; on macOS, Linux, and Windows platforms, classes and functions
+;;; that provide the Delectus graphical user interface. Uses and
+;;; requires Lispworks CAPI
+
+#+capi
+(defpackage #:delectus.capi
+  (:use #:cl #:capi))
+
