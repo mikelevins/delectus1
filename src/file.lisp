@@ -43,12 +43,12 @@
   (assert (equalp column-labels (remove-duplicates column-labels :test #'equal))()
     "Duplicate column labels in ~S" column-labels)
   (assert (every #'valid-column-label? column-labels) ()
-    "The labels ~S are reserved for Delectus and cannot be used for columns." +reserved-column-labels)
+    "The labels ~S are reserved for Delectus and cannot be used for columns." delectus.system:+reserved-column-labels)
   (with-open-database (db path)
     (with-transaction db
       ;; table: delectus - identifies format version
       (execute-non-query db "create table delectus (format_version integer)")
-      (execute-non-query db "insert into delectus (format_version) values (?)" version:+delectus-format-version+)
+      (execute-non-query db "insert into delectus (format_version) values (?)" delectus.version:+delectus-format-version+)
       ;; table: contents - stores document data
       ;;        columns are (rowid [user-supplied column label]*)
       (if column-labels

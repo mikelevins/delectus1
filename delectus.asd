@@ -23,7 +23,7 @@
                           :components ((:file "package")
                                        (:file "version")
                                        (:file "system")
-                                       (:file "utils")
+                                       (:file "utilities")
                                        (:file "legacy")
                                        (:file "file")
                                        (:file "store")

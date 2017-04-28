@@ -30,8 +30,9 @@
 
 (defun build-sql-text-filter (filter-text cols)
   (reduce #'(lambda (l r)(concatenate 'string l r))
-          (interpose " OR "
-                     (loop for col in cols collect (format nil "\"~A\" LIKE \"%~A%\"" col filter-text)))))
+          (delectus.utilities:interpose 
+           " OR "
+           (loop for col in cols collect (format nil "\"~A\" LIKE \"%~A%\"" col filter-text)))))
 
 (defmethod store-get-rows ((store store) &key 
                            (column-labels nil)

@@ -8,21 +8,17 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :delectus)
+(in-package :delectus.utilities)
 
 ;;; ---------------------------------------------------------------------
 ;;; list utilities
 ;;; ---------------------------------------------------------------------
 
-(defun list-difference  (src-list sublist &key (test 'eql))
-  (labels ((discard (discard-list target-list &key (test 'eql))
-             (if (null discard-list)
-                 target-list
-                 (discard (cdr discard-list)
-                          (remove (car discard-list)
-                                  target-list :test test)
-                          :test test))))
-    (discard sublist src-list :test test)))
+;;; interpose (it things)
+;;; ---------------------------------------------------------------------
+;;; returns a new list created by inserting IT between each pair of
+;;; elements in THINGS. If THINGS has one or fewer elements then the
+;;; returned list is EQ to THINGS.
 
 (defun interpose (it things)
   (if (null (cdr things))
@@ -30,4 +26,5 @@
     (cons (car things)
           (cons it
                 (interpose it (cdr things))))))
+
 
