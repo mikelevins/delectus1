@@ -104,8 +104,7 @@
   (text-input-pane-text (filter-input window)))
 
 (defmethod compute-column-descriptions ((window document-window))
-  (let* ((column-labels (mapcar #'column-label->display-label
-                                (visible-column-labels (document window)))))
+  (let* ((column-labels (visible-column-labels (document window))))
     (mapcar (lambda (lbl) `(:title ,lbl :default-width 96))
             column-labels)))
 

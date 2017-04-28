@@ -32,5 +32,4 @@
                                        #+capi (:file "view-capi")
                                        ))))
 
-
 ;;; (asdf:load-system :delectus)

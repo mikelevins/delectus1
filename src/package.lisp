@@ -12,3 +12,17 @@
 
 (defpackage #:delectus
   (:use #:cl #:sqlite #:fare-csv #+capi #:capi))
+
+(defpackage #:delectus.version
+  (:use #:cl)
+  (:nicknames #:version)
+  (:export
+   #:+delectus-major-version+
+   #:+delectus-minor-version+
+   #:+delectus-patch-version+
+   #:+delectus-build-number+
+   #:delectus-version
+   #:delectus-version-string
+   #:+delectus-format-version+ ; version number of the Delectus file format
+   #:delectus-format-version-string ; version string for the delectus file format
+   ))

@@ -48,7 +48,7 @@
     (with-transaction db
       ;; table: delectus - identifies format version
       (execute-non-query db "create table delectus (format_version integer)")
-      (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
+      (execute-non-query db "insert into delectus (format_version) values (?)" version:+delectus-format-version+)
       ;; table: contents - stores document data
       ;;        columns are (rowid [user-supplied column label]*)
       (if column-labels

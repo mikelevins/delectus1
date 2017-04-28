@@ -8,7 +8,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :delectus)
+(in-package :delectus.version)
 
 (defparameter +delectus-major-version+ 2)
 (defparameter +delectus-minor-version+ 0)
