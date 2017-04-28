@@ -10,6 +10,18 @@
 
 (in-package :delectus)
 
+;;; ---------------------------------------------------------------------
+;;; TODO
+;;; ---------------------------------------------------------------------
+;;; - make the column-widths stay where the user adjusts them to even
+;;;   when sorting by different columns
+;;; - figure out a way to sort numerically in columns that are mainly
+;;;   numbers
+
+;;; ---------------------------------------------------------------------
+;;; Notes
+;;; ---------------------------------------------------------------------
+
 ;;; Cocoa system icons from Delectus 1:
 ;;; add row button: NSListViewTemplate
 ;;; add column button: NSColumnViewTemplate
@@ -18,18 +30,10 @@
 ;;; view classes
 ;;; ---------------------------------------------------------------------
 
-;;; TODO: change the sort implementation
-;;; currently it uses the built-in CAPI sort feature but that will
-;;; sort only what's actually in the pane.  In order to get the best
-;;; results with dbs that are too large to display all at once I
-;;; should instead have a click in the header re-fetch the contents
-;;; with an ORDER BY clause in the SQL.  That way the results will be
-;;; sorted on the entire column even when only a fraction of the rows
-;;; are displayed.
 (define-interface document-window ()
   ;; -- slots ---------------------------------------------
   ((document :accessor document :initform nil :initarg :document)
-   (sort-column :accessor sort-column :initform nil :initarg :sort-column)
+   (sort-column :accessor sort-column :initform "rowid" :initarg :sort-column)
    (sort-order :accessor sort-order :initform nil :initarg :sort-order) ; NIL | :ascending | :descending
    (item-count-limit :accessor item-count-limit :initform 256 :initarg :item-count-limit)
    (item-start-index :accessor item-start-index :initform 0 :initarg :item-start-index))
@@ -170,5 +174,3 @@
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/zipcode.delectus2"))
 ;;; (defparameter $doc (make-instance 'document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
-
-

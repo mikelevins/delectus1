@@ -47,8 +47,6 @@
           (interpose " OR "
                      (loop for col in cols collect (format nil "\"~A\" LIKE \"%~A%\"" col filter-text)))))
 
-;;; (format t "~%~%~A" (build-sql-text-filter "Fif" (visible-column-labels $store)))
-
 (defmethod store-get-rows ((store store) &key 
                            (column-labels nil)
                            (count-limit nil)
