@@ -8,35 +8,54 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :delectus)
+(in-package :delectus.legacy)
 
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
+;;; The legacy.lisp code works together with a command-line utility
+;;; called lecter, written in Gambit Scheme and compiled separately.
 ;;; lecter converts Delectus 1.x files to text files containing
-;;; Delectus data in s-expression format. We then read
-;;; these sexp files and convert the data to Delectus 2.0.
+;;; Delectus data in s-expression or csv format. We then read these
+;;; files and convert the data to Delectus 2.0.
+;;;
+;;; The data layout in csv files is:
+;;; header <newline> [row]*
+;;; where header is:
+;;; label[,label]*
+;;; and row is
+;;; field[,field]*
 ;;;
 ;;; The data layout in sexp files is like this:
 ;;;
-;;; :COLUMNS (
-;;; "Column Label"
-;;; ... repeated for the number of columns
-;;; )
+;;; :COLUMNS ([label]*)
 ;;; :ROWS
-;;; (value1 value2 ...)
+;;; ([value]*)
 ;;; ... 
 ;;;
 ;;; The legacy code reads a file in this format and converts the data
-;;; to Delectus 2 data suitable for storage in a SQLite file.
+;;; to Delectus 2 data suitable for storage in a SQLite file. It is an
+;;; error if the number of fields in any row differs from the number
+;;; of labels.
+
+;;; sexp-val->delectus-val (val)
+;;; ---------------------------------------------------------------------
+;;; PRIVATE GENERIC FUNCTION
+;;; converts VAL to a value that can be stored in a Delectus file,
+;;; returning the converted value.
 
 (defmethod sexp-val->delectus-val (val) val)
 
 (defmethod sexp-val->delectus-val ((val symbol)) 
   (symbol-name val))
 
-;;; convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
+;;; convert-delectus-sexp-file (path &optional (outpath nil)
 ;;; ---------------------------------------------------------------------
+;;; EXPORTED GENERIC FUNCTION
+;;; creates a new Delectus file containing the converted contents of
+;;; the file at PATH. The file at PATH must be in lecter's SEXP export
+;;; format.
+
 (defmethod convert-delectus-sexp-file ((path pathname) &optional (outpath nil))
   (let* ((outpath (or outpath
                       (make-pathname :directory (pathname-directory path)
@@ -76,13 +95,13 @@
 (defmethod convert-delectus-sexp-file ((path string) &optional (outpath nil))
   (convert-delectus-sexp-file (pathname path) outpath))
 
-;;; (convert-delectus-sexp-file "/Users/mikel/Desktop/junior-movies.sexp")
-;;; (convert-delectus-sexp-file "/Users/mikel/Desktop/Movies.sexp")
-
-;;; convert-delectus-csv-file ((path pathname) &optional (outpath nil))
+;;; convert-delectus-csv-file (path &optional (outpath nil))
 ;;; ---------------------------------------------------------------------
-;;; TODO: decide how to handle edge cases in case we want to import arbitrary CSV:
-;;;  1. how do we know whether to treat the first row as column labels?
+;;; EXPORTED GENERIC FUNCTION
+;;; creates a new Delectus file containing the converted contents of
+;;; the file at PATH. The file at PATH must be in lecter's CSV export
+;;; format.
+
 (defmethod convert-delectus-csv-file ((path pathname) &optional (outpath nil))
   (let* ((outpath (or outpath
                       (make-pathname :directory (pathname-directory path)
@@ -104,6 +123,10 @@
 
 (defmethod convert-delectus-csv-file ((path string) &optional (outpath nil))
   (convert-delectus-csv-file (pathname path) outpath))
+
+
+;;; TEST CODE
+;;; ---------------------------------------------------------------------
 
 ;;; shell: lecter --csv test-data/junior-movies.delectus > ~/Desktop/junior-movies.csv
 ;;; (time (convert-delectus-csv-file "/Users/mikel/Desktop/junior-movies.csv" "/Users/mikel/Desktop/junior-movies.delectus2"))

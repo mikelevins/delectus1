@@ -17,11 +17,21 @@
 
 ;;; store
 ;;; ---------------------------------------------------------------------
+;;; CLASS
+;;; The type of objects that represent Delectus store files.
+
 (defclass store ()
   ;; pathname of a SQLite3 file with appropriate Delectus tables
   ((data-path :accessor data-path :initform nil :initarg :data-path)))
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
+
+;;; visible-column-labels (store)
+;;; ---------------------------------------------------------------------
+;;; GENERIC FUNCTION
+;;; returns a list of column labels that are user-visible in STORE.
+;;; The list of visible labels does not include the hidden system
+;;; label "rowid".
 
 (defmethod visible-column-labels ((store store))
   (with-open-database (db (data-path store))

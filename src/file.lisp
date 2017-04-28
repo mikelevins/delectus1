@@ -36,11 +36,17 @@
 ;;;   of course, no column can be placed before rowid). views always
 ;;;   fetch columns in the order recorded in column_order.
 
-;;; create-delectus-file ((path pathname))
+;;; create-delectus-file (path &optional (column-labels nil))
 ;;; ---------------------------------------------------------------------
-;;; 
+;;; GENERIC FUNCTION 
+;;; Returns the pathname of a newly-created Delectus store file.
+;;; Creates the store file and populates it with the required tables.
+;;; Signals an error if the file cannot be created, if elements of
+;;; COLUMN-LABELS are duplicates, or if reserved labels are passed in
+;;; COLUMN-LABELS.
+
 (defmethod create-delectus-file ((path pathname) &optional (column-labels nil))
-  (assert (equalp column-labels (remove-duplicates column-labels :test #'equal))()
+  (assert (equalp column-labels (remove-duplicates column-labels :test #'equalp))()
     "Duplicate column labels in ~S" column-labels)
   (assert (every #'valid-column-label? column-labels) ()
     "The labels ~S are reserved for Delectus and cannot be used for columns." delectus.system:+reserved-column-labels)
@@ -64,6 +70,12 @@
 
 (defmethod create-delectus-file ((path string) &optional (column-labels nil))
   (create-delectus-file (pathname path) column-labels))
+
+;;; probe-delectus-file (path)
+;;; ---------------------------------------------------------------------
+;;; GENERIC FUNCTION 
+;;; returns true if PATH is the pathname of an existing Delectus file and 
+;;; NIL otherwise.
 
 (defmethod probe-delectus-file ((path pathname))
   (let ((path (probe-file path)))

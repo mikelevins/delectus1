@@ -16,6 +16,7 @@
 
 ;;; interpose (it things)
 ;;; ---------------------------------------------------------------------
+;;; FUNCTION
 ;;; returns a new list created by inserting IT between each pair of
 ;;; elements in THINGS. If THINGS has one or fewer elements then the
 ;;; returned list is EQ to THINGS.

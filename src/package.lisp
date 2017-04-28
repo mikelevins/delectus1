@@ -57,3 +57,16 @@
    #:interpose
    ))
 
+;;; delectus.legacy
+;;; ---------------------------------------------------------------------
+;;; utilities for converting files in old versions of Delectus formats
+;;; to the current version.
+
+(defpackage #:delectus.legacy
+  (:use #:cl)
+  (:export 
+   #:convert-delectus-sexp-file
+   #:convert-delectus-csv-file
+   ))
+
+
