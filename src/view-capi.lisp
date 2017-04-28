@@ -27,28 +27,13 @@
 ;;; add column button: NSColumnViewTemplate
 
 ;;; ---------------------------------------------------------------------
-;;; utils
-;;; ---------------------------------------------------------------------
-
-(defun column-label->display-label (lbl)
-  (if (member lbl +reserved-column-labels :test #'equal)
-      "id"
-    lbl))
-
-(defun display-label->column-label (lbl)
-  (if (equalp "id" lbl)
-      "rowid"
-    lbl))
-
-
-;;; ---------------------------------------------------------------------
 ;;; view classes
 ;;; ---------------------------------------------------------------------
 
 (define-interface document-window ()
   ;; -- slots ---------------------------------------------
   ((document :accessor document :initform nil :initarg :document)
-   (sort-column :accessor sort-column :initform "rowid" :initarg :sort-column)
+   (sort-column :accessor sort-column :initform nil :initarg :sort-column)
    (sort-order :accessor sort-order :initform nil :initarg :sort-order) ; NIL | :ascending | :descending
    (item-count-limit :accessor item-count-limit :initform 256 :initarg :item-count-limit)
    (item-start-index :accessor item-start-index :initform 0 :initarg :item-start-index))
@@ -99,6 +84,11 @@
    :width 800 :height 600))
 
 (defmethod initialize-instance :after ((window document-window) &rest initargs &key &allow-other-keys)
+  (unless (sort-column window)
+    (setf (sort-column window)
+          (first (visible-column-labels (document window)))))
+  (unless (sort-order window)
+    (setf (sort-order window) :ascending))
   (update-collection-rows window)
   (update-pager-text window))
 
@@ -169,7 +159,7 @@
 (defun handle-column-selection (window selected-column)
   (let* ((old-sort-column (sort-column window))
          (old-sort-order (sort-order window))
-         (new-sort-column (display-label->column-label selected-column)))
+         (new-sort-column selected-column))
     (if (equalp new-sort-column old-sort-column)
         (if (equal :ascending old-sort-order)
             (setf (sort-order window) :descending)

@@ -30,11 +30,11 @@
 ;;; 
 ;;; - column_order (column_name string)
 ;;;   lists the user-defined column labels in user-defined order. It
-;;;   is an invariant of Delectus that the rowid column is always
-;;;   first. by default the remaining columns appear in order of
-;;;   creation, but users can reorder them (except that, of course, no
-;;;   column can be placed before rowid). views always fetch columns
-;;;   in the order recorded in column_order.
+;;;   is an invariant of Delectus that the (hidden) rowid column is
+;;;   always the first column. by default the remaining columns appear
+;;;   in order of creation, but users can reorder them (except that,
+;;;   of course, no column can be placed before rowid). views always
+;;;   fetch columns in the order recorded in column_order.
 
 ;;; create-delectus-file ((path pathname))
 ;;; ---------------------------------------------------------------------
@@ -42,30 +42,30 @@
 (defmethod create-delectus-file ((path pathname) &optional (column-labels nil))
   (assert (equalp column-labels (remove-duplicates column-labels :test #'equal))()
     "Duplicate column labels in ~S" column-labels)
-  ;; remove "rowid" from user-supplied columns; we handle specially
-  (let ((column-labels (remove "rowid" column-labels :test #'equal)))
-    (with-open-database (db path)
-      (with-transaction db
-        ;; table: delectus - identifies format version
-        (execute-non-query db "create table delectus (format_version integer)")
-        (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
-        ;; table: contents - stores document data
-        ;;        columns are (rowid [user-supplied column labels])
-        (if column-labels
-            (execute-non-query db (format nil "create table contents (rowid INTEGER PRIMARY KEY, ~{~s~^, ~})" column-labels))
-          (execute-non-query db "create table contents (rowid INTEGER PRIMARY KEY)"))
-        ;; table: notes - stores user-defined notes about the store document
-        (execute-non-query db "create table notes (timestamp, subject, author, note)")
-        ;; table: column_order - stores the user-defined column order
-        (execute-non-query db "create table column_order (column_name string)")
-        (dolist (lbl column-labels)
-          (execute-non-query db "insert into column_order (column_name) values (?)" lbl)))))
+  (assert (every #'valid-column-label? column-labels) ()
+    "The labels ~S are reserved for Delectus and cannot be used for columns." +reserved-column-labels)
+  (with-open-database (db path)
+    (with-transaction db
+      ;; table: delectus - identifies format version
+      (execute-non-query db "create table delectus (format_version integer)")
+      (execute-non-query db "insert into delectus (format_version) values (?)" +delectus-format-version+)
+      ;; table: contents - stores document data
+      ;;        columns are (rowid [user-supplied column label]*)
+      (if column-labels
+          (execute-non-query db (format nil "create table contents (rowid INTEGER PRIMARY KEY, ~{~s~^, ~})" column-labels))
+        (execute-non-query db "create table contents (rowid INTEGER PRIMARY KEY)"))
+      ;; table: notes - stores user-defined notes about the store document
+      (execute-non-query db "create table notes (timestamp, subject, author, note)")
+      ;; table: column_order - stores the user-defined column order
+      (execute-non-query db "create table column_order (column_name string)")
+      (dolist (lbl column-labels)
+        (execute-non-query db "insert into column_order (column_name) values (?)" lbl))))
   path)
 
 (defmethod create-delectus-file ((path string) &optional (column-labels nil))
   (create-delectus-file (pathname path) column-labels))
 
-(defmethod ensure-delectus-file ((path pathname))
+(defmethod probe-delectus-file ((path pathname))
   (let ((path (probe-file path)))
     (and path
          (uiop/pathname:file-pathname-p path)
@@ -74,5 +74,5 @@
            (execute-non-query db "select * from delectus"))
          path)))
 
-(defmethod ensure-delectus-file ((path string))
-  (ensure-delectus-file (pathname path)))
+(defmethod probe-delectus-file ((path string))
+  (probe-delectus-file (pathname path)))
