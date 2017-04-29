@@ -53,8 +53,8 @@
 (defmethod create-delectus-file ((path pathname) &optional (column-labels nil))
   (assert (equalp column-labels (remove-duplicates column-labels :test #'equalp))()
           "Duplicate column labels in ~S" column-labels)
-  (assert (every #'valid-column-label? column-labels) ()
-          "The labels ~S are reserved for Delectus and cannot be used for columns." delectus.system:+reserved-column-labels)
+  (assert (every #'delectus.system:valid-column-label? column-labels) ()
+          "The labels ~S are reserved for Delectus and cannot be used for columns." delectus.system:+reserved-column-labels+)
   (with-open-database (db path)
     (with-transaction db
       ;; table: delectus - identifies format version

@@ -126,6 +126,6 @@
 
 ;;; TEST CODE
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
-;;; (store-get-rows $store :column-labels '("Title") :count-limit 50  :filter-text "Fo")
+;;; (store-get-rows $store :column-labels '("Title") :count-limit 50  :filter-text "Cree")
 ;;; (time (store-count-rows $store))
 

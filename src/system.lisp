@@ -36,5 +36,5 @@
 (defmethod valid-column-label? (thing) nil)
 
 (defmethod valid-column-label? ((thing string))
-  (not (member thing +reserved-column-labels :test #'equalp)))
+  (not (member thing +reserved-column-labels+ :test #'equalp)))
 

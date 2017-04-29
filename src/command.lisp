@@ -17,6 +17,16 @@
 ;;; interaction with the model. Commands are posted to the document,
 ;;; which then executes them against the model.
 
+;;; NOTES
+;;; how to get the rowid of an insert:
+#|
+(with-open-database (db (data-path $store))
+  (with-transaction db
+    (execute-to-list db "insert into contents (\"Title\") values (\"Santa Claus versus the Martians\")")
+    (execute-to-list db "select last_insert_rowid()")))
+|#
+
+
 ;;; ---------------------------------------------------------------------
 ;;; command
 ;;; ---------------------------------------------------------------------
@@ -24,3 +34,22 @@
 ;;; The type of objects that represent Delectus user commands.
 
 (defclass command ()())
+
+(defclass insert-row-command (command)())
+(defclass undo-insert-row-command (command)())
+
+(defclass update-row-command (command)())
+(defclass undo-update-row-command (command)())
+
+(defclass delete-row-command (command)())
+(defclass undo-delete-row-command (command)())
+
+(defclass add-column-command (command)())
+(defclass undo-add-column-command (command)())
+
+(defclass delete-column-command (command)())
+(defclass undo-delete-column-command (command)())
+
+(defclass move-column-command (command)())
+(defclass undo-move-column-command (command)())
+

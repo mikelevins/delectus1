@@ -51,7 +51,7 @@
   (:use #:cl)
   (:export 
    #:+system-rowid-label+
-   #:+reserved-column-labels
+   #:+reserved-column-labels+
    #:valid-column-label?))
 
 ;;; ---------------------------------------------------------------------
