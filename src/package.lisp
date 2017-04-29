@@ -142,6 +142,18 @@
   (:use #:cl)
   (:export 
    #:command
+   #:insert-row-command
+   #:undo-insert-row-command
+   #:update-row-command
+   #:undo-update-row-command
+   #:delete-row-command
+   #:undo-delete-row-command
+   #:add-column-command
+   #:undo-add-column-command
+   #:delete-column-command
+   #:undo-delete-column-command
+   #:move-column-command
+   #:undo-move-column-command
    ))
 
 ;;; ---------------------------------------------------------------------
