@@ -10,15 +10,28 @@
 
 (in-package :delectus.system)
 
+;;; +system-rowid-label+
 ;;; ---------------------------------------------------------------------
-;;; system column labels
-;;; ---------------------------------------------------------------------
-;;; columns that every delectus contents table possesses, regardless
-;;; of what columns a user supplies.
+;;; *exported special variable*
+;;;
+;;; column label reserved for row ids
 
 (defparameter +system-rowid-label+ "rowid")
 
-(defparameter +reserved-column-labels (list +system-rowid-label+ "oid" "_rowid_"))
+;;; +reserved-column-labels+
+;;; ---------------------------------------------------------------------
+;;; *exported special variable*
+;;;
+;;; reserved column labels unavailable for user columns
+
+(defparameter +reserved-column-labels+ (list +system-rowid-label+ "oid" "_rowid_"))
+
+;;; valid-column-label? (thing)
+;;; ---------------------------------------------------------------------
+;;; *exported generic function*
+;;;
+;;; Returns true if and only if THING is a string that can be used as a
+;;; column label.
 
 (defmethod valid-column-label? (thing) nil)
 

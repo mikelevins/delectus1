@@ -13,11 +13,8 @@
 ;;; ---------------------------------------------------------------------
 ;;; store
 ;;; ---------------------------------------------------------------------
-;;; a class that represents data storage
-
-;;; store
-;;; ---------------------------------------------------------------------
-;;; EXPORTED CLASS
+;;; *exported class*
+;;;
 ;;; The type of objects that represent Delectus store files.
 
 (defclass store ()
@@ -26,12 +23,13 @@
 
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 
+;;; ---------------------------------------------------------------------
 ;;; build-sql-text-filter (filter-text cols)
 ;;; ---------------------------------------------------------------------
-;;; PRIVATE FUNCTION
-;;; returns a SQL string that selects columns given by COLS and matching
-;;; the text given by FILTER-TEXT. A row matches FILTER-TEXT if the
-;;; string in FILTER-TEXT appears anywhere in the row. 
+;;; *private function*
+;;;
+;;; Builds and returns a SQL LIKE expression that tries to match a
+;;; FILTER-STRING to each column in COLS.
 
 (defun build-sql-text-filter (filter-text cols)
   (reduce #'(lambda (l r)(concatenate 'string l r))
@@ -39,6 +37,7 @@
            " OR "
            (loop for col in cols collect (format nil "\"~A\" LIKE \"%~A%\"" col filter-text)))))
 
+;;; ---------------------------------------------------------------------
 ;;; store-get-rows (store &key (column-labels nil)
 ;;;                            (count-limit nil)
 ;;;                            (start-index 0)
@@ -46,14 +45,15 @@
 ;;;                            (sort-column "rowid")
 ;;;                            (sort-order :ascending)
 ;;; ---------------------------------------------------------------------
-;;; EXPORTED GENERIC FUNCTION
-;;; returns all columns matching COLUMN-LABELS of all rows from STORE
-;;; that match FILTER-TEXT. A row matches FILTER-TEXT if the string in
-;;; FILTER-TEXT appears anywhere in the row. Results are limited to
-;;; COUNT-LIMIT rows, beginning with the row index START-INDEX. If
-;;; COUNT-LIMIT is NIL then all matching rows are returned. Rows are
-;;; sorted by SORT-COLUMN in the order given by SORT-ORDER, which can
-;;; be :ASCENDING or :DESCENDING.
+;;; *exported generic function*
+;;;
+;;; Returns a list of all rows of the `contents` table of STORE that
+;;; match FILTER-TEXT or, if FILTER-TEXT is NIL, all rows. If
+;;; COUNT-LIMIT is not NIL then it must be an integer; the result
+;;; list's length is limited to COUNT-LIMIT, and the returned results
+;;; begin at START-INDEX in the result set. Results are sorted by
+;;; SORT-COLUMN. Their order, given by SORT-ORDER, may be :ascending
+;;; or :descending.
 
 (defmethod store-get-rows ((store store) &key 
                            (column-labels nil)
@@ -86,27 +86,31 @@
       (with-transaction db
         (execute-to-list db query)))))
 
+;;; ---------------------------------------------------------------------
 ;;; store-get-column-labels (store)
 ;;; ---------------------------------------------------------------------
-;;; EXPORTED GENERIC FUNCTION
+;;; *exported generic function*
 ;;;
-;;; returns the visible column labels of the store in user-defined
-;;; order. The invisible column "rowid" is not included. The column
-;;; order is determined by rows in the column_order table.
+;;; Returns the visible column labels of STORE in user-defined
+;;; order. The invisible column `rowid` is not included. The column
+;;; order is given by the rows in the `column_order` table.
 
 (defmethod store-get-column-labels ((store store))
   (with-open-database (db (data-path store))
     (with-transaction db
       (mapcar #'first (execute-to-list db "select * from column_order")))))
 
+;;; ---------------------------------------------------------------------
 ;;; store-count-rows (store &key (column-labels nil)
 ;;;                              (filter-text "")
 ;;; ---------------------------------------------------------------------
-;;; EXPORTED GENERIC FUNCTION
+;;; *exported generic function*
 ;;;
-;;; returns a count of all columns matching COLUMN-LABELS of all rows
-;;; from STORE that match FILTER-TEXT. A row matches FILTER-TEXT if
-;;; the string in FILTER-TEXT appears anywhere in the row. 
+;;; Returns a count of all matching rows in STORE. Matching rows are
+;;; either all rows or, if FILTER-TEXT is not NIL, all rows for which
+;;; the contents of some column in COLUMN-LABELS contains
+;;; FILTER-TEXT. If FILTER-TEXT is empty then it matches any
+;;; contents. If COLUMN-LABELS is NIL then all columns are searched.
 
 (defmethod store-count-rows ((store store) &key (column-labels nil)(filter-text ""))
   (let* ((column-order (or column-labels (store-get-column-labels store)))
@@ -121,8 +125,6 @@
         (first (first (execute-to-list db query)))))))
 
 ;;; TEST CODE
-;;; ---------------------------------------------------------------------
-
 ;;; (defparameter $store (make-instance 'store :data-path "/Users/mikel/Desktop/Movies.delectus2"))
 ;;; (store-get-rows $store :column-labels '("Title") :count-limit 50  :filter-text "Fo")
 ;;; (time (store-count-rows $store))

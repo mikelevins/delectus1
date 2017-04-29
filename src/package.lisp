@@ -10,16 +10,22 @@
 
 (in-package :cl-user)
 
+;;; ---------------------------------------------------------------------
 ;;; delectus
 ;;; ---------------------------------------------------------------------
+;;; *package*
+;;;
 ;;; the top-level package for the delectus application
 
 (defpackage #:delectus
   (:use #:cl #:sqlite #:fare-csv #+capi #:capi))
 
+;;; ---------------------------------------------------------------------
 ;;; delectus.version
 ;;; ---------------------------------------------------------------------
-;;; definitions of delectus application and file-format versions and
+;;; *package*
+;;;
+;;; Definitions of delectus application and file-format versions and
 ;;; utilities for retrieving them.
 
 (defpackage #:delectus.version
@@ -28,28 +34,32 @@
    #:+delectus-major-version+
    #:+delectus-minor-version+
    #:+delectus-patch-version+
-   #:+delectus-build-number+
    #:delectus-version
    #:delectus-version-string
-   #:+delectus-format-version+      ; version number of the Delectus file format
-   #:delectus-format-version-string ; version string for the Delectus file format
-   ))
+   #:+delectus-format-major-version+
+   #:+delectus-format-minor-version+
+   #:delectus-format-version-string))
 
+;;; ---------------------------------------------------------------------
 ;;; delectus.system
 ;;; ---------------------------------------------------------------------
-;;; common system parameters and related utilities
+;;; *package*
+;;;
+;;; Common system parameters and related utilities.
 
 (defpackage #:delectus.system
   (:use #:cl)
   (:export 
-   #:+system-rowid-label+    ; the system-reserved label for the private rowid column in all Delectus tables
-   #:+reserved-column-labels ; column labels that are reserved to Delectus system code; these may not be used in user code
-   #:valid-column-label?     ; a function that returns true if and only if a label is valid for use in a Delectus table
-   ))
+   #:+system-rowid-label+
+   #:+reserved-column-labels
+   #:valid-column-label?))
 
+;;; ---------------------------------------------------------------------
 ;;; delectus.utilities
 ;;; ---------------------------------------------------------------------
-;;; general utilities
+;;; *package*
+;;;
+;;; General utilities.
 
 (defpackage #:delectus.utilities
   (:use #:cl)
@@ -57,9 +67,12 @@
    #:interpose
    ))
 
+;;; ---------------------------------------------------------------------
 ;;; delectus.file
 ;;; ---------------------------------------------------------------------
-;;; utilities for creating and populating Delectus 2 store files
+;;; *package*
+;;;
+;;; Utilities for creating and populating Delectus 2 store files.
 
 (defpackage #:delectus.file
   (:use #:cl #:sqlite #:fare-csv)
@@ -68,10 +81,12 @@
    #:probe-delectus-file
    ))
 
-
+;;; ---------------------------------------------------------------------
 ;;; delectus.legacy
 ;;; ---------------------------------------------------------------------
-;;; utilities for converting files in old versions of Delectus formats
+;;; *package*
+;;;
+;;; Utilities for converting files in old versions of Delectus formats
 ;;; to the current version.
 
 (defpackage #:delectus.legacy
@@ -81,10 +96,12 @@
    #:convert-delectus-csv-file
    ))
 
-
+;;; ---------------------------------------------------------------------
 ;;; delectus.store
 ;;; ---------------------------------------------------------------------
-;;; classes and functions for interacting with document data stored in 
+;;; *package*
+;;;
+;;; Classes and functions for interacting with document data stored in
 ;;; Delectus files
 
 (defpackage #:delectus.store
@@ -96,10 +113,13 @@
    #:store-get-rows
    ))
 
-
+;;; ---------------------------------------------------------------------
 ;;; delectus.document
 ;;; ---------------------------------------------------------------------
-;;; classes and functions for interacting with the Delectus document model
+;;; *package*
+;;;
+;;; Classes and functions for interacting with the Delectus document
+;;; model
 
 (defpackage #:delectus.document
   (:use #:cl)
@@ -110,10 +130,12 @@
    #:visible-rows
    ))
 
-
+;;; ---------------------------------------------------------------------
 ;;; delectus.command
 ;;; ---------------------------------------------------------------------
-;;; classes and functions that command the Delectus document to carry
+;;; *package*
+;;;
+;;; Classes and functions that command the Delectus document to carry
 ;;; out user instructions
 
 (defpackage #:delectus.command
@@ -122,11 +144,14 @@
    #:command
    ))
 
+;;; ---------------------------------------------------------------------
 ;;; delectus.capi
 ;;; ---------------------------------------------------------------------
-;;; on macOS, Linux, and Windows platforms, classes and functions
-;;; that provide the Delectus graphical user interface. Uses and
-;;; requires Lispworks CAPI
+;;; *package*
+;;;
+;;; On macOS, Linux, and Windows platforms, classes and functions that
+;;; provide the Delectus graphical user interface. Uses and requires
+;;; Lispworks CAPI
 
 #+capi
 (defpackage #:delectus.capi

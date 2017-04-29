@@ -10,22 +10,21 @@
 
 (in-package :delectus.utilities)
 
-;;; ---------------------------------------------------------------------
-;;; list utilities
-;;; ---------------------------------------------------------------------
 
+;;; ---------------------------------------------------------------------
 ;;; interpose (it things)
 ;;; ---------------------------------------------------------------------
-;;; FUNCTION
-;;; returns a new list created by inserting IT between each pair of
+;;; *exported function*
+;;;
+;;; Returns a new list created by inserting IT between each pair of
 ;;; elements in THINGS. If THINGS has one or fewer elements then the
 ;;; returned list is EQ to THINGS.
 
 (defun interpose (it things)
   (if (null (cdr things))
       things
-    (cons (car things)
-          (cons it
-                (interpose it (cdr things))))))
+      (cons (car things)
+            (cons it
+                  (interpose it (cdr things))))))
 
 
