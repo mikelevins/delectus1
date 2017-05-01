@@ -20,7 +20,7 @@
   :author "mikel evins <mikel@evins.net>"
   :license "Apache 2.0"
   :serial t
-  :depends-on (:sqlite :fare-csv :local-time)
+  :depends-on (:sqlite :fare-csv)
   :components ((:module "src" :serial t
                         :components ((:file "package")
                                      (:file "version")

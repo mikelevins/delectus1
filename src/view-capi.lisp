@@ -277,3 +277,7 @@
 ;;; (defparameter $store (make-instance 'delectus.store:store :data-path "/Users/mikel/Desktop/zip_codes_states.delectus2"))
 ;;; (defparameter $doc (make-instance 'delectus.document:document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
+;;;
+;;; (defparameter $store (make-instance 'delectus.store:store :data-path "C:\\Users\\mevin\\Movies.delectus2"))
+;;; (defparameter $doc (make-instance 'delectus.document:document :store $store))
+;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
