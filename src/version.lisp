@@ -59,11 +59,10 @@
 ;;; returns the version of the Delectus release as a string
 
 (defun delectus-version-string ()
-  (format nil "~A.~A.~A (build ~A)"
+  (format nil "~A.~A.~A"
           +delectus-major-version+
           +delectus-minor-version+
-          +delectus-patch-version+
-          +delectus-build-number+))
+          +delectus-patch-version+))
 
 ;;; ---------------------------------------------------------------------
 ;;; +delectus-format-major-version+

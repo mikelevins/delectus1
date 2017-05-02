@@ -16,11 +16,13 @@
 ;;;
 ;;; A delectus store file is a SQLite3 file with the following tables:
 ;;;
-;;; - delectus (format_version) 
-;;;   The `format_version` column contains the version number of the
-;;;   current file format. The version format is semantic versioning
-;;;   i.j.k... The table stores one row for each digit, storing as
-;;;   many digits as needed.
+;;; - delectus (keys, vals) 
+;;;   The `delectus` table is a property map that stores metadata
+;;;   describing the file as key/value pairs. Two keys present
+;;;   in all files are "delectus.version", the version of the 
+;;;   Delectus application that created the file, and 
+;;;   "delectus.format.version", the version of the Delectus
+;;;   file format used in the file.
 ;;;
 ;;; - contents (rowid, label*)
 ;;;   `rowid` is a monotonic unique index and `label*` is user-supplied
@@ -58,9 +60,14 @@
   (with-open-database (db path)
     (with-transaction db
       ;; table: delectus - identifies format version
-      (execute-non-query db "create table delectus (format_version integer)")
-      (execute-non-query db "insert into delectus (format_version) values (?)" delectus.version:+delectus-format-major-version+)
-      (execute-non-query db "insert into delectus (format_version) values (?)" delectus.version:+delectus-format-minor-version+)
+      (execute-non-query db "create table delectus (keys, vals)")
+      (execute-non-query db "insert into delectus (keys, vals) values (?,?)" 
+                         "delectus.version" (delectus.version:delectus-version-string))
+      (execute-non-query db "insert into delectus (keys, vals) values (?,?)" 
+                         "delectus.format.version"
+                         (format nil "~A.~A" 
+                                 delectus.version:+delectus-format-major-version+
+                                 delectus.version:+delectus-format-minor-version+))
       ;; table: contents - stores document data
       ;;        columns are (rowid [user-supplied column label]*)
       (if column-labels
