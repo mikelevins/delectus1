@@ -22,13 +22,11 @@
   :serial t
   :depends-on (:sqlite :fare-csv)
   :components ((:module "src" :serial t
-                        :components ((:module "sqlite-tools" :serial t
-                                              :components ((:file "package")
-                                                           (:file "tools")))
-                                     (:file "package")
+                        :components ((:file "package")
                                      (:file "version")
                                      (:file "system")
                                      (:file "utilities")
+                                     (:file "utils-sqlite")
                                      (:file "file")
                                      (:file "legacy")
                                      (:file "store")

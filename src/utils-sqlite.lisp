@@ -1,6 +1,14 @@
-;;;; squealer.lisp
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          utils-sqlite.lisp
+;;;; Project:       Delectus 2
+;;;; Purpose:       sqlite utility functions 
+;;;; Author:        mikel evins
+;;;; Copyright:     2018 by mikel evins
+;;;;
+;;;; ***********************************************************************
 
-(in-package #:sqlite-tools)
+(in-package :delectus.sqlite)
 
  #+linux(defparameter $home "/home/")
  #+darwin(defparameter $home "/Users/")
