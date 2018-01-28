@@ -22,7 +22,10 @@
   :serial t
   :depends-on (:sqlite :fare-csv)
   :components ((:module "src" :serial t
-                        :components ((:file "package")
+                        :components ((:module "sqlite-tools" :serial t
+                                              :components ((:file "package")
+                                                           (:file "tools")))
+                                     (:file "package")
                                      (:file "version")
                                      (:file "system")
                                      (:file "utilities")
@@ -35,3 +38,4 @@
                                      ))))
 
 ;;; (asdf:load-system :delectus)
+

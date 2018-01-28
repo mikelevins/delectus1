@@ -282,6 +282,6 @@
 ;;; (defparameter $doc (make-instance 'delectus.document:document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
 ;;;
-;;; (defparameter $store (make-instance 'delectus.store:store :data-path "/home/mikel/Desktop/Movies.delectus2"))
+;;; (defparameter $store (make-instance 'delectus.store:store :data-path "/Users/mikel/Workshop/src/delectus/test-data//Movies.delectus2"))
 ;;; (defparameter $doc (make-instance 'delectus.document:document :store $store))
 ;;; (defparameter $ui (contain (make-instance 'document-window :document $doc)))
