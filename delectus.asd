@@ -27,6 +27,7 @@
                                      (:file "system")
                                      (:file "utilities")
                                      (:file "utils-sqlite")
+                                     (:file "utils-sqlite-capi")
                                      (:file "file")
                                      (:file "legacy")
                                      (:file "store")
