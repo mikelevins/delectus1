@@ -12,7 +12,8 @@
 
 (define-interface table-list ()
   ;; -- slots ---------------------------------------------
-  ((dbpath :accessor dbpath :initform nil :initarg :dbpath))
+  ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
+   (responder :accessor responder :initform nil :initarg :responder))
 
   ;; -- panes ---------------------------------------------
   (:panes

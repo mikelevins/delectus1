@@ -24,7 +24,7 @@
 ;;; list-tables
 (defun list-tables (path)
   (sqlite:with-open-database (db path)
-    (sqlite:execute-to-list db "SELECT name FROM sqlite_master WHERE type = \"table\"")))
+    (mapcar #'car (sqlite:execute-to-list db "SELECT name FROM sqlite_master WHERE type = \"table\""))))
 
 ;;; (list-tables $moviesdb)
 ;;; (list-tables $redditdb)
