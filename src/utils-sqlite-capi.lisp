@@ -10,6 +10,10 @@
 
 (in-package :delectus.capi)
 
+(defun tables-pane-selection-callback (item-data item interface)
+  (display-message "item-data: ~S, item: ~S, interface: ~S"
+                   item-data item interface))
+
 (define-interface table-list ()
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
@@ -19,7 +23,10 @@
   (:panes
    (tables-pane list-panel :reader tables-pane
                 :alternating-background t
-                :items (compute-tables interface)))
+                :items (compute-tables interface)
+                :interaction :single-selection
+                :callback-type :full
+                :selection-callback 'tables-pane-selection-callback))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
