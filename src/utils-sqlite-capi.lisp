@@ -10,6 +10,17 @@
 
 (in-package :delectus.capi)
 
+;;; =====================================================================
+;;; MODEL
+;;; =====================================================================
+;;; code that interacts with SQLite files
+
+;;; =====================================================================
+;;; CONTROLLER
+;;; =====================================================================
+;;; code that reads and updates models and handles events dispatched
+;;; by views
+
 ;;; ---------------------------------------------------------------------
 ;;; sqlite-controller
 ;;; ---------------------------------------------------------------------
@@ -20,6 +31,11 @@
 
 (defmethod handle-table-name-selected ((responder sqlite-controller) table-name table-list)
   (display-message "selected table: ~S" table-name))
+
+;;; =====================================================================
+;;; VIEW
+;;; =====================================================================
+;;; code that displays models and dispatches events to controllers
 
 ;;; ---------------------------------------------------------------------
 ;;; table-list
