@@ -20,24 +20,5 @@
 (defpackage #:delectus
   (:use #:cl #:sqlite #:fare-csv #+capi #:capi))
 
-;;; ---------------------------------------------------------------------
-;;; delectus.version
-;;; ---------------------------------------------------------------------
-;;; *package*
-;;;
-;;; Definitions of delectus application and file-format versions and
-;;; utilities for retrieving them.
-
-(defpackage #:delectus.version
-  (:use #:cl)
-  (:export
-   #:+delectus-major-version+
-   #:+delectus-minor-version+
-   #:+delectus-patch-version+
-   #:delectus-version
-   #:delectus-version-string
-   #:+delectus-format-major-version+
-   #:+delectus-format-minor-version+
-   #:delectus-format-version-string))
 
 

@@ -20,11 +20,12 @@
   :author "mikel evins <mikel@evins.net>"
   :license "Apache 2.0"
   :serial t
-  :depends-on (:sqlite :fare-csv)
+  :depends-on (:uiop :sqlite :fare-csv)
   :components ((:module "src" :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     ))))
+                                     (:file "utils-sqlite")
+                                     (:file "file")))))
 
 ;;; (asdf:load-system :delectus)
 ;;; (env:start-environment)
