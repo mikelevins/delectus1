@@ -35,7 +35,7 @@
 ;;;
 ;;; patch version of the Delectus release
 
-(defparameter +delectus-patch-version+ 1)
+(defparameter +delectus-patch-version+ 2)
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus-version ()
@@ -48,8 +48,7 @@
 (defun delectus-version ()
   (vector +delectus-major-version+
           +delectus-minor-version+
-          +delectus-patch-version+
-          +delectus-build-number+))
+          +delectus-patch-version+))
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus-version-string ()
