@@ -24,16 +24,6 @@
   :components ((:module "src" :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     (:file "system")
-                                     (:file "utilities")
-                                     (:file "utils-sqlite")
-                                     (:file "utils-sqlite-capi")
-                                     (:file "file")
-                                     (:file "legacy")
-                                     (:file "store")
-                                     (:file "document")
-                                     (:file "command")
-                                     #+capi (:file "view-capi")
                                      ))))
 
 ;;; (asdf:load-system :delectus)
