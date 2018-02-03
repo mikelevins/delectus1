@@ -15,6 +15,8 @@
     (and path
          (uiop/pathname:file-pathname-p path)
          (with-open-database (db path)
+           ;; the right way to check whether a file is a SQLite file,
+           ;; according to SQlite docs:
            (execute-non-query db "pragma schema_version"))
          path)))
 
