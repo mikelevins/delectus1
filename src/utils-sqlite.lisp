@@ -36,3 +36,10 @@
 
 (defmethod sqlite-list-tables ((path string))
   (sqlite-list-tables (pathname path)))
+
+(defmethod sqlite-list-table-columns ((path pathname) (table-name string))
+  (sqlite:with-open-database (db path)
+    (sqlite:execute-to-list db (format nil "pragma table_info(~S)" table-name))))
+
+(defmethod sqlite-list-table-columns ((path string) (table-name string))
+  (sqlite-list-table-columns (pathname path) table-name))
