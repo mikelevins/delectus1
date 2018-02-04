@@ -43,3 +43,24 @@
 
 (defmethod sqlite-list-table-columns ((path string) (table-name string))
   (sqlite-list-table-columns (pathname path) table-name))
+
+(defmethod sqlite-count-table-rows ((path pathname) (table-name string))
+  (sqlite:with-open-database (db path)
+    (sqlite:execute-single db (format nil "select count(*) from ~A" table-name))))
+
+(defmethod sqlite-count-table-rows ((path string) (table-name string))
+  (sqlite-count-table-rows (pathname path) table-name))
+
+;;; (sqlite-count-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents")
+
+(defmethod sqlite-get-table-rows ((path pathname) (table-name string) &key (from 0) (count nil))
+  (sqlite:with-open-database (db path)
+    (let ((count (or count
+                     (sqlite-count-table-rows path table-name))))
+      (sqlite:execute-to-list db (format nil "select * from ~a limit ~d,~d" table-name from count)))))
+
+(defmethod sqlite-get-table-rows ((path string) (table-name string) &key (from 0) (count nil))
+  (sqlite-get-table-rows (pathname path) table-name :from from :count count))
+
+;;; (sqlite-get-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" :from 0 :count 10)
+;;; (sqlite-get-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" :from 100 :count 10)

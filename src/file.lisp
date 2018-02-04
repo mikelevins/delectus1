@@ -47,3 +47,12 @@
   (mapcar #'second (sqlite-file-table-columns file table-name)))
 
 ;;; (sqlite-file-table-column-names $sqlite-file "contents")
+
+(defmethod sqlite-file-table-rows ((file sqlite-file)(table-name string)
+                                   &key (from 0)(count nil))
+  (if (sqlite-file-valid? file)
+      (sqlite-get-table-rows (path file) table-name :from from :count count)
+      (error "Not a SQLite file: ~S" (path file))))
+
+;; (sqlite-file-table-rows $sqlite-file "contents" :from 0 :count 5)
+;; (sqlite-file-table-rows $sqlite-file "contents" :from 100 :count 5)
