@@ -56,3 +56,12 @@
 
 ;; (sqlite-file-table-rows $sqlite-file "contents" :from 0 :count 5)
 ;; (sqlite-file-table-rows $sqlite-file "contents" :from 100 :count 5)
+
+
+(defmethod sqlite-file-table-row ((file sqlite-file)(table-name string) index)
+  (if (sqlite-file-valid? file)
+      (sqlite-get-table-row (path file) table-name index)
+      (error "Not a SQLite file: ~S" (path file))))
+
+;; (sqlite-file-table-row $sqlite-file "contents" 0)
+;; (sqlite-file-table-row $sqlite-file "contents" 100)

@@ -64,3 +64,13 @@
 
 ;;; (sqlite-get-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" :from 0 :count 10)
 ;;; (sqlite-get-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" :from 100 :count 10)
+
+(defmethod sqlite-get-table-row ((path pathname) (table-name string) (index integer))
+  (sqlite:with-open-database (db path)
+    (sqlite:execute-to-list db (format nil "select * from ~a limit ~d,~d" table-name index 1))))
+
+(defmethod sqlite-get-table-row ((path string) (table-name string) (index integer))
+  (sqlite-get-table-row (pathname path) table-name index))
+
+;;; (sqlite-get-table-row "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" 0)
+;;; (sqlite-get-table-row "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" 100)
