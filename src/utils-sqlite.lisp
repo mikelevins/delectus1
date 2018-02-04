@@ -16,7 +16,7 @@
          (uiop/pathname:file-pathname-p path)
          (with-open-database (db path)
            ;; the right way to check whether a file is a SQLite file,
-           ;; according to SQlite docs:
+           ;; according to SQLite docs:
            (execute-non-query db "pragma schema_version"))
          path)))
 
@@ -29,3 +29,10 @@
 ;;; (ensure-valid-sqlite-file "/Users/mikel/.emacs")
 ;;; should return NIL because it doesn't exist:
 ;;; (ensure-valid-sqlite-file "/Users/brobdingnag/.emacs")
+
+(defmethod sqlite-list-tables ((path pathname))
+  (sqlite:with-open-database (db path)
+    (mapcar #'car (sqlite:execute-to-list db "SELECT name FROM sqlite_master WHERE type = \"table\""))))
+
+(defmethod sqlite-list-tables ((path string))
+  (sqlite-list-tables (pathname path)))
