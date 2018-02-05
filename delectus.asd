@@ -25,7 +25,9 @@
                         :components ((:file "package")
                                      (:file "version")
                                      (:file "utils-sqlite")
-                                     (:file "file")))))
+                                     (:file "file")
+                                     ;; capi UI
+                                     #+capi (:file "utils-sqlite-capi")))))
 
 ;;; (asdf:load-system :delectus)
 ;;; (env:start-environment)
