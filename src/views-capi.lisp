@@ -12,7 +12,7 @@
 
 (define-interface sqlite-window ()
   ;; -- slots ---------------------------------------------
-  ((dbpath :accessor dbpath :initform nil :initarg :dbpath))
+  ((controller :accessor controller :initform nil :initarg :controller))
 
   ;; -- panes ---------------------------------------------
   (:panes
@@ -41,11 +41,11 @@
     :width 800 :height 600))
 
 (defmethod initialize-instance :after ((win sqlite-window) &rest initargs &key &allow-other-keys)
-  (when (dbpath win)
-    (let ((table-names (sqlite-list-tables (dbpath win)))
-          (tables-pane (tables-pane win)))
-      (when table-names
-        (setf (collection-items tables-pane)
-              table-names)))))
+  (when (controller win)
+    (when (dbpath (controller win))
+        (let ((table-names (sqlite-list-tables (dbpath (controller win))))
+              (tables-pane (tables-pane win)))
+          (when table-names
+            (setf (collection-items tables-pane)
+                  table-names))))))
 
-;;; (contain (make-instance 'sqlite-window :dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2"))
