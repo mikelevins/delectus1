@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          utils-sqlite-capi.lisp
+;;;; Name:          views-capi.lisp
 ;;;; Project:       Delectus 2
-;;;; Purpose:       Lispworks UI for working with SQLite utilities
+;;;; Purpose:       Lispworks CAPI views
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2018 by mikel evins
 ;;;;

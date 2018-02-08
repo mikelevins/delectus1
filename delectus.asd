@@ -27,7 +27,9 @@
                                      (:file "utils-sqlite")
                                      (:file "file")
                                      ;; capi UI
-                                     #+capi (:file "utils-sqlite-capi")))))
+                                     #+capi (:file "controllers-capi")
+                                     #+capi (:file "views-capi")
+                                     ))))
 
 ;;; (asdf:load-system :delectus)
 ;;; (env:start-environment)
