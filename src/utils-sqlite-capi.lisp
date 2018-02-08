@@ -30,8 +30,8 @@
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (contents-layout column-layout '(columns-pane :divider contents-pane))
-   (main-layout row-layout '(tables-pane :divider contents-layout)
+   (browser-layout column-layout '(tables-pane :divider columns-pane))
+   (main-layout row-layout '(browser-layout :divider contents-pane)
                 :reader main-layout :border 4))
   
   ;; -- defaults ---------------------------------------------
@@ -40,4 +40,12 @@
     :window-styles '(:textured-background)
     :width 800 :height 600))
 
-;;; (contain (make-instance 'sqlite-window))
+(defmethod initialize-instance :after ((win sqlite-window) &rest initargs &key &allow-other-keys)
+  (when (dbpath win)
+    (let ((table-names (sqlite-list-tables (dbpath win)))
+          (tables-pane (tables-pane win)))
+      (when table-names
+        (setf (collection-items tables-pane)
+              table-names)))))
+
+;;; (contain (make-instance 'sqlite-window :dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2"))
