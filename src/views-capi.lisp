@@ -10,6 +10,11 @@
 
 (in-package :delectus)
 
+;;; ---------------------------------------------------------------------
+;;; CLASS sqlite-window
+;;; ---------------------------------------------------------------------
+;;; a window used to inspect the contents of SQLite files
+
 (define-interface sqlite-window ()
   ;; -- slots ---------------------------------------------
   ((controller :accessor controller :initform nil :initarg :controller))

@@ -10,9 +10,16 @@
 
 (in-package :delectus)
 
+
+;;; ---------------------------------------------------------------------
+;;; CLASS sqlite-database-controller
+;;; ---------------------------------------------------------------------
+;;; a controller used to inspect the contents of SQLite files
+
 (defclass sqlite-database-controller ()
-  ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
-   (window :accessor window :initform nil)))
+  ((dbpath :accessor dbpath :initform nil :initarg :dbpath) ; the database file to inspect
+   (window :accessor window :initform nil) ; the window to manage; see initialize-instance :after
+   ))
 
 (defmethod initialize-instance :after ((controller sqlite-database-controller) &rest initargs &key &allow-other-keys)
   (setf (window controller)
