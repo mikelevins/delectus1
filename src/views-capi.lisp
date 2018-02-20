@@ -15,13 +15,26 @@
 ;;; ---------------------------------------------------------------------
 ;;; a window used to inspect the contents of SQLite files
 
+;;; callbacks
+(defun handle-sqlite-table-selection (table-name sqlite-window)
+  (let* ((controller (controller sqlite-window))
+         (dbpath (dbpath controller))
+         (column-names (mapcar #'second (sqlite-list-table-columns (dbpath (controller sqlite-window)) table-name)))
+         (columns-pane (columns-pane sqlite-window)))
+    (when column-names
+      (setf (collection-items columns-pane)
+            column-names))))
+
+;;; interface definition
 (define-interface sqlite-window ()
   ;; -- slots ---------------------------------------------
   ((controller :accessor controller :initform nil :initarg :controller))
 
   ;; -- panes ---------------------------------------------
   (:panes
-   (tables-pane list-panel :reader tables-pane)
+   (tables-pane list-panel :reader tables-pane
+                :selection-callback 'handle-sqlite-table-selection
+                :callback-type :item-interface)
    (columns-pane list-panel :reader columns-pane)
    (contents-pane multi-column-list-panel :reader contents-pane
                   :columns '((:title "Fruits" 
