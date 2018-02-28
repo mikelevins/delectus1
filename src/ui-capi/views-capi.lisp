@@ -19,7 +19,7 @@
 (defun handle-sqlite-table-selection (table-name sqlite-window)
   (let* ((controller (controller sqlite-window))
          (dbpath (dbpath controller))
-         (column-names (mapcar #'second (sqlite-list-table-columns (dbpath (controller sqlite-window)) table-name)))
+         (column-names (mapcar #'second (data::sqlite-list-table-columns (dbpath (controller sqlite-window)) table-name)))
          (columns-pane (columns-pane sqlite-window)))
     (when column-names
       (setf (collection-items columns-pane)
@@ -61,7 +61,7 @@
 (defmethod initialize-instance :after ((win sqlite-window) &rest initargs &key &allow-other-keys)
   (when (controller win)
     (when (dbpath (controller win))
-        (let ((table-names (sqlite-list-tables (dbpath (controller win))))
+        (let ((table-names (data::sqlite-list-tables (dbpath (controller win))))
               (tables-pane (tables-pane win)))
           (when table-names
             (setf (collection-items tables-pane)

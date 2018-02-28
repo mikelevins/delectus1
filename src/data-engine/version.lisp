@@ -1,67 +1,66 @@
 ;;;; ***********************************************************************
 ;;;;
 ;;;; Name:          version.lisp
-;;;; Project:       Delectus 2
+;;;; Project:       Delectus 2 data engine
 ;;;; Purpose:       delectus version
 ;;;; Author:        mikel evins
-;;;; Copyright:     2017 by mikel evins
+;;;; Copyright:     2018 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :delectus)
+(in-package :data)
 
 ;;; ---------------------------------------------------------------------
-;;; +delectus-major-version+
+;;; +delectus-data-major-version+
+;;; ---------------------------------------------------------------------
+;;;
+;;; major version of the Delectus data engine release
+
+(defparameter +delectus-data-major-version+ 2)
+
+;;; ---------------------------------------------------------------------
+;;; +delectus-data-minor-version+
 ;;; ---------------------------------------------------------------------
 ;;; *exported special variable*
 ;;;
-;;; major version of the Delectus release
+;;; minor version of the Delectus data engine release
 
-(defparameter +delectus-major-version+ 2)
-
-;;; ---------------------------------------------------------------------
-;;; +delectus-minor-version+
-;;; ---------------------------------------------------------------------
-;;; *exported special variable*
-;;;
-;;; minor version of the Delectus release
-
-(defparameter +delectus-minor-version+ 0)
+(defparameter +delectus-data-minor-version+ 0)
 
 ;;; ---------------------------------------------------------------------
-;;; +delectus-patch-version+
+;;; +delectus-data-patch-version+
 ;;; ---------------------------------------------------------------------
 ;;; *exported special variable*
 ;;;
-;;; patch version of the Delectus release
+;;; patch version of the Delectus data engine release
 
-(defparameter +delectus-patch-version+ 2)
+(defparameter +delectus-data-patch-version+ 3)
 
 ;;; ---------------------------------------------------------------------
-;;; delectus-version ()
+;;; delectus-data-version ()
 ;;; ---------------------------------------------------------------------
 ;;; *exported function*
 ;;;
-;;; returns the version of the Delectus release as a vector of
-;;; integers
+;;; returns the version of the Delectus data engine release as a
+;;; vector of integers
 
-(defun delectus-version ()
-  (vector +delectus-major-version+
-          +delectus-minor-version+
-          +delectus-patch-version+))
+(defun delectus-data-version ()
+  (vector +delectus-data-major-version+
+          +delectus-data-minor-version+
+          +delectus-data-patch-version+))
 
 ;;; ---------------------------------------------------------------------
-;;; delectus-version-string ()
+;;; delectus-data-version-string ()
 ;;; ---------------------------------------------------------------------
 ;;; *exported function*
 ;;;
-;;; returns the version of the Delectus release as a string
+;;; returns the version of the Delectus data engine release as a string
 
-(defun delectus-version-string ()
+(defun delectus-data-version-string ()
   (format nil "~A.~A.~A"
-          +delectus-major-version+
-          +delectus-minor-version+
-          +delectus-patch-version+))
+          +delectus-data-major-version+
+          +delectus-data-minor-version+
+          +delectus-data-patch-version+))
 
 ;;; ---------------------------------------------------------------------
 ;;; +delectus-format-major-version+
@@ -79,7 +78,7 @@
 ;;;
 ;;; minor version of the Delectus file format
 
-(defparameter +delectus-format-minor-version+ 0)
+(defparameter +delectus-format-minor-version+ 1)
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus-format-version-string ()

@@ -1,14 +1,14 @@
 ;;;; ***********************************************************************
 ;;;;
 ;;;; Name:          utils-sqlite.lisp
-;;;; Project:       Delectus 2
+;;;; Project:       Delectus 2 data engine
 ;;;; Purpose:       utilities for operating on sqlite files
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2018 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :delectus)
+(in-package :data)
 
 (defmethod ensure-valid-sqlite-file ((path pathname))
   (let ((path (probe-file path)))

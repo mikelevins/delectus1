@@ -1,14 +1,14 @@
 ;;;; ***********************************************************************
 ;;;;
 ;;;; Name:          file.lisp
-;;;; Project:       Delectus 2
+;;;; Project:       Delectus 2 data engine
 ;;;; Purpose:       managing database files
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2018 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :delectus)
+(in-package :data)
 
 ;;;---------------------------------------------------------------------
 ;;; CLASS sqlite-file

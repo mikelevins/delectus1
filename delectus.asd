@@ -11,25 +11,48 @@
 (in-package #:cl-user)
 
 ;;; ---------------------------------------------------------------------
-;;; delectus 2: a list manager
+;;; delectus 2 data engine
 ;;; ---------------------------------------------------------------------
 
-(asdf:defsystem #:delectus
-  :description "Delectus: a list manager"
+(asdf:defsystem #:data-engine
+    :description "The Delectus data engine"
+    :version "2.0.0"
+    :author "mikel evins <mikel@evins.net>"
+    :license "Apache 2.0"
+    :serial t
+    :depends-on (:uiop :sqlite :fare-csv)
+    :components ((:module "src" :serial t
+                          :components ((:module "data-engine" :serial t
+                                                :components ((:file "package")
+                                                             (:file "version")
+                                                             (:file "utils-sqlite")
+                                                             (:file "file")
+                                                             ))))))
+
+;;; (asdf:load-system :data-engine)
+;;; (env:start-environment)
+
+
+;;; ---------------------------------------------------------------------
+;;; delectus 2 desktop: a list manager
+;;; ---------------------------------------------------------------------
+
+(asdf:defsystem #:delectus-desktop
+  :description "Delectus desktop UI"
   :version "2.0.0"
   :author "mikel evins <mikel@evins.net>"
   :license "Apache 2.0"
   :serial t
-  :depends-on (:uiop :sqlite :fare-csv)
+  :depends-on (:data-engine)
   :components ((:module "src" :serial t
-                        :components ((:file "package")
-                                     (:file "version")
-                                     (:file "utils-sqlite")
-                                     (:file "file")
-                                     ;; capi UI
-                                     #+capi (:file "controllers-capi")
-                                     #+capi (:file "views-capi")
-                                     ))))
+                        :components ((:module "ui-capi" :serial t
+                                              :components ((:file "package")
+                                                           (:file "version")
+                                                           (:file "controllers-capi")
+                                                           (:file "views-capi")
+                                                           ))))))
 
-;;; (asdf:load-system :delectus)
+
+
+;;; (asdf:load-system :delectus-desktop)
 ;;; (env:start-environment)
