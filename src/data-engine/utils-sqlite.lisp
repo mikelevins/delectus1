@@ -10,6 +10,10 @@
 
 (in-package :data)
 
+;;; GENERIC FUNCTION ensure-valid-sqlite-file (path)
+;;; ---------------------------------------------------------------------
+;;; returns PATH if it's a valid SQLite file; returns NIL if it isn't
+
 (defmethod ensure-valid-sqlite-file ((path pathname))
   (let ((path (probe-file path)))
     (and path
@@ -23,12 +27,17 @@
 (defmethod ensure-valid-sqlite-file ((path string))
   (ensure-valid-sqlite-file (pathname path)))
 
+;;; tests:
 ;;; should return the pathname because it's a valid sqlite file:
 ;;; (ensure-valid-sqlite-file "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
 ;;; should return NIL because it isn't:
 ;;; (ensure-valid-sqlite-file "/Users/mikel/.emacs")
 ;;; should return NIL because it doesn't exist:
 ;;; (ensure-valid-sqlite-file "/Users/brobdingnag/.emacs")
+
+;;; GENERIC FUNCTION sqlite-list-tables (path)
+;;; ---------------------------------------------------------------------
+;;; returns a list of table names from the file at PATH
 
 (defmethod sqlite-list-tables ((path pathname))
   (sqlite:with-open-database (db path)
@@ -39,6 +48,11 @@
 
 ;;; (sqlite-list-tables "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
 
+;;; GENERIC FUNCTION sqlite-list-table-columns (path table-name)
+;;; ---------------------------------------------------------------------
+;;; returns a list of column names from the named table in the file at
+;;; PATH
+
 (defmethod sqlite-list-table-columns ((path pathname) (table-name string))
   (sqlite:with-open-database (db path)
     (sqlite:execute-to-list db (format nil "pragma table_info(~S)" table-name))))
@@ -48,6 +62,10 @@
 
 ;;; (sqlite-list-table-columns "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents")
 
+;;; GENERIC FUNCTION sqlite-count-table-rows (path table-name)
+;;; ---------------------------------------------------------------------
+;;; returns a count of rows in the named table in the file at PATH
+
 (defmethod sqlite-count-table-rows ((path pathname) (table-name string))
   (sqlite:with-open-database (db path)
     (sqlite:execute-single db (format nil "select count(*) from ~A" table-name))))
@@ -56,6 +74,12 @@
   (sqlite-count-table-rows (pathname path) table-name))
 
 ;;; (sqlite-count-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents")
+
+;;; GENERIC FUNCTION sqlite-get-table-rows (path table-name &key (from 0) (count nil)))
+;;; ---------------------------------------------------------------------
+;;; returns a list of rows from the named table in the file at
+;;; PATH. Collects COUNT rows starting at index FROM. If COUNT is NIL,
+;;; returns all rows.
 
 (defmethod sqlite-get-table-rows ((path pathname) (table-name string) &key (from 0) (count nil))
   (sqlite:with-open-database (db path)
@@ -68,6 +92,11 @@
 
 ;;; (sqlite-get-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" :from 0 :count 10)
 ;;; (sqlite-get-table-rows "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents" :from 100 :count 10)
+
+;;; GENERIC FUNCTION sqlite-get-table-row (path table-name index))
+;;; ---------------------------------------------------------------------
+;;; returns the row at INDEX from the table named TABLE-NAME in the
+;;; file at PATH.
 
 (defmethod sqlite-get-table-row ((path pathname) (table-name string) (index integer))
   (sqlite:with-open-database (db path)
