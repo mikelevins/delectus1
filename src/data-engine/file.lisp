@@ -8,14 +8,26 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;;---------------------------------------------------------------------
+;;; ABOUT
+;;;---------------------------------------------------------------------
+;;; implements a database API that hides the details of the file format
+
+
 (in-package :data)
 
 ;;;---------------------------------------------------------------------
 ;;; CLASS sqlite-file
 ;;;---------------------------------------------------------------------
+;;; a database represented as a SQLite file
 
 (defclass sqlite-file ()
   ((path :accessor path :initform nil :initarg :path)))
+
+;;; GENERIC FUNCTION sqlite-file (path)
+;;;---------------------------------------------------------------------
+;;; returns a newly-created sqlite-file whose contents are the file at
+;;; PATH.
 
 (defmethod sqlite-file ((path pathname))
   (make-instance 'sqlite-file :path path))
@@ -25,43 +37,82 @@
 
 ;;; (defparameter $sqlite-file (sqlite-file "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2"))
 
-(defmethod sqlite-file-valid? ((file sqlite-file))
-  (ensure-valid-sqlite-file (path file)))
+;;; GENERIC FUNCTION ensure-valid (db)
+;;;---------------------------------------------------------------------
+;;; returns a true value if the database is valid, NIL otherwise
 
-(defmethod sqlite-file-table-names ((file sqlite-file))
-  (if (sqlite-file-valid? file)
-      (sqlite-list-tables (path file))
-      (error "Not a SQLite file: ~S" (path file))))
+(defmethod ensure-valid ((db sqlite-file))
+  (ensure-valid-sqlite-file (path db)))
 
-;;; (sqlite-file-valid? $sqlite-file)
-;;; (sqlite-file-table-names $sqlite-file)
+;;; GENERIC FUNCTION table-names (db)
+;;;---------------------------------------------------------------------
+;;; returns a list of table names from the database
 
-(defmethod sqlite-file-table-columns ((file sqlite-file)(table-name string))
-  (if (sqlite-file-valid? file)
-      (sqlite-list-table-columns (path file) table-name)
-      (error "Not a SQLite file: ~S" (path file))))
+(defmethod table-names ((db sqlite-file))
+  (if (ensure-valid db)
+      (sqlite-list-tables (path db))
+      (error "Invalid database: ~S" db)))
 
-;;; (sqlite-file-table-columns $sqlite-file "contents")
+;;; (table-names $sqlite-file)
 
-(defmethod sqlite-file-table-column-names ((file sqlite-file)(table-name string))
-  (mapcar #'second (sqlite-file-table-columns file table-name)))
+;;; GENERIC FUNCTION table-columns (db table-name)
+;;;---------------------------------------------------------------------
+;;; returns a list of column info from the table named TABLE-NAME, or
+;;; NIL if there is no such table.
 
-;;; (sqlite-file-table-column-names $sqlite-file "contents")
+(defmethod table-columns ((db sqlite-file)(table-name string))
+  (if (ensure-valid db)
+      (sqlite-list-table-columns (path db) table-name)
+      (error "Invalid database: ~S" db)))
 
-(defmethod sqlite-file-table-rows ((file sqlite-file)(table-name string)
+;;; (table-columns $sqlite-file "contents")
+
+;;; GENERIC FUNCTION table-column-names (db table-name)
+;;;---------------------------------------------------------------------
+;;; returns a list of column names from the table named TABLE-NAME, or
+;;; NIL if there is no such table.
+
+(defmethod table-column-names ((db sqlite-file)(table-name string))
+  (mapcar #'second (sqlite-file-table-columns db table-name)))
+
+;;; (table-column-names $sqlite-file "contents")
+
+;;; GENERIC FUNCTION table-row-count (db table-name)
+;;;---------------------------------------------------------------------
+;;; returns a count of rows from the named table in the file at
+;;; PATH.
+
+(defmethod table-row-count ((db sqlite-file)(table-name string))
+  (if (ensure-valid db)
+      (sqlite-count-table-rows (path db) table-name)
+      (error "Invalid database: ~S" db)))
+
+;; (table-row-count $sqlite-file "contents")
+
+;;; GENERIC FUNCTION table-rows (db table-name)
+;;;---------------------------------------------------------------------
+;;; returns a list of rows from the named table in the file at
+;;; PATH. Collects COUNT rows starting at index FROM. If COUNT is NIL,
+;;; returns all rows.
+
+(defmethod table-rows ((db sqlite-file)(table-name string)
                                    &key (from 0)(count nil))
-  (if (sqlite-file-valid? file)
-      (sqlite-get-table-rows (path file) table-name :from from :count count)
-      (error "Not a SQLite file: ~S" (path file))))
+  (if (ensure-valid db)
+      (sqlite-get-table-rows (path db) table-name :from from :count count)
+      (error "Invalid database: ~S" db)))
 
-;; (sqlite-file-table-rows $sqlite-file "contents" :from 0 :count 5)
-;; (sqlite-file-table-rows $sqlite-file "contents" :from 100 :count 5)
+;; (table-rows $sqlite-file "contents" :from 0 :count 5)
+;; (table-rows $sqlite-file "contents" :from 100 :count 5)
 
+;;; GENERIC FUNCTION table-row (db table-name index)
+;;;---------------------------------------------------------------------
+;;; returns the row at INDEX from the table named TABLE-NAME in the
+;;; database DB
 
-(defmethod sqlite-file-table-row ((file sqlite-file)(table-name string) index)
-  (if (sqlite-file-valid? file)
-      (sqlite-get-table-row (path file) table-name index)
-      (error "Not a SQLite file: ~S" (path file))))
+(defmethod table-row ((db sqlite-file)(table-name string) index)
+  (if (ensure-valid db)
+      (sqlite-get-table-row (path db) table-name index)
+      (error "Invalid database: ~S" db)))
 
-;; (sqlite-file-table-row $sqlite-file "contents" 0)
-;; (sqlite-file-table-row $sqlite-file "contents" 100)
+;; (table-row $sqlite-file "contents" 0)
+;; (table-row $sqlite-file "contents" 100)

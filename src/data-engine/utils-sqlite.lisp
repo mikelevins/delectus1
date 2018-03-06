@@ -61,6 +61,8 @@
   (sqlite-list-table-columns (pathname path) table-name))
 
 ;;; (sqlite-list-table-columns "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "contents")
+;;; returns NIL because there is no such table:
+;;; (sqlite-list-table-columns "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2" "foo")
 
 ;;; GENERIC FUNCTION sqlite-count-table-rows (path table-name)
 ;;; ---------------------------------------------------------------------
