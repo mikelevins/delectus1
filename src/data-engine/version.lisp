@@ -34,7 +34,7 @@
 ;;;
 ;;; patch version of the Delectus data engine release
 
-(defparameter +delectus-data-patch-version+ 3)
+(defparameter +delectus-data-patch-version+ 4)
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus-data-version ()

@@ -25,9 +25,9 @@
                           :components ((:module "data-engine" :serial t
                                                 :components ((:file "package")
                                                              (:file "version")
-                                                             (:file "file-utils")
-                                                             (:file "sqlite-utils")
+                                                             (:file "utils-file")
                                                              (:file "database")
+                                                             (:file "sqlite")
                                                              ))))))
 
 ;;; (asdf:load-system :data-engine)
