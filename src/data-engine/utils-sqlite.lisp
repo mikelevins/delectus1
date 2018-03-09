@@ -10,11 +10,11 @@
 
 (in-package :data)
 
-;;; GENERIC FUNCTION ensure-valid-sqlite-file (path)
+;;; GENERIC FUNCTION valid-sqlite-file? (path)
 ;;; ---------------------------------------------------------------------
 ;;; returns PATH if it's a valid SQLite file; returns NIL if it isn't
 
-(defmethod ensure-valid-sqlite-file ((path pathname))
+(defmethod valid-sqlite-file? ((path pathname))
   (let ((path (probe-file path)))
     (and path
          (uiop/pathname:file-pathname-p path)
@@ -25,16 +25,16 @@
            (condition (c) nil))
          path)))
 
-(defmethod ensure-valid-sqlite-file ((path string))
-  (ensure-valid-sqlite-file (pathname path)))
+(defmethod valid-sqlite-file? ((path string))
+  (valid-sqlite-file? (pathname path)))
 
 ;;; tests:
 ;;; should return the pathname because it's a valid sqlite file:
-;;; (ensure-valid-sqlite-file "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
+;;; (valid-sqlite-file? "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
 ;;; should return NIL because it isn't:
-;;; (ensure-valid-sqlite-file "/Users/mikel/.emacs")
+;;; (valid-sqlite-file? "/Users/mikel/.emacs")
 ;;; should return NIL because it doesn't exist:
-;;; (ensure-valid-sqlite-file "/Users/brobdingnag/.emacs")
+;;; (valid-sqlite-file? "/Users/brobdingnag/.emacs")
 
 ;;; GENERIC FUNCTION sqlite-list-tables (path)
 ;;; ---------------------------------------------------------------------
