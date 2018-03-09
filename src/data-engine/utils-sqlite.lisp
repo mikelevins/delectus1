@@ -18,10 +18,11 @@
   (let ((path (probe-file path)))
     (and path
          (uiop/pathname:file-pathname-p path)
-         (with-open-database (db path)
-           ;; the right way to check whether a file is a SQLite file,
-           ;; according to SQLite docs:
-           (execute-non-query db "pragma schema_version"))
+         (handler-case (with-open-database (db path)
+                         ;; the right way to check whether a file is a SQLite file,
+                         ;; according to SQLite docs:
+                         (execute-non-query db "pragma schema_version"))
+           (condition (c) nil))
          path)))
 
 (defmethod ensure-valid-sqlite-file ((path string))

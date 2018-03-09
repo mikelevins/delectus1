@@ -13,7 +13,6 @@
 ;;;---------------------------------------------------------------------
 ;;; implements a database API that hides the details of the file format
 
-
 (in-package :data)
 
 ;;;---------------------------------------------------------------------
@@ -73,7 +72,7 @@
 ;;; NIL if there is no such table.
 
 (defmethod table-column-names ((db sqlite-file)(table-name string))
-  (mapcar #'second (sqlite-file-table-columns db table-name)))
+  (mapcar #'second (table-columns db table-name)))
 
 ;;; (table-column-names $sqlite-file "contents")
 
