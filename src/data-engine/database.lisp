@@ -13,7 +13,7 @@
 ;;;---------------------------------------------------------------------
 ;;; implements a database API that hides the details of the file format
 
-(in-package :data)
+(in-package :delectus.data)
 
 ;;; =====================================================================
 ;;; database interface

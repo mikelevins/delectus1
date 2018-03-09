@@ -11,14 +11,13 @@
 (in-package :cl-user)
 
 ;;; ---------------------------------------------------------------------
-;;; data-engine
+;;; delectus.data
 ;;; ---------------------------------------------------------------------
 ;;; *package*
 ;;;
 ;;; the package for the delectus data engine
 
-(defpackage #:data-engine
-  (:nicknames :data)
+(defpackage #:delectus.data
   (:use #:cl #:sqlite #:fare-csv))
 
 

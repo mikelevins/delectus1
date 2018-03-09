@@ -11,14 +11,14 @@
 (in-package :cl-user)
 
 ;;; ---------------------------------------------------------------------
-;;; delectus
+;;; desktop
 ;;; ---------------------------------------------------------------------
 ;;; *package*
 ;;;
-;;; the top-level package for the delectus application
+;;; the top-level package for the delectus desktop application
 
-(defpackage #:delectus
-  (:use #:cl #:sqlite #:fare-csv #+capi #:capi))
+(defpackage :delectus.desktop
+  (:use :cl :sqlite :fare-csv :delectus.data #+capi :capi))
 
 
 

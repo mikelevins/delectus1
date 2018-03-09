@@ -18,7 +18,7 @@
 ;;; sqlite utilities
 ;;; =====================================================================
 
-(in-package :data)
+(in-package :delectus.data)
 
 ;;; GENERIC FUNCTION valid-sqlite-file? (path)
 ;;; ---------------------------------------------------------------------
