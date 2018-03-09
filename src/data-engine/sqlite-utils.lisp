@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          utils-sqlite.lisp
+;;;; Name:          sqlite-utils.lisp
 ;;;; Project:       Delectus 2 data engine
 ;;;; Purpose:       utilities for operating on sqlite files
 ;;;; Author:        mikel evins
@@ -13,6 +13,8 @@
 ;;; GENERIC FUNCTION valid-sqlite-file? (path)
 ;;; ---------------------------------------------------------------------
 ;;; returns PATH if it's a valid SQLite file; returns NIL if it isn't
+;;; a valid sqlite-file database is an existing SQLite file that
+;;; we can read from
 
 (defmethod valid-sqlite-file? ((path pathname))
   (let ((path (probe-file path)))

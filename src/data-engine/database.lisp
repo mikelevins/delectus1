@@ -41,6 +41,8 @@
 ;;; GENERIC FUNCTION valid? (db)
 ;;;---------------------------------------------------------------------
 ;;; returns a true value if the database is valid, NIL otherwise
+;;; a valid sqlite-file database is an existing SQLite file that
+;;; we can read from
 
 (defmethod valid? ((db sqlite-file))
   (valid-sqlite-file? (path db)))
