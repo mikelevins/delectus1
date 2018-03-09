@@ -26,7 +26,7 @@
                                                 :components ((:file "package")
                                                              (:file "version")
                                                              (:file "utils-sqlite")
-                                                             (:file "file")
+                                                             (:file "database")
                                                              ))))))
 
 ;;; (asdf:load-system :data-engine)

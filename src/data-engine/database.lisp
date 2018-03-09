@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          file.lisp
+;;;; Name:          database.lisp
 ;;;; Project:       Delectus 2 data engine
-;;;; Purpose:       managing database files
+;;;; Purpose:       managing databases
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2018 by mikel evins
 ;;;;
@@ -12,8 +12,10 @@
 ;;; ABOUT
 ;;;---------------------------------------------------------------------
 ;;; implements a database API that hides the details of the file format
+;;; the only database class presently supported is sqlite-file
 
 (in-package :data)
+
 
 ;;;---------------------------------------------------------------------
 ;;; CLASS sqlite-file
