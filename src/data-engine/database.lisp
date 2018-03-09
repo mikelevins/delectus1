@@ -38,19 +38,19 @@
 
 ;;; (defparameter $sqlite-file (sqlite-file "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2"))
 
-;;; GENERIC FUNCTION ensure-valid (db)
+;;; GENERIC FUNCTION valid? (db)
 ;;;---------------------------------------------------------------------
 ;;; returns a true value if the database is valid, NIL otherwise
 
-(defmethod ensure-valid ((db sqlite-file))
-  (ensure-valid-sqlite-file (path db)))
+(defmethod valid? ((db sqlite-file))
+  (valid-sqlite-file? (path db)))
 
 ;;; GENERIC FUNCTION table-names (db)
 ;;;---------------------------------------------------------------------
 ;;; returns a list of table names from the database
 
 (defmethod table-names ((db sqlite-file))
-  (if (ensure-valid db)
+  (if (valid? db)
       (sqlite-list-tables (path db))
       (error "Invalid database: ~S" db)))
 
@@ -62,7 +62,7 @@
 ;;; NIL if there is no such table.
 
 (defmethod table-columns ((db sqlite-file)(table-name string))
-  (if (ensure-valid db)
+  (if (valid? db)
       (sqlite-list-table-columns (path db) table-name)
       (error "Invalid database: ~S" db)))
 
@@ -84,7 +84,7 @@
 ;;; PATH.
 
 (defmethod table-row-count ((db sqlite-file)(table-name string))
-  (if (ensure-valid db)
+  (if (valid? db)
       (sqlite-count-table-rows (path db) table-name)
       (error "Invalid database: ~S" db)))
 
@@ -98,7 +98,7 @@
 
 (defmethod table-rows ((db sqlite-file)(table-name string)
                                    &key (from 0)(count nil))
-  (if (ensure-valid db)
+  (if (valid? db)
       (sqlite-get-table-rows (path db) table-name :from from :count count)
       (error "Invalid database: ~S" db)))
 
@@ -111,7 +111,7 @@
 ;;; database DB
 
 (defmethod table-row ((db sqlite-file)(table-name string) index)
-  (if (ensure-valid db)
+  (if (valid? db)
       (sqlite-get-table-row (path db) table-name index)
       (error "Invalid database: ~S" db)))
 

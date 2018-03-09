@@ -17,7 +17,7 @@
 (defmethod valid-sqlite-file? ((path pathname))
   (let ((path (probe-file path)))
     (and path
-         (uiop/pathname:file-pathname-p path)
+         (file-pathname-p path)
          (handler-case (with-open-database (db path)
                          ;; the right way to check whether a file is a SQLite file,
                          ;; according to SQLite docs:
