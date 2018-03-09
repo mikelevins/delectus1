@@ -35,6 +35,7 @@
   ;; -- panes ---------------------------------------------
   (:panes
    (tables-pane list-panel :reader tables-pane
+                :keep-selection-p nil
                 :selection-callback 'handle-sqlite-table-selection
                 :callback-type :item-interface)
    (columns-pane list-panel :reader columns-pane)
@@ -63,9 +64,12 @@
 (defmethod initialize-instance :after ((win sqlite-window) &rest initargs &key &allow-other-keys)
   (when (controller win)
     (when (dbpath (controller win))
-        (let ((table-names (delectus.data::sqlite-list-tables (dbpath (controller win))))
-              (tables-pane (tables-pane win)))
-          (when table-names
-            (setf (collection-items tables-pane)
-                  table-names))))))
+      (let ((table-names (delectus.data::sqlite-list-tables (dbpath (controller win))))
+            (tables-pane (tables-pane win)))
+        (when table-names
+          (setf (collection-items tables-pane)
+                table-names)
+          (setf (choice-selection tables-pane)
+                nil))))))
+
 
