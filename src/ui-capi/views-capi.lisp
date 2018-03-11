@@ -40,12 +40,8 @@
                 :callback-type :item-interface)
    (columns-pane list-panel :reader columns-pane)
    (contents-pane multi-column-list-panel :reader contents-pane
-                  :columns '((:title "Fruits" 
-                              :adjust :right 
-                              :width (character 15))
-                             (:title "Vegetables" 
-                              :adjust :left 
-                              :visible-min-width (character 30)))
+                  :columns (compute-column-descriptions interface)
+                  :items (compute-visible-rows interface)
                   :alternating-background t
                   :auto-reset-column-widths nil))
   
@@ -73,3 +69,29 @@
                 nil))))))
 
 
+;;; ---------------------------------------------------------------------
+;;; compute-column-descriptions (window)
+;;; ---------------------------------------------------------------------
+;;; *private generic function*
+;;;
+;;; Returns a plist of column descriptions suitable for passing
+;;; as an init arg to the initializer for `contents-pane`, a
+;;; `multi-column-list-pane`.
+;;; TODO: a real version; this just always computes columns for the "contents" table
+
+(defmethod compute-column-descriptions ((window sqlite-window))
+  (let* ((column-labels (delectus.data::sqlite-list-table-columns (dbpath (controller window)) "contents")))
+    (mapcar (lambda (lbl) `(:title ,lbl :default-width 96))
+            column-labels)))
+
+;;; ---------------------------------------------------------------------
+;;; compute-visible-rows (window)
+;;; ---------------------------------------------------------------------
+;;; *private generic function*
+;;;
+;;; Returns the rows from `document` that are currently visible,
+;;; taking into account the current state of `window`.
+;;; TODO: a real version; this just always computes rows for the "contents" table
+
+(defmethod compute-visible-rows ((window sqlite-window))
+  (delectus.data::sqlite-get-table-rows (dbpath (controller window)) "contents" :from 0 :count 10))

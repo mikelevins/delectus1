@@ -34,6 +34,7 @@
 (defgeneric valid? (db))
 (defgeneric table-names (db))
 (defgeneric table-columns (db table-name))
+(defgeneric list-table-columns (db table-name))
 (defgeneric table-row-count (db table-name))
 (defgeneric table-rows (db table-name &key from count))
 (defgeneric table-row (db table-name index))
