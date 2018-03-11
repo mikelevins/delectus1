@@ -28,7 +28,9 @@
   (:panes
    (tables-pane list-panel :reader tables-pane
                 :alternating-background t
-                :items (compute-sqlite-tables interface)))
+                :items (compute-sqlite-tables interface)
+                :callback-type :item-interface
+                :selection-callback 'handle-table-selection))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
@@ -50,6 +52,9 @@
     (if dbpath
         (delectus.data::sqlite-list-tables dbpath)
       nil)))
+
+(defun handle-table-selection (item interface)
+  (setf (table-name interface) item))
 
 ;;; (defparameter $dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
 ;;; (defparameter $win (contain (make-instance 'sqlite-browser :dbpath $dbpath)))
