@@ -31,7 +31,8 @@
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout
-    :width 400 :height 400))
+    :width 400 :height 400
+    :title "SQLite tables"))
 
 (defmethod  compute-sqlite-tables ((interface sqlite-table-list))
   (let ((path (dbpath interface)))
@@ -64,7 +65,8 @@
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout
-    :width 400 :height 400))
+    :width 400 :height 400
+    :title "SQLite columns"))
 
 (defmethod compute-sqlite-column-names ((interface sqlite-column-list))
   (let ((path (dbpath interface))
@@ -77,3 +79,47 @@
 
 ;;; (defparameter $dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
 ;;; (defparameter $win (contain (make-instance 'sqlite-column-list :dbpath $dbpath :table-name "contents")))
+
+;;; ---------------------------------------------------------------------
+;;; INTERFACE sqlite-row-list
+;;; ---------------------------------------------------------------------
+
+(define-interface sqlite-row-list ()
+  ;; -- slots ---------------------------------------------
+  ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
+   (table-name :accessor table-name :initform nil :initarg :table-name)
+   (rows-per-page :accessor rows-per-page :initform 20 :initarg :rows-per-page)
+   (current-page :accessor current-page :initform 0 :initarg :current-page))
+
+  ;; -- panes ---------------------------------------------
+  (:panes
+   (contents-pane list-panel :reader contents-pane
+                  :alternating-background t
+                  :items (compute-sqlite-rows interface)))
+  
+  ;; -- layouts ---------------------------------------------
+  (:layouts
+   (main-layout column-layout '(contents-pane)
+                :reader main-layout :border 4))
+  
+  ;; -- defaults ---------------------------------------------
+  (:default-initargs :layout 'main-layout
+    :width 400 :height 400
+    :title "SQLite rows"))
+
+(defmethod compute-sqlite-rows ((interface sqlite-row-list))
+  (let ((path (dbpath interface))
+        (table-name (table-name interface)))
+    (if path
+        (if table-name
+            (let ((page-start-index (* (current-page interface)
+                                       (rows-per-page interface))))
+              (delectus.data::sqlite-get-table-rows path table-name
+                                                    :from page-start-index
+                                                    :count (rows-per-page interface)))
+            nil)
+        nil)))
+
+;;; (defparameter $dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
+;;; (defparameter $win (contain (make-instance 'sqlite-row-list :dbpath $dbpath :table-name "contents" :current-page 2)))
+
