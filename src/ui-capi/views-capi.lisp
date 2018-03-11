@@ -13,6 +13,9 @@
 ;;; ---------------------------------------------------------------------
 ;;; INTERFACE sqlite-browser
 ;;; ---------------------------------------------------------------------
+;;; the sqlite-browser is a utility for browsing the contents of
+;;; arbitrary SQLite files. It is not the Delectus2 user interface;
+;;; it's a tool for inspecting SQLite files.
 
 (define-interface sqlite-browser ()
   ;; -- slots ---------------------------------------------
