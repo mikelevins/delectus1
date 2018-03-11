@@ -26,7 +26,6 @@
                                                 :components ((:file "package")
                                                              (:file "version")
                                                              (:file "utils-file")
-                                                             (:file "database")
                                                              (:file "sqlite")
                                                              ))))))
 
