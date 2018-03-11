@@ -11,115 +11,41 @@
 (in-package :delectus.desktop)
 
 ;;; ---------------------------------------------------------------------
-;;; INTERFACE sqlite-table-list
+;;; INTERFACE sqlite-browser
 ;;; ---------------------------------------------------------------------
 
-(define-interface sqlite-table-list ()
-  ;; -- slots ---------------------------------------------
-  ((dbpath :accessor dbpath :initform nil :initarg :dbpath))
-
-  ;; -- panes ---------------------------------------------
-  (:panes
-   (contents-pane list-panel :reader contents-pane
-                  :alternating-background t
-                  :items (compute-sqlite-tables interface)))
-  
-  ;; -- layouts ---------------------------------------------
-  (:layouts
-   (main-layout column-layout '(contents-pane)
-                :reader main-layout :border 4))
-  
-  ;; -- defaults ---------------------------------------------
-  (:default-initargs :layout 'main-layout
-    :width 400 :height 400
-    :title "SQLite tables"))
-
-(defmethod  compute-sqlite-tables ((interface sqlite-table-list))
-  (let ((path (dbpath interface)))
-    (if path
-        (delectus.data::sqlite-list-tables path)
-        nil)))
-
-;;; (defparameter $dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
-;;; (defparameter $win (contain (make-instance 'sqlite-table-list :dbpath $dbpath)))
-
-;;; ---------------------------------------------------------------------
-;;; INTERFACE sqlite-column-list
-;;; ---------------------------------------------------------------------
-
-(define-interface sqlite-column-list ()
-  ;; -- slots ---------------------------------------------
-  ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
-   (table-name :accessor table-name :initform nil :initarg :table-name))
-
-  ;; -- panes ---------------------------------------------
-  (:panes
-   (contents-pane list-panel :reader contents-pane
-                  :alternating-background t
-                  :items (compute-sqlite-column-names interface)))
-  
-  ;; -- layouts ---------------------------------------------
-  (:layouts
-   (main-layout column-layout '(contents-pane)
-                :reader main-layout :border 4))
-  
-  ;; -- defaults ---------------------------------------------
-  (:default-initargs :layout 'main-layout
-    :width 400 :height 400
-    :title "SQLite columns"))
-
-(defmethod compute-sqlite-column-names ((interface sqlite-column-list))
-  (let ((path (dbpath interface))
-        (table-name (table-name interface)))
-    (if path
-        (if table-name
-            (delectus.data::sqlite-list-table-column-names path table-name)
-            nil)
-        nil)))
-
-;;; (defparameter $dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
-;;; (defparameter $win (contain (make-instance 'sqlite-column-list :dbpath $dbpath :table-name "contents")))
-
-;;; ---------------------------------------------------------------------
-;;; INTERFACE sqlite-row-list
-;;; ---------------------------------------------------------------------
-
-(define-interface sqlite-row-list ()
+(define-interface sqlite-browser ()
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
    (table-name :accessor table-name :initform nil :initarg :table-name)
-   (rows-per-page :accessor rows-per-page :initform 20 :initarg :rows-per-page)
+   (rows-per-page :accessor rows-per-page :initform 10 :initarg :rows-per-page)
    (current-page :accessor current-page :initform 0 :initarg :current-page))
 
   ;; -- panes ---------------------------------------------
   (:panes
-   (contents-pane list-panel :reader contents-pane
-                  :alternating-background t
-                  :items (compute-sqlite-rows interface)))
+   (tables-pane list-panel :reader tables-pane
+                :alternating-background t
+                :items (compute-sqlite-tables interface)))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (main-layout column-layout '(contents-pane)
+   (main-layout column-layout '(tables-pane)
                 :reader main-layout :border 4))
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout
-    :width 400 :height 400
-    :title "SQLite rows"))
+    :width 600 :height 400
+    :title "SQLite Browser"))
 
-(defmethod compute-sqlite-rows ((interface sqlite-row-list))
-  (let ((path (dbpath interface))
-        (table-name (table-name interface)))
-    (if path
-        (if table-name
-            (let ((page-start-index (* (current-page interface)
-                                       (rows-per-page interface))))
-              (delectus.data::sqlite-get-table-rows path table-name
-                                                    :from page-start-index
-                                                    :count (rows-per-page interface)))
-            nil)
-        nil)))
+(defmethod initialize-instance :after ((browser sqlite-browser) &rest initargs &key &allow-other-keys)
+  (setf (choice-selection (tables-pane browser))
+        nil))
+
+(defmethod compute-sqlite-tables ((interface sqlite-browser))
+  (let ((dbpath (dbpath interface)))
+    (if dbpath
+        (delectus.data::sqlite-list-tables dbpath)
+      nil)))
 
 ;;; (defparameter $dbpath "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus2")
-;;; (defparameter $win (contain (make-instance 'sqlite-row-list :dbpath $dbpath :table-name "contents" :current-page 2)))
-
+;;; (defparameter $win (contain (make-instance 'sqlite-browser :dbpath $dbpath)))
