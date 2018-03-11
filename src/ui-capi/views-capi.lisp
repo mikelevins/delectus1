@@ -38,6 +38,7 @@
     :title "SQLite Browser"))
 
 (defmethod initialize-instance :after ((browser sqlite-browser) &rest initargs &key &allow-other-keys)
+  ;; the browser starts with nothing selected and waits for the user to make a selection
   (setf (choice-selection (tables-pane browser))
         nil))
 
