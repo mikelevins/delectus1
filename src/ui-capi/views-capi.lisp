@@ -31,9 +31,10 @@
                 :items (compute-sqlite-tables interface)
                 :callback-type :item-interface
                 :selection-callback 'handle-table-selection)
-   (rows-pane list-panel :reader rows-pane
+   (rows-pane multi-column-list-panel :reader rows-pane
                 :alternating-background t
                 :items nil
+                :columns '((:title ""))
                 :callback-type :item-interface
                 :selection-callback 'handle-row-selection))
   
@@ -63,6 +64,19 @@
         (delectus.data::sqlite-list-tables dbpath)
       nil)))
 
+;;; GENERIC FUNCTION compute-sqlite-columns interface
+;;; ---------------------------------------------------------------------
+;;; computes and returns the names of the columns of the named table
+
+(defmethod compute-sqlite-columns ((interface sqlite-browser))
+  (let* ((dbpath (dbpath interface))
+         (table-name (table-name interface)))
+    (if dbpath
+        (if table-name
+            (delectus.data::sqlite-list-table-column-names dbpath table-name)
+          nil)
+      nil)))
+
 ;;; GENERIC FUNCTION compute-sqlite-rows interface
 ;;; ---------------------------------------------------------------------
 ;;; computes and returns rows of the named table according to the
@@ -86,7 +100,12 @@
 
 (defun handle-table-selection (item interface)
   (setf (table-name interface) item)
-  (let* ((rows (compute-sqlite-rows interface)))
+  (let* ((columns (compute-sqlite-columns interface))
+         (column-specs (mapcar (lambda (cname) `(:title ,cname))
+                               columns))
+         (rows (compute-sqlite-rows interface)))
+    (modify-multi-column-list-panel-columns (rows-pane interface)
+                                            :columns column-specs)
     (setf (collection-items (rows-pane interface))
           rows)))
 
