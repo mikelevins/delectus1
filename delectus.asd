@@ -55,3 +55,44 @@
 
 ;;; (asdf:load-system :delectus-desktop)
 ;;; (env:start-environment)
+
+;;; ---------------------------------------------------------------------
+;;; delectus Dex: a data app builder and runner
+;;; ---------------------------------------------------------------------
+
+(asdf:defsystem #:dex
+  :description "Delectus Dex: the Deck runner"
+  :version "2.0.0"
+  :author "mikel evins <mikel@evins.net>"
+  :license "Apache 2.0"
+  :serial t
+  :depends-on (:data-engine)
+  :components ((:module "src" :serial t
+                        :components ((:module "dex" :serial t
+                                              :components ((:file "package")
+                                                           (:file "version")
+                                                           ))))))
+
+
+
+;;; (asdf:load-system :dex)
+;;; (env:start-environment)
+
+
+(asdf:defsystem #:dexter
+  :description "Delectus Dexter: the Deck builder"
+  :version "2.0.0"
+  :author "mikel evins <mikel@evins.net>"
+  :license "Apache 2.0"
+  :serial t
+  :depends-on (:data-engine)
+  :components ((:module "src" :serial t
+                :components ((:module "dex" :serial t
+                              :components ((:file "package")
+                                           (:file "version")
+                                           ))))))
+
+
+
+;;; (asdf:load-system :dexter)
+;;; (env:start-environment)
