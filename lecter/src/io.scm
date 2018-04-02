@@ -54,8 +54,20 @@
                   (data->table data))))
     (reg:register-delectus! tbl)))
 
-;;; (define $jr-path "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
+;;; (define $jr-path "/Users/mikel/Workshop/src/delectus/test-data/junior-movies.delectus")
 ;;; (define $jr (read-delectus-file $jr-path))
+
+(define (delectus->table src-path)
+  (let* ((raw (io:read-binary-file src-path))
+         (data (u8vector->object raw))
+         (converter (converter-for-format data))
+         (tbl (if (delectus-table? data)
+                  (compacted-delectus-table data)
+                  (compacted-delectus-table (data->table data)))))
+    (or tbl #f)))
+
+;;; (define $jr-path "/Users/mikel/Workshop/src/delectus/test-data/junior-movies.delectus")
+;;; (define $jr (delectus->table $jr-path))
 
 ;;; ----------------------------------------------------------------------
 ;;; writing delectus files
@@ -260,6 +272,8 @@
                (format "~%No conversion performed.~%")
                $ERR_BAD_FORMAT))))
 
+;;; (define $movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus")
+;;; (define $movies (delectus->lisp $movies-path))
 
 (define (%if-error-aux errval thunk)
   (let ((handler (lambda (err) errval)))
