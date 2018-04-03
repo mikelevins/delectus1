@@ -7,7 +7,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define $lecter-version-string "lecter v2.0.0d1")
+(define $lecter-version-string "lecter v2.0.0d2")
 
 ;;; USAGE:
 ;;; lecter --version => returns the version of lecter to stdio

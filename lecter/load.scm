@@ -24,7 +24,6 @@
     "/src/sort-keys.scm"
     "/src/filter-keys.scm"
     "/src/functions.scm"
-    "/src/api.scm"
     "/src/entries.scm"
     "/src/rows.scm"
     "/src/columns.scm"
