@@ -41,25 +41,6 @@
               (else (write-char (car format-list) buffer)
                     (loop (cdr format-list) objects)))))))
 
-(define (str thing)
-  (format "~a" thing))
-
-(define (string-concatenate strings)
-  (let loop ((result "")
-             (strs strings))
-    (if (null? strs)
-        result
-        (loop (string-append result (car strs))
-              (cdr strs)))))
-	  
-(define (string-join strings separator)
-  (let ((separator (if (char? separator)
-                       (string separator)
-                       (if (string? separator)
-                           separator
-                           (error "Unknown separator type: " separator)))))
-    (string-concatenate (interpose separator strings))))
-
 (define (string-contains-ci? str substr)
   (let ((str-len (string-length str))
         (substr-len (string-length substr)))
