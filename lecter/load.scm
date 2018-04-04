@@ -30,7 +30,6 @@
     "/src/tables.scm"
     "/src/views.scm"
     "/src/registry.scm"
-    "/src/engine.scm"
     "/src/csv.scm"
     "/src/io-formats.scm"
     "/src/io.scm"
