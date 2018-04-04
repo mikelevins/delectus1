@@ -21,8 +21,6 @@ SCHEME_SOURCES = src/constants.scm \
 
 PRODUCT = lecter
 
-FLAGS_OBJ = -I${GSC_INC} -L${GSC_LIB} -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp 
-
 compile:
 	${GSC} -f -o ${PRODUCT} -exe ${SCHEME_SOURCES}
 
