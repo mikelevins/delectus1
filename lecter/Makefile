@@ -16,7 +16,6 @@ SCHEME_SOURCES = src/constants.scm \
 		 src/functions.scm \
                  src/entries.scm src/rows.scm src/columns.scm \
                  src/tables.scm src/views.scm src/registry.scm \
-                 src/engine.scm \
                  src/csv.scm src/io-formats.scm src/io.scm  \
                  src/lecter.scm
 

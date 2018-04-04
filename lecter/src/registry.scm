@@ -30,7 +30,7 @@
         (let ((vw (view:create tblid)))
           (reg:register-view! tblid vw)
           tblid))
-      (error "invalid argument to eng:register-delectus!" tbl)))
+      (error "invalid argument to reg:register-delectus!" tbl)))
 
 
 
