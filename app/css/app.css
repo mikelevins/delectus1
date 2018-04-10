@@ -68,9 +68,9 @@ body {
 
 #todoapp h1 {
     position: absolute;
-    top: -120px;
+    top: -96px;
     width: 100%;
-    font-size: 70px;
+    font-size: 48px;
     font-weight: bold;
     text-align: center;
     color: #b3b3b3;
