@@ -8,8 +8,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define (true? thing)(equal? thing #t))
-
 (define (partial fn . args)
   (lambda more-args
     (apply fn `(,@args ,@more-args))))

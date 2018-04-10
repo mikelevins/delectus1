@@ -7,7 +7,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define $lecter-version-string "lecter v2.0.0d1")
+(define $lecter-version-string "lecter v2.0.0d2")
 
 ;;; USAGE:
 ;;; lecter --version => returns the version of lecter to stdio
@@ -22,7 +22,8 @@
   (display "                       # or INVALID if it's not a recognized Delectus format")(newline)
   (display "  lecter --format-name PATH # prints the version name of the delectus file format,")(newline)
   (display "                            # or INVALID if it's not a recognized Delectus format")(newline)
-  (display "  lecter --sexp # prints the Delectus data to stdio as s-expressions")(newline))
+  (display "  lecter --sexp # prints the Delectus data to stdio as s-expressions")(newline)
+  (display "  lecter --csv # prints the Delectus data to stdio as CSV")(newline))
 
 (define (write-sexp path)
   (let* ((data (delectus->lisp path))
