@@ -1,5 +1,3 @@
 /.DS_Store
 /lecter/lecter
-*.asd~
-src/view-capi.lisp~
-*.lisp~
+.idea
