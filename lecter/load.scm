@@ -1,13 +1,13 @@
 ;;;; ***********************************************************************
 ;;;;
 ;;;; Name:          load.scm
-;;;; Project:       Delectus
-;;;; Purpose:       loader for interactive testing
+;;;; Project:       lecter
+;;;; Purpose:       lecter loader for interactive testing
 ;;;; Author:        mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-;;; modify if the Delectus sources are at another pathname
+;;; modify if the lecter sources are at another pathname
 
 (define $delectus-root "/Users/mikel/Workshop/src/delectus/lecter")
 
@@ -38,10 +38,12 @@
 ;;; load Scheme files
 ;;; ----------------------------------------------------------------------
 
-(define (load-delectus)
+(define (load-lecter)
   (for-each (lambda (f)
               (let ((p (string-append $delectus-root f)))
                 (load p)))
             $load-files))
 
-;;; (load-delectus)
+;;; (load-lecter)
+;;; (define $movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus")
+;;; (define $junior-movies-path "/Users/mikel/Workshop/src/delectus/test-data/junior-movies.delectus")

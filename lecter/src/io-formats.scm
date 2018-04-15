@@ -8,6 +8,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ----------------------------------------------------------------------
+;;; 
+;;; ----------------------------------------------------------------------
+
 (define (store:vector-format? x tag)
   (and (vector? x)
        (> (vector-length x) 1)
@@ -53,6 +57,11 @@
         ((equal? format-number $delectus-format-beta-2) "delectus-format-beta-2")
         ((equal? format-number $delectus-format-1.0) "delectus-format-1.0")
         (else "INVALID")))
+
+(define (delectus-file-format path)
+  (let* ((raw (io:read-binary-file path))
+         (data (u8vector->object raw)))
+    (delectus-format data)))
 
 ;;; ----------------------------------------------------------------------
 ;;; converting delectus formats
@@ -117,4 +126,3 @@
 (define (data->table data)
   (let ((converter (converter-for-format data)))
     (converter data)))
-

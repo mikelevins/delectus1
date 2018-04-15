@@ -9,7 +9,19 @@
 ;;;; ***********************************************************************
 
 ;;; ======================================================================
-;;; general utilities
+;;; MACROS
+;;; ======================================================================
+
+(define (%if-error-aux errval thunk)
+  (let ((handler (lambda (err) errval)))
+    (with-exception-catcher handler thunk)))
+
+(define-macro (if-error errval . body)
+  `(%if-error-aux ,errval 
+                  (lambda () ,@body)))
+
+;;; ======================================================================
+;;; FILE I/O UTILS
 ;;; ======================================================================
 
 (define (%concat-chunks chunk more-chunks)
@@ -37,6 +49,34 @@
     (if (not (null? chunks))
         (%concat-chunks (car chunks)(cdr chunks))
         #f)))
+
+(define (delectus-format-version src-path)
+  (if-error "INVALID"
+            (let* ((raw (io:read-binary-file src-path))
+                   (data (u8vector->object raw)))
+              (delectus-format data))))
+
+;;; (define $inpath "/Users/mikel/Workshop/src/delectus/lecter/test-data/junior-movies.delectus")
+;;; (define $data (delectus->lisp $inpath))
+
+(define (file-readable? src-path)
+  (and (> (string-length src-path) 0)
+       (file-exists? src-path)
+       (let* ((userinfo (user-info (user-name)))
+              (owner (file-owner src-path))
+              (group (file-group src-path))
+              (mode (file-mode src-path))
+              (group-can-read #b000100000)
+              (others-can-read #b000000100)
+              (owner-can-read #b100000000))
+         (or (and (= owner (user-info-uid userinfo))
+                  (not (zero? (bitwise-and mode owner-can-read))))
+             (and (= group (user-info-gid userinfo))
+                  (not (zero? (bitwise-and mode group-can-read))))
+             (not (zero? (bitwise-and mode others-can-read)))))))
+
+(define (error-input-not-readable src-path)
+  (error (format "File not readable: ~s" src-path)))
 
 ;;; ======================================================================
 ;;; Native Delectus I/O
@@ -176,9 +216,9 @@
 ;;; (define $ziptest-path "/Users/mikel/Desktop/ziptest.csv")
 ;;; (write-csv-file (find-document $zipid) $ziptest-path)
 
-;;; ======================================================================
+;;; ----------------------------------------------------------------------
 ;;; delectus->csv
-;;; ======================================================================
+;;; ----------------------------------------------------------------------
 
 (define (delectus->csv src-path)
   (let* ((raw (io:read-binary-file src-path))
@@ -197,25 +237,11 @@
 ;;; (define $outpath "/Users/mikel/Desktop/Movies.csv")
 ;;; (delectus2csv $inpath $outpath)
 
-(define (display-usage)
-  (newline)
-  (display "USAGE: delectus2csv INFILE"))
-
-
-(define (delectus1-pathname->delectus2-pathname src-path)
-  (string-append src-path ".csv"))
+(define (write-csv path)
+  (delectus->csv path))
 
 ;;; ======================================================================
-;;; file formats
-;;; ======================================================================
-
-(define (delectus-file-format path)
-  (let* ((raw (io:read-binary-file path))
-         (data (u8vector->object raw)))
-    (delectus-format data)))
-
-;;; ======================================================================
-;;; delectus->lisp
+;;; LISP I/O
 ;;; ======================================================================
 
 (define (value->lisp val)
@@ -256,41 +282,75 @@
                (format "~%No conversion performed.~%")
                $ERR_BAD_FORMAT))))
 
+(define (write-sexp path)
+  (let* ((data (delectus->lisp path))
+         (columns-tail (member 'COLUMNS data))
+         (columns (if columns-tail (cadr columns-tail) '()))
+         (rows-tail (member 'ROWS data))
+         (rows (if rows-tail (cadr rows-tail) '())))
+    (display ":DELECTUS :SEXP")
+    (newline)
+    (display ":COLUMNS")
+    (newline)
+    (display "(")
+    (for-each (lambda (column)
+                (display " ")
+                (write column))
+              columns)
+    (display " )")
+    (newline)
+    (display ":ROWS")
+    (for-each (lambda (row)
+                (newline)
+                (display "(")
+                (for-each (lambda (it)
+                            (display " ")
+                            (write it))
+                          row)
+                (display " )"))
+              rows)))
+
+
 ;;; (define $movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.delectus")
 ;;; (define $movies (delectus->lisp $movies-path))
 
-(define (%if-error-aux errval thunk)
-  (let ((handler (lambda (err) errval)))
-    (with-exception-catcher handler thunk)))
+;;; ======================================================================
+;;; JSON I/O
+;;; ======================================================================
 
-(define-macro (if-error errval . body)
-  `(%if-error-aux ,errval 
-                  (lambda () ,@body)))
+(define (%delectus->alists path)
+  (let* ((data (delectus->lisp path))
+         (columns-tail (member 'COLUMNS data))
+         (columns (if columns-tail (cadr columns-tail) '()))
+         (rows-tail (member 'ROWS data))
+         (rows (if rows-tail (cadr rows-tail) '())))
+    (map (lambda (row)
+           (map (lambda (col item)(cons col item))
+                columns
+                row))
+         rows)))
 
-(define (delectus-format-version src-path)
-  (if-error "INVALID"
-            (let* ((raw (io:read-binary-file src-path))
-                   (data (u8vector->object raw)))
-              (delectus-format data))))
+(define (%write-alist-json-items alist)
+  (let* ((head (car alist))
+         (tail (cdr alist))
+         (key (car head))
+         (val (cdr head)))
+    (write key)
+    (display ": ")
+    (write val)
+    (if (not (null? tail))
+        (begin (display ", ")
+               (%write-alist-json-items tail)))))
 
-;;; (define $inpath "/Users/mikel/Workshop/src/delectus/lecter/test-data/junior-movies.delectus")
-;;; (define $data (delectus->lisp $inpath))
+(define (%write-alist-json alist)
+  (display "{ ")
+  (if (not (null? alist))
+      (%write-alist-json-items alist))
+  (display " }"))
 
-(define (file-readable? src-path)
-  (and (> (string-length src-path) 0)
-       (file-exists? src-path)
-       (let* ((userinfo (user-info (user-name)))
-              (owner (file-owner src-path))
-              (group (file-group src-path))
-              (mode (file-mode src-path))
-              (group-can-read #b000100000)
-              (others-can-read #b000000100)
-              (owner-can-read #b100000000))
-         (or (and (= owner (user-info-uid userinfo))
-                  (not (zero? (bitwise-and mode owner-can-read))))
-             (and (= group (user-info-gid userinfo))
-                  (not (zero? (bitwise-and mode group-can-read))))
-             (not (zero? (bitwise-and mode others-can-read)))))))
-
-(define (error-input-not-readable src-path)
-  (error (format "File not readable: ~s" src-path)))
+(define (write-jsonl path)
+  (let* ((alists (%delectus->alists path)))
+    (for-each (lambda (alist)
+                (%write-alist-json alist)
+                (newline))
+              alists)))

@@ -7,8 +7,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define $lecter-version-string "lecter v2.0.0d2")
-
 ;;; USAGE:
 ;;; lecter --version => returns the version of lecter to stdio
 ;;; lecter --format <pathname> => name of delectus format version, or "INVALID"
@@ -23,38 +21,10 @@
   (display "  lecter --format-name PATH # prints the version name of the delectus file format,")(newline)
   (display "                            # or INVALID if it's not a recognized Delectus format")(newline)
   (display "  lecter --sexp # prints the Delectus data to stdio as s-expressions")(newline)
-  (display "  lecter --csv # prints the Delectus data to stdio as CSV")(newline))
+  (display "  lecter --csv # prints the Delectus data to stdio as CSV")(newline)
+  (display "  lecter --jsonl # prints the Delectus data to stdio as JSONL")(newline)
+  )
 
-(define (write-sexp path)
-  (let* ((data (delectus->lisp path))
-         (columns-tail (member 'COLUMNS data))
-         (columns (if columns-tail (cadr columns-tail) '()))
-         (rows-tail (member 'ROWS data))
-         (rows (if rows-tail (cadr rows-tail) '())))
-    (display ":DELECTUS :SEXP")
-    (newline)
-    (display ":COLUMNS")
-    (newline)
-    (display "(")
-    (for-each (lambda (column)
-                (display " ")
-                (write column))
-              columns)
-    (display " )")
-    (newline)
-    (display ":ROWS")
-    (for-each (lambda (row)
-                (newline)
-                (display "(")
-                (for-each (lambda (it)
-                            (display " ")
-                            (write it))
-                          row)
-                (display " )"))
-              rows)))
-
-(define (write-csv path)
-  (delectus->csv path))
 
 (let ((args (cdr (command-line))))
   (if (< (length args) 1)
@@ -77,6 +47,7 @@
                                                        (newline)))))
               ((equal? option "--sexp") (write-sexp (list-ref args 1)))
               ((equal? option "--csv") (write-csv (list-ref args 1)))
+              ((equal? option "--jsonl") (write-jsonl (list-ref args 1)))
               (else (print-lecter-usage))))))
 
 
