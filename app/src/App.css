@@ -12,3 +12,9 @@
 .App-title {
   font-size: 1.5em;
 }
+
+.ListBox {
+  border-style: solid;
+  border-width: 1;
+  margin: 1em;
+}

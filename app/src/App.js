@@ -4,6 +4,9 @@ import './App.css';
 
 const localDB = new PouchDB('delectus');
 
+function ListBox(props){
+  return <div className="ListBox"><span>{props.name}</span></div>
+}
 
 class App extends Component {
   render() {
@@ -12,7 +15,7 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Delectus</h1>
         </header>
-
+        <ListBox name="Listname" />
       </div>
     );
   }
