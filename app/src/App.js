@@ -4,8 +4,34 @@ import './App.css';
 
 const localDB = new PouchDB('delectus');
 
-function ListBox(props){
-  return <div className="ListBox"><span>{props.name}</span></div>
+const mockList = ["Apples", "Bananas", "Cherries","Waffles"];
+
+function ListItems(props) {
+  return (
+    <div className="ListItems">
+      <ul>
+        {props.items.map(function (listValue) {
+          return <li>{listValue}</li>;
+        })}
+      </ul>
+    </div>
+  )
+}
+
+function AddRowButton() {
+  return (
+    <div className="AddRowButton">+</div>
+  )
+}
+
+function ListBox(props) {
+  return <div className="ListBox">
+    <span>{props.name}</span>
+    <span className="AddColumnButton">+</span>
+    <p></p>
+    <ListItems items={mockList} />
+    <AddRowButton/>
+  </div>
 }
 
 class App extends Component {

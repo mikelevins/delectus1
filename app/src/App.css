@@ -1,3 +1,14 @@
+.AddColumnButton {
+  float: right;
+  font-size: larger;
+  font-weight: bold;
+}
+
+.AddRowButton {
+  font-size: larger;
+  font-weight: bold;
+}
+
 .App {
   text-align: left;
 }
@@ -17,4 +28,5 @@
   border-style: solid;
   border-width: 1;
   margin: 1em;
+  padding: 1em;
 }
