@@ -1,14 +1,15 @@
 import React from 'react';
-import AddItemButton from './AddItemButton';
+import AddColumnButton from './AddColumnButton';
+import AddRowButton from './AddRowButton';
 import ListItems from './ListItems';
 
 const ListBox = (props) => (
     <div className="ListBox">
         <span className="ListBoxName">{props.name}</span>
-        <span className="AddColumnButton">+</span>
+        <AddColumnButton />
         <p></p>
         <ListItems items={props.items} />
-        <AddItemButton />
+        <AddRowButton />
     </div>
 );
 

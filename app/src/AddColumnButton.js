@@ -1,13 +1,14 @@
 import React from 'react';
 import IconButton from 'material-ui/IconButton';
-import AddItem from 'material-ui/svg-icons/action/list';
+import AddColumn from 'material-ui/svg-icons/action/view-column';
+import './App.css';
 
 /**
  * This example uses an [IconButton](/#/components/icon-button) on the left, has a clickable `title`
  * through the `onClick` property, and a [FlatButton](/#/components/flat-button) on the right.
  */
-const AddItemButton = () => (
-    <IconButton><AddItem /></IconButton>
+const AddColumnButton = () => (
+    <div className="AddColumnButton">+<IconButton><AddColumn /></IconButton></div>
   );
 
-export default AddItemButton;
+export default AddColumnButton;
