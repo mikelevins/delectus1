@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import DelectusAppBar from './DelectusAppBar';
 import PouchDB from 'pouchdb';
 import './App.css';
 
 const localDB = new PouchDB('delectus');
-
-const mockList = ["Apples", "Bananas", "Cherries", "Waffles"];
+const mockList = ["Apples", "Bananas", "Cherries", "Dates", "Waffles"];
 
 function ListItems(props) {
   return (
@@ -29,7 +27,7 @@ function AddRowButton() {
 
 function ListBox(props) {
   return <div className="ListBox">
-    <span>{props.name}</span>
+    <span className="ListBoxName">{props.name}</span>
     <span className="AddColumnButton">+</span>
     <p></p>
     <ListItems items={mockList} />
@@ -43,9 +41,9 @@ class App extends Component {
     return (
       <div className="App">
         <MuiThemeProvider>
-        <DelectusAppBar />
+        <DelectusAppBar title="Delectus" />
         </MuiThemeProvider>
-        <ListBox name="Listname" />
+        <ListBox name="Fruits" />
       </div>
     );
   }
