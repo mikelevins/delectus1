@@ -46,11 +46,20 @@
   font-weight: bold;  
 }
 
+
+.ListHeader {
+}
+
+.ListHeaderCell {
+  border: solid;
+}
+
 .ListItemCell {
   border: solid;
 }
 
-.ListItems {
+.ListTable {
   border-collapse: collapse;
+  table-layout: fixed;
   width: 100%;
 }

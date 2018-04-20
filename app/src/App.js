@@ -7,6 +7,7 @@ import PouchDB from 'pouchdb';
 import './App.css';
 
 const localDB = new PouchDB('delectus');
+const mockColumns = ["Name","Color", "Distinction"];
 const mockRows = [["Apples", "red", "tangy"], ["Bananas", "yellow", "mushy"], ["Cherries","red", "sweet"], 
 ["Dates","brown", "fibery"], ["Elephants","gray", "awesome"], ["Waffles","tan", "buttery"]];
 
@@ -22,6 +23,7 @@ class App extends Component {
           <DelectusAppBar title="Delectus" />
           <ListBox
             name="Fruits"
+            columns={mockColumns}
             items={mockRows}
           />
         </MuiThemeProvider>

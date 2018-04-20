@@ -8,10 +8,13 @@ import './App.css';
  */
 const ListItems = (props) => (
     <div>
-        <table className="ListItems">
-            <th></th>
+        <table className="ListTable">
+            <tr className="ListHeader">{props.columns.map(function (field) {
+                return <th className="ListHeaderCell"> {field} </th>
+            })}
+            </tr>
             {props.items.map(function (item) {
-                return <ListItem itemValue={item}/>;
+                return <ListItem itemValue={item} />;
             })}
         </table>
     </div>

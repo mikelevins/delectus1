@@ -8,7 +8,10 @@ const ListBox = (props) => (
         <span className="ListBoxName">{props.name}</span>
         <AddColumnButton />
         <p></p>
-        <ListItems items={props.items} />
+        <ListItems
+         columns={props.columns}
+         items={props.items}
+         />
         <AddRowButton />
     </div>
 );
