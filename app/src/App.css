@@ -60,6 +60,9 @@
   padding: 0.25rem;
 }
 
+.ListItemRow:nth-child(even) {background: #AAA;}
+.ListItemRow:nth-child(odd) {background: #FFF;}
+
 .ListTable {
   border-collapse: collapse;
   table-layout: fixed;
