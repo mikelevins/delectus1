@@ -60,7 +60,7 @@
   padding: 0.25rem;
 }
 
-.ListItemRow:nth-child(even) {background: #AAA;}
+.ListItemRow:nth-child(even) {background: rgb(182, 169, 157);}
 .ListItemRow:nth-child(odd) {background: #FFF;}
 
 .ListTable {
