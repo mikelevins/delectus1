@@ -5,10 +5,10 @@ import React from 'react';
  * through the `onClick` property, and a [FlatButton](/#/components/flat-button) on the right.
  */
 const ListItem = (props) => (
-    <li>{props.itemValue.map(function (field){
-        return <span> {field} </span>
+    <tr className="ListItemRow">{props.itemValue.map(function (field){
+        return <td className="ListItemCell"> {field} </td>
     })}
-    </li>
+    </tr>
 );
 
 export default ListItem;

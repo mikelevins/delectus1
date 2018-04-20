@@ -7,8 +7,8 @@ import PouchDB from 'pouchdb';
 import './App.css';
 
 const localDB = new PouchDB('delectus');
-const mockRows = [["Apples", "red"], ["Bananas", "yellow"], ["Cherries","red"], 
-["Dates","brown"], ["Elephants","gray"], ["Waffles","tan"]];
+const mockRows = [["Apples", "red", "tangy"], ["Bananas", "yellow", "mushy"], ["Cherries","red", "sweet"], 
+["Dates","brown", "fibery"], ["Elephants","gray", "awesome"], ["Waffles","tan", "buttery"]];
 
 class App extends Component {
 
