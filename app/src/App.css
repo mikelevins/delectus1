@@ -51,11 +51,13 @@
 }
 
 .ListHeaderCell {
-  border: solid;
+  border: 2px solid black;
+  padding: 2px;
 }
 
 .ListItemCell {
-  border: solid;
+  border: 2px solid black;
+  padding: 2px;
 }
 
 .ListTable {
