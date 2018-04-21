@@ -8,7 +8,7 @@ import './App.css';
  * through the `onClick` property, and a [FlatButton](/#/components/flat-button) on the right.
  */
 const AddColumnButton = () => (
-    <div>+<IconButton><AddColumn /></IconButton></div>
+    <span>+<IconButton><AddColumn /></IconButton></span>
   );
 
 export default AddColumnButton;
