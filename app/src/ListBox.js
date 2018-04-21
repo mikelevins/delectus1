@@ -12,14 +12,19 @@ import {
 import {
     Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle
 } from 'material-ui/Toolbar';
+import IconButton from 'material-ui/IconButton';
+import AddColumn from 'material-ui/svg-icons/action/view-column';
 
 
+import BottomBar from './BottomBar';
 import './ListBox.css';
+
 
 const ListBox = (props) => (
     <div>
         <Toolbar>
             <ToolbarTitle text={props.title}/>
+            <IconButton><AddColumn /></IconButton>
         </Toolbar>
         <Table>
             <TableHeader>
@@ -48,6 +53,7 @@ const ListBox = (props) => (
                 })}
             </TableBody>
         </Table>
+        <BottomBar/>
     </div>
 );
 
