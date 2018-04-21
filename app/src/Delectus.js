@@ -15,8 +15,8 @@ import Settings from 'material-ui/svg-icons/action/settings';
 import ListBox from './ListBox';
 import './Delectus.css';
 
+const mockTitle = "Fruits";
 const mockColumns = ["Name", "Color", "Distinction", "Count"];
-
 const mockFields = [
   ["Apples", "red", "tangy", 3],
   ["Bananas", "yellow", "mushy", 4],
@@ -47,6 +47,7 @@ class Delectus extends Component {
         />
         <ListBox 
         theme={this.state.theme}
+        title={mockTitle}
         columns={mockColumns}
         rows={mockFields}
         />
