@@ -15,39 +15,23 @@ const ListBox = (props) => (
     <Table>
         <TableHeader>
             <TableRow>
-                <TableHeaderColumn>ID</TableHeaderColumn>
-                <TableHeaderColumn>Name</TableHeaderColumn>
-                <TableHeaderColumn>Status</TableHeaderColumn>
+                {props.columns.map(function (field) {
+                    return <TableHeaderColumn> {field} </TableHeaderColumn>
+                })}
             </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow>
-                <TableRowColumn>1</TableRowColumn>
-                <TableRowColumn>John Smith</TableRowColumn>
-                <TableRowColumn>Employed</TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn>2</TableRowColumn>
-                <TableRowColumn>Randal White</TableRowColumn>
-                <TableRowColumn>Unemployed</TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn>3</TableRowColumn>
-                <TableRowColumn>Stephanie Sanders</TableRowColumn>
-                <TableRowColumn>Employed</TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn>4</TableRowColumn>
-                <TableRowColumn>Steve Brown</TableRowColumn>
-                <TableRowColumn>Employed</TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn>5</TableRowColumn>
-                <TableRowColumn>Christopher Nolan</TableRowColumn>
-                <TableRowColumn>Unemployed</TableRowColumn>
-            </TableRow>
+            {props.rows.map(function (row) {
+                return (
+                    <TableRow>
+                        {row.map(function (item) {
+                            return (<TableRowColumn>{item}</TableRowColumn>)
+                        })}
+                    </TableRow>)
+            })}
         </TableBody>
     </Table>
 );
 
 export default ListBox;
+
