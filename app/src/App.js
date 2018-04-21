@@ -76,6 +76,7 @@ class App extends Component {
               columns={mockColumns}
               items={mockFields}
               list={mockList}
+              theme={getMuiTheme(this.state.theme)}
             />
           </div>
         </MuiThemeProvider>
