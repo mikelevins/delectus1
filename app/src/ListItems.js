@@ -8,7 +8,7 @@ import './App.css';
  */
 const ListItems = (props) => (
     <div>
-        <table className="ListTable">
+        <table className="ListTable"><tbody>
             <tr className="ListHeader">{props.columns.map(function (field) {
                 return <th className="ListHeaderCell"> {field} </th>
             })}
@@ -16,7 +16,7 @@ const ListItems = (props) => (
             {props.items.map(function (item) {
                 return <ListItem itemValue={item} />;
             })}
-        </table>
+        </tbody></table>
     </div>
 );
 
