@@ -5,8 +5,8 @@ import React from 'react';
  * through the `onClick` property, and a [FlatButton](/#/components/flat-button) on the right.
  */
 const ListItem = (props) => (
-    <tr className="ListItemRow">{props.itemValue.map(function (field){
-        return <td className="ListItemCell"> {field} </td>
+    <tr>{props.itemValue.map(function (field){
+        return <td> {field} </td>
     })}
     </tr>
 );

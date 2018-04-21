@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Helmet } from "react-helmet";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import DelectusAppBar from './DelectusAppBar';
 import ListBox from './ListBox';
 import PouchDB from 'pouchdb';
 import cuid from 'cuid';
-import './App.css';
+//import './App.css';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 const localDB = new PouchDB('delectus');
 
@@ -23,15 +26,15 @@ function makeRow(elements) {
 }
 
 console.log('mockRow:');
-console.log(makeRow(["Fred","Wilma","Barney","Betty"]));
+console.log(makeRow(["Fred", "Wilma", "Barney", "Betty"]));
 
-function makeList(columns,rows) {
+function makeList(columns, rows) {
   var result = {
     '_id': 'list' + cuid(),
     'type': 'list',
     'title': 'A List',
     'columns': columns.slice(),
-    'rows': rows.map(function(row){return row._id;}),
+    'rows': rows.map(function (row) { return row._id; }),
   }
   return result;
 }
@@ -48,30 +51,33 @@ const mockFields = [
 ];
 
 const mockRows = mockFields.map(makeRow);
-const mockList = makeList(mockColumns,mockRows);
+const mockList = makeList(mockColumns, mockRows);
 
 console.log('mockList:');
 console.log(mockList);
 
 class App extends Component {
-  constructor () {
+  constructor() {
     super();
-    this.state = {'mockRows': mockRows};
+    this.state = { 'theme': lightBaseTheme};
   }
 
   render() {
     return (
-      <div className="App">
+      <div>
         <Helmet>
           <title>Delectus</title>
         </Helmet>
-        <MuiThemeProvider>
-          <DelectusAppBar title="Delectus" />
-          <ListBox
-            name="Fruits"
-            columns={mockColumns}
-            items={mockFields}
-          />
+        <MuiThemeProvider muiTheme={getMuiTheme(this.state.theme)}>
+          <div>
+            <DelectusAppBar title="Delectus" />
+            <ListBox
+              name="Fruits"
+              columns={mockColumns}
+              items={mockFields}
+              list={mockList}
+            />
+          </div>
         </MuiThemeProvider>
 
       </div>

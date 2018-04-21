@@ -8,7 +8,7 @@ import './App.css';
  * through the `onClick` property, and a [FlatButton](/#/components/flat-button) on the right.
  */
 const AddRowButton = () => (
-    <div className="AddRowButton">+<IconButton><AddItem /></IconButton></div>
+    <div>+<IconButton><AddItem /></IconButton></div>
   );
 
 export default AddRowButton;

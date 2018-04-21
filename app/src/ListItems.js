@@ -1,22 +1,25 @@
 import React from 'react';
 import ListItem from './ListItem';
+import styled from 'styled-components';
 import './App.css';
 
-/**
- * This example uses an [IconButton](/#/components/icon-button) on the left, has a clickable `title`
- * through the `onClick` property, and a [FlatButton](/#/components/flat-button) on the right.
- */
+const ListItemsTable = styled.table`
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+`;
+
 const ListItems = (props) => (
     <div>
-        <table className="ListTable"><tbody>
-            <tr className="ListHeader">{props.columns.map(function (field) {
-                return <th className="ListHeaderCell"> {field} </th>
+        <ListItemsTable><tbody>
+            <tr>{props.columns.map(function (field) {
+                return <th> {field} </th>
             })}
             </tr>
             {props.items.map(function (item) {
                 return <ListItem itemValue={item} />;
             })}
-        </tbody></table>
+        </tbody></ListItemsTable>
     </div>
 );
 

@@ -14,11 +14,10 @@ function handleClick() {
  */
 const DelectusAppBar = () => (
   <AppBar
-    title={<span className="DelectusAppBarTitle">Delectus</span>}
+    title={<span>Delectus</span>}
     onTitleClick={handleClick}
     iconElementLeft={<IconButton><NavigationClose /></IconButton>}
     iconElementRight={<IconButton><Settings /></IconButton>}
-    className="DelectusAppBar"
   />
 );
 
