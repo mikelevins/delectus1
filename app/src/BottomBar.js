@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
 import AddRow from 'material-ui/svg-icons/action/list';
-import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
+import { BottomNavigation } from 'material-ui/BottomNavigation';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 
-const addRowIcon = <IconButton><AddRow /></IconButton>;
+import Pager from './Pager';
 
-/**
- * A simple example of `BottomNavigation`, with three labels and icons
- * provided. The selected `BottomNavigationItem` is determined by application
- * state (for instance, by the URL).
- */
+const addRowStyle = {
+    flex: "none",
+};
+
 class BottomBar extends Component {
     state = {
         selectedIndex: 0,
@@ -23,12 +22,14 @@ class BottomBar extends Component {
         return (
             <Paper zDepth={1}>
                 <BottomNavigation selectedIndex={this.state.selectedIndex}>
-                    <BottomNavigationItem
-                        label=""
-                        icon={addRowIcon}
-                        onClick={() => this.select(0)}
+                    <FlatButton
+                        style={addRowStyle}
+                        label="+"
+                        labelPosition="before"
+                        icon={<AddRow />}
                     />
                     <TextField hintText="Search" />
+                    <Pager />
                 </BottomNavigation>
             </Paper>
         );

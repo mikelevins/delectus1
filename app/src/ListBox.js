@@ -10,22 +10,37 @@ import {
 } from 'material-ui/Table';
 
 import {
-    Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle
+    Toolbar, ToolbarTitle
 } from 'material-ui/Toolbar';
-import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
 import AddColumn from 'material-ui/svg-icons/action/view-column';
 
 
 import BottomBar from './BottomBar';
 import './ListBox.css';
 
+const toolbarStyle = {
+    backgroundColor: "#fff",
+};
+
+const addColumnStyle = {
+    color: "#000",
+    flex: "none",
+};
 
 const ListBox = (props) => (
     <div>
-        <Toolbar>
-            <ToolbarTitle text={props.title}/>
-            <IconButton><AddColumn /></IconButton>
+        <Toolbar style={toolbarStyle}>
+            <ToolbarTitle text={props.title} />
+            <FlatButton
+                style={addColumnStyle}
+                label="+"
+                labelPosition="before"
+                primary={true}
+                icon={<AddColumn />}
+            />
         </Toolbar>
+
         <Table>
             <TableHeader>
                 <TableRow>
@@ -38,7 +53,8 @@ const ListBox = (props) => (
                     })}
                 </TableRow>
             </TableHeader>
-            <TableBody>
+
+            <TableBody stripedRows={true}>
                 {props.rows.map(function (row, index) {
                     return (
                         <TableRow key={index}>
@@ -53,7 +69,8 @@ const ListBox = (props) => (
                 })}
             </TableBody>
         </Table>
-        <BottomBar/>
+
+        <BottomBar />
     </div>
 );
 
