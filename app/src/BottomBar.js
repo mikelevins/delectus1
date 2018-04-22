@@ -11,6 +11,12 @@ const addRowStyle = {
     flex: "none",
 };
 
+const addRowLabelStyle = {
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+};
+
+
 class BottomBar extends Component {
     state = {
         selectedIndex: 0,
@@ -26,6 +32,7 @@ class BottomBar extends Component {
                         style={addRowStyle}
                         label="+"
                         labelPosition="before"
+                        labelStyle={addRowLabelStyle}
                         icon={<AddRow />}
                     />
                     <TextField hintText="Search" />
