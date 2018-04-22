@@ -3,13 +3,14 @@ import cuid from 'cuid';
 
 
 const mockTitle = "Fruits";
-const mockColumns = ["Name", "Color", "Distinction", "Count"];
+const mockColumns = ["Name", "Color", "Distinction", "Count","Delicious?"];
 const mockFields = [
-  ["Apples", "red", "tangy", 3],
+  ["Apples", "red", "tangy", 3, "yes"],
   ["Bananas", "yellow", "mushy", 4],
   ["Cherries", "red", "sweet", 35],
   ["Dates", "brown", "fibery", 22],
-  ["Elephants", "gray", "awesome", 0],
+  ["Elephants", "gray", "awesome", 0, "no"],
+  ["Figs", "brown", "sweet", 0],
   ["Waffles", "tan", "buttery", 2]
 ];
 

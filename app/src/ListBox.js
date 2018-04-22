@@ -20,7 +20,7 @@ const tableStyle = {
 
 const tableHeaderStyle = {
     fontSize: "1rem",
-    fontWeight: "bold,"
+    fontWeight: "bold",
 };
 
 const tableRowStyle = {
@@ -33,6 +33,7 @@ const ListBox = (props) => (
         <Table
             style={tableStyle}
             multiSelectable={true}
+            fixedHeader={false}
         >
             <TableHeader>
                 <TableRow>
