@@ -28,6 +28,22 @@ const addColumnStyle = {
     flex: "none",
 };
 
+const tableStyle = {
+    display: "block",
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+};
+
+const tableHeaderStyle = {
+    fontSize: "1rem",
+    fontWeight: "bold,"
+};
+
+const tableRowStyle = {
+    fontSize: "1rem",
+    fontWeight: "normal,"
+};
+
 const ListBox = (props) => (
     <div>
         <Toolbar style={toolbarStyle}>
@@ -41,12 +57,18 @@ const ListBox = (props) => (
             />
         </Toolbar>
 
-        <Table>
+        <Table
+            style={tableStyle}
+            multiSelectable={true}
+        >
             <TableHeader>
                 <TableRow>
                     {props.columns.map(function (field, index) {
                         return (
-                            <TableHeaderColumn key={index}>
+                            <TableHeaderColumn
+                                style={tableHeaderStyle}
+                                key={index}
+                            >
                                 {field}
                             </TableHeaderColumn>
                         )
@@ -60,7 +82,10 @@ const ListBox = (props) => (
                         <TableRow key={index}>
                             {row.map(function (item, index) {
                                 return (
-                                    <TableRowColumn key={index}>
+                                    <TableRowColumn
+                                        style={tableRowStyle}
+                                        key={index}
+                                    >
                                         {item}
                                     </TableRowColumn>
                                 )
