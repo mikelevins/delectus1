@@ -36,7 +36,7 @@ const ListBox = (props) => (
         >
             <TableHeader>
                 <TableRow>
-                    {props.columns.map(function (field, index) {
+                    {props.list.columns.map(function (field, index) {
                         return (
                             <TableHeaderColumn
                                 style={tableHeaderStyle}
@@ -50,10 +50,10 @@ const ListBox = (props) => (
             </TableHeader>
 
             <TableBody stripedRows={true}>
-                {props.rows.map(function (row, index) {
+                {props.list.rows.map(function (row, index) {
                     return (
                         <TableRow key={index}>
-                            {row.map(function (item, index) {
+                            {row.fields.map(function (item, index) {
                                 return (
                                     <TableRowColumn
                                         style={tableRowStyle}
