@@ -11,6 +11,9 @@ import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Settings from 'material-ui/svg-icons/action/settings';
 
+// utilities
+import cuid from 'cuid';
+
 // delectus' own includes
 import ListBox from './ListBox';
 import './Delectus.css';
@@ -26,11 +29,37 @@ const mockFields = [
   ["Waffles", "tan", "buttery", 2]
 ];
 
+function makeRow(fields) {
+  var result = {
+    '_id': 'row' + cuid(),
+    'type': 'row',
+    'list': null,
+    'fields': fields.slice(),
+    'createdAt': new Date().toISOString(),
+    'updatedAt': ''
+  }
+  return result;
+}
+
+const mockRows = mockFields.map(makeRow);
+
+function makeList(title, columns, rows) {
+  var result = {
+    '_id': 'list' + cuid(),
+    'type': 'list',
+    'title': title,
+    'columns': columns.slice(),
+    'rows': rows.map(function (row) { return row._id; }),
+  }
+  return result;
+}
+
 class Delectus extends Component {
   constructor() {
     super();
     this.state = {
       'theme': lightBaseTheme,
+      'list': makeList(mockTitle, mockColumns, mockRows),
     };
   }
 
@@ -40,17 +69,20 @@ class Delectus extends Component {
         <Helmet>
           <title>Delectus</title>
         </Helmet>
+
         <AppBar
           title={<span>Delectus</span>}
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
           iconElementRight={<IconButton><Settings /></IconButton>}
         />
+
         <ListBox 
         theme={this.state.theme}
         title={mockTitle}
         columns={mockColumns}
         rows={mockFields}
         />
+        
       </div>
     );
   }
