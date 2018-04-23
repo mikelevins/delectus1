@@ -13,7 +13,7 @@ import cuid from 'cuid';
 // delectus' own includes
 import DelectusAppBar from './DelectusAppBar';
 import ListBox from './ListBox';
-import './Delectus.css';
+import './DelectusList.css';
 import mockList from './MockData';
 
 class DelectusList extends Component {
@@ -21,7 +21,6 @@ class DelectusList extends Component {
     super();
     this.state = {
       'theme': lightBaseTheme,
-//      'list': makeList(mockTitle, mockColumns, mockRows),
       'list': mockList,
     };
   }
@@ -34,6 +33,8 @@ class DelectusList extends Component {
         </Helmet>
 
         <DelectusAppBar title={this.state.list.title}/>
+
+        <p className="DelectusListNote">{this.state.list.note}</p>
 
         <ListBox 
         theme={this.state.theme}
