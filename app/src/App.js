@@ -9,7 +9,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 // delectus' own includes
 import './Delectus';
 import './App.css';
-import Delectus from './Delectus';
+import DelectusList from './DelectusList';
 
 class App extends Component {
   constructor() {
@@ -20,7 +20,7 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(this.state.theme)}>
-        <Delectus />
+        <DelectusList />
       </MuiThemeProvider>
     );
   }
