@@ -7,7 +7,6 @@ import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 // delectus' own includes
-import './Delectus';
 import './App.css';
 import DelectusList from './DelectusList';
 
