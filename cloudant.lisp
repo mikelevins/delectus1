@@ -2,6 +2,7 @@
 ;;; get username and password from the Cloudant dashboard
 
 ;;; (ql:quickload :clouchdb)
+;;; (ql:quickload :fare-csv)
 (defpackage :cloudant (:use :cl :clouchdb :parenscript))
 (in-package :cloudant)
 
@@ -15,6 +16,16 @@
           lower-bound
           upper-bound))
 
+(defun distribute-order (count
+                         &optional
+                           (lower-bound *minimum-order*)
+                           (upper-bound *maximum-order*))
+  (let ((interval (truncate (- upper-bound lower-bound)
+                            (1+ count)))
+        (result nil))
+    (dotimes (i count (reverse result))
+      (push (+ lower-bound (* interval (1+ i))) result))))
+
 (defun init-cloudant (username password)
   (set-connection :user username
                   :password password
@@ -23,3 +34,18 @@
                   :port "443"
                   :name "delectus"))
 
+;;; read the Movies.csv file:
+;;; (defparameter $movies-path "/home/mikel/Workspace/src/delectus/test-data/Movies.csv")
+;;; (defparameter $movies (fare-csv:read-csv-file $movies-path))
+;;; (defparameter $movie-columns (first $movies))
+
+(defun make-delectus-column (column-name order)
+  `(,column-name . ((:|order| . ,order)
+                    (:|type| . "string"))))
+
+(defun make-delectus-list (column-names)
+  (let* ((orders (distribute-order (length column-names))))
+    `((:|type| . "List")
+      (:|Fields| . ,(mapcar 'make-delectus-column column-names orders)))))
+
+;;; (defparameter $movies-list (make-delectus-list $movie-columns))
