@@ -43,9 +43,10 @@
   `(,column-name . ((:|order| . ,order)
                     (:|type| . "string"))))
 
-(defun make-delectus-list (column-names)
+(defun make-delectus-list (username column-names)
   (let* ((orders (distribute-order (length column-names))))
-    `((:|type| . "List")
+    `((:|username| . ,username)
+      (:|type| . "List")
       (:|Fields| . ,(mapcar 'make-delectus-column column-names orders)))))
 
-;;; (defparameter $movies-list (make-delectus-list $movie-columns))
+;;; (defparameter $movies-list (make-delectus-list "delectus" $movie-columns))
