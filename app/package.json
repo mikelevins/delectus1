@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@cloudant/cloudant": "^2.1.0",
     "cuid": "^2.1.1",
     "material-ui": "latest",
     "npm": "^5.8.0",
