@@ -10,6 +10,7 @@
   :depends-on (:fare-csv :clouchdb :parenscript)
   :components
   ((:file "package")
-   (:file "users")))
+   (:file "users")
+   (:file "lists")))
 
 ;;; (asdf:load-system :delectus)
