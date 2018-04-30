@@ -12,11 +12,15 @@ import "./App.css";
 
 const cardStyle = {
   marginBottom: "1rem",
-  marginLeft: "20%",
-  marginRight: "20%",
+  marginLeft: "15%",
+  marginRight: "15%",
   marginTop: "1rem",
-  padding: "1rem",
+  padding: "0.75rem",
   textAlign: "center"
+};
+
+const appBarStyle = {
+  backgroundColor: "#4F3B27",
 };
 
 class App extends Component {
@@ -30,32 +34,36 @@ class App extends Component {
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(this.state.theme)}>
         <div>
-          <AppBar title="Delectus" />
+          <AppBar title="Delectus" style={appBarStyle} />
           <Card style={cardStyle}>
-            <img src="icon.png" width="108" height="131" />
+            <img src="icon.png" width="54" height="65" />
             <p>Your lists. Your way.</p>
-          </Card>
-          <Card style={cardStyle}>
             <p>
               $1.99 on the{" "}
               <a href="https://itunes.apple.com/us/app/delectus/id431505280?ls=1&mt=12">
                 Mac App Store.
               </a>
             </p>
+          </Card>
+
+          <Card style={cardStyle}>
             <h2>Manual</h2>
             <p>
-              To download the Delectus manual, click{" "}
+              Download the Delectus manual &nbsp;
               <a href="https://delectus.evins.net/downloads/Delectus_manual.zip">
-                this link
+                here
               </a>.
             </p>
+          </Card>
+
+          <Card style={cardStyle}>
             <h2>Support</h2>
             <p>
-              For questions, comments, and help, contact us by
+              Click &nbsp;
               <a href="mailto:delectus@evins.net?subject=About%20Delectus">
-                {" "}
-                clicking here
-              </a>,
+                here
+              </a>{" "}
+              for help and support.
             </p>
             <p>or send email to delectus@evins.net.</p>
           </Card>
