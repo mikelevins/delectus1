@@ -1,10 +1,9 @@
 // utilities
-import cuid from 'cuid';
-
+import cuid from "cuid";
 
 const mockTitle = "Fruits";
 const mockNote = "A list of delicious fruits we have on hand.";
-const mockColumns = ["Name", "Color", "Distinction", "Count","Delicious?"];
+const mockColumns = ["Name", "Color", "Distinction", "Count", "Delicious?"];
 const mockFields = [
   ["Apples", "red", "tangy", 3, "yes"],
   ["Bananas", "yellow", "mushy", 4, "yes"],
@@ -17,13 +16,13 @@ const mockFields = [
 
 function makeRow(fields) {
   var result = {
-    '_id': 'row' + cuid(),
-    'type': 'row',
-    'list': null,
-    'fields': fields.slice(),
-    'createdAt': new Date().toISOString(),
-    'updatedAt': ''
-  }
+    _id: "row" + cuid(),
+    type: "row",
+    list: null,
+    fields: fields.slice(),
+    createdAt: new Date().toISOString(),
+    updatedAt: ""
+  };
   return result;
 }
 
@@ -31,16 +30,16 @@ const mockRows = mockFields.map(makeRow);
 
 function makeList(title, note, columns, rows) {
   var result = {
-    '_id': 'list' + cuid(),
-    'type': 'list',
-    'title': title,
-    'note': note,
-    'columns': columns.slice(),
-    'rows': rows.slice(),
-  }
+    _id: "list" + cuid(),
+    type: "list",
+    title: title,
+    note: note,
+    columns: columns.slice(),
+    rows: rows.slice()
+  };
   return result;
 }
 
-const mockList = makeList(mockTitle,mockNote,mockColumns,mockRows);
+const mockList = makeList(mockTitle, mockNote, mockColumns, mockRows);
 
 export default mockList;
