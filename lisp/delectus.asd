@@ -7,7 +7,7 @@
 (asdf:defsystem :delectus
   :version "0.1"
   :serial t
-  :depends-on (:fare-csv :clouchdb :parenscript)
+  :depends-on (:fare-csv :local-time :clouchdb :parenscript)
   :components
   ((:file "package")
    (:file "users")

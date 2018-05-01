@@ -21,7 +21,10 @@
           columns)
   `((:|user| . ,(username->dbname username))
     (:|type| . "List")
+    (:|created_time| . ,(local-time:format-timestring nil (local-time:now)))
+    (:|modified_time| . "")
     (:|columns| . ,(mapcar #'identity columns))
     (:|rows| . ,(mapcar #'make-row rows))))
 
 ;;; (defparameter $minimovies (delectus-list "delectus" '("title" "star" "rating") '(("Bruce Almighty" "Jim Carrey" "***")("Home Alone" "Macauley Culkin" "***")("The Maltese Falcon" "Humphrey Bogart" "*****"))))
+
