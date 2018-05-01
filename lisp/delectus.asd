@@ -11,6 +11,7 @@
   :components
   ((:file "package")
    (:file "users")
-   (:file "lists")))
+   (:file "lists")
+   (:file "collections")))
 
 ;;; (asdf:load-system :delectus)
