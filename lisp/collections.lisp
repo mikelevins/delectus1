@@ -4,3 +4,6 @@
 
 (in-package :delectus)
 
+(defclass delectus-collection ()
+  ((title :accessor title :initform "" :initarg :title)
+   ))
