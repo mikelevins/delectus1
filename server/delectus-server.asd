@@ -6,10 +6,11 @@
   :license  "Specify license here"
   :version "0.0.1"
   :serial t
-  :depends-on (:hunchentoot :easy-routes)
+  :depends-on (:clouchdb :hunchentoot :easy-routes)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
+                                     (:file "database")
                                      (:file "delectus-server")))))
 
 ;;; (asdf:load-system :delectus-server)
