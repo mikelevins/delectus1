@@ -26,4 +26,6 @@ compile:
 
 clean:
 	rm -f ${PRODUCT}
+	rm -f src/*.o1
+	rm -f src/*.o2
 	rm -f *~

@@ -331,6 +331,15 @@
   (%write-json-list-items items write-fn)
   (display "]"))
 
+(define (%write-json-rows items  #!optional (write-fn write))
+  (let ((head (car items))
+        (tail (cdr items)))
+    (display "    ")
+    (write-fn head)
+    (if (not (null? tail))
+        (begin (display ", ")(newline)
+               (%write-json-rows tail write-fn)))))
+
 (define (write-json path)
   (let* ((data (delectus->lisp path))
          (columns-tail (member 'COLUMNS data))
@@ -340,8 +349,8 @@
     (display "{ \"columns\": ")
     (%write-json-list columns write)
     (display ",")(newline)
-    (display " \"rows\": [")(newline)
-    (%write-json-list rows %write-json-list)
+    (display "  \"rows\": [")(newline)
+    (%write-json-rows rows %write-json-list)
     (display "]}")))
 
 

@@ -11,6 +11,8 @@
 ;;; lecter --version => returns the version of lecter to stdio
 ;;; lecter --format <pathname> => name of delectus format version, or "INVALID"
 ;;; lecter --sexp <pathname> => returns s-expression conversion of delectus data to stdio
+;;; lecter --csv <pathname> => returns csv conversion of delectus data to stdio
+;;; lecter --jsonl <pathname> => returns csv conversion of delectus data to stdio
 
 (define (print-lecter-usage)
   (newline)
@@ -20,9 +22,9 @@
   (display "                       # or INVALID if it's not a recognized Delectus format")(newline)
   (display "  lecter --format-name PATH # prints the version name of the delectus file format,")(newline)
   (display "                            # or INVALID if it's not a recognized Delectus format")(newline)
-  (display "  lecter --sexp # prints the Delectus data to stdio as s-expressions")(newline)
-  (display "  lecter --csv # prints the Delectus data to stdio as CSV")(newline)
-  (display "  lecter --jsonl # prints the Delectus data to stdio as JSONL")(newline)
+  (display "  lecter --sexp PATH # prints the Delectus data to stdio as s-expressions")(newline)
+  (display "  lecter --csv PATH # prints the Delectus data to stdio as CSV")(newline)
+  (display "  lecter --jsonl PATH # prints the Delectus data to stdio as JSONL")(newline)
   )
 
 
@@ -47,7 +49,7 @@
                                                        (newline)))))
               ((equal? option "--sexp") (write-sexp (list-ref args 1)))
               ((equal? option "--csv") (write-csv (list-ref args 1)))
-              ((equal? option "--jsonl") (write-jsonl (list-ref args 1)))
+              ((equal? option "--json") (write-json (list-ref args 1)))
               (else (print-lecter-usage))))))
 
 
