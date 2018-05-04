@@ -10,7 +10,7 @@ GSC=${GAMBIT_HOME}/bin/gsc
 GSC_INC=${GAMBIT_HOME}/include
 GSC_LIB=${GAMBIT_HOME}/lib
 
-SCHEME_SOURCES = src/constants.scm \
+SCHEME_SOURCES = src/constants.scm src/uuid.scm \
 		 src/lists.scm src/vectors.scm src/strings.scm \
                  src/Sort.scm src/sort-keys.scm src/filter-keys.scm \
 		 src/functions.scm \
