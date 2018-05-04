@@ -406,7 +406,8 @@
                           (loop (cdr tail))))))))
 
 (define (write-couchdb path)
-  (let* ((data (delectus->lisp path))
+  (let* ((name (path-strip-extension (path-strip-directory path)))
+         (data (delectus->lisp path))
          (columns-tail (member 'COLUMNS data))
          (columns (if columns-tail (cadr columns-tail) '()))
          (rows-tail (member 'ROWS data))
@@ -415,6 +416,7 @@
          (listid (string-append "list:" list-uuid)))
     (display "{")
     (write "_id")(display ":")(write listid)(display ",")
+    (write "name")(display ":")(write name)(display ",")
     (write "type")(display ":")(write "List")(display ",")
     (write "columns")(display ":[")(write-list-elements columns)(display "]")
     (display "}")(newline)
