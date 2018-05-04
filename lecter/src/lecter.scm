@@ -25,8 +25,8 @@
   (display "                            # or INVALID if it's not a recognized Delectus format")(newline)
   (display "  lecter --sexp PATH # prints the Delectus data to stdio as s-expressions")(newline)
   (display "  lecter --csv PATH # prints the Delectus data to stdio as CSV")(newline)
-  (display "  lecter --jsonl PATH # prints the Delectus data to stdio as JSONL")(newline)
-  )
+  (display "  lecter --json PATH # prints the Delectus data to stdio as JSON")(newline)
+  (display "  lecter --couchdb PATH # prints the Delectus data to stdio as a CouchDB document")(newline))
 
 
 (let ((args (cdr (command-line))))
@@ -53,6 +53,7 @@
               ((equal? option "--sexp") (write-sexp (list-ref args 1)))
               ((equal? option "--csv") (write-csv (list-ref args 1)))
               ((equal? option "--json") (write-json (list-ref args 1)))
+              ((equal? option "--couchdb") (write-couchdb (list-ref args 1)))
               (else (print-lecter-usage))))))
 
 

@@ -8,6 +8,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define (identity x) x)
+
 (define (partial fn . args)
   (lambda more-args
     (apply fn `(,@args ,@more-args))))
