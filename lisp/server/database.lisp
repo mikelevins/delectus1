@@ -15,5 +15,6 @@
 
 ;;; (initdb)
 ;;; (clouchdb:list-dbs)
-;;; (clouchdb:set-connection :name "_users")
+;;; (clouchdb:set-connection :name "userdb-64656c6563747573")
 ;;; (clouchdb:get-all-documents)
+;;; (clouchdb:set-connection :name "")

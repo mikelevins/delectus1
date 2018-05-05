@@ -7,7 +7,7 @@
   :version "0.0.1"
   :serial t
   :depends-on (:clouchdb :hunchentoot :easy-routes)
-  :components ((:module "src"
+  :components ((:module "server"
                         :serial t
                         :components ((:file "package")
                                      (:file "database")
