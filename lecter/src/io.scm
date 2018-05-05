@@ -381,6 +381,7 @@
   (let ((id (string-append "item:" (make-uuid)))
         (fields (map cons columns row)))
     (display "{")(write "_id")(display ":")(write id)(display ", ")
+    (write "type")(display ":")(write "ListItem")(display ", ")
     (write "List")(display ":")(write listid)(display ", ")
     (if (not (null? fields))
         (let* ((field (car fields))
