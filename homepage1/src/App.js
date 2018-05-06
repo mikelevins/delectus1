@@ -11,10 +11,10 @@ import getMuiTheme from "material-ui/styles/getMuiTheme";
 import "./App.css";
 
 const cardStyle = {
-  marginBottom: "1rem",
-  marginLeft: "15%",
-  marginRight: "15%",
-  marginTop: "1rem",
+  marginLeft: "auto",
+  marginRight: "auto",
+  marginTop: "0.75rem",
+  maxWidth: "300px",
   padding: "0.75rem",
   textAlign: "center"
 };
@@ -35,38 +35,40 @@ class App extends Component {
       <MuiThemeProvider muiTheme={getMuiTheme(this.state.theme)}>
         <div>
           <AppBar title="Delectus" style={appBarStyle} />
-          <Card style={cardStyle}>
-            <img src="icon.png" width="54" height="65" />
-            <p>Your lists. Your way.</p>
-            <p>
-              $1.99 on the{" "}
-              <a href="https://itunes.apple.com/us/app/delectus/id431505280?ls=1&mt=12">
-                Mac App Store.
-              </a>
-            </p>
-          </Card>
+          <div>
+            <Card style={cardStyle}>
+              <img src="icon.png" alt="Delectus icon" width="54" height="65" />
+              <p>Your lists. Your way.</p>
+              <p>
+                $1.99 on the{" "}
+                <a href="https://itunes.apple.com/us/app/delectus/id431505280?ls=1&mt=12">
+                  Mac App Store.
+                </a>
+              </p>
+            </Card>
 
-          <Card style={cardStyle}>
-            <h2>Manual</h2>
-            <p>
-              Download the Delectus manual &nbsp;
-              <a href="https://delectus.evins.net/downloads/Delectus_manual.zip">
-                here
-              </a>.
-            </p>
-          </Card>
+            <Card style={cardStyle}>
+              <h2>Manual</h2>
+              <p>
+                Download the Delectus manual &nbsp;
+                <a href="https://delectus.evins.net/downloads/Delectus_manual.zip">
+                  here
+                </a>.
+              </p>
+            </Card>
 
-          <Card style={cardStyle}>
-            <h2>Support</h2>
-            <p>
-              Click &nbsp;
-              <a href="mailto:delectus@evins.net?subject=About%20Delectus">
-                here
-              </a>{" "}
-              for help and support.
-            </p>
-            <p>or send email to delectus@evins.net.</p>
-          </Card>
+            <Card style={cardStyle}>
+              <h2>Support</h2>
+              <p>
+                Click &nbsp;
+                <a href="mailto:delectus@evins.net?subject=About%20Delectus">
+                  here
+                </a>{" "}
+                for help and support.
+              </p>
+              <p>or send email to delectus@evins.net.</p>
+            </Card>
+          </div>
         </div>
       </MuiThemeProvider>
     );
@@ -74,5 +76,3 @@ class App extends Component {
 }
 
 export default App;
-
-
