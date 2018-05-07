@@ -7,21 +7,17 @@ import { Helmet } from "react-helmet";
 
 import lightBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme";
 
-// utilities
-import cuid from "cuid";
-
 // delectus' own includes
 import DelectusAppBar from "./DelectusAppBar";
 import ListBox from "./ListBox";
 import "./DelectusList.css";
-import mockList from "./MockData";
 
 class DelectusList extends Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       theme: lightBaseTheme,
-      list: mockList
+      list: props.list,
     };
   }
 
