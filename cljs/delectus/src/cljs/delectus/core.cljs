@@ -1,8 +1,21 @@
 (ns delectus.core
-  (:require [reagent.core :as reagent]
+  (:require cljsjs.pouchdb
+            [reagent.core :as reagent]
             [reagent-material-ui.core :as ui]
             [secretary.core :as secretary :include-macros true]
             [accountant.core :as accountant]))
+
+;;; ---------------------------------------------------------------------
+;;; local database
+;;; ---------------------------------------------------------------------
+
+;;; creates a local (client-side) database named "delectus"
+(def +pouch+ (js/PouchDB. "delectus"))
+
+;;; use the PouchDB API to get and print info about the created
+;;; database:
+;;; (in-ns 'delectus.core)
+;;; (.then (.info +pouch+) (fn [obj] (println obj)))
 
 ;;; ---------------------------------------------------------------------
 ;;; helpers
@@ -16,7 +29,7 @@
 (def +mock-rows+ [["Apples" "red" "tangy" 3 "yes"]
                   ["Bananas" "yellow" "mushy" 4 "yes"]
                   ["Cherries" "red" "sweet" 35 "yes"]
-                  ["Dates" "brown" "fibery" 22 "yes"]
+                  ["Dates" "brown" "wrinkly" 22 "yes"]
                   ["Elephants" "gray" "awesome" 0 "no"]
                   ["Figs" "brown" "sweet" 0 "yes"]
                   ["Waffles" "tan" "buttery" 2 "yes"]])
@@ -39,17 +52,7 @@
 (defn home-page []
   [ui/MuiThemeProvider +default-theme+
    [:div
-    [ui/AppBar {:title +mock-title+}]
-    [ui/Table
-     [ui/TableHeader
-      [ui/TableRow
-       (map (fn [lbl] [ui/TableHeaderColumn {:key lbl} lbl])
-            +mock-columns+)]]
-     [ui/TableBody {:stripedRows true}
-      (map (fn [row] [ui/TableRow {:key row}
-                      (map (fn [f] [ui/TableRowColumn {:key f} f])
-                           row)])
-           +mock-rows+)]]]])
+    [ui/AppBar {:title "Delectus"}]]])
 
 ;;; ---------------------------------------------------------------------
 ;;; Routes
@@ -80,3 +83,4 @@
       (secretary/locate-route path))})
   (accountant/dispatch-current!)
   (mount-root))
+

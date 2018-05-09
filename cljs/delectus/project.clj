@@ -6,6 +6,7 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [ring-server "0.5.0"]
+                 [cljsjs/pouchdb "6.3.4-0"]
                  [reagent "0.8.0"]
                  [reagent-utils "0.3.1"]
                  [reagent-material-ui "0.2.5"]
@@ -14,11 +15,9 @@
                  [compojure "1.6.1"]
                  [hiccup "1.0.5"]
                  [yogthos/config "1.1.1"]
-                 [org.clojure/clojurescript "1.10.238"
-                  :scope "provided"]
+                 [org.clojure/clojurescript "1.10.238" :scope "provided"]
                  [secretary "1.2.3"]
-                 [venantius/accountant "0.2.4"
-                  :exclusions [org.clojure/tools.reader]]]
+                 [venantius/accountant "0.2.4" :exclusions [org.clojure/tools.reader]]]
 
   :plugins [[lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.7"]
@@ -62,23 +61,15 @@
               :output-dir "target/cljsbuild/public/js/out"
               :source-map true
               :optimizations :none
-              :pretty-print  true}}
-
-
-
-            }
-   }
+              :pretty-print  true}}}}
 
   :figwheel
   {:http-server-root "public"
    :server-port 3449
    :nrepl-port 7002
-   :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"
-                      ]
+   :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
    :css-dirs ["resources/public/css"]
    :ring-handler delectus.handler/app}
-
-
 
   :profiles {:dev {:repl-options {:init-ns delectus.repl
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
@@ -90,13 +81,10 @@
                                   [figwheel-sidecar "0.5.16"]
                                   [org.clojure/tools.nrepl "0.2.13"]
                                   [com.cemerick/piggieback "0.2.2"]
-                                  [pjstadig/humane-test-output "0.8.3"]
-                                  
- ]
+                                  [pjstadig/humane-test-output "0.8.3"]]
 
                    :source-paths ["env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.16"]
-]
+                   :plugins [[lein-figwheel "0.5.16"]]
 
                    :injections [(require 'pjstadig.humane-test-output)
                                 (pjstadig.humane-test-output/activate!)]
