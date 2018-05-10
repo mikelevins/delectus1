@@ -16,7 +16,10 @@ import PouchDBFind from 'pouchdb-find';
 // IBM ShoppingList sample imports
 // ---------------------------------------------------------------------
 
-import { ShoppingListFactory, ShoppingListRepositoryPouchDB } from 'ibm-shopping-list-model';
+import {
+    ShoppingListFactory,
+    ShoppingListRepositoryPouchDB
+} from 'ibm-shopping-list-model';
 
 // ---------------------------------------------------------------------
 // Local imports
