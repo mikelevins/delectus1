@@ -33,7 +33,7 @@ import registerServiceWorker from './registerServiceWorker';
 // set up the database
 PouchDB.plugin(PouchDBFind); // install the pouchdb-find plugin
 const localDB = new PouchDB('shopping_list_react');
-let remoteDB = undefined;
+let remoteDB = new PouchDB('http://delectus:Ipse-777-Dixit@mars:5984/shopping-list');
 
 // these are framework-independent interfaces for working with lists and items in the list
 const shoppingListFactory = new ShoppingListFactory();
