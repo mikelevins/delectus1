@@ -5,6 +5,7 @@ import React, { Component } from "react";
 import PouchDB from 'pouchdb';
 
 
+
 // material-ui stuff
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
@@ -30,7 +31,7 @@ class App extends Component {
     this.localdb = PouchDB('delectus');
     this.state = { theme: muiTheme };
 
-    // peek at the PuchDB
+    // peek at the PouchDB
     this.localdb.info().then(function(info){
       console.log(info);
     });
