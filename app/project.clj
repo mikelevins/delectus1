@@ -1,12 +1,13 @@
 (defproject delectus "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :description "the Delectus 2 web application"
+  :url "http://delect.us"
+  :license {:name "Apache License 2.0"
+            :url "https://www.apache.org/licenses/LICENSE-2.0"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [ring-server "0.5.0"]
                  [cljsjs/pouchdb "6.3.4-0"]
+                 [cljsjs/pouchdb-find "6.3.4-0"]
                  [reagent "0.8.0"]
                  [reagent-utils "0.3.1"]
                  [reagent-material-ui "0.2.5"]
