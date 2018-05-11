@@ -26,6 +26,7 @@ import Paper from "material-ui/Paper";
 import { Card, CardTitle } from "material-ui/Card";
 import IconButton from "material-ui/IconButton";
 import KeyboardBackspace from "material-ui/svg-icons/hardware/keyboard-backspace";
+import ListIcon from "material-ui/svg-icons/action/list";
 import SettingsIcon from "material-ui/svg-icons/action/settings";
 import AboutIcon from "material-ui/svg-icons/action/info-outline";
 import {
@@ -52,10 +53,8 @@ import { List } from "immutable";
 // Local imports
 // ---------------------------------------------------------------------
 
-import {CollectionModel, ListItemModel, ListModel} from "./Model";
-import logo from "./logo.svg";
+import { DelectusCollection, DelectusItem, DelectusList } from "./Model";
 import "./App.css";
-
 
 // ---------------------------------------------------------------------
 // App setup
@@ -90,9 +89,12 @@ class App extends Component {
     this.remoteDB = props.remoteDB;
 
     // debug model values
-    this.aList = new ListModel({_id: false});
-    this.aListItem = new ListItemModel({_id: false, list: this.aList});
-    this.aCollection = new CollectionModel({_id: false, members: [this.aList]});
+    this.aList = new DelectusList({ _id: false });
+    this.aListItem = new DelectusItem({ _id: false, list: this.aList });
+    this.aCollection = new DelectusCollection({
+      _id: false,
+      members: [this.aList]
+    });
 
     this.state = {
       shoppingList: null,
@@ -435,7 +437,9 @@ class App extends Component {
       );
     else
       return (
-        <img src="cart_sm.png" width="48px" alt="Shopping List app logo" />
+        <IconButton touch={true} onClick={this.getShoppingLists}>
+          <ListIcon />
+        </IconButton>
       );
   };
 
@@ -554,32 +558,12 @@ class App extends Component {
         modal={false}
         open={this.state.aboutOpen}
         onRequestClose={this.handleAboutSettings}
-      >
-        <p>
-          <a
-            href="https://github.com/ibm-watson-data-lab/shopping-list"
-            target="_blank"
-          >
-            Shopping List is a series of Offline First demo apps, each built
-            using a different stack.
-          </a>
-          These demo apps cover Progressive Web Apps, hybrid mobile apps, native
-          mobile apps, and desktop apps. This particular demo app is a{" "}
-          <strong>Progressive Web App</strong>
-          built using <strong>React and PouchDB</strong>.{" "}
-          <a
-            href="https://github.com/ibm-watson-data-lab/shopping-list-react-pouchdb"
-            target="_blank"
-          >
-            Get the source code
-          </a>.
-        </p>
-      </Dialog>
+      />
     );
   };
 
   render() {
-    let screenname = "Shopping List";
+    let screenname = "Delectus";
     if (this.state.view === "items") screenname = this.state.shoppingList.title;
     return (
       <MuiThemeProvider muiTheme={muiTheme}>

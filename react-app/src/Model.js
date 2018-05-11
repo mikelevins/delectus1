@@ -1,11 +1,11 @@
 var cuid = require('cuid');
 
-class ListModel {
+class DelectusList {
     constructor(props) {
         this._id = props._id ? props._id : "list:" + cuid();
         this._rev = props._rev ? props._rev : "";
         this._deleted = props._deleted ? props._deleted : false;
-        this.type = "list";
+        this.type = "DelectusList";
         this.version = 1;
         this.title = props.title ? props.title : "An Anonymous List";
         this.note = "";
@@ -15,12 +15,12 @@ class ListModel {
     }
 };
 
-class CollectionModel {
+class DelectusCollection {
     constructor(props) {
         this._id = props._id ? props._id : "collection:" + cuid();
         this._rev = props._rev ? props._rev : "";
         this._deleted = props._deleted ? props._deleted : false;
-        this.type = "collection";
+        this.type = "DelectusCollection";
         this.version = 1;
         this.title = props.title ? props.title : "An Anonymous Collection";
         this.note = "";
@@ -31,12 +31,12 @@ class CollectionModel {
     }
 };
 
-class ListItemModel {
+class DelectusItem {
     constructor(props) {
         this._id = props._id ? props._id : "item:" + cuid();
         this._rev = props._rev ? props._rev : "";
         this._deleted = props._deleted ? props._deleted : false;
-        this.type = "item";
+        this.type = "DelectusItem";
         this.version = 1;
         this.list = props.list ? props.list._id : false;
         this.title = props.title ? props.title : "An Anonymous Item";
@@ -47,5 +47,5 @@ class ListItemModel {
     }
 };
 
-export {CollectionModel, ListModel, ListItemModel};
+export {DelectusCollection, DelectusList, DelectusItem};
 
