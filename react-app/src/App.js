@@ -52,8 +52,10 @@ import { List } from "immutable";
 // Local imports
 // ---------------------------------------------------------------------
 
+import {CollectionModel, ListItemModel, ListModel} from "./Model";
 import logo from "./logo.svg";
 import "./App.css";
+
 
 // ---------------------------------------------------------------------
 // App setup
@@ -86,6 +88,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.remoteDB = props.remoteDB;
+
+    // debug model values
+    this.aList = new ListModel({_id: false});
+    this.aListItem = new ListItemModel({_id: false, list: this.aList});
+    this.aCollection = new CollectionModel({_id: false, members: [this.aList]});
 
     this.state = {
       shoppingList: null,
