@@ -11,8 +11,8 @@ class DelectusCollection {
         this.note = "";
         // ids of member lists and collections
         this.members = props.members ? props.members.map((i)=>i._id) : []; 
-        this.createdAt = Date.now();
-        this.updatedAt = Date.now();
+        this.createdAt = props.createdAt ? props.createdAt : Date.now();
+        this.updatedAt = props.updatedAt ? props.updatedAt : Date.now();
     }
 };
 

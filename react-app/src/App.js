@@ -93,7 +93,7 @@ class App extends Component {
     super(props);
     this.remoteDB = props.remoteDB;
 
-    // debug model values
+    // testing new model values
     this.aList = new DelectusList({ _id: false });
     this.aListItem = new DelectusItem({ _id: false, list: this.aList });
     this.aCollection = new DelectusCollection({

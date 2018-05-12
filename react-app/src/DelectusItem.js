@@ -11,8 +11,8 @@ class DelectusItem {
         this.title = props.title ? props.title : "An Anonymous Item";
         this.checked = props.checked ? props.checked : false;
         this.fields = props.fields;
-        this.createdAt = Date.now();
-        this.updatedAt = Date.now();
+        this.createdAt = props.createdAt ? props.createdAt : Date.now();
+        this.updatedAt = props.updatedAt ? props.updatedAt : Date.now();
     }
 };
 

@@ -10,8 +10,8 @@ class DelectusList {
         this.title = props.title ? props.title : "An Anonymous List";
         this.note = "";
         this.checked = props.checked ? props.checked : false;
-        this.createdAt = Date.now();
-        this.updatedAt = Date.now();
+        this.createdAt = props.createdAt ? props.createdAt : Date.now();
+        this.updatedAt = props.updatedAt ? props.updatedAt : Date.now();
     }
 };
 
