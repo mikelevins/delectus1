@@ -53,7 +53,9 @@ import { List } from "immutable";
 // Local imports
 // ---------------------------------------------------------------------
 
-import { DelectusCollection, DelectusItem, DelectusList } from "./Model";
+import DelectusCollection from "./DelectusCollection";
+import DelectusList from "./DelectusList";
+import DelectusItem from "./DelectusItem";
 import "./App.css";
 
 // ---------------------------------------------------------------------
@@ -84,6 +86,9 @@ const NOITEMSMSG = "Click the + sign above to create a shopping list item.";
 // ---------------------------------------------------------------------
 
 class App extends Component {
+  
+  // constructor
+  // -------------------------------------------------------------------
   constructor(props) {
     super(props);
     this.remoteDB = props.remoteDB;
@@ -96,6 +101,7 @@ class App extends Component {
       members: [this.aList]
     });
 
+    // app state
     this.state = {
       shoppingList: null,
       shoppingLists: [],
@@ -109,6 +115,10 @@ class App extends Component {
       aboutOpen: false
     };
   }
+  
+  
+  // data accessors
+  // -------------------------------------------------------------------
   // Before this component shows the user anything, get the data
   // from the local PouchDB Then, if we were initialized with a
   // remote DB, synchronize with it
@@ -239,7 +249,7 @@ class App extends Component {
       .then(this.refreshShoppingListItems(this.state.shoppingList._id));
   };
 
-  // Delete and item
+  // Delete an item
   deleteShoppingListItem = itemid => {
     this.props.shoppingListRepository
       .getItem(itemid)
@@ -362,6 +372,9 @@ class App extends Component {
     this.setState({ adding: true });
   };
 
+
+  // ui-rendering methods
+  // -------------------------------------------------------------------
   // Show UI for typing in a new name
   renderNewNameUI = () => {
     return (
@@ -562,6 +575,9 @@ class App extends Component {
     );
   };
 
+  // main renderer
+  // -------------------------------------------------------------------
+  
   render() {
     let screenname = "Delectus";
     if (this.state.view === "items") screenname = this.state.shoppingList.title;
