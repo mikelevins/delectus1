@@ -1,8 +1,0 @@
-DELECTUS™ is Copyright 2010, 2011 by mikel evins, All Rights Reserved.
-
-DELECTUS™ is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties. DELECTUS™  is licensed, not sold.
-
-All title, including but not limited to copyrights, in and to DELECTUS™ and any copies thereof are owned by mikel evins or his suppliers. All title and intellectual property rights in and to the content which may be accessed through use of DELECTUS™ is the property of the respective content owner and may be protected by applicable copyright or other intellectual property laws and treaties. 
-
-Portions of Delectus are copyright Marc Feeley <feeley@iro.umontreal.ca>, and licensed under the Apache 2.0 License (see the "Apache 2.0 License" included with DELECTUS™.
-

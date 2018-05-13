@@ -1,6 +1,0 @@
-SRFI functions are added in here as-needed from the reference
-implementations, or from other compatible sources. I don't include the
-full SRFIs because (1) I don't generally need all that's in them and
-(2) the readily-available distributions don't straightforwardly work
-in Gambit without some hacking of the sources.
-
