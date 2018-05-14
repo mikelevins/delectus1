@@ -6,11 +6,11 @@
   :license  "Apache 2"
   :version "2.0.1"
   :serial t
+  :depends-on (:cl-conspack)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
-                                     (:file "store")
-                                     (:file "sync")))))
+                                     (:file "changes")
+                                     ))))
 
 ;;; (asdf:load-system :delectus-engine)
-
