@@ -5,32 +5,42 @@
 Following are the change operations supported by the Delectus
 engine.
 
-| Name                        |
-|-----------------------------|
-| create-collection           |
-| mark-collection-deleted     |
-| destroy-collection          |
-| add-list-to-collection      |
-| remove-list-from collection |
-| create-list                 |
-| mark-list-deleted           |
-| destroy-list                |
-| add-column-to-list          |
-| mark-column-deleted         |
-| destroy-column              |
-| add-row-to-list             |
-| mark-row-deleted            |
-| delete-row                  |
-| update-field                |
+| Name                          |
+|-------------------------------|
+| create-collection             |
+| mark-collection-deleted       |
+| destroy-collection            |
+| add-object-to-collection      |
+| remove-object-from collection |
+| create-list                   |
+| mark-list-deleted             |
+| destroy-list                  |
+| add-column-to-list            |
+| mark-column-deleted           |
+| destroy-column                |
+| add-row-to-list               |
+| mark-row-deleted              |
+| destroy-row                   |
+| update-field                  |
 
 The data storage engine executes these operations when the sync engine
-or the user interface requests them. In either case, the operation
-changes the state of the datastore, computes a new state token for it
-(a hash of the store's new state), and appends the state token to the
-state log. It also adds the executed command to the change
-log. Operations that update values record both the value before the
-operation and the value after, so that recorded change operations can
-be undone and redone.
+or the user interface requests them. The sync protocol operates on
+**Delectus containers**, updating the state represented by their
+contents.
+
+When the engine executes a change-protocol operation, the operation
+updates the state of the target container according to the operation's
+specification, pushes a record of the operation (along with old and
+new values for any updated values in the container) onto the
+container's change log, then computes a new state token by hashing the
+updated change log. It then appends the new state token to the
+container's state log.
+
+The entire update of the container is performed atomically, in a
+transaction. If an error occurs during processing, the container's
+state is left unchanged.
+
+### Sync conflicts
 
 It's possible for a sync engine to enqueue two operations that make
 conflicting changes to the same element of the datastore. For example,
