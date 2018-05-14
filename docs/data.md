@@ -1,6 +1,42 @@
 # Delectus 2 Data Objects
 
+Delectus 2 manages **containers** of **collections** of **lists**. A
+**list** consists of a sequence of **rows** divided into labeled
+**columns**, with a **field** for each column of each row.
+
+Along with the representation of data objects, Delectus 2 consists of
+several **user interfaces** and a **data engine**, each of which can
+read and update containers according to well-defined **protocols**.
+
+This document describes the data structures stored in Delectus
+containers.
+
+## Identity
+
+The objects that Delectus manages may be stored in more than one
+location. The **sync engine** uses the **change protocol** to resolve
+differences that arise in different copies of the same object.
+
+In order for this reconciliation to work, Delectus requires a way to
+identify which stored objects are copies of which other stored
+objects. It solves this problem by assigning **identities** to several
+types of objects.
+
+**Containers**, **Collections**, and **Lists** are all assigned v4
+UUIDs that uniquely identify them, distinguishing them from all other
+objects of those types. When Delectus encounters two objects with the
+same UUID, it considers them two (possibly different) copies of the
+same object. In that case, Delectus attempts to reconcile their
+differences using the sync engine together with the change protocol.
+
+**Columns** and **Rows** are assigned IDs that are guaranteed unique
+only within a given List. A **Field** is uniquely identified within a
+List by its row and column.
+
 ## Field values
+
+Field values are the primitive, atomic value objects stored by a
+Delectus container. They include the following types:
 
 - **null:** The absence of any value
 - **Boolean:** True or false
@@ -12,12 +48,12 @@
 ## Rows
 
 A **Delectus row** consists of a sequence of field values. Rows do not
-appear bare; they exist only as members of **Delectus lists**.
+occur bare; they exist only as members of **Delectus lists**.
 
 ## Columns
 
 A **Delectus column** consists of a sequence of text values. Columns
-do not appear bare; they exist only as attributes of **Delectus
+do not occur bare; they exist only as attributes of **Delectus
 lists**.
 
 ## Lists
