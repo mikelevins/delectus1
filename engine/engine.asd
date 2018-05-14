@@ -8,8 +8,9 @@
   :serial t
   :components ((:module "src"
                         :serial t
-                        :components (:file "package")
-                        (:file "sync"))))
+                        :components ((:file "package")
+                                     (:file "store")
+                                     (:file "sync")))))
 
 ;;; (asdf:load-system :delectus-sync)
 

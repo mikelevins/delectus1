@@ -1,4 +1,4 @@
 ;;;; package.lisp
 
-(defpackage #:sync
+(defpackage #:engine
   (:use #:cl))
