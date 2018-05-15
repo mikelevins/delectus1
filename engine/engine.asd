@@ -6,7 +6,7 @@
   :license  "Apache 2"
   :version "2.0.1"
   :serial t
-  :depends-on (:cl-conspack :sha3 :uuid)
+  :depends-on (:sqlite :cl-conspack :sha3 :uuid)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
