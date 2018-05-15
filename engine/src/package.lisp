@@ -1,4 +1,4 @@
 ;;;; package.lisp
 
-(defpackage #:engine
-  (:use #:cl))
+(defpackage :engine
+  (:use :cl :conspack))
