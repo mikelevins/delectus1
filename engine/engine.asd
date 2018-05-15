@@ -11,6 +11,7 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "utils")
+                                     (:file "messages")
                                      (:file "state-token")
                                      (:file "changes")
                                      ))))
