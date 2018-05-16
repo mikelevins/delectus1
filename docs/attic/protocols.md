@@ -7,21 +7,20 @@ engine.
 
 | Name                          |
 |-------------------------------|
-| create-collection             |
-| mark-collection-deleted       |
-| destroy-collection            |
-| add-object-to-collection      |
-| remove-object-from collection |
-| create-list                   |
-| mark-list-deleted             |
-| destroy-list                  |
-| add-column-to-list            |
-| mark-column-deleted           |
-| destroy-column                |
-| add-row-to-list               |
-| mark-row-deleted              |
-| destroy-row                   |
 | update-field                  |
+| add-row                       |
+| mark-row-deleted              |
+| add-column                    |
+| rename-column                 |
+| mark-column-deleted           |
+| create-list                   |
+| rename-list                   |
+| mark-list-deleted             |
+| update-list-notes             |
+| create-collection             |
+| rename-collection             |
+| mark-collection-deleted       |
+| update-collection-notes       |
 
 The data storage engine executes these operations when the sync engine
 or the user interface requests them. The sync protocol operates on
@@ -39,6 +38,26 @@ container's state log.
 The entire update of the container is performed atomically, in a
 transaction. If an error occurs during processing, the container's
 state is left unchanged.
+
+> Note: In Delectus 2.0 there are no change operations that destroy
+> stored data. For example, there is no destroy-row or
+> destroy-list. Users may mark a list, collection, row, or column
+> 'deleted' and client UIs will normally hide them, unless the user
+> specifically asks to see deleted content.
+
+> The reason that Delectus does not support destroying deleted content
+> is that destroying content leads to troublesome semantics that can
+> break the sync model. For example, suppose a user adds a list to a
+> collection, then destroys it. The collection now has a reference to
+> a nonexistent object, with no way to reconstruct it. The sync model
+> requires Delectus to be able to reconstruct any state in the history
+> of a list or collection, and so we do not actually destroy deleted
+> data.
+
+> We may add the ability in the future to destroy content. Most likely
+> it will require rebuilding a change history from start to finish,
+> with the destroyed content omitted, then marking the change history
+> somehow to inform sync peers of the change.
 
 ### Sync conflicts
 
