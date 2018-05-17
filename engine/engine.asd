@@ -6,13 +6,14 @@
   :license  "Apache 2"
   :version "2.0.1"
   :serial t
-  :depends-on (:sqlite :local-time :cl-conspack :sha3 :uuid)
+  :depends-on (:sqlite :local-time :cl-conspack :sha3)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
                                      (:file "utils")
+                                     (:file "identity")
                                      (:file "messages")
-                                     (:file "state-token")
+                                     (:file "state")
                                      (:file "changes")
                                      ))))
 
