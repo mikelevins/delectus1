@@ -17,3 +17,8 @@
 
 ;;; (compute-state-token nil)
 ;;; (compute-state-token `((message-add-row ,$list-id ,$state-token)))
+
+;;; A statelog is simply a list of recorded state tokens associated
+;;; with the identifiable object for which the tokens have been
+;;; computed. They are recorded in reverse order, by pushing new ones
+;;; onto the front of the list.

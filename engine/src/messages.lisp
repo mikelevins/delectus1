@@ -7,7 +7,7 @@
 ;;; integers, greatly shrinking the size of our messages
 
 (define-index change-operations
-  ;; message fields
+  ;; message attributes
   :collection-id
   :column-label
   :list-id
@@ -24,29 +24,35 @@
   :row-id
   :title
 
-  ;; field operations
+  ;; operations on fields
   :update-field
 
-  ;; row operations
+  ;; operations on rows
   :add-row
   :mark-row-deleted
 
-  ;; column operations
+  ;; operations on columns
   :add-column
   :rename-column
   :mark-column-deleted
 
-  ;; list operations
-  :create-list
+  ;; operations on lists
   :rename-list
   :mark-list-deleted
   :update-list-notes
 
-  ;; collection operations
-  :create-collection
+  ;; operations on collections
   :rename-collection
   :mark-collection-deleted
   :update-collection-notes
+
+  ;; operations on containers
+  :create-list
+  :create-collection
+
+
+  ;; operations on repositories
+  :create-container
   )
 
 ;;; ---------------------------------------------------------------------
