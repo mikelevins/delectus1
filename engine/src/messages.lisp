@@ -56,6 +56,53 @@
   :unmark-collection-deleted
   )
 
+(defparameter *change-operations*
+  '(  ;; operations on fields
+    :update-field
+
+    ;; operations on rows
+    :add-row
+    :mark-row-deleted
+    :unmark-row-deleted
+
+    ;; operations on columns
+    :add-column
+    :rename-column
+    :mark-column-deleted
+    :unmark-column-deleted
+
+    ;; operations on lists
+    :create-list
+    :rename-list
+    :update-list-notes
+    :mark-list-deleted
+    :unmark-list-deleted
+
+    ;; operations on collections
+    :create-collection
+    :rename-collection
+    :update-collection-notes
+    :add-member
+    :mark-member-deleted
+    :unmark-member-deleted
+    :mark-collection-deleted
+    :unmark-collection-deleted
+    ))
+
+(defun change-message-p (thing)
+  (and (consp thing)
+       (symbolp (car thing))
+       (member (car thing)
+               *change-operations*)
+       t))
+
+(deftype change-message () '(satisfies change-message-p))
+
+(defun validate-change-message (thing)
+  (unless (typep thing 'change-message)
+    (error "Not a change message: ~S" thing))
+  t)
+
 ;;; ---------------------------------------------------------------------
 ;;; Fields
 ;;; ---------------------------------------------------------------------

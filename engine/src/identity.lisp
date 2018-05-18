@@ -22,6 +22,7 @@
                         (random #xffff *identity-random-state*)
                         (random #xffff *identity-random-state*)
                         (random #xffff *identity-random-state*))))
-    (with-output-to-string (out)
-      (loop for b across bytes
-         do (write b :stream out)))))
+    (string-downcase
+     (with-output-to-string (out)
+       (loop for b across bytes
+          do (write b :stream out))))))

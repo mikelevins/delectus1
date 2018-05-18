@@ -7,3 +7,6 @@
 
 (defun hash (bytes)
   (sha3:sha3-digest-vector bytes :output-bit-length 256))
+
+(defun timestamp-now ()
+  (format nil "~A" (local-time:now)))
