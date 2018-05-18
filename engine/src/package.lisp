@@ -4,6 +4,7 @@
   (:use :cl :conspack))
 
 (defpackage :message
+  (:nicknames :msg)
   (:use :cl :conspack)
   (:export
 
