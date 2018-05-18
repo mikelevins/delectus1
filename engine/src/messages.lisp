@@ -11,18 +11,18 @@
   :collection-id
   :column-label
   :list-id
+  :member-id
+  :new-column-label
   :new-notes
   :new-title
   :new-value
-  :notes
+  :old-column-label
   :old-notes
   :old-title
-  :originator-timestamp
   :old-value
   :parent-state
-  :receiver-timestamp
   :row-id
-  :title
+  :timestamp
 
   ;; operations on fields
   :update-field
@@ -30,29 +30,30 @@
   ;; operations on rows
   :add-row
   :mark-row-deleted
+  :unmark-row-deleted
 
   ;; operations on columns
   :add-column
   :rename-column
   :mark-column-deleted
+  :unmark-column-deleted
 
   ;; operations on lists
+  :create-list
   :rename-list
-  :mark-list-deleted
   :update-list-notes
+  :mark-list-deleted
+  :unmark-list-deleted
 
   ;; operations on collections
-  :rename-collection
-  :mark-collection-deleted
-  :update-collection-notes
-
-  ;; operations on containers
-  :create-list
   :create-collection
-
-
-  ;; operations on repositories
-  :create-container
+  :rename-collection
+  :update-collection-notes
+  :add-member
+  :mark-member-deleted
+  :unmark-member-deleted
+  :mark-collection-deleted
+  :unmark-collection-deleted
   )
 
 ;;; ---------------------------------------------------------------------
@@ -60,176 +61,226 @@
 ;;; ---------------------------------------------------------------------
 
 (defun update-field (&key
-                       (list-id nil)
                        (parent-state nil)
+                       (list-id nil)
                        (row-id nil)
                        (column-label nil)
                        (new-value nil)
                        (old-value nil)
-                       (originator-timestamp nil)
-                       (receiver-timestamp nil))
-  `(:UPDATE-FIELD :list-id ,list-id
-                  :parent-state ,parent-state
+                       (timestamp nil))
+  `(:UPDATE-FIELD :parent-state ,parent-state
+                  :list-id ,list-id
                   :row-id ,row-id
                   :column-label ,column-label
                   :new-value ,new-value
-                  :old-value ,old-value))
-
-;;; (defparameter $list-id (str "list:" (uuid:make-v4-uuid)))
-;;; (defparameter $parent-state (hash (encode '(:some "stuff"))))
-;;; (defparameter $row-id (str "row:" (uuid:make-v4-uuid)))
-;;; (defparameter $column-label "Fruits")
-;;; (defparameter $new-value 101)
-;;; (defparameter $old-value 1)
-;;; (message:update-field $list-id $parent-state $row-id $column-label $new-value $old-value)
+                  :old-value ,old-value
+                  :timestamp ,timestamp))
 
 ;;; ---------------------------------------------------------------------
 ;;; Rows
 ;;; ---------------------------------------------------------------------
 
 (defun add-row (&key
-                  (list-id nil)
                   (parent-state nil)
-                  (originator-timestamp nil)
-                  (receiver-timestamp nil))
-  `(:ADD-ROW :list-id ,list-id
-             :parent-state ,parent-state))
-
-;;; (defparameter $list-id (str "list:" (uuid:make-v4-uuid)))
-;;; (defparameter $parent-state (hash (encode '(:some "stuff"))))
-;;; (print-message (message-add-row $list-id $parent-state))
+                  (list-id nil)
+                  (timestamp nil))
+  `(:ADD-ROW :parent-state ,parent-state
+             :list-id ,list-id
+             :timestamp ,timestamp))
 
 (defun mark-row-deleted (&key
-                           (list-id nil)
                            (parent-state nil)
+                           (list-id nil)
                            (row-id nil)
-                           (originator-timestamp nil)
-                       (receiver-timestamp nil))
-  `(:MARK-ROW-DELETED :list-id ,list-id
-                      :parent-state ,parent-state
-                      :row-id ,row-id))
+                           (timestamp nil))
+  `(:MARK-ROW-DELETED :parent-state ,parent-state
+                      :list-id ,list-id
+                      :row-id ,row-id
+                      :timestamp ,timestamp))
+
+(defun unmark-row-deleted (&key
+                             (parent-state nil)
+                             (list-id nil)
+                             (row-id nil)
+                             (timestamp nil))
+  `(:UNMARK-ROW-DELETED :parent-state ,parent-state
+                        :list-id ,list-id
+                        :row-id ,row-id
+                        :timestamp ,timestamp))
 
 ;;; ---------------------------------------------------------------------
 ;;; Columns
 ;;; ---------------------------------------------------------------------
 
 (defun add-column (&key
-                     (list-id nil)
                      (parent-state nil)
+                     (list-id nil)
                      (column-label nil)
-                     (originator-timestamp nil)
-                     (receiver-timestamp nil))
-  `(:ADD-COLUMN :list-id ,list-id
-                :parent-state ,parent-state
-                :column-label ,column-label))
+                     (timestamp nil))
+  `(:ADD-COLUMN :parent-state ,parent-state
+                :list-id ,list-id
+                :column-label ,column-label
+                :timestamp ,timestamp))
 
 (defun rename-column (&key
-                        (list-id nil)
                         (parent-state nil)
+                        (list-id nil)
                         (new-column-label nil)
                         (old-column-label nil)
-                        (originator-timestamp nil)
-                        (receiver-timestamp nil))
-  `(:RENAME-COLUMN :list-id ,list-id
-                   :parent-state ,parent-state
+                        (timestamp nil))
+  `(:RENAME-COLUMN :parent-state ,parent-state
+                   :list-id ,list-id
                    :new-column-label ,new-column-label
-                   :old-column-label ,old-column-label))
+                   :old-column-label ,old-column-label
+                   :timestamp ,timestamp))
 
 (defun mark-column-deleted (&key
-                              (list-id nil)
                               (parent-state nil)
+                              (list-id nil)
                               (column-label nil)
-                              (originator-timestamp nil)
-                              (receiver-timestamp nil))
-  `(:MARK-COLUMN-DELETED :list-id ,list-id
-                         :parent-state ,parent-state
-                         :column-label ,column-label))
+                              (timestamp nil))
+  `(:MARK-COLUMN-DELETED :parent-state ,parent-state
+                         :list-id ,list-id
+                         :column-label ,column-label
+                         :timestamp ,timestamp))
 
+(defun unmark-column-deleted (&key
+                                (parent-state nil)
+                                (list-id nil)
+                                (column-label nil)
+                                (timestamp nil))
+  `(:UNMARK-COLUMN-DELETED :parent-state ,parent-state
+                           :list-id ,list-id
+                           :column-label ,column-label
+                           :timestamp ,timestamp))
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
-(defun create-list (&key
-                      (title nil)
-                      (notes nil)
-                      (originator-timestamp nil)
-                      (receiver-timestamp nil))
-  `(:CREATE-LIST :title ,title
-                 :notes ,notes))
+(defun create-list (&key ; the parent-state when creating a list is always nil
+                      (list-id nil) ; used when creating a copy of an exiting list
+                      (timestamp nil))
+  `(:CREATE-LIST :list-id ,list-id
+                 :timestamp ,timestamp))
 
 (defun rename-list (&key
-                      (list-id nil)
                       (parent-state nil)
+                      (list-id nil)
                       (new-title nil)
                       (old-title nil)
-                      (originator-timestamp nil)
-                      (receiver-timestamp nil))
-  `(:RENAME-LIST :list-id ,list-id
-                 :parent-state ,parent-state
+                      (timestamp nil))
+  `(:RENAME-LIST :parent-state ,parent-state
+                 :list-id ,list-id
                  :new-title ,new-title
-                 :old-title ,old-title))
-
-(defun mark-list-deleted (&key
-                            (list-id nil)
-                            (parent-state nil)
-                            (originator-timestamp nil)
-                            (receiver-timestamp nil))
-  `(:MARK-LIST-DELETED :list-id ,list-id
-                       :parent-state ,parent-state))
+                 :old-title ,old-title
+                 :timestamp ,timestamp))
 
 (defun update-list-notes (&key
-                            (list-id nil)
                             (parent-state nil)
+                            (list-id nil)
                             (new-notes nil)
                             (old-notes nil)
-                            (originator-timestamp nil)
-                            (receiver-timestamp nil))
-  `(:UPDATE-LIST-NOTES :list-id ,list-id
-                       :parent-state ,parent-state
+                            (timestamp nil))
+  `(:UPDATE-LIST-NOTES :parent-state ,parent-state
+                       :list-id ,list-id
                        :new-notes ,new-notes
-                       :old-notes ,old-notes))
+                       :old-notes ,old-notes
+                       :timestamp ,timestamp))
+
+(defun mark-list-deleted (&key
+                            (parent-state nil)
+                            (list-id nil)
+                            (timestamp nil))
+  `(:MARK-LIST-DELETED :parent-state ,parent-state
+                       :list-id ,list-id
+                       :timestamp ,timestamp))
+
+(defun unmark-list-deleted (&key
+                              (parent-state nil)
+                              (list-id nil)
+                              (timestamp nil))
+  `(:UNMARK-LIST-DELETED :parent-state ,parent-state
+                         :list-id ,list-id
+                         :timestamp ,timestamp))
 
 ;;; ---------------------------------------------------------------------
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
-(defun create-collection (&key
-                            (title nil)
-                            (originator-timestamp nil)
-                            (receiver-timestamp nil))
-  `(:CREATE-COLLECTION :title ,title))
+(defun create-collection (&key ; the parent-state when creating a collection is always nil
+                            (collection-id nil) ; used when creating a copy of an exiting collection
+                            (timestamp nil))
+  `(:CREATE-COLLECTION :collection-id ,collection-id
+                       :timestamp ,timestamp))
 
 (defun rename-collection (&key
-                            (collection-id nil)
                             (parent-state nil)
+                            (collection-id nil)
                             (new-title nil)
                             (old-title nil)
-                            (originator-timestamp nil)
-                            (receiver-timestamp nil))
-  `(:RENAME-COLLECTION :collection-id ,collection-id
-                       :parent-state ,parent-state
+                            (timestamp nil))
+  `(:RENAME-COLLECTION :parent-state ,parent-state
+                       :collection-id ,collection-id
                        :new-title ,new-title
-                       :old-title ,old-title))
-
-(defun mark-collection-deleted (&key
-                                  (collection-id nil)
-                                  (parent-state nil)
-                                  (originator-timestamp nil)
-                                  (receiver-timestamp nil))
-  `(:MARK-COLLECTION-DELETED :collection-id ,collection-id
-                             :parent-state ,parent-state))
+                       :old-title ,old-title
+                       :timestamp ,timestamp))
 
 (defun update-collection-notes (&key
-                                  (collection-id nil)
                                   (parent-state nil)
+                                  (collection-id nil)
                                   (new-notes nil)
                                   (old-notes nil)
-                                  (originator-timestamp nil)
-                                  (receiver-timestamp nil))
-  `(:UPDATE-COLLECTION-NOTES :collection-id ,collection-id
-                             :parent-state ,parent-state
+                                  (timestamp nil))
+  `(:UPDATE-COLLECTION-NOTES :parent-state ,parent-state
+                             :collection-id ,collection-id
                              :new-notes ,new-notes
-                             :old-notes ,old-notes))
+                             :old-notes ,old-notes
+                             :timestamp ,timestamp))
 
+(defun add-member (&key
+                     (parent-state nil)
+                     (collection-id nil)
+                     (member-id nil) ; a known list or collection id
+                     (timestamp nil))
+  `(:ADD-MEMBER :parent-state ,parent-state
+                :collection-id ,collection-id
+                :member-id ,member-id
+                :timestamp ,timestamp))
+
+(defun mark-member-deleted (&key
+                              (parent-state nil)
+                              (collection-id nil)
+                              (member-id nil)
+                              (timestamp nil))
+  `(:MARK-MEMBER-DELETED :parent-state ,parent-state
+                         :collection-id ,collection-id
+                         :member-id ,member-id
+                         :timestamp ,timestamp))
+
+(defun unmark-member-deleted (&key
+                                (parent-state nil)
+                                (collection-id nil)
+                                (member-id nil)
+                                (timestamp nil))
+  `(:UNMARK-MEMBER-DELETED :parent-state ,parent-state
+                           :collection-id ,collection-id
+                           :member-id ,member-id
+                           :timestamp ,timestamp))
+
+(defun mark-collection-deleted (&key
+                                  (parent-state nil)
+                                  (collection-id nil)
+                                  (timestamp nil))
+  `(:MARK-COLLECTION-DELETED :parent-state ,parent-state
+                             :collection-id ,collection-id
+                             :timestamp ,timestamp))
+
+(defun unmark-collection-deleted (&key
+                                    (parent-state nil)
+                                    (collection-id nil)
+                                    (timestamp nil))
+  `(:UNMARK-COLLECTION-DELETED :parent-state ,parent-state
+                               :collection-id ,collection-id
+                               :timestamp ,timestamp))
 

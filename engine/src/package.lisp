@@ -7,29 +7,36 @@
   (:use :cl :conspack)
   (:export
 
-   ;; field operations
+   ;; operations on fields
    :update-field
 
-   ;; row operations
+   ;; operations on rows
    :add-row
    :mark-row-deleted
+   :unmark-row-deleted
 
-   ;; column operations
+   ;; operations on columns
    :add-column
    :rename-column
    :mark-column-deleted
+   :unmark-column-deleted
 
-   ;; list operations
+   ;; operations on lists
    :create-list
    :rename-list
-   :mark-list-deleted
    :update-list-notes
+   :mark-list-deleted
+   :unmark-list-deleted
 
-   ;; collection operations
+   ;; operations on collections
    :create-collection
    :rename-collection
-   :mark-collection-deleted
    :update-collection-notes
+   :add-member
+   :mark-member-deleted
+   :unmark-member-deleted
+   :mark-collection-deleted
+   :unmark-collection-deleted
    ))
 
 
