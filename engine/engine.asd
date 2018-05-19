@@ -12,6 +12,7 @@
                         :components ((:file "package")
                                      (:file "utils")
                                      (:file "identity")
+                                     (:file "sqlite")
                                      (:file "messages")
                                      (:file "changes")
                                      (:file "node")

@@ -1,7 +1,7 @@
 ;;;; package.lisp
 
 (defpackage :engine
-  (:use :cl :conspack))
+  (:use :cl :conspack :sqlite))
 
 (defpackage :message
   (:nicknames :msg)
