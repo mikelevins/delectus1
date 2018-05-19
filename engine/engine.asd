@@ -13,8 +13,8 @@
                                      (:file "utils")
                                      (:file "identity")
                                      (:file "messages")
-                                     (:file "state")
                                      (:file "changes")
+                                     (:file "node")
                                      ))))
 
 ;;; (asdf:load-system :delectus-engine)

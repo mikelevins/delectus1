@@ -8,12 +8,6 @@
   (:use :cl :conspack)
   (:export
 
-   ;; operations on messages
-   :validate-change-message
-   
-   ;; change-message type
-   :change-message
-   
    ;; operations on fields
    :update-field
 
