@@ -1,6 +1,8 @@
  ;;;; delectus.asd
 
 (asdf:defsystem :engine
+  ;; the system needs the same name as this file in order to load
+  ;; properly in Lispworks 6.1 on Windows
   :description "delectus data and sync engine"
   :author "mikel evins <mikel@evins.net>"
   :license  "Apache 2"
@@ -18,7 +20,12 @@
                                      (:file "node")
                                      ))))
 
+;;; Windows:
+;;;
+;;; load CFFI:
 ;;; (ql:quickload :cffi)
+;;;
+;;; tell CFFI where SQLite is:
 ;;; (push #P"C:\\sqlite\\32bit\\" cffi:*foreign-library-directories*)
-;;; (asdf:load-system :engine)
 
+;;; (asdf:load-system :engine)
