@@ -1,6 +1,6 @@
-;;;; delectus.asd
+ ;;;; delectus.asd
 
-(asdf:defsystem :delectus-engine
+(asdf:defsystem :engine
   :description "delectus data and sync engine"
   :author "mikel evins <mikel@evins.net>"
   :license  "Apache 2"
@@ -18,4 +18,7 @@
                                      (:file "node")
                                      ))))
 
-;;; (asdf:load-system :delectus-engine)
+;;; (ql:quickload :cffi)
+;;; (push #P"C:\\sqlite\\32bit\\" cffi:*foreign-library-directories*)
+;;; (asdf:load-system :engine)
+
