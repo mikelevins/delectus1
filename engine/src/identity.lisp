@@ -31,4 +31,8 @@
       (format out "~12,'0x" node)
       out)))
 
+(defparameter *anonymous-identity*
+  "anonymous")
 
+(defparameter *delectus-identity*
+  "delectus")
