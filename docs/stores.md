@@ -114,33 +114,4 @@ Collection object tables all have the same format:
 
 ## Changes
 
-A Delectus storefile maintains a log of all changes applied to it. The
-changelog is a table that records **change messages** successfully
-processed by the local node on the storefile. Each change message
-specifies a valid **change operation** together with parameter values
-needed to yield a valid change to the store. For a complete
-description of change messages, see the document "changes.md".
-
-The only supported way to change the contents of a Delectus storefil
-is by executing a change message. Because Delectus records all
-processed change messages in the change log, the log contains all the
-data needed to reproduce the exact contents of the storefile at any
-point in its history.
-
-Delectus uses this feature to synchronize copies of storefiles. When
-asked to back up a store to the Delectus server, Delectus creates a
-storefile on the server with the same storeid as the reference
-storefile. It then executes the messages from the reference store's
-changelog in execute order. After the last message is executed, the
-new copy contains exactly the same data as the original.
-
-Delectus follows the same procedure when replicating a store from the
-Delectus server to a device--for example, when a user first logs in to
-an existing account with a Delectus client application.
-
-Finally, when Delectus detects that two copies of a store are
-incongruent (that is, when their state values differ), it reconciles
-the differences by merging their changelogs and then rebuilding both
-copies using the merged changelogs in order to bring the two copies
-back into congruence.
 
