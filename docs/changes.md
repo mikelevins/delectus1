@@ -73,8 +73,12 @@ change message contains the state token for the store's previous
 state.)
 
 - **create store**
-    (:create-store store-id state-token)
+    (:create-store store-id)
     => store-id | store-creation-error
+
+The `:create-store` operation is the sole operation that does not take
+a `state-token` argument, because there is no prior state when a store
+is created.
 
 - **mark store deleted**
     (:mark-store-deleted store-id state-token old-status new-status)
