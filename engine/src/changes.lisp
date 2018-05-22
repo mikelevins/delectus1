@@ -1,5 +1,5 @@
 ;;; changes.lisp
-;;; logging changes
+;;; change API
 
 (in-package :engine)
 
