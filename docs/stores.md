@@ -107,11 +107,19 @@ object table.
 
 Collection object tables all have the same format:
 
-| rowid | execute order | deleted? | identity                    | title          | type          |
-| ----- | ------------- | -------- | --------------------------- | -------------- | ------------- |
-|     1 |             1 | <0 or 1> | <delectus identity string>  | <title string> | <object type> |
-|   ... |           ... |      ... |                         ... |            ... |           ... |
+| rowid | deleted? | identity                    | title          | type          |
+| ----- | -------- | --------------------------- | -------------- | ------------- |
+|     1 | <0 or 1> | <delectus identity string>  | <title string> | <object type> |
+|   ... |      ... |                         ... |            ... |           ... |
 
 ## Changes
 
+The history of changes to a storefile is recorded in a table named
+**Changelog**. Each element recorded in the Changelog is a **change
+message**.
+
+| rowid  | execute_order | timestamp         | message          |
+| -----  | ------------- | ----------------- | ---------------- |
+|     1  | <integer>     | <ISO 8601 string> | <change message> |
+|   ...  |           ... |               ... |              ... |
 
