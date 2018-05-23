@@ -25,3 +25,4 @@
             (format out "~A~%" id))
           id))))
 
+;;; (local-nodeid)
