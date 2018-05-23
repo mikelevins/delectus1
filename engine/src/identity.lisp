@@ -14,7 +14,7 @@
   (unless *identity-random-state*
     (setf *identity-random-state* (make-random-state t)))
   (let* ((now (get-universal-time))
-         (clock-seq (random #x1fff *identity-random-state*))
+         (clock-seq (ldb (byte 13 0) (get-internal-real-time)))
          (node (random #xffffffffffff *identity-random-state*))
          (time-low now)
          (time-mid (random #xffff *identity-random-state*))

@@ -8,8 +8,18 @@
 (defun hash (bytes)
   (sha3:sha3-digest-vector bytes :output-bit-length 256))
 
+(defun now-fractional-seconds ()
+  (let* ((current-real-time (get-internal-real-time))
+         (current-real-seconds (truncate current-real-time
+                                         internal-time-units-per-second))
+         (current-offset (- current-real-time (* current-real-seconds
+                                                 internal-time-units-per-second))))
+    (/ current-offset 1000.0)))
+
 (defun timestamp-now ()
-  (format nil "~A" (local-time:now)))
+  (format nil "~A" (local-time:timestamp+ (local-time:now)
+                                          (now-fractional-seconds)
+                                          :sec)))
 
 ;;;  file-pathname-p (pathname)
 ;;; ---------------------------------------------------------------------
