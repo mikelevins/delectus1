@@ -24,7 +24,7 @@ Motion::Project::App.setup do |app|
   app.name = 'Delectus'
 
   # version for your app
-  app.version = '1.0'
+  app.version = '2.0'
 
   # ===========================================================================================
   # 3. Set your deployment target (it's recommended that you at least target 10.0 and above).
@@ -39,7 +39,7 @@ Motion::Project::App.setup do |app|
   #    https://developer.apple.com/account/ios/identifier/bundle. You must enroll into Apple's
   #    Developer program to get access to this screen (there is an annual fee of $99).
   # ===========================================================================================
-  # app.identifier = ''
+  app.identifier = 'us.delect.ios.Delectus'
 
   # ===========================================================================================
   # 5. If you need to reference any additional iOS libraries, use the config array below.
