@@ -1,0 +1,30 @@
+Your columns; your rows; your way.
+
+Originally designed for a little old lady, to help her keep track of her large collection of movies, Delectus is a simple list manager.
+
+Lists of what? Of whatever you like!
+
+Create a Delectus document and add any columns you want to your list. Then add as many rows as you like, and enter any text you wish. Click the column headings, and Delectus sorts the list. Type in the Filter Box and Delectus hides items that don't match.
+
+Users of Delectus use it every day to manage lists of movies, books, and music CDs. They use it for lists of camera equipment and savings bonds. They use it for cataloging specialized equipment. They use it to keep track of books they lend. I wrote Delectus to help my elderly mother manage her movie collection, but others  have found dozens of uses for it. What will you use it for? Write and tell me, at delectus@mikelevins.com!
+
+FEATURES
+
+Delectus is extremely simple, with only a few features:
+
+• Create one list per document
+• Add as many columns as you like to each document, with any column labels you choose
+• Add as many rows as you like, with any text you like in each row
+
+SORTING
+
+• Click a column label to sort by that column
+• Click once to sort forward
+• Click twice to sort in reverse
+• Click a third time to return to unsorted display
+• Delectus automatically sorts numeric columns by number
+
+SEARCHING
+• Type any text in the Filter Box
+• Delectus hides rows that don't match
+
