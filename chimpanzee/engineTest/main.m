@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
-#define ___VERSION 406000
+#define ___VERSION 408009
 #include "gambit.h"
-#include "Delectus.h"
+#include "DelectusApp.h"
 #include "stdio.h"
 
 #define SCHEME_LIBRARY_LINKER ____20_Delectus__
@@ -37,7 +37,7 @@ void runTests(){
 	}else{
 		printf("is_row_deleted->NO\n");
 	}
-	
+    printf("end of runTests");
     
 }
 

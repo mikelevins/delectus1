@@ -11,9 +11,9 @@
 #import "DelectusDataSource.h"
 #import "DelectusDataCell.h"
 #import "DelectusPrintView.h"
-#define ___VERSION 406001
+#define ___VERSION 408009
 #include "gambit.h"
-#include "Delectus.h"
+#include "DelectusApp.h"
 
 @implementation DelectusDocument
 

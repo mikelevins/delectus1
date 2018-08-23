@@ -7,9 +7,9 @@
 //
 
 #import "DelectusDataSource.h"
-#define ___VERSION 406001
+#define ___VERSION 408009
 #include "gambit.h"
-#include "Delectus.h"
+#include "DelectusApp.h"
 
 
 @implementation DelectusDataSource
