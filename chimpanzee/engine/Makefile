@@ -38,21 +38,30 @@ OBJECTS = constants.o \
           Delectus.o Delectus_.o
 
 PRODUCT = libDelectus.a
+DYLIB = libDelectus.dylib
 
-FLAGS_OBJ = -I${GSC_INC} -L${GSC_LIB} -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp 
+FLAGS_OBJ = -I${GSC_INC} -L${GSC_LIB} -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp 
 
 lib: obj
 	ar rc ${PRODUCT} ${OBJECTS} && ranlib ${PRODUCT}
 	rm -f ${C_SOURCES}
 	rm -f ${OBJECTS}
 
+shared_lib: shared_obj
+	${GCC} -shared ${OBJECTS} -lgambit -o ${DYLIB}
+
 obj: compile_scheme
-	${GCC} ${FLAGS_OBJ} -I"${GSC_INC}" -c ${C_SOURCES} ${GSC_LIB}/libgambit.a  -D___LIBRARY
+	${GCC} ${FLAGS_OBJ} -I"${GSC_INC}" -c ${C_SOURCES} ${GSC_LIB}/libgambit.a -D___LIBRARY
+
+shared_obj: compile_scheme
+	${GCC} ${FLAGS_OBJ} -I"${GSC_INC}" -c ${C_SOURCES} ${GSC_LIB}/libgambit.a -D___LIBRARY -D___SHARED
 
 compile_scheme:
 	${GSC} -:~~bin=${GSC_BIN},~~lib=${GSC_LIB},~~include=${GSC_INC} -f -link ${SCHEME_SOURCES}
 
 clean:
+	rm libDelectus.a
+	rm libDelectus.dylib
 	rm -f ${C_SOURCES}
 	rm -f ${OBJECTS}
 	rm -f *~
