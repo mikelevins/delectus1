@@ -60,8 +60,8 @@ compile_scheme:
 	${GSC} -:~~bin=${GSC_BIN},~~lib=${GSC_LIB},~~include=${GSC_INC} -f -link ${SCHEME_SOURCES}
 
 clean:
-	rm libDelectus.a
-	rm libDelectus.dylib
+	rm -f libDelectus.a
+	rm -f libDelectus.dylib
 	rm -f ${C_SOURCES}
 	rm -f ${OBJECTS}
 	rm -f *~
