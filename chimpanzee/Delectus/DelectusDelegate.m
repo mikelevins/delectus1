@@ -10,6 +10,7 @@
 #import "DelectusDataSource.h"
 #define ___VERSION 408009
 #include "gambit.h"
+#include <Realm/Realm.h>
 #include "DelectusApp.h"
 
 
