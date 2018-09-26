@@ -47,8 +47,7 @@
         // get the Database path
         if (appDirectory) {
             NSURL* dbPath = [NSURL fileURLWithPath: databaseName relativeToURL:appDirectory];
-           delectusDB  = [FMDatabase databaseWithURL:dbPath];
-            NSLog([delectusDB description]);
+            delectusDB  = [FMDatabase databaseWithURL:dbPath];
         }
 
     }
