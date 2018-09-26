@@ -26,34 +26,69 @@
         }else{
             contentFont = [[NSFont userFontOfSize:fontSize] retain];
         }
-        
-        databaseName = @"delectusDB.sqlite3";
-        
-        // get the Application Support paths
-        NSFileManager* sharedFM = [NSFileManager defaultManager];
-        NSArray* possibleURLs = [sharedFM URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask];
-        NSURL* appSupportDir = nil;
-        NSURL* appDirectory = nil;
-        if ([possibleURLs count] >= 1) {
-            // Use the first directory (if multiple are returned)
-            appSupportDir = [possibleURLs objectAtIndex:0];
-        }
-        // If a valid app support directory exists, add the
-        // app's bundle ID to it to specify the final directory.
-        if (appSupportDir) {
-            NSString* appBundleID = [[NSBundle mainBundle] bundleIdentifier];
-            appDirectory = [appSupportDir URLByAppendingPathComponent:appBundleID];
-        }
-        // get the Database path
-        if (appDirectory) {
-            NSURL* dbPath = [NSURL fileURLWithPath: databaseName relativeToURL:appDirectory];
-            delectusDB  = [FMDatabase databaseWithURL:dbPath];
-        }
 
+        NSURL* dbURL = [self initDatabase];
+    
+        if (dbURL) {
+            delectusDB = [FMDatabase databaseWithURL:dbURL];
+            if (delectusDB){
+                BOOL isOpen = [delectusDB open];
+                if (isOpen) {
+                    NSLog(@"created delectus DB");
+                } else {
+                    NSLog(@"ERROR: failed to open delectus DB");
+                }
+                
+                BOOL isClosed = [delectusDB close];
+                if (isClosed) {
+                    NSLog(@"closed delectus DB");
+                } else {
+                    NSLog(@"ERROR: failed to close delectus DB");
+                }
+
+            } else {
+                NSLog(@"ERROR: failed to create delectus DB");
+            }
+        } else {
+            NSLog(@"failed to retrieve database URL");
+        }
+        return self;
+        
+    }
+}
+
+- (NSURL*)initDatabase
+{
+    NSURL* dbURL = nil;
+    NSURL* dirPath = nil;
+    databaseName = @"delectusDB.sqlite3";
+
+    
+    NSString* bundleID = [[NSBundle mainBundle] bundleIdentifier];
+    NSFileManager*fm = [NSFileManager defaultManager];
+    
+    // Find the application support directory in the home directory.
+    NSArray* appSupportDir = [fm URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask];
+    
+    if ([appSupportDir count] > 0)
+    {
+        // Append the bundle ID to the URL for the Application Support directory
+        dirPath = [[appSupportDir objectAtIndex:0] URLByAppendingPathComponent:bundleID];
+        
+        // If the directory does not exist, this method creates it.
+        NSError*    theError = nil;
+        if ([fm createDirectoryAtURL:dirPath withIntermediateDirectories:YES
+                           attributes:nil error:&theError])
+        {
+            dbURL = [dirPath URLByAppendingPathComponent:databaseName];
+            return dbURL;
+        } else {
+            // creating the database directory failed
+            NSLog(@"failed to create the Delectus Database directory in ~/Library/Application Support/");
+            return nil;
+        }
     }
     
-    
-    return self;
 }
 
 - (void)dealloc

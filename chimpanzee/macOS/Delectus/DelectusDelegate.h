@@ -24,6 +24,7 @@
     NSString* databaseName;
 }
 
+- (NSURL*)initDatabase;
 - (DelectusDataSource*)newDelectus;
 - (DelectusDataSource*)readDelectusFile:(NSURL*)url;
 - (DelectusDataSource*)readCSVFile:(NSURL*)url;
