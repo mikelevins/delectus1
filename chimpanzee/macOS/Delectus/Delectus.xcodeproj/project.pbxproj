@@ -14,9 +14,9 @@
 		8D15AC310486D014006FF6A4 /* DelectusDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* DelectusDocument.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
-		973B5E63212F0BAA00D8CE2D /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 973B5E62212F0BAA00D8CE2D /* libDelectus.a */; };
 		973B5E65212F0BC400D8CE2D /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 973B5E64212F0BC400D8CE2D /* libgambit.a */; };
 		97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 97814B611330C1D5008BD174 /* DelectusDataSource.m */; };
+		97ADF438215BBC3500EB483A /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97ADF437215BBC3500EB483A /* libDelectus.a */; };
 		97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */; };
 		97EA5C01133FCEE900BD41F9 /* Delectus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5BFF133FCEE900BD41F9 /* Delectus.icns */; };
 		97EA5C04133FD3D700BD41F9 /* DelectusDoc.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5C02133FD3D700BD41F9 /* DelectusDoc.icns */; };
@@ -55,11 +55,11 @@
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D15AC360486D014006FF6A4 /* Delectus-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Delectus-Info.plist"; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Delectus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Delectus.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		973B5E61212F0B9500D8CE2D /* DelectusApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DelectusApp.h; path = ../engine/include/DelectusApp.h; sourceTree = "<group>"; };
-		973B5E62212F0BAA00D8CE2D /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../engine/libDelectus.a; sourceTree = "<group>"; };
 		973B5E64212F0BC400D8CE2D /* libgambit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambit.a; path = ../../../../../../../Library/Gambit/v4.8.9/lib/libgambit.a; sourceTree = "<group>"; };
 		97814B601330C1D5008BD174 /* DelectusDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataSource.h; sourceTree = "<group>"; };
 		97814B611330C1D5008BD174 /* DelectusDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDataSource.m; sourceTree = "<group>"; };
+		97ADF436215BBBFE00EB483A /* DelectusApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DelectusApp.h; path = ../libDelectus/include/DelectusApp.h; sourceTree = "<group>"; };
+		97ADF437215BBC3500EB483A /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../libDelectus/libDelectus.a; sourceTree = "<group>"; };
 		97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusPrintView.h; sourceTree = "<group>"; };
 		97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusPrintView.m; sourceTree = "<group>"; };
 		97EA5C00133FCEE900BD41F9 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = English; path = English.lproj/Delectus.icns; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				973B5E63212F0BAA00D8CE2D /* libDelectus.a in Frameworks */,
+				97ADF438215BBC3500EB483A /* libDelectus.a in Frameworks */,
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				973B5E65212F0BC400D8CE2D /* libgambit.a in Frameworks */,
 			);
@@ -146,7 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				2564AD2C0F5327BB00F57823 /* Delectus_Prefix.pch */,
-				973B5E61212F0B9500D8CE2D /* DelectusApp.h */,
+				97ADF436215BBBFE00EB483A /* DelectusApp.h */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -172,7 +172,7 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				973B5E62212F0BAA00D8CE2D /* libDelectus.a */,
+				97ADF437215BBC3500EB483A /* libDelectus.a */,
 				973B5E64212F0BC400D8CE2D /* libgambit.a */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
@@ -350,7 +350,8 @@
 					"$(inherited)",
 					/Library/Gambit/current/lib,
 					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
-					"\"$(SRCROOT)/../engine\"",
+					"\"$(SRCROOT)/../libDelectus\"",
+					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
@@ -385,7 +386,8 @@
 					"$(inherited)",
 					/Library/Gambit/current/lib,
 					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
-					"\"$(SRCROOT)/../engine\"",
+					"\"$(SRCROOT)/../libDelectus\"",
+					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
