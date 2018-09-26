@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "DelectusDataSource.h"
 #import "DelectusDocument.h"
+#import "FMDatabase.h"
 
 @interface DelectusDelegate : NSObject {
     NSFont* contentFont;
@@ -19,6 +20,8 @@
     IBOutlet id renameColumnMenu;
     IBOutlet id showDeletedItemsMenu;
     IBOutlet id purgeDeletedItemsMenu;
+    FMDatabase* delectusDB;
+    NSString* databaseName;
 }
 
 - (DelectusDataSource*)newDelectus;

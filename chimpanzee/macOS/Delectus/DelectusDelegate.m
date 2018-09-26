@@ -26,6 +26,31 @@
         }else{
             contentFont = [[NSFont userFontOfSize:fontSize] retain];
         }
+        
+        databaseName = @"delectusDB.sqlite3";
+        
+        // get the Application Support paths
+        NSFileManager* sharedFM = [NSFileManager defaultManager];
+        NSArray* possibleURLs = [sharedFM URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask];
+        NSURL* appSupportDir = nil;
+        NSURL* appDirectory = nil;
+        if ([possibleURLs count] >= 1) {
+            // Use the first directory (if multiple are returned)
+            appSupportDir = [possibleURLs objectAtIndex:0];
+        }
+        // If a valid app support directory exists, add the
+        // app's bundle ID to it to specify the final directory.
+        if (appSupportDir) {
+            NSString* appBundleID = [[NSBundle mainBundle] bundleIdentifier];
+            appDirectory = [appSupportDir URLByAppendingPathComponent:appBundleID];
+        }
+        // get the Database path
+        if (appDirectory) {
+            NSURL* dbPath = [NSURL fileURLWithPath: databaseName relativeToURL:appDirectory];
+           delectusDB  = [FMDatabase databaseWithURL:dbPath];
+            NSLog([delectusDB description]);
+        }
+
     }
     
     
