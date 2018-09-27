@@ -45,8 +45,9 @@
         // get the realm
         if (appDirectory) {
             NSURL* dbPath = [NSURL fileURLWithPath: @"delectus.db" relativeToURL:appDirectory];
-            NSLog(@"%@",[dbPath path]);
+            NSLog(@"dbPath = %@",[dbPath path]);
         }
+
     }
     
     
