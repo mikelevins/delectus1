@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "DelectusDataSource.h"
 #import "DelectusDocument.h"
-#import <Realm/Realm.h>
 
 @interface DelectusDelegate : NSObject {
     NSFont* contentFont;
@@ -20,7 +19,6 @@
     IBOutlet id renameColumnMenu;
     IBOutlet id showDeletedItemsMenu;
     IBOutlet id purgeDeletedItemsMenu;
-    RLMRealm *realm;
 }
 
 - (DelectusDataSource*)newDelectus;

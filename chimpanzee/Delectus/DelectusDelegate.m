@@ -45,8 +45,7 @@
         // get the realm
         if (appDirectory) {
             NSURL* dbPath = [NSURL fileURLWithPath: @"delectus.db" relativeToURL:appDirectory];
-            realm = [RLMRealm realmWithURL:dbPath];
-            NSLog([realm description]);
+            NSLog(@"%@",[dbPath path]);
         }
     }
     
