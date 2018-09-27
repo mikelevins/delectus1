@@ -156,9 +156,10 @@
         NSInteger foundIndex = [columnLabels indexOfObject:lbl];
         if(foundIndex==NSNotFound){[columnLabels addObject:lbl];}
     }
-        
+    
+    DelectusDelegate* delegate = (DelectusDelegate*)[NSApp delegate];
     NSFont* headerFont = [NSFont systemFontOfSize:13.0];
-    NSFont* contentFont = [[NSApp delegate] contentFont];
+    NSFont* contentFont = [delegate contentFont];
     int labelcount = [columnLabels count];
     for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
@@ -204,7 +205,8 @@
     }else{
         [delRowButton setEnabled: NO];
     }
-    [[NSApp delegate] updateUIForDocument:self withSelectedColumn: [tableView selectedColumn] andRow:[tableView selectedRow]];
+    DelectusDelegate* delegate = (DelectusDelegate*)[NSApp delegate];
+    [delegate updateUIForDocument:self withSelectedColumn: [tableView selectedColumn] andRow:[tableView selectedRow]];
 }
 
 
@@ -213,7 +215,8 @@
     [self closePristineDocuments:self];
     [super windowControllerDidLoadNib:aController];
     if (dataSource==nil){
-        dataSource=[[[NSApp delegate] newDelectus] retain];
+        DelectusDelegate* delegate = (DelectusDelegate*)[NSApp delegate];
+        dataSource=[[delegate newDelectus] retain];
     }
     [tableView setDataSource: dataSource];
     [tableView setDelegate: self];
@@ -461,7 +464,8 @@
 // --------------------------------------------------------------------------------
 
 - (void)setFont:(NSFont*)newFont{
-    [[NSApp delegate] setContentFont: newFont];
+    DelectusDelegate* delegate = (DelectusDelegate*)[NSApp delegate];
+    [delegate setContentFont: newFont];
     NSArray* cols = [tableView tableColumns];
     int colcount = [cols count];
     for(int i = 0;i<colcount;i++){
@@ -474,7 +478,8 @@
 
 - (void)changeFont:(id)sender
 {    
-    NSFont *oldFont = [[NSApp delegate] contentFont];
+    DelectusDelegate* delegate = (DelectusDelegate*)[NSApp delegate];
+    NSFont *oldFont = [delegate contentFont];
     NSFont *newFont = [sender convertFont:oldFont];
     [self setFont:newFont];
     return;
@@ -492,7 +497,8 @@
     if ([typeName isEqualToString: @"csv"]) {
         errStr=@"CSVFormatError";
         errMsg=@"Couldn't read CSV data from the file";
-        DelectusDataSource* src=[[NSApp delegate] readCSVFile:absoluteURL];
+        DelectusDelegate* delegate = (DelectusDelegate*)[NSApp delegate];
+        DelectusDataSource* src=[delegate readCSVFile:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
@@ -505,7 +511,8 @@
     } else if ([typeName isEqualToString: @"delectus"]) {
         errStr=@"DelectusFormatError";
         errMsg=@"Couldn't read Delectus data from the file";
-        DelectusDataSource* src=[[NSApp delegate] readDelectusFile:absoluteURL];
+        DelectusDelegate* delegate = (DelectusDelegate*)[NSApp delegate];
+        DelectusDataSource* src=[delegate readDelectusFile:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
