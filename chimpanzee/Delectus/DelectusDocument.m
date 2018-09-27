@@ -229,7 +229,7 @@
     [showDeletedButton setTarget: self];
     [self setupColumns];
     [self updateUIForSelectionChange];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     // make sure this doc ends up in front
@@ -280,16 +280,16 @@
                 [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
                 [tableView editColumn:0 row:(rowCount-1) withEvent:nil select:YES];
             }
-            [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+            [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
             [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
             [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
         }else{
             NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
-            NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
+            NSRunAlertPanel(@"Adding a Row",@"%@", msg,@"Okay", nil, nil);
         }
     }else{
         NSString* msg = [NSString stringWithFormat: @"Can't add a row with no columns!"];
-        NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
+        NSRunAlertPanel(@"Adding a Row",@"%@", msg,@"Okay", nil, nil);
     }
 }
 
@@ -308,7 +308,7 @@
         [self updateChangeCount: NSChangeDone];
         [tableView reloadData];
         [tableView deselectAll: self];
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
         [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
         [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
@@ -361,7 +361,7 @@
     [self setupColumns];
     [tableView reloadData];
     [self updateUIForSelectionChange];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
@@ -380,7 +380,7 @@
         [self setupColumns];
         [tableView reloadData];
         [self updateUIForSelectionChange];
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
         [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
         [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
@@ -401,7 +401,7 @@
     NSString* filterText = [filterField stringValue];
     [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
     [tableView reloadData];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
@@ -436,7 +436,7 @@
     }
     [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:nextLabel andSortOrder:sortOrder andFilterText:[filterField stringValue]];
     [tableView reloadData];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
@@ -616,7 +616,7 @@
         BOOL isDup = [dataSource isDuplicateLabel: lbl];
         if (isDup){
             NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",lbl];
-            NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
+            NSRunAlertPanel(@"Adding a Column",@"%@", msg,@"Okay", nil, nil);
         } else {
             int err = [dataSource addColumn:lbl];
             if (err == ERR_NO_ERROR){
@@ -629,12 +629,12 @@
                     [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];
                     [tableView scrollColumnToVisible:(colCount-1)];
                 }
-                [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+                [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
                 [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
                 [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
             }else{
                 NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
-                NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
+                NSRunAlertPanel(@"Adding a Column",@"%@", msg,@"Okay", nil, nil);
             }
         }
     } else if([commandStr isEqualTo: @"RenameColumn"]){
@@ -646,7 +646,7 @@
             BOOL isDup = [dataSource isDuplicateLabel: newlbl];
             if(isDup && (![newlbl isEqualTo: oldlbl])){
                 NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",newlbl];
-                NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+                NSRunAlertPanel(@"Renaming a Column",@"%@", msg,@"Okay", nil, nil);
             }else{
                 int err = [dataSource renameColumn:oldlbl to:newlbl];
                 if (err == ERR_NO_ERROR){
@@ -654,17 +654,17 @@
                     [self setupColumns];
                     [tableView reloadData];
                     [self recordColumnInfo];
-                    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+                    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
                     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
                     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
                 }else{
                     NSString* msg = [NSString stringWithFormat: @"There was an error changing the column name to '%@'",newlbl];
-                    NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+                    NSRunAlertPanel(@"Renaming a Column",@"%@", msg,@"Okay", nil, nil);
                 }
             }
         }else{
             NSString* msg = [NSString stringWithFormat: @"Error: no column selected"];
-            NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+            NSRunAlertPanel(@"Renaming a Column",@"%@", msg,@"Okay", nil, nil);
         }
     }
 }
