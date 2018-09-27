@@ -20,10 +20,10 @@
     if (self) {
         NSString* newline = [NSString stringWithFormat:@"\n"];
         NSString* tab = [NSString stringWithFormat:@"\t"];
-        documentName = docName;
+        NSRange insertionRange = [self selectedRange];
+        documentName = [NSString stringWithFormat:@"%@\n",docName];
         [self setDataSource:aSource];
-        [self insertText:documentName];
-        [self insertText:newline];
+        [self insertText:documentName replacementRange:insertionRange];
         NSArray* cols = [dataSource collectColumns];
         int colcount = [cols count];
         if(colcount>0){
