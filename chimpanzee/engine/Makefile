@@ -40,7 +40,7 @@ OBJECTS = constants.o \
 PRODUCT = libDelectus.a
 DYLIB = libDelectus.dylib
 
-FLAGS_OBJ = -I${GSC_INC} -L${GSC_LIB} -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp 
+FLAGS_OBJ = -I${GSC_INC} -L${GSC_LIB} -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp -mmacosx-version-min=10.13
 
 lib: obj
 	ar rc ${PRODUCT} ${OBJECTS} && ranlib ${PRODUCT}
