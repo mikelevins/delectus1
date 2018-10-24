@@ -8,7 +8,7 @@ import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 
 PouchDB.plugin(PouchDBFind);
-const localDB = new PouchDB('delectusdb');
+const localDB = new PouchDB('oppsdaily');
 const remoteDB = new PouchDB('http://localhost:5984/oppsdaily');
 
 ReactDOM.render(

@@ -5,7 +5,8 @@ class App extends Component {
   state = {
     users: [],
     localDB: this.props.localDB,
-    remoteDB: this.props.remoteDB
+    remoteDB: this.props.remoteDB,
+    remoteDBInfo: this.props.remoteDB.info()
   }
 
   componentDidMount() {
@@ -23,8 +24,9 @@ class App extends Component {
         )}
 
         <h1>Delectus Databases</h1>
-        <div>localDB</div>
-        <div>remoteDB</div>
+        <div>localDB: {this.state.localDB.toString()}</div>
+        <div> &nbsp; </div>
+        <div>remoteDB: {this.state.remoteDBInfo.toString()}</div>
         
       </div>
     );
