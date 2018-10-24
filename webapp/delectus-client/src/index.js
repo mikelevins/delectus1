@@ -7,7 +7,14 @@ import * as serviceWorker from './serviceWorker';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+PouchDB.plugin(PouchDBFind);
+const localDB = new PouchDB('delectusdb');
+const remoteDB = new PouchDB('http://localhost:5984/oppsdaily');
+
+ReactDOM.render(
+    <App localDB={localDB} remoteDB={remoteDB}/>, 
+    document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
