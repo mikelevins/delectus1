@@ -9,7 +9,7 @@ import PouchDBFind from 'pouchdb-find';
 
 PouchDB.plugin(PouchDBFind);
 const localDB = new PouchDB('oppsdaily');
-const remoteDB = new PouchDB('http://localhost:5984/oppsdaily');
+const remoteDB = new PouchDB('http://mars:5984/oppsdaily');
 
 ReactDOM.render(
     <App localDB={localDB} remoteDB={remoteDB}/>, 

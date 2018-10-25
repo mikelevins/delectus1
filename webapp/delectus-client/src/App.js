@@ -15,7 +15,18 @@ class App extends Component {
       .then(users => this.setState({ users }));
   }
 
+  syncWithRemoteDB() {
+    this.state.localDB.sync(this.state.remoteDB).on('complete', function () {
+      // yay, we're in sync!
+      console.log("yay, we are syncing")
+    }).on('error', function (err) {
+      // boo, we hit an error!
+      console.log("boo, we are NOT syncing")
+    });
+  }
+
   render() {
+    this.syncWithRemoteDB();
     return (
       <div className="App">
         <h1>Delectus Users</h1>
@@ -27,7 +38,7 @@ class App extends Component {
         <div>localDB: {this.state.localDB.toString()}</div>
         <div> &nbsp; </div>
         <div>remoteDB: {this.state.remoteDBInfo.toString()}</div>
-        
+
       </div>
     );
   }
