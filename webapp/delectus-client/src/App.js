@@ -13,20 +13,20 @@ class App extends Component {
     fetch('/users')
       .then(res => res.json())
       .then(users => this.setState({ users }));
+      this.syncWithRemoteDB();
   }
 
   syncWithRemoteDB() {
     this.state.localDB.sync(this.state.remoteDB).on('complete', function () {
       // yay, we're in sync!
-      console.log("yay, we are syncing")
+      console.log("yay, syncing with remote CouchDB")
     }).on('error', function (err) {
       // boo, we hit an error!
-      console.log("boo, we are NOT syncing")
+      console.log("boo, sync failed")
     });
   }
 
   render() {
-    this.syncWithRemoteDB();
     return (
       <div className="App">
         <h1>Delectus Users</h1>
