@@ -4,16 +4,17 @@ import './App.css';
 class App extends Component {
   state = {
     users: [],
-    localDB: this.props.localDB,
-    remoteDB: this.props.remoteDB,
-    remoteDBInfo: this.props.remoteDB.info()
+    localDB: this.props.localPouchDB,
+    remoteDB: this.props.remoteCouchDB
   }
+
+  docs = ["nothing"];
 
   componentDidMount() {
     fetch('/users')
       .then(res => res.json())
       .then(users => this.setState({ users }));
-      this.syncWithRemoteDB();
+    this.syncWithRemoteDB();
   }
 
   syncWithRemoteDB() {
@@ -27,6 +28,7 @@ class App extends Component {
   }
 
   render() {
+
     return (
       <div className="App">
         <h1>Delectus Users</h1>
@@ -34,11 +36,7 @@ class App extends Component {
           <div key={user.id}>{user.username}</div>
         )}
 
-        <h1>Delectus Databases</h1>
-        <div>localDB: {this.state.localDB.toString()}</div>
-        <div> &nbsp; </div>
-        <div>remoteDB: {this.state.remoteDBInfo.toString()}</div>
-
+        <h1>Opps Daily</h1>
       </div>
     );
   }

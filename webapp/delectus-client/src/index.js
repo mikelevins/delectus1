@@ -8,11 +8,11 @@ import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 
 PouchDB.plugin(PouchDBFind);
-const localDB = new PouchDB('oppsdaily');
-const remoteDB = new PouchDB('http://mars:5984/oppsdaily');
+const localPouchDB = new PouchDB('oppsdaily');
+const remoteCouchDB = new PouchDB('http://mars:5984/oppsdaily');
 
 ReactDOM.render(
-    <App localDB={localDB} remoteDB={remoteDB}/>, 
+    <App localPouchDB={localPouchDB} remoteCouchDB={remoteCouchDB}/>, 
     document.getElementById('root')
 );
 
