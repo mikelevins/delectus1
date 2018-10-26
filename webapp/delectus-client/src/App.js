@@ -4,6 +4,7 @@ import './App.css';
 class App extends Component {
   state = {
     users: [],
+    allDocs: [],
     localDB: this.props.localPouchDB,
     remoteDB: this.props.remoteCouchDB
   }
@@ -35,34 +36,47 @@ class App extends Component {
           console.log(err);
         } else {
           var the_rows = result.rows;
-          var list_items = the_rows.map(row => {
-            return <tr key={row.id}>
-              <td align={'left'}>received: {row.doc.date_received}</td>
-              <td align={'left'}>id: {row.id}</td>
-            </tr>
-          });
-          app.setState({ docs: list_items });
+          app.setState({ allDocs: the_rows });
         }
       }
     );
-    return app.docs;
+  }
+
+  makeEntry(row) {
+    return <tr key={row.id}>
+    <td align={'left'}>received: {row.doc.date_received}</td>
+    <td align={'left'}>id: {row.id}</td>
+    </tr>
+  }
+
+  renderUsers() {
+    return (<div className="Usernames">
+      {this.state.users.map(user =>
+        <div key={user.id}>{user.username}</div>
+      )}
+    </div>);
+  }
+
+  renderDocs() {
+    return (
+      <div className="OppsDaily">
+        {this.state.allDocs.map(doc =>
+          <div key={doc.key}>{doc.key}</div>
+        )}
+      </div>
+    );
   }
 
   render() {
+    var app = this;
     this.getAllDocs();
     return (
       <div className="App">
         <h1>Delectus Users</h1>
-        {this.state.users.map(user =>
-          <div key={user.id}>{user.username}</div>
-        )}
+        {this.renderUsers()}
 
         <h1>Opps Daily</h1>
-        <div>
-        docs:
-          <table>
-            <tbody>{this.state.docs}</tbody>
-          </table></div>
+        {this.renderDocs()}}
       </div>
     );
   }
