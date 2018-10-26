@@ -44,17 +44,9 @@ class App extends Component {
 
   makeEntry(row) {
     return <tr key={row.id}>
-    <td align={'left'}>received: {row.doc.date_received}</td>
-    <td align={'left'}>id: {row.id}</td>
+      <td align={'left'}>received: {row.doc.date_received}</td>
+      <td align={'left'}>id: {row.id}</td>
     </tr>
-  }
-
-  renderUsers() {
-    return (<div className="Usernames">
-      {this.state.users.map(user =>
-        <div key={user.id}>{user.username}</div>
-      )}
-    </div>);
   }
 
   renderDoc(item) {
@@ -64,12 +56,22 @@ class App extends Component {
           <table border="1px">
             <tbody>
             <tr>
-                <td>Summary: &nbsp; {item.doc.summary}</td>
-                <td>Received: &nbsp; {item.doc.date_received}</td>
-                <td>ID: &nbsp; {item.id}</td>
+                <td colSpan="2"  align={'left'}> Summary: &nbsp; {item.doc.summary}</td>
               </tr>
               <tr>
-                <td colSpan="3">{item.doc.content.substring(82,172)+'...'}</td>
+                <td align={'left'}>Received: &nbsp; {item.doc.date_received}</td>
+                <td align={'left'}>ID: &nbsp; {item.id}</td>
+              </tr>
+              <tr>
+                <td align={'left'}>Industry: &nbsp; {item.doc.industry}</td>
+                <td align={'left'}>Job function: &nbsp; {item.doc.job_function}</td>
+              </tr>
+              <tr>
+                <td align={'left'}>Will pay: &nbsp; {item.doc.willing_to_pay}</td>
+                <td align={'left'}>per: &nbsp; {item.doc.pay_per_unit}</td>
+              </tr>
+              <tr>
+                <td align={'left'} colSpan="2">{item.doc.content.substring(82, 200) + '...'}</td>
               </tr>
             </tbody>
           </table>
@@ -80,7 +82,7 @@ class App extends Component {
   renderDocs() {
     return (
       <div className="OppsDaily">
-        <table align="center" cellPadding="8px">
+        <table align="center" cellPadding="10px">
           <tbody>
             {this.state.allDocs.map(entry => this.renderDoc(entry))}
           </tbody>
@@ -94,9 +96,6 @@ class App extends Component {
     this.getAllDocs();
     return (
       <div className="App">
-        <h1>Delectus Users</h1>
-        {this.renderUsers()}
-
         <h1>Opps Daily</h1>
         {this.renderDocs()}}
       </div>
