@@ -71,7 +71,7 @@ class App extends Component {
                 <td align={'left'}>per: &nbsp; {item.doc.pay_per_unit}</td>
               </tr>
               <tr>
-                <td align={'left'} colSpan="2">{item.doc.content.substring(82, 200) + '...'}</td>
+                <td align={'left'} colSpan="2">{item.doc.content.substring(82, 384) + '...'}</td>
               </tr>
             </tbody>
           </table>
