@@ -57,12 +57,23 @@ class App extends Component {
     </div>);
   }
 
+  renderDoc(item) {
+    return (
+      <tr key={item.key}>
+        <td align="left">
+          {item.doc.date_received}
+        </td>
+      </tr>);
+  }
+
   renderDocs() {
     return (
       <div className="OppsDaily">
-        {this.state.allDocs.map(doc =>
-          <div key={doc.key}>{doc.key}</div>
-        )}
+        <table>
+          <tbody>
+            {this.state.allDocs.map(entry => this.renderDoc(entry))}
+          </tbody>
+        </table>
       </div>
     );
   }
