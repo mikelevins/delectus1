@@ -25,21 +25,27 @@ class App extends Component {
     });
   }
 
-  getAllDocs(){
+  getAllDocs() {
     var app = this;
     this.state.localDB.allDocs(
-      {include_docs: true, descending: true}, 
-      function(err, result) {
+      { include_docs: true, descending: true },
+      function (err, result) {
         if (err) {
-          console.log("Error getting documents: ");  
-          console.log(err);  
+          console.log("Error getting documents: ");
+          console.log(err);
         } else {
-          app.setState({docs: result.rows});
-          console.log("row count: "+ result.rows.length);  
+          var the_rows = result.rows;
+          var list_items = the_rows.map(row => {
+            return <tr key={row.id}>
+              <td align={'left'}>received: {row.doc.date_received}</td>
+              <td align={'left'}>id: {row.id}</td>
+            </tr>
+          });
+          app.setState({ docs: list_items });
         }
       }
-      );
-      return app.docs;
+    );
+    return app.docs;
   }
 
   render() {
@@ -52,7 +58,11 @@ class App extends Component {
         )}
 
         <h1>Opps Daily</h1>
-        <div>docs: {String(this.state.docs)}</div>
+        <div>
+        docs:
+          <table>
+            <tbody>{this.state.docs}</tbody>
+          </table></div>
       </div>
     );
   }
