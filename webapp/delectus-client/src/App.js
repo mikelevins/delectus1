@@ -19,10 +19,10 @@ class App extends Component {
   syncWithRemoteDB() {
     this.state.localDB.sync(this.state.remoteDB).on('complete', function () {
       // yay, we're in sync!
-      console.log("yay, syncing with remote CouchDB")
+      console.log("syncing with remote CouchDB")
     }).on('error', function (err) {
       // boo, we hit an error!
-      console.log("boo, sync failed")
+      console.log("ERROR: sync failed")
     });
   }
 
@@ -60,8 +60,19 @@ class App extends Component {
   renderDoc(item) {
     return (
       <tr key={item.key}>
-        <td align="left">
-          {item.doc.date_received}
+        <td>
+          <table border="1px">
+            <tbody>
+            <tr>
+                <td>Summary: &nbsp; {item.doc.summary}</td>
+                <td>Received: &nbsp; {item.doc.date_received}</td>
+                <td>ID: &nbsp; {item.id}</td>
+              </tr>
+              <tr>
+                <td colSpan="3">{item.doc.content.substring(82,172)+'...'}</td>
+              </tr>
+            </tbody>
+          </table>
         </td>
       </tr>);
   }
@@ -69,7 +80,7 @@ class App extends Component {
   renderDocs() {
     return (
       <div className="OppsDaily">
-        <table>
+        <table align="center" cellPadding="8px">
           <tbody>
             {this.state.allDocs.map(entry => this.renderDoc(entry))}
           </tbody>
