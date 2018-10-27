@@ -2,7 +2,19 @@ import React, { Component } from 'react';
 import './App.css';
 
 const css = `
-.Entry { border: 1px solid; }
+.Entry { 
+  background-color: #222266;
+  border-collapse: collapse;
+  color: #ffffff;
+  margin: 1em; 
+  padding: 12px; 
+}
+
+.EntryField { 
+  border: 1px solid white;
+  font-weight: bold; 
+  padding: 12px;
+}
 `;
 
 class App extends Component {
@@ -46,36 +58,31 @@ class App extends Component {
     );
   }
 
-  makeEntry(row) {
-    return <tr key={row.id}>
-      <td align={'left'}>received: {row.doc.date_received}</td>
-      <td align={'left'}>id: {row.id}</td>
-    </tr>
-  }
-
   renderDoc(item) {
     return (
       <tr key={item.key}>
         <td>
           <table className="Entry">
             <tbody>
-            <tr>
-                <td colSpan="2"  align={'left'}> Summary: &nbsp; {item.doc.summary}</td>
+              <tr>
+                <td className="EntryField" colSpan="2" align={'left'}>
+                  Summary: &nbsp; {item.doc.summary}
+                </td>
               </tr>
               <tr>
-                <td align={'left'}>Received: &nbsp; {item.doc.date_received}</td>
-                <td align={'left'}>ID: &nbsp; {item.id}</td>
+                <td className="Entry" align={'left'}>Received: &nbsp; {item.doc.date_received}</td>
+                <td className="Entry" align={'left'}>ID: &nbsp; {item.id}</td>
               </tr>
               <tr>
-                <td align={'left'}>Industry: &nbsp; {item.doc.industry}</td>
-                <td align={'left'}>Job function: &nbsp; {item.doc.job_function}</td>
+                <td className="Entry" align={'left'}>Industry: &nbsp; {item.doc.industry}</td>
+                <td className="Entry" align={'left'}>Job function: &nbsp; {item.doc.job_function}</td>
               </tr>
               <tr>
-                <td align={'left'}>Will pay: &nbsp; {item.doc.willing_to_pay}</td>
-                <td align={'left'}>per: &nbsp; {item.doc.pay_per_unit}</td>
+                <td className="Entry" align={'left'}>Will pay: &nbsp; {item.doc.willing_to_pay}</td>
+                <td className="Entry" align={'left'}>per: &nbsp; {item.doc.pay_per_unit}</td>
               </tr>
               <tr>
-                <td align={'left'} colSpan="2">{item.doc.content.substring(82, 384) + '...'}</td>
+                <td className="Entry" align={'left'} colSpan="2">{item.doc.content.substring(82, 384) + '...'}</td>
               </tr>
             </tbody>
           </table>
