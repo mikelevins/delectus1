@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 
+const css = `
+.Entry { border: 1px solid; }
+`;
+
 class App extends Component {
   state = {
     users: [],
@@ -92,12 +96,6 @@ class App extends Component {
   }
 
   render() {
-    const css = `
-      .Entry {
-        border: 1px solid;
-      }
-    `
-
     this.getAllDocs();
     return (
       <div className="App">
