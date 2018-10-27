@@ -53,7 +53,7 @@ class App extends Component {
     return (
       <tr key={item.key}>
         <td>
-          <table border="1px">
+          <table className="Entry">
             <tbody>
             <tr>
                 <td colSpan="2"  align={'left'}> Summary: &nbsp; {item.doc.summary}</td>
@@ -92,10 +92,16 @@ class App extends Component {
   }
 
   render() {
-    var app = this;
+    const css = `
+      .Entry {
+        border: 1px solid;
+      }
+    `
+
     this.getAllDocs();
     return (
       <div className="App">
+        <style>{css}</style>
         <h1>Opps Daily</h1>
         {this.renderDocs()}}
       </div>
