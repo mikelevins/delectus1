@@ -57,6 +57,15 @@ class App extends Component {
     );
   }
 
+  formatFieldForDisplay(fName, fVal){
+    var contentBanner = ' ** The Opportunity ------------------------------------------------------------  ';
+    if (fName == 'content') {
+      return (fVal.substring(contentBanner.length,320)+'...');
+    } else {
+      return (fVal);
+    }
+  }
+
   renderDoc(obj) {
     var doc = obj.doc;
     return (
@@ -64,10 +73,7 @@ class App extends Component {
         <tbody>
           {Object.keys(doc).reverse().map(k => {
             var val = doc[k];
-            var valstr = String(val);
-            if (valstr.length > 128) {
-              valstr = valstr.substring(82,384)+'...';
-            }
+            var valstr = this.formatFieldForDisplay(k,String(val));
             return (
               <tr><td className="EntryField"><b>{k}:</b> {valstr}</td></tr>
             );
