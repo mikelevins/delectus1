@@ -3,17 +3,16 @@ import './App.css';
 
 const css = `
 .Entry { 
-  background-color: #222266;
+  border: 1px solid black;
   border-collapse: collapse;
-  color: #ffffff;
   margin: 1em; 
   padding: 12px; 
+  text-align: left;
 }
 
 .EntryField { 
-  border: 1px solid white;
-  font-weight: bold; 
-  padding: 12px;
+  border: 1px solid black;
+  border-collapse: collapse;
 }
 `;
 
@@ -58,46 +57,30 @@ class App extends Component {
     );
   }
 
-  renderDoc(item) {
+  renderDoc(obj) {
+    var doc = obj.doc;
     return (
-      <tr key={item.key}>
-        <td>
-          <table className="Entry">
-            <tbody>
-              <tr>
-                <td className="EntryField" colSpan="2" align={'left'}>
-                  Summary: &nbsp; {item.doc.summary}
-                </td>
-              </tr>
-              <tr>
-                <td className="Entry" align={'left'}>Received: &nbsp; {item.doc.date_received}</td>
-                <td className="Entry" align={'left'}>ID: &nbsp; {item.id}</td>
-              </tr>
-              <tr>
-                <td className="Entry" align={'left'}>Industry: &nbsp; {item.doc.industry}</td>
-                <td className="Entry" align={'left'}>Job function: &nbsp; {item.doc.job_function}</td>
-              </tr>
-              <tr>
-                <td className="Entry" align={'left'}>Will pay: &nbsp; {item.doc.willing_to_pay}</td>
-                <td className="Entry" align={'left'}>per: &nbsp; {item.doc.pay_per_unit}</td>
-              </tr>
-              <tr>
-                <td className="Entry" align={'left'} colSpan="2">{item.doc.content.substring(82, 384) + '...'}</td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>);
+      <table className="Entry">
+        <tbody>
+          {Object.keys(doc).reverse().map(k => {
+            var val = doc[k];
+            var valstr = String(val);
+            if (valstr.length > 128) {
+              valstr = valstr.substring(82,384)+'...';
+            }
+            return (
+              <tr><td className="EntryField"><b>{k}:</b> {valstr}</td></tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
   }
 
   renderDocs() {
     return (
       <div className="OppsDaily">
-        <table align="center" cellPadding="10px">
-          <tbody>
-            {this.state.allDocs.map(entry => this.renderDoc(entry))}
-          </tbody>
-        </table>
+        {this.state.allDocs.map(doc => this.renderDoc(doc))}
       </div>
     );
   }
