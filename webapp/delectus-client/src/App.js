@@ -5,14 +5,14 @@ const css = `
 .Entry { 
   border: 1px solid black;
   border-collapse: collapse;
-  margin: 1em; 
-  padding: 12px; 
+  margin: 2em; 
   text-align: left;
 }
 
 .EntryField { 
   border: 1px solid black;
   border-collapse: collapse;
+  padding: 0.5em; 
 }
 `;
 
