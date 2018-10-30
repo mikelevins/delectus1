@@ -16,6 +16,28 @@ const css = `
 }
 `;
 
+function DocItem(props){
+  return <li>{props.name}</li>;
+}
+
+function DocList(props) {
+  const docs = props.documents;
+  const docItems = docs.map(doc =>
+    <DocItem key={doc.id}
+      name={doc.id} />
+  );
+
+  return (
+    <div className="App">
+      <style>{css}</style>
+      <h1>Opps Daily</h1>
+      <ul>
+        {docItems}
+      </ul>
+    </div>
+  );
+}
+
 class App extends Component {
   state = {
     users: [],
@@ -57,49 +79,18 @@ class App extends Component {
     );
   }
 
-  formatFieldForDisplay(fName, fVal){
+  formatFieldForDisplay(fName, fVal) {
     var contentBanner = ' ** The Opportunity ------------------------------------------------------------  ';
     if (fName == 'content') {
-      return (fVal.substring(contentBanner.length,320)+'...');
+      return (fVal.substring(contentBanner.length, 320) + '...');
     } else {
       return (fVal);
     }
   }
 
-  renderDoc(obj) {
-    var doc = obj.doc;
-    return (
-      <table className="Entry">
-        <tbody>
-          {Object.keys(doc).reverse().map(k => {
-            var val = doc[k];
-            var valstr = this.formatFieldForDisplay(k,String(val));
-            return (
-              <tr><td className="EntryField"><b>{k}:</b> {valstr}</td></tr>
-            );
-          })}
-        </tbody>
-      </table>
-    );
-  }
-
-  renderDocs() {
-    return (
-      <div className="OppsDaily">
-        {this.state.allDocs.map(doc => this.renderDoc(doc))}
-      </div>
-    );
-  }
-
   render() {
     this.getAllDocs();
-    return (
-      <div className="App">
-        <style>{css}</style>
-        <h1>Opps Daily</h1>
-        {this.renderDocs()}}
-      </div>
-    );
+    return (<DocList documents={this.state.allDocs} />);
   }
 
 
