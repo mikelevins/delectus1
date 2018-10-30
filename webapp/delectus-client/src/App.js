@@ -15,8 +15,7 @@ const css = `
 }
 
 .EntryField { 
-  border: 1px solid black;
-  border-collapse: collapse;
+  margin: .25em; 
 }
 
 .FormLabel {
@@ -63,10 +62,14 @@ function refreshAllDocs(props) {
 function formatForDisplay(props) {
   const val = props.value;
   if (val.length > 512) {
-    return val.substring(82, 320)+'...';
+    return val.substring(82, 320) + '...';
   } else {
     return val;
   }
+}
+
+function editDoc() {
+  alert('Soon this will be the document editor');
 }
 
 // ---------------------------------------------------------
@@ -75,11 +78,11 @@ function formatForDisplay(props) {
 
 function DocField(props) {
   return (
-    <div>
-      <label className="FormLabel">{props.docKey}:</label>
+    <p className="EntryField">
+      <span className="FormLabel">{props.docKey}:</span>
       &nbsp;
-      <label>{formatForDisplay({value: props.doc[props.docKey]})}</label>
-    </div>
+      <span>{formatForDisplay({ value: props.doc[props.docKey] })}</span>
+    </p>
   );
 }
 
@@ -97,10 +100,12 @@ function DocForm(props) {
       doc={doc} />);
 
   return (
-    <form>
+    <div>
       {docFields}
-      <input type='submit' value='Edit' />
-    </form>
+      <button onClick={editDoc}>
+        Edit
+      </button>
+    </div>
   );
 }
 
