@@ -43,17 +43,61 @@ function refreshAllDocs(props) {
   );
 }
 
+function formatForDisplay(props) {
+  const val = props.value;
+  if (val.length > 82) {
+    return val.substring(82, 320);
+  } else {
+    return val;
+  }
+}
+
+// ---------------------------------------------------------
+// DocField component
+// ---------------------------------------------------------
+
+function DocField(props) {
+  return (<div>
+    <label>{props.key}: </label>
+    <label>{formatForDisplay({ value: props.doc[props.key] })}: </label>
+    <input type='submit' value='edit' />
+  </div>
+  );
+}
+
+// ---------------------------------------------------------
+// DocForm component
+// ---------------------------------------------------------
+
+function DocForm(props) {
+  var doc = props.doc;
+  var doc_keys = Object.keys(doc).reverse();
+  var docFields = doc_keys.map((k) =>
+    <div key={k}>
+    <label>{k}:</label>
+    </div>
+  );
+
+  return (
+    <form>
+      {docFields}
+      <input type='submit' value='Edit' />
+    </form>
+  );
+}
+
 // ---------------------------------------------------------
 // DocEntry component
 // ---------------------------------------------------------
 
 function DocEntry(props) {
   var entry = props.entry;
-  var entry_id = entry.id;
   var entry_doc = entry.doc;
   var doc_keys = Object.keys(entry_doc);
 
-  return (<li className="Entry">{String(doc_keys)}</li>);
+  return (<li className="Entry">
+    <DocForm doc={entry_doc} />
+  </li>);
 }
 
 // ---------------------------------------------------------
