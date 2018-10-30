@@ -18,6 +18,11 @@ const css = `
   border: 1px solid black;
   border-collapse: collapse;
 }
+
+.FormLabel {
+  font-weight: bold;
+}
+
 `;
 
 // ---------------------------------------------------------
@@ -45,8 +50,8 @@ function refreshAllDocs(props) {
 
 function formatForDisplay(props) {
   const val = props.value;
-  if (val.length > 82) {
-    return val.substring(82, 320);
+  if (val.length > 512) {
+    return val.substring(82, 320)+'...';
   } else {
     return val;
   }
@@ -57,11 +62,12 @@ function formatForDisplay(props) {
 // ---------------------------------------------------------
 
 function DocField(props) {
-  return (<div>
-    <label>{props.key}: </label>
-    <label>{formatForDisplay({ value: props.doc[props.key] })}: </label>
-    <input type='submit' value='edit' />
-  </div>
+  return (
+    <div>
+      <label className="FormLabel">{props.docKey}:</label>
+      &nbsp;
+      <label>{formatForDisplay({value: props.doc[props.docKey]})}</label>
+    </div>
   );
 }
 
@@ -73,10 +79,10 @@ function DocForm(props) {
   var doc = props.doc;
   var doc_keys = Object.keys(doc).reverse();
   var docFields = doc_keys.map((k) =>
-    <div key={k}>
-    <label>{k}:</label>
-    </div>
-  );
+    <DocField
+      key={k}
+      docKey={k}
+      doc={doc} />);
 
   return (
     <form>
@@ -93,7 +99,6 @@ function DocForm(props) {
 function DocEntry(props) {
   var entry = props.entry;
   var entry_doc = entry.doc;
-  var doc_keys = Object.keys(entry_doc);
 
   return (<li className="Entry">
     <DocForm doc={entry_doc} />
