@@ -48,7 +48,12 @@ function refreshAllDocs(props) {
 // ---------------------------------------------------------
 
 function DocEntry(props) {
-  return (<li className="Entry">{props.name}</li>);
+  var entry = props.entry;
+  var entry_id = entry.id;
+  var entry_doc = entry.doc;
+  var doc_keys = Object.keys(entry_doc);
+
+  return (<li className="Entry">{String(doc_keys)}</li>);
 }
 
 // ---------------------------------------------------------
@@ -59,9 +64,9 @@ function DocList(props) {
   const entries = props.documents;
   const docEntries = entries.map((entry) =>
     <DocEntry
-      key={entry.id}
-      name={entry.id} />
-  );
+      key={entry.key}
+      entry={entry}
+    />);
 
   return (
     <div className="DocList">
