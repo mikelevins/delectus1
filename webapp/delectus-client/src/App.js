@@ -80,8 +80,12 @@ function formatForDisplay(props) {
   }
 }
 
-function toggleEditor (app) {
-  app.setState({ showEditor: !app.state.showEditor })
+function showEditor (app) {
+  app.setState({ showEditor: true })
+}
+
+function hideEditor (app) {
+  app.setState({ showEditor: false })
 }
 
 // ---------------------------------------------------------
@@ -93,7 +97,7 @@ function DocEditor(props) {
   return (
     <div className="DocEditor">
     <p>This will be the DocEditor window</p>
-    <button onClick={() => { toggleEditor(app) }}>
+    <button onClick={() => { hideEditor(app) }}>
         Close
       </button>
     </div>
@@ -132,7 +136,7 @@ function DocEntry(props) {
   return (<li>
     <div className="Entry">
       {doc_fields}
-      <button onClick={() => { toggleEditor(app) }}>
+      <button onClick={() => { showEditor(app) }}>
         Edit
       </button>
     </div>
