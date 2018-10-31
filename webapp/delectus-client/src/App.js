@@ -6,6 +6,18 @@ import './App.css';
 // ---------------------------------------------------------
 
 const css = `
+.DocEditor {
+  background-color: #eeeeee;
+  border: 1px solid black;
+  height: 60%;
+  left: 20%;
+  padding: 1em;
+  position: fixed;
+  top: 20%;
+  width: 60%;
+  z-index: 1000;
+}
+
 .Entry { 
   border: 1px solid black;
   border-collapse: collapse;
@@ -73,6 +85,18 @@ function editDoc() {
 }
 
 // ---------------------------------------------------------
+// DocEditor component
+// ---------------------------------------------------------
+
+function DocEditor(props) {
+  return (
+    <div className="DocEditor">
+    <p>This will be the DocEditor window</p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------
 // DocField component
 // ---------------------------------------------------------
 
@@ -91,6 +115,7 @@ function DocField(props) {
 // ---------------------------------------------------------
 
 function DocEntry(props) {
+  var app = props.app;
   var entry = props.entry;
   var entry_doc = entry.doc;
   var doc_keys = Object.keys(entry_doc).reverse();
@@ -103,7 +128,7 @@ function DocEntry(props) {
   return (<li>
     <div className="Entry">
       {doc_fields}
-      <button onClick={editDoc}>
+      <button onClick={app.toggleEditor}>
         Edit
       </button>
     </div>
@@ -120,6 +145,7 @@ function DocList(props) {
     <DocEntry
       key={entry.key}
       entry={entry}
+      app={props.app}
     />);
 
   return (
@@ -139,6 +165,7 @@ function DocList(props) {
 class App extends Component {
   state = {
     allDocs: [],
+    showEditor: false,
     localDB: this.props.localPouchDB,
     remoteDB: this.props.remoteCouchDB
   }
@@ -160,7 +187,8 @@ class App extends Component {
         <style>{css}</style>
         <h1>Opps Daily</h1>
         <h3>document count: {this.state.allDocs.length}</h3>
-        <DocList documents={this.state.allDocs} />
+        <DocList app={this} documents={this.state.allDocs} />
+        <DocEditor/>
       </div>
     );
   }
