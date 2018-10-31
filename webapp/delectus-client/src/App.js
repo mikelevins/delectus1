@@ -87,38 +87,26 @@ function DocField(props) {
 }
 
 // ---------------------------------------------------------
-// DocForm component
-// ---------------------------------------------------------
-
-function DocForm(props) {
-  var doc = props.doc;
-  var doc_keys = Object.keys(doc).reverse();
-  var docFields = doc_keys.map((k) =>
-    <DocField
-      key={k}
-      docKey={k}
-      doc={doc} />);
-
-  return (
-    <div>
-      {docFields}
-      <button onClick={editDoc}>
-        Edit
-      </button>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------
 // DocEntry component
 // ---------------------------------------------------------
 
 function DocEntry(props) {
   var entry = props.entry;
   var entry_doc = entry.doc;
+  var doc_keys = Object.keys(entry_doc).reverse();
+  var doc_fields = doc_keys.map((k) =>
+    <DocField
+      key={k}
+      docKey={k}
+      doc={entry_doc} />);
 
-  return (<li className="Entry">
-    <DocForm doc={entry_doc} />
+  return (<li>
+    <div className="Entry">
+      {doc_fields}
+      <button onClick={editDoc}>
+        Edit
+      </button>
+    </div>
   </li>);
 }
 
