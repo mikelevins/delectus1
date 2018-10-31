@@ -80,8 +80,8 @@ function formatForDisplay(props) {
   }
 }
 
-function editDoc() {
-  alert('Soon this will be the document editor');
+function toggleEditor (app) {
+  app.setState({ showEditor: !app.state.showEditor })
 }
 
 // ---------------------------------------------------------
@@ -89,9 +89,13 @@ function editDoc() {
 // ---------------------------------------------------------
 
 function DocEditor(props) {
+  var app = props.app;
   return (
     <div className="DocEditor">
     <p>This will be the DocEditor window</p>
+    <button onClick={() => { toggleEditor(app) }}>
+        Close
+      </button>
     </div>
   );
 }
@@ -128,7 +132,7 @@ function DocEntry(props) {
   return (<li>
     <div className="Entry">
       {doc_fields}
-      <button onClick={app.toggleEditor}>
+      <button onClick={() => { toggleEditor(app) }}>
         Edit
       </button>
     </div>
@@ -188,7 +192,7 @@ class App extends Component {
         <h1>Opps Daily</h1>
         <h3>document count: {this.state.allDocs.length}</h3>
         <DocList app={this} documents={this.state.allDocs} />
-        <DocEditor/>
+        { this.state.showEditor && <DocEditor app={this} /> }
       </div>
     );
   }
