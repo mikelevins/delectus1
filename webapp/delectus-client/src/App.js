@@ -13,6 +13,7 @@ const css = `
   left: 20%;
   padding: 1em;
   position: fixed;
+  text-align: left;
   top: 20%;
   width: 60%;
   z-index: 1000;
@@ -81,7 +82,8 @@ function formatForDisplay(props) {
 }
 
 function showEditor (props) {
-  props.app.setState({ showEditor: true })
+  props.app.setState({ showEditor: true });
+  props.app.setState({ selectedDoc: props.doc });
 }
 
 function hideEditor (props) {
@@ -94,10 +96,17 @@ function hideEditor (props) {
 
 function DocEditor(props) {
   var app = props.app;
-  var docid = props.docid;
+  var doc = props.doc
+  var doc_keys = Object.keys(doc).reverse();
+  var doc_fields = doc_keys.map((k) =>
+    <DocField
+      key={k}
+      docKey={k}
+      doc={doc} />);
+
   return (
     <div className="DocEditor">
-    <p>Editing doc: {docid}</p>
+    {doc_fields}
     <button onClick={() => { hideEditor({ app: app }) }}>
         Close
       </button>
@@ -137,7 +146,7 @@ function DocEntry(props) {
   return (<li>
     <div className="Entry">
       {doc_fields}
-      <button onClick={() => { showEditor({ app: app }) }}>
+      <button onClick={() => { showEditor({ app: app, doc: entry_doc }) }}>
         Edit
       </button>
     </div>
@@ -175,6 +184,7 @@ class App extends Component {
   state = {
     allDocs: [],
     showEditor: false,
+    selectedDoc: null,
     localDB: this.props.localPouchDB,
     remoteDB: this.props.remoteCouchDB
   }
@@ -197,7 +207,7 @@ class App extends Component {
         <h1>Opps Daily</h1>
         <h3>document count: {this.state.allDocs.length}</h3>
         <DocList app={this} documents={this.state.allDocs} />
-        { this.state.showEditor && <DocEditor app={this} /> }
+        { this.state.showEditor && <DocEditor app={this} doc={this.state.selectedDoc } /> }
       </div>
     );
   }
