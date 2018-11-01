@@ -7,6 +7,10 @@ import './App.css';
 
 const css = `
 
+.Button {
+  font-size: 11pt;
+}
+
 .Cell {
   display: table-cell;
   font-size: 12pt;
@@ -27,6 +31,12 @@ const css = `
   top: 10%;
   width: 70%;
   z-index: 1000;
+}
+
+.Entry {
+  border: 1px solid black;
+  margin: 1em;
+  padding: 1em;
 }
 
 .Label {
@@ -157,7 +167,6 @@ function DocCompactField(props) {
       <div className="Label">{
         props.docKey}:
         </div>
-      &nbsp;
       <div className="Cell">
         {formatForDisplay({ value: props.doc[props.docKey] })}
       </div>
@@ -182,7 +191,7 @@ function DocEditor(props) {
   return (
     <div className="Editor">
       {doc_fields}
-      <button onClick={() => { hideEditor({ app: app }) }}>Close</button>
+      <button className="Button" onClick={() => { hideEditor({ app: app }) }}>Close</button>
     </div>
   );
 }
@@ -203,18 +212,21 @@ function DocEntry(props) {
       docKey={k}
       doc={entry_doc} />);
 
-  return (<li>
+  return (
     <div className="Entry">
       {doc_fields}
       <div className="Row">
         <div className="EntryField">
-          <button onClick={() => { showEditor({ app: app, doc: entry_doc }) }}>
+          <button className="Button" onClick={() => {
+            showEditor({ app: app, doc: entry_doc })
+          }
+          }>
             Edit
           </button>
         </div>
       </div>
     </div>
-  </li>);
+  );
 }
 
 // ---------------------------------------------------------
