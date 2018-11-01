@@ -9,6 +9,7 @@ const css = `
 
 .Button {
   font-size: 11pt;
+  font-weight: bold;
 }
 
 .Cell {
@@ -20,8 +21,9 @@ const css = `
 }
 
 .Editor {
-  background-color: #eeeeee;
+  background-color: #efefef;
   border: 1px solid black;
+  box-shadow: 5px 5px #666666;
   display: table;
   height: 80%;
   left: 15%;
