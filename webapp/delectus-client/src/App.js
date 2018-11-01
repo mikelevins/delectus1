@@ -6,52 +6,52 @@ import './App.css';
 // ---------------------------------------------------------
 
 const css = `
-.DocEditor {
+
+.Cell {
+  display: table-cell;
+  font-size: 12pt;
+  padding: 4px 8px;
+  text-align: left;
+  width: 85%;
+}
+
+.Editor {
   background-color: #eeeeee;
   border: 1px solid black;
   display: table;
-  height: 60%;
-  left: 20%;
+  height: 80%;
+  left: 15%;
   padding: 1em;
   position: fixed;
   text-align: left;
-  top: 20%;
-  width: 50%;
+  top: 10%;
+  width: 70%;
   z-index: 1000;
 }
 
-.DocList {
+.Label {
+  display: table-cell;
+  font-weight: bold;
+  text-align: right;
+  width: 15%;
+}
+
+.Row { 
+  display: table-row;
+}
+
+.Table {
   display: table;
   width: 100%%;
 }
 
-.Entry { 
-  border: 1px solid black;
-  border-collapse: collapse;
-  display: table;
-  margin: .5em; 
-  text-align: left;
-}
-
-.EntryField { 
-  display: table-row;
-  margin: .25em; 
-}
-
-.FormField {
+.TextAreaCell {
   display: table-cell;
+  height: 12em;
+  font-size: 12pt;
   padding: 4px 8px;
-  width: 100%;
-}
-
-.FormLabel {
-  display: table-cell;
-  font-weight: bold;
-  text-align: right;
-}
-
-.FormRow {
-  display: table-row;
+  text-align: left;
+  width: 85%;
 }
 
 `;
@@ -110,31 +110,37 @@ function hideEditor(props) {
 }
 
 // ---------------------------------------------------------
-// DocFormField component
+// EditorField component
 // ---------------------------------------------------------
 
-function DocFormField(props) {
+function EditorField(props) {
   var labelText = props.docKey;
   var valueText = props.doc[props.docKey];
 
   if (props.docKey === "content") {
     return (
-      <div className="FormRow">
-        <div className="FormLabel">
+      <div className="Row">
+        <div className="Label">
           <label>{labelText}:</label>
         </div>
         <div className="EntryField">
-          <textarea name={props.docKey} defaultValue={valueText} />
+          <textarea
+            className="TextAreaCell"
+            name={props.docKey}
+            defaultValue={valueText} />
         </div>
       </div>);
   } else {
     return (
-      <div className="DocFormRow">
-        <div className="FormLabel">
+      <div className="Row">
+        <div className="Label">
           <label>{labelText}:</label>
         </div>
         <div>
-          <input className="FormField" name={props.docKey} type="text" defaultValue={valueText} />
+          <input
+            className="Cell"
+            name={props.docKey}
+            type="text" defaultValue={valueText} />
         </div>
       </div>
     );
@@ -147,12 +153,12 @@ function DocFormField(props) {
 
 function DocCompactField(props) {
   return (
-    <div className="EntryField">
-      <div className="FormLabel">{
+    <div className="Row">
+      <div className="Label">{
         props.docKey}:
         </div>
       &nbsp;
-      <div className="FormField">
+      <div className="Cell">
         {formatForDisplay({ value: props.doc[props.docKey] })}
       </div>
     </div>
@@ -168,18 +174,16 @@ function DocEditor(props) {
   var doc = props.doc
   var doc_keys = Object.keys(doc).reverse();
   var doc_fields = doc_keys.map((k) =>
-    <DocFormField
+    <EditorField
       key={k}
       docKey={k}
       doc={doc} />);
 
   return (
-    <form>
-      <div className="DocEditor">
-        {doc_fields}
-        <button onClick={() => { hideEditor({ app: app }) }}>Close</button>
-      </div>
-    </form>
+    <div className="Editor">
+      {doc_fields}
+      <button onClick={() => { hideEditor({ app: app }) }}>Close</button>
+    </div>
   );
 }
 
@@ -202,7 +206,7 @@ function DocEntry(props) {
   return (<li>
     <div className="Entry">
       {doc_fields}
-      <div>
+      <div className="Row">
         <div className="EntryField">
           <button onClick={() => { showEditor({ app: app, doc: entry_doc }) }}>
             Edit
@@ -227,7 +231,7 @@ function DocList(props) {
     />);
 
   return (
-    <div className="DocList">
+    <div className="Table">
       {docEntries}
     </div>
   );
