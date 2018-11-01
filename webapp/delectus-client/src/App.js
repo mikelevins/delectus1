@@ -9,30 +9,49 @@ const css = `
 .DocEditor {
   background-color: #eeeeee;
   border: 1px solid black;
+  display: table;
   height: 60%;
   left: 20%;
   padding: 1em;
   position: fixed;
   text-align: left;
   top: 20%;
-  width: 60%;
+  width: 50%;
   z-index: 1000;
+}
+
+.DocList {
+  display: table;
+  width: 100%%;
 }
 
 .Entry { 
   border: 1px solid black;
   border-collapse: collapse;
+  display: table;
   margin: .5em; 
-  padding: 0.25em; 
   text-align: left;
 }
 
 .EntryField { 
+  display: table-row;
   margin: .25em; 
 }
 
+.FormField {
+  display: table-cell;
+  padding: 4px 8px;
+  width: 100%;
+}
+
 .FormLabel {
+  display: table-cell;
   font-weight: bold;
+  text-align: right;
+}
+
+.FormRow {
+  display: table-row;
 }
 
 `;
@@ -81,13 +100,63 @@ function formatForDisplay(props) {
   }
 }
 
-function showEditor (props) {
+function showEditor(props) {
   props.app.setState({ showEditor: true });
   props.app.setState({ selectedDoc: props.doc });
 }
 
-function hideEditor (props) {
+function hideEditor(props) {
   props.app.setState({ showEditor: false })
+}
+
+// ---------------------------------------------------------
+// DocFormField component
+// ---------------------------------------------------------
+
+function DocFormField(props) {
+  var labelText = props.docKey;
+  var valueText = props.doc[props.docKey];
+
+  if (props.docKey === "content") {
+    return (
+      <div className="FormRow">
+        <div className="FormLabel">
+          <label>{labelText}:</label>
+        </div>
+        <div className="EntryField">
+          <textarea name={props.docKey} defaultValue={valueText} />
+        </div>
+      </div>);
+  } else {
+    return (
+      <div className="DocFormRow">
+        <div className="FormLabel">
+          <label>{labelText}:</label>
+        </div>
+        <div>
+          <input className="FormField" name={props.docKey} type="text" defaultValue={valueText} />
+        </div>
+      </div>
+    );
+  }
+}
+
+// ---------------------------------------------------------
+// DocCompactField component
+// ---------------------------------------------------------
+
+function DocCompactField(props) {
+  return (
+    <div className="EntryField">
+      <div className="FormLabel">{
+        props.docKey}:
+        </div>
+      &nbsp;
+      <div className="FormField">
+        {formatForDisplay({ value: props.doc[props.docKey] })}
+      </div>
+    </div>
+  );
 }
 
 // ---------------------------------------------------------
@@ -99,34 +168,21 @@ function DocEditor(props) {
   var doc = props.doc
   var doc_keys = Object.keys(doc).reverse();
   var doc_fields = doc_keys.map((k) =>
-    <DocField
+    <DocFormField
       key={k}
       docKey={k}
       doc={doc} />);
 
   return (
-    <div className="DocEditor">
-    {doc_fields}
-    <button onClick={() => { hideEditor({ app: app }) }}>
-        Close
-      </button>
-    </div>
+    <form>
+      <div className="DocEditor">
+        {doc_fields}
+        <button onClick={() => { hideEditor({ app: app }) }}>Close</button>
+      </div>
+    </form>
   );
 }
 
-// ---------------------------------------------------------
-// DocField component
-// ---------------------------------------------------------
-
-function DocField(props) {
-  return (
-    <p className="EntryField">
-      <span className="FormLabel">{props.docKey}:</span>
-      &nbsp;
-      <span>{formatForDisplay({ value: props.doc[props.docKey] })}</span>
-    </p>
-  );
-}
 
 // ---------------------------------------------------------
 // DocEntry component
@@ -138,7 +194,7 @@ function DocEntry(props) {
   var entry_doc = entry.doc;
   var doc_keys = Object.keys(entry_doc).reverse();
   var doc_fields = doc_keys.map((k) =>
-    <DocField
+    <DocCompactField
       key={k}
       docKey={k}
       doc={entry_doc} />);
@@ -146,9 +202,13 @@ function DocEntry(props) {
   return (<li>
     <div className="Entry">
       {doc_fields}
-      <button onClick={() => { showEditor({ app: app, doc: entry_doc }) }}>
-        Edit
-      </button>
+      <div>
+        <div className="EntryField">
+          <button onClick={() => { showEditor({ app: app, doc: entry_doc }) }}>
+            Edit
+          </button>
+        </div>
+      </div>
     </div>
   </li>);
 }
@@ -168,9 +228,7 @@ function DocList(props) {
 
   return (
     <div className="DocList">
-      <ul>
-        {docEntries}
-      </ul>
+      {docEntries}
     </div>
   );
 
@@ -207,7 +265,7 @@ class App extends Component {
         <h1>Opps Daily</h1>
         <h3>document count: {this.state.allDocs.length}</h3>
         <DocList app={this} documents={this.state.allDocs} />
-        { this.state.showEditor && <DocEditor app={this} doc={this.state.selectedDoc } /> }
+        {this.state.showEditor && <DocEditor app={this} doc={this.state.selectedDoc} />}
       </div>
     );
   }
