@@ -23,6 +23,7 @@ const css = `
 .Editor {
   background-color: #efefef;
   border: 1px solid black;
+  border-radius: 24px;
   box-shadow: 5px 5px #666666;
   display: table;
   height: 80%;
@@ -37,8 +38,17 @@ const css = `
 
 .Entry {
   border: 1px solid black;
+  border-radius: 12px;
   margin: 1em;
   padding: 1em;
+}
+
+.InputCell {
+  display: table-cell;
+  font-size: 12pt;
+  padding: 4px 8px;
+  text-align: left;
+  width: 98%;
 }
 
 .Label {
@@ -63,7 +73,7 @@ const css = `
   font-size: 12pt;
   padding: 4px 8px;
   text-align: left;
-  width: 85%;
+  width: 98%;
 }
 
 `;
@@ -135,7 +145,7 @@ function EditorField(props) {
         <div className="Label">
           <label>{labelText}:</label>
         </div>
-        <div className="EntryField">
+        <div className="Cell">
           <textarea
             className="TextAreaCell"
             name={props.docKey}
@@ -148,9 +158,8 @@ function EditorField(props) {
         <div className="Label">
           <label>{labelText}:</label>
         </div>
-        <div>
-          <input
-            className="Cell"
+        <div className="Cell">
+          <input className="InputCell"
             name={props.docKey}
             type="text" defaultValue={valueText} />
         </div>
