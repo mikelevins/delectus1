@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './tachyons.min.css';
 import './App.css';
 
 // ---------------------------------------------------------
@@ -212,8 +211,8 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1 className="tc">Opps Daily</h1>
-        <h3 className="tc">document count: {this.state.allDocs.length}</h3>
+        <h1 className="center">Opps Daily</h1>
+        <h3 className="center">document count: {this.state.allDocs.length}</h3>
         <DocList app={this} documents={this.state.allDocs} />
         {this.state.showEditor && <DocEditor app={this} doc={this.state.selectedDoc} />}
       </div>
