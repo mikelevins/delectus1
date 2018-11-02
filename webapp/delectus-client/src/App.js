@@ -1,82 +1,6 @@
 import React, { Component } from 'react';
+import './tachyons.min.css';
 import './App.css';
-
-// ---------------------------------------------------------
-// Styles for the components (included by the App)
-// ---------------------------------------------------------
-
-const css = `
-
-.Button {
-  font-size: 11pt;
-  font-weight: bold;
-}
-
-.Cell {
-  display: table-cell;
-  font-size: 12pt;
-  padding: 4px 8px;
-  text-align: left;
-  width: 85%;
-}
-
-.Editor {
-  background-color: #efefef;
-  border: 1px solid black;
-  border-radius: 24px;
-  box-shadow: 5px 5px #666666;
-  display: table;
-  height: 80%;
-  left: 15%;
-  padding: 1em;
-  position: fixed;
-  text-align: left;
-  top: 10%;
-  width: 70%;
-  z-index: 1000;
-}
-
-.Entry {
-  border: 1px solid black;
-  border-radius: 12px;
-  margin: 1em;
-  padding: 1em;
-}
-
-.InputCell {
-  display: table-cell;
-  font-size: 12pt;
-  padding: 4px 8px;
-  text-align: left;
-  width: 98%;
-}
-
-.Label {
-  display: table-cell;
-  font-weight: bold;
-  text-align: right;
-  width: 15%;
-}
-
-.Row { 
-  display: table-row;
-}
-
-.Table {
-  display: table;
-  width: 100%%;
-}
-
-.TextAreaCell {
-  display: table-cell;
-  height: 12em;
-  font-size: 12pt;
-  padding: 4px 8px;
-  text-align: left;
-  width: 98%;
-}
-
-`;
 
 // ---------------------------------------------------------
 // helper functions
@@ -288,9 +212,8 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <style>{css}</style>
-        <h1>Opps Daily</h1>
-        <h3>document count: {this.state.allDocs.length}</h3>
+        <h1 className="tc">Opps Daily</h1>
+        <h3 className="tc">document count: {this.state.allDocs.length}</h3>
         <DocList app={this} documents={this.state.allDocs} />
         {this.state.showEditor && <DocEditor app={this} doc={this.state.selectedDoc} />}
       </div>
