@@ -1,9 +1,9 @@
 .Button {
-  background-color: ##efefef;
+  background-color: #efefef;
   border: 1px solid black;
   border-radius: 3px;
   box-shadow: 2px 2px #555555;
-  color: #black;
+  color: black;
   font-size: 12pt;
   font-weight: bold;
   padding: 0.25em 0.5em;
@@ -64,7 +64,7 @@
 
 .Table {
   display: table;
-  width: 100%%;
+  width: 100%;
 }
 
 .TextAreaCell {
