@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import DocEditor from './DocEditor.js';
 import EditorField from './EditorField.js';
 
 // ---------------------------------------------------------
@@ -46,16 +47,6 @@ function formatForDisplay(props) {
   }
 }
 
-function showEditor(props) {
-  props.app.setState({ showEditor: true });
-  props.app.setState({ selectedDoc: props.doc });
-}
-
-function hideEditor(props) {
-  props.app.setState({ showEditor: false })
-}
-
-
 // ---------------------------------------------------------
 // DocCompactField component
 // ---------------------------------------------------------
@@ -72,29 +63,6 @@ function DocCompactField(props) {
     </div>
   );
 }
-
-// ---------------------------------------------------------
-// DocEditor component
-// ---------------------------------------------------------
-
-function DocEditor(props) {
-  var app = props.app;
-  var doc = props.doc
-  var doc_keys = Object.keys(doc).reverse();
-  var doc_fields = doc_keys.map((k) =>
-    <EditorField
-      key={k}
-      docKey={k}
-      doc={doc} />);
-
-  return (
-    <div className="Editor">
-      {doc_fields}
-      <button className="Button" onClick={() => { hideEditor({ app: app }) }}>Close</button>
-    </div>
-  );
-}
-
 
 // ---------------------------------------------------------
 // DocEntry component
@@ -117,7 +85,7 @@ function DocEntry(props) {
       <div className="Row">
         <div className="EntryField">
           <button className="Button" onClick={() => {
-            showEditor({ app: app, doc: entry_doc })
+            app.showEditor({ app: app, doc: entry_doc })
           }
           }>
             Edit
@@ -173,6 +141,16 @@ class App extends Component {
       localDB: this.state.localDB
     });
   }
+
+  hideEditor() {
+    this.setState({ showEditor: false })
+  }
+
+   showEditor(props) {
+    this.setState({ showEditor: true })
+    this.setState({ selectedDoc: props.doc });
+  }
+
 
   render() {
     return (
