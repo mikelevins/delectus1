@@ -2,3 +2,80 @@
   text-align: center;
 }
 
+.Button {
+  background-color: #efefef;
+  border: 1px solid black;
+  border-radius: 3px;
+  box-shadow: 2px 2px #555555;
+  color: black;
+  font-size: 12pt;
+  font-weight: bold;
+  padding: 0.25em 0.5em;
+}
+
+.Cell {
+  display: table-cell;
+  font-size: 12pt;
+  padding: 4px 8px;
+  text-align: left;
+  width: 85%;
+}
+
+.center { text-align: center; }
+
+.Editor {
+  background-color: #efefef;
+  border: 1px solid black;
+  border-radius: 24px;
+  box-shadow: 5px 5px #555555;
+  display: table;
+  height: 80%;
+  left: 15%;
+  padding: 1em;
+  position: fixed;
+  text-align: left;
+  top: 10%;
+  width: 70%;
+  z-index: 1000;
+}
+
+.Entry {
+  border: 1px solid black;
+  border-radius: 12px;
+  box-shadow: 4px 4px #555555;
+  margin: 1em;
+  padding: 1em;
+}
+
+.InputCell {
+  display: table-cell;
+  font-size: 12pt;
+  padding: 4px 8px;
+  text-align: left;
+  width: 98%;
+}
+
+.Label {
+  display: table-cell;
+  font-weight: bold;
+  text-align: right;
+  width: 15%;
+}
+
+.Row { 
+  display: table-row;
+}
+
+.Table {
+  display: table;
+  width: 100%;
+}
+
+.TextAreaCell {
+  display: table-cell;
+  height: 12em;
+  font-size: 12pt;
+  padding: 4px 8px;
+  text-align: left;
+  width: 98%;
+}

@@ -198,6 +198,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    document.title = "Delectus"
     syncWithRemoteDB({
       localDB: this.state.localDB,
       remoteDB: this.state.remoteDB
