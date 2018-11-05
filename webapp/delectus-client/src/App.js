@@ -211,7 +211,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1 className="center">Opps Daily</h1>
+        <h1 className="center">Delectus</h1>
         <h3 className="center">document count: {this.state.allDocs.length}</h3>
         <DocList app={this} documents={this.state.allDocs} />
         {this.state.showEditor && <DocEditor app={this} doc={this.state.selectedDoc} />}
