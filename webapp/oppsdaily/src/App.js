@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import DocEditor from './DocEditor.js';
-import DocEntry from './DocEntry.js';
+import DocList from './DocList.js';
 
 // ---------------------------------------------------------
 // helper functions
@@ -24,28 +24,6 @@ function refreshAllDocs(props) {
       }
     }
   );
-}
-
-
-// ---------------------------------------------------------
-// DocList component
-// ---------------------------------------------------------
-
-function DocList(props) {
-  const entries = props.documents;
-  const docEntries = entries.map((entry) =>
-    <DocEntry
-      key={entry.key}
-      entry={entry}
-      app={props.app}
-    />);
-
-  return (
-    <div className="Table">
-      {docEntries}
-    </div>
-  );
-
 }
 
 // ---------------------------------------------------------
