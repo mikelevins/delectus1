@@ -5,22 +5,23 @@ import DocEntry from './DocEntry.js';
 // ---------------------------------------------------------
 // DocList component
 // ---------------------------------------------------------
+// Displays the list of document entries
 
 function DocList(props) {
     const entries = props.documents;
     const docEntries = entries.map((entry) =>
-      <DocEntry
-        key={entry.key}
-        entry={entry}
-        app={props.app}
-      />);
-  
+        <DocEntry
+            key={entry.key}
+            entry={entry}
+            app={props.app}
+        />);
+
     return (
-      <div className="Table">
-        {docEntries}
-      </div>
+        <div className="Table">
+            {docEntries}
+        </div>
     );
-  
-  }
-  
-  export default DocList;
+
+}
+
+export default DocList;

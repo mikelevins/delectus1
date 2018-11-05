@@ -39,8 +39,12 @@ class App extends Component {
     remoteDB: this.props.remoteCouchDB
   }
 
+  // methods
+  // ---------------------------------------------------------
+
   componentDidMount() {
     document.title = "Opps Daily"
+
     syncWithRemoteDB({
       localDB: this.state.localDB,
       remoteDB: this.state.remoteDB
@@ -55,20 +59,23 @@ class App extends Component {
     this.setState({ showEditor: false })
   }
 
-   showEditor(props) {
+  showEditor(props) {
     this.setState({ showEditor: true })
     this.setState({ selectedDoc: props.doc });
   }
-// shorten very long fields for display
- formatForDisplay(props) {
-  const val = props.value;
-  if (val.length > 512) {
-    return val.substring(82, 320) + '...';
-  } else {
-    return val;
-  }
-}
 
+  // shorten very long fields for display
+  formatForDisplay(props) {
+    const val = props.value;
+    if (val.length > 512) {
+      return val.substring(82, 320) + '...';
+    } else {
+      return val;
+    }
+  }
+
+  // main render
+  // ---------------------------------------------------------
 
   render() {
     return (

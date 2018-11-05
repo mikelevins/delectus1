@@ -5,6 +5,7 @@ import EditorField from './EditorField.js';
 // ---------------------------------------------------------
 // DocEditor component
 // ---------------------------------------------------------
+// Presents an editor dialog for document entries
 
 function DocEditor(props) {
     var app = props.app;

@@ -5,6 +5,7 @@ import DocCompactField from './DocCompactField.js';
 // ---------------------------------------------------------
 // DocEntry component
 // ---------------------------------------------------------
+// Displays an individual document entry
 
 function DocEntry(props) {
     var app = props.app;
@@ -12,27 +13,27 @@ function DocEntry(props) {
     var entry_doc = entry.doc;
     var doc_keys = Object.keys(entry_doc).reverse();
     var doc_fields = doc_keys.map((k) =>
-      <DocCompactField
-        app={app}
-        key={k}
-        docKey={k}
-        doc={entry_doc} />);
-  
+        <DocCompactField
+            app={app}
+            key={k}
+            docKey={k}
+            doc={entry_doc} />);
+
     return (
-      <div className="Entry">
-        {doc_fields}
-        <div className="Row">
-          <div className="EntryField">
-            <button className="Button" onClick={() => {
-              app.showEditor({ app: app, doc: entry_doc })
-            }
-            }>
-              Edit
+        <div className="Entry">
+            {doc_fields}
+            <div className="Row">
+                <div className="EntryField">
+                    <button className="Button" onClick={() => {
+                        app.showEditor({ app: app, doc: entry_doc })
+                    }
+                    }>
+                        Edit
             </button>
-          </div>
+                </div>
+            </div>
         </div>
-      </div>
     );
-  }
-  
-  export default DocEntry;
+}
+
+export default DocEntry;
