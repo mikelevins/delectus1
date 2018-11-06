@@ -9,12 +9,13 @@ import DocEntry from './DocEntry.js';
 
 function DocList(props) {
     const entries = props.documents;
-    const docEntries = entries.map((entry) =>
-        <DocEntry
-            key={entry.key}
-            entry={entry}
-            app={props.app}
-        />);
+    const docEntries = entries.map(
+        (entry) =>
+            <DocEntry
+                key={entry.key}
+                entry={entry}
+                app={props.app}
+            />);
 
     return (
         <div className="Table">

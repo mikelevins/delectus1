@@ -49,6 +49,7 @@ class App extends Component {
       localDB: this.state.localDB,
       remoteDB: this.state.remoteDB
     });
+    
     refreshAllDocs({
       app: this,
       localDB: this.state.localDB
