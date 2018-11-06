@@ -60,7 +60,7 @@
   display: table-cell;
   font-weight: bold;
   text-align: right;
-  vertical-align: middle;
+  vertical-align: baseline;
   width: 15%;
 }
 
@@ -75,7 +75,7 @@
 
 .TextAreaCell {
   display: table-cell;
-  height: 18em;
+  height: 20em;
   font-size: 12pt;
   padding: 4px 8px;
   text-align: left;
