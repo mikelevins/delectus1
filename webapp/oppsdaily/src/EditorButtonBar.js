@@ -17,13 +17,13 @@ function EditorButtonBar(props) {
             <div className="Cell">
                     <button
                         className="Button f12pt"
-                        onClick={() => { app.hideEditor() }}>
+                        onClick={() => { app.dismissEditor() }}>
                         Save</button>
                 </div>
                 <div className="Cell">
                     <button
                         className="Button f12pt"
-                        onClick={() => { app.hideEditor() }}>
+                        onClick={() => { app.dismissEditor() }}>
                         Cancel</button>
                 </div>
             </div>

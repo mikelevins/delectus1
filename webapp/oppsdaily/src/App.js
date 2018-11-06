@@ -56,11 +56,11 @@ class App extends Component {
     });
   }
 
-  hideEditor() {
+  dismissEditor() {
     this.setState({ showEditor: false })
   }
 
-  showEditor(props) {
+  editDocument(props) {
     this.setState({ selectedDoc: props.doc });
     this.setState({ showEditor: true })
   }
