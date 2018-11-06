@@ -49,7 +49,7 @@ class App extends Component {
       localDB: this.state.localDB,
       remoteDB: this.state.remoteDB
     });
-    
+
     refreshAllDocs({
       app: this,
       localDB: this.state.localDB
@@ -78,7 +78,7 @@ class App extends Component {
   // main render
   // ---------------------------------------------------------
 
-  render() {
+  render1() {
     return (
       <div className="App">
         <h1 className="center">Opps Daily</h1>
@@ -88,6 +88,29 @@ class App extends Component {
       </div>
     );
   }
+
+  render() {
+    if (this.state.showEditor) {
+      return (
+        <div className="App">
+          <h1 className="center">Opps Daily</h1>
+          <h3 className="center">document id: {this.state.selectedDoc._id}</h3>
+          <DocEditor app={this} doc={this.state.selectedDoc} />
+        </div>
+      );
+
+    } else {
+      return (
+        <div className="App">
+          <h1 className="center">Opps Daily</h1>
+          <h3 className="center">document count: {this.state.allDocs.length}</h3>
+          <DocList app={this} documents={this.state.allDocs} />
+        </div>
+      );
+
+    }
+  }
+
 
 }
 

@@ -12,17 +12,17 @@ function DocEditor(props) {
     var doc = props.doc
     var doc_keys = Object.keys(doc).reverse();
     var doc_fields = doc_keys.map((k) =>
-      <EditorField
-        key={k}
-        docKey={k}
-        doc={doc} />);
-  
+        <EditorField
+            key={k}
+            docKey={k}
+            doc={doc} />);
+
     return (
-      <div className="Editor">
-        {doc_fields}
-        <button className="Button" onClick={() => { app.hideEditor() }}>Close</button>
-      </div>
+        <div className="Editor">
+            {doc_fields}
+            <button className="Button" onClick={() => { app.hideEditor() }}>Cancel</button>
+        </div>
     );
-  }
-  
-  export default DocEditor;
+}
+
+export default DocEditor;
