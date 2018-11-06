@@ -56,7 +56,14 @@ class App extends Component {
     });
   }
 
-  dismissEditor() {
+  saveEditAndDismissEditor() {
+    var selectedDoc = this.state.selectedDoc;
+    var docID = selectedDoc._id;
+
+    this.setState({ showEditor: false })
+  }
+
+  cancelEditAndDismissEditor() {
     this.setState({ showEditor: false })
   }
 
