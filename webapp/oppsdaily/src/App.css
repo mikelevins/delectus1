@@ -40,6 +40,7 @@
 }
 
 .Entry {
+  background-color: #ffffff;
   border: 1px solid black;
   border-radius: 12px;
   box-shadow: 4px 4px #555555;
