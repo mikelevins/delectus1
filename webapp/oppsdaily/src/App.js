@@ -79,20 +79,18 @@ class App extends Component {
   // ---------------------------------------------------------
 
   render() {
+    // if the editor is shown, render the selected document
     if (this.state.showEditor) {
       return (
         <div className="App">
-          <h1 className="center">Opps Daily</h1>
-          <h3 className="center"> Editing document id: {this.state.selectedDoc._id}</h3>
           <DocEditor app={this} doc={this.state.selectedDoc} />
         </div>
       );
 
     } else {
+      // otherwise, render the list of documents
       return (
         <div className="App">
-          <h1 className="center">Opps Daily</h1>
-          <h3 className="center">document count: {this.state.allDocs.length}</h3>
           <DocList app={this} documents={this.state.allDocs} />
         </div>
       );

@@ -8,7 +8,6 @@
   border-radius: 3px;
   box-shadow: 2px 2px #555555;
   color: black;
-  font-size: 12pt;
   font-weight: bold;
   margin: 0.5em;
   padding: 0.25em 0.5em;
@@ -18,7 +17,6 @@
   display: table-cell;
   font-size: 12pt;
   padding: 4px 8px;
-  text-align: left;
   width: 100%;
 }
 
@@ -41,6 +39,8 @@
   padding: 1em;
 }
 
+.f12pt { font-size: 12pt; }
+
 .InputCell {
   display: table-cell;
   font-size: 12pt;
@@ -56,6 +56,8 @@
   vertical-align: baseline;
 }
 
+.left { text-align: left; }
+
 .Row { 
   display: table-row;
 }
@@ -70,6 +72,5 @@
   height: 20em;
   font-size: 12pt;
   padding: 4px 8px;
-  text-align: left;
   width: 100%;
 }

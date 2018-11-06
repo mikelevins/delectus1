@@ -15,7 +15,7 @@ function DocCompactField(props) {
             <div className="Label">{
                 props.docKey}:
           </div>
-            <div className="Cell">
+            <div className="Cell left">
                 {app.formatForDisplay({ value: props.doc[props.docKey] })}
             </div>
         </div>

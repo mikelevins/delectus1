@@ -18,9 +18,13 @@ function DocEditor(props) {
             doc={doc} />);
 
     return (
-        <div className="Editor">
-            {doc_fields}
-            <button className="Button" onClick={() => { app.hideEditor() }}>Cancel</button>
+        <div>
+            <h1 className="center">Opps Daily</h1>
+            <h3 className="center"> Editing document id: {app.state.selectedDoc._id}</h3>
+            <div className="Editor">
+                {doc_fields}
+                <button className="Button f12pt" onClick={() => { app.hideEditor() }}>Cancel</button>
+            </div>
         </div>
     );
 }

@@ -24,7 +24,7 @@ function DocEntry(props) {
             {doc_fields}
             <div className="Row">
                 <div className="EntryField">
-                    <button className="Button" onClick={() => {
+                    <button className="Button f12pt" onClick={() => {
                         app.showEditor({ app: app, doc: entry_doc })
                     }
                     }>

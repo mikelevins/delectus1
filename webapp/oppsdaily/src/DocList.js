@@ -18,8 +18,13 @@ function DocList(props) {
             />);
 
     return (
-        <div className="Table">
-            {docEntries}
+        <div>
+            <h1 className="center">Opps Daily</h1>
+            <h3 className="center">document count: {props.app.state.allDocs.length}</h3>
+
+            <div className="Table">
+                {docEntries}
+            </div>
         </div>
     );
 
