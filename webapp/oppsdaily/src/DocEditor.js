@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import EditorField from './EditorField.js';
+import EditorButtonBar from './EditorButtonBar.js';
 
 // ---------------------------------------------------------
 // DocEditor component
@@ -22,8 +23,10 @@ function DocEditor(props) {
             <h1 className="center">Opps Daily</h1>
             <h3 className="center"> Editing document id: {app.state.selectedDoc._id}</h3>
             <div className="Editor">
-                {doc_fields}
-                <button className="Button f12pt" onClick={() => { app.hideEditor() }}>Cancel</button>
+                <div className="Table">
+                    {doc_fields}
+                </div>
+                <EditorButtonBar app={app} editor={this} />
             </div>
         </div>
     );
