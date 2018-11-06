@@ -61,8 +61,8 @@ class App extends Component {
   }
 
   showEditor(props) {
-    this.setState({ showEditor: true })
     this.setState({ selectedDoc: props.doc });
+    this.setState({ showEditor: true })
   }
 
   // shorten very long fields for display
@@ -78,23 +78,12 @@ class App extends Component {
   // main render
   // ---------------------------------------------------------
 
-  render1() {
-    return (
-      <div className="App">
-        <h1 className="center">Opps Daily</h1>
-        <h3 className="center">document count: {this.state.allDocs.length}</h3>
-        <DocList app={this} documents={this.state.allDocs} />
-        {this.state.showEditor && <DocEditor app={this} doc={this.state.selectedDoc} />}
-      </div>
-    );
-  }
-
   render() {
     if (this.state.showEditor) {
       return (
         <div className="App">
           <h1 className="center">Opps Daily</h1>
-          <h3 className="center">document id: {this.state.selectedDoc._id}</h3>
+          <h3 className="center"> Editing document id: {this.state.selectedDoc._id}</h3>
           <DocEditor app={this} doc={this.state.selectedDoc} />
         </div>
       );
