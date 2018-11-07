@@ -24,10 +24,9 @@
 
 .DocEntry {
   background-color: #ffffff;
-  border: 1px solid black;
-  border-radius: 8px;
-  box-shadow: 4px 4px #555555;
-  margin: 1em;
+  border: 0px solid black;
+  border-radius: 2px;
+  margin: 0.5em;
   padding: 1em;
 }
 
