@@ -76,8 +76,8 @@ class App extends Component {
   // ---------------------------------------------------------
 
   render() {
-    // if the editor is shown, render the selected document
     if (this.state.showEditor) {
+      // DocEditor active
       return (
         <div className="App">
           <DocEditor app={this} doc={this.state.selectedDoc} />
@@ -85,7 +85,7 @@ class App extends Component {
       );
 
     } else {
-      // otherwise, render the list of documents
+      // DocEditor inactive
       return (
         <div className="App">
           <DocList app={this} documents={this.state.allDocs} />
