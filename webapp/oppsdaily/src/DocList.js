@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import DocEntry from './DocEntry.js';
 
@@ -7,27 +7,28 @@ import DocEntry from './DocEntry.js';
 // ---------------------------------------------------------
 // Displays the list of document entries
 
-function DocList(props) {
-    const entries = props.documents;
-    const docEntries = entries.map(
-        (entry) =>
-            <DocEntry
-                key={entry.key}
-                entry={entry}
-                app={props.app}
-            />);
+class DocList extends Component {
 
-    return (
-        <div>
-            <h1 className="center">Opps Daily</h1>
-            <h3 className="center">document count: {props.app.state.allDocs.length}</h3>
+    // main render
+    // ---------------------------------------------------------
 
-            <div className="Table">
-                {docEntries}
+    render() {
+        const docs = this.props.docs;
+        const entries = docs.map(
+            (doc) => <p>id: {doc.id}</p>
+        );
+
+        return (
+            <div className="DocList">
+            {entries}}
             </div>
-        </div>
-    );
+        );
+    } // end render
+} // end DocList
 
-}
+
+// ---------------------------------------------------------
+// exports
+// ---------------------------------------------------------
 
 export default DocList;

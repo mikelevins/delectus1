@@ -22,20 +22,20 @@
 
 .center { text-align: center; }
 
-.Editor {
-  background-color: #efefef;
-  padding: 2.5%;
-  text-align: left;
-  width: 90%;
-}
-
-.Entry {
+.DocEntry {
   background-color: #ffffff;
   border: 1px solid black;
   border-radius: 8px;
   box-shadow: 4px 4px #555555;
   margin: 1em;
   padding: 1em;
+}
+
+.Editor {
+  background-color: #efefef;
+  padding: 2.5%;
+  text-align: left;
+  width: 90%;
 }
 
 .f12pt { font-size: 12pt; }

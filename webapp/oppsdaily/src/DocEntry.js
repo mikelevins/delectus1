@@ -10,6 +10,7 @@ import DocCompactField from './DocCompactField.js';
 function DocEntry(props) {
     var app = props.app;
     var entry = props.entry;
+    var entry_id = entry.id;
     var entry_doc = entry.doc;
     var doc_keys = Object.keys(entry_doc).reverse();
     var doc_fields = doc_keys.map((k) =>
@@ -20,7 +21,8 @@ function DocEntry(props) {
             doc={entry_doc} />);
 
     return (
-        <div className="Entry">
+        <div className="DocEntry">
+        <p className="left">id: {entry_id}</p>
             {doc_fields}
             <div className="Row">
                 <div className="EntryField">
