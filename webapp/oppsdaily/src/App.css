@@ -2,15 +2,29 @@
   text-align: center;
 }
 
-.bgwhite { background-color: white; }
-
 .bold { font-weight: bold; }
-
-.center { text-align: center; }
 
 .DocEntry {
   background-color: white;
   margin-top: 1em;
+}
+
+.DocEntryButton {
+  background-color: #4CAF50;
+    border: none;
+    color: white;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 20px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.DocEntryButtonCell {
+  border: 1px solid black;
+  padding: 0.25em;
+  text-align: center;
 }
 
 .DocEntryCell {
@@ -30,9 +44,3 @@
   margin-right: 5%;  
   width: 90%;
 }
-
-.f12pt { font-size: 12pt; }
-
-.left { text-align: left; }
-
-.right { text-align: right; }

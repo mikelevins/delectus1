@@ -18,11 +18,14 @@ class DocEntry extends Component {
                 <table className="DocEntryTable">
                     <tbody>
                         <tr>
-                            <td className="DocEntryCell" colSpan="2">
+                            <td className="DocEntryCell" colSpan="3">
                                 <span className='bold'>Summary:</span> &nbsp;
                             </td>
                         </tr>
                         <tr>
+                            <td className="DocEntryButtonCell">
+                                <button className="DocEntryButton">Edit</button>
+                            </td>
                             <td className="DocEntryCell">
                                 <span className='bold'>date:</span>
                                 {doc.date_received}, &nbsp;
