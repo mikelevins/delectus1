@@ -14,13 +14,13 @@ class DocList extends Component {
 
     render() {
         const docs = this.props.docs;
-        const entries = docs.map(
-            (doc) => <p>id: {doc.id}</p>
-        );
+        const entries = docs.map( (doc) => <DocEntry entry={doc} /> );
 
         return (
             <div className="DocList">
-            {entries}}
+                <h1>Opps Daily</h1>
+                <h4>Document count: {docs.length}</h4>
+                {entries}
             </div>
         );
     } // end render

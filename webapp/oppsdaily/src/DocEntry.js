@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import DocCompactField from './DocCompactField.js';
 
@@ -7,35 +7,17 @@ import DocCompactField from './DocCompactField.js';
 // ---------------------------------------------------------
 // Displays an individual document entry
 
-function DocEntry(props) {
-    var app = props.app;
-    var entry = props.entry;
-    var entry_id = entry.id;
-    var entry_doc = entry.doc;
-    var doc_keys = Object.keys(entry_doc).reverse();
-    var doc_fields = doc_keys.map((k) =>
-        <DocCompactField
-            app={app}
-            key={k}
-            docKey={k}
-            doc={entry_doc} />);
+class DocEntry extends Component {
+    render() {
+        var entry = this.props.entry;
+        var entry_id = entry.id;
 
-    return (
-        <div className="DocEntry">
-        <p className="left">id: {entry_id}</p>
-            {doc_fields}
-            <div className="Row">
-                <div className="EntryField">
-                    <button className="Button f12pt" onClick={() => {
-                        app.editDocument({ app: app, doc: entry_doc })
-                    }
-                    }>
-                        Edit
-            </button>
-                </div>
+        return (
+            <div className="DocEntry">
+                <p className="left">id: {entry_id}</p>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
 export default DocEntry;
