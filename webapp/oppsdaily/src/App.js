@@ -46,32 +46,6 @@ class App extends Component {
     this.refreshAllDocs();
   } // end componentDidMount
 
-  saveEditAndDismissEditor() {
-    var selectedDoc = this.state.selectedDoc;
-    var docID = selectedDoc._id;
-
-    this.setState({ showEditor: false })
-  } // end saveEditAndDismissEditor
-
-  cancelEditAndDismissEditor() {
-    this.setState({ showEditor: false })
-  } // end cancelEditAndDismissEditor
-
-  editDocument(props) {
-    this.setState({ selectedDoc: props.doc });
-    this.setState({ showEditor: true })
-  } // end editDocument
-
-  // shorten very long fields for display
-  formatForDisplay(props) {
-    const val = props.value;
-    if (val.length > 512) {
-      return val.substring(82, 320) + '...';
-    } else {
-      return val;
-    }
-  } //end formatForDisplay
-
   // main render
   // ---------------------------------------------------------
 
