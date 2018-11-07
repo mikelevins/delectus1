@@ -4,29 +4,6 @@ import DocEditor from './DocEditor.js';
 import DocList from './DocList.js';
 
 // ---------------------------------------------------------
-// helper functions
-// ---------------------------------------------------------
-
-function syncWithRemoteDB(props) {
-  props.localDB.sync(props.remoteDB);
-}
-
-function refreshAllDocs(props) {
-  props.localDB.allDocs(
-    { include_docs: true, descending: true },
-    function (err, result) {
-      if (err) {
-        console.log("Error getting documents: ");
-        console.log(err);
-      } else {
-        var the_rows = result.rows;
-        props.app.setState({ allDocs: the_rows });
-      }
-    }
-  );
-}
-
-// ---------------------------------------------------------
 // App component
 // ---------------------------------------------------------
 
@@ -42,18 +19,31 @@ class App extends Component {
   // methods
   // ---------------------------------------------------------
 
+  syncWithRemoteDB() {
+    this.state.localDB.sync(this.state.remoteDB);
+  }
+
+  refreshAllDocs() {
+    var app = this;
+    app.state.localDB.allDocs(
+      { include_docs: true, descending: true },
+      function (err, result) {
+        if (err) {
+          console.log("Error getting documents: ");
+          console.log(err);
+        } else {
+          var the_rows = result.rows;
+          app.setState({ allDocs: the_rows });
+        }
+      }
+    );
+  }
+
+
   componentDidMount() {
     document.title = "Opps Daily"
-
-    syncWithRemoteDB({
-      localDB: this.state.localDB,
-      remoteDB: this.state.remoteDB
-    });
-
-    refreshAllDocs({
-      app: this,
-      localDB: this.state.localDB
-    });
+    this.syncWithRemoteDB();
+    this.refreshAllDocs();
   }
 
   saveEditAndDismissEditor() {
