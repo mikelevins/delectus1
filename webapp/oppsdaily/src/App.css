@@ -2,6 +2,8 @@
   text-align: center;
 }
 
+.bold { font-weight: bold; }
+
 .Button {
   background-color: #ffffff;
   border: 1px solid black;

@@ -14,7 +14,7 @@ class DocList extends Component {
 
     render() {
         const docs = this.props.docs;
-        const entries = docs.map( (doc) => <DocEntry entry={doc} /> );
+        const entries = docs.map( (doc) => <DocEntry key={doc.id} entry={doc} /> );
 
         return (
             <div className="DocList">
