@@ -15,13 +15,26 @@ class DocEntry extends Component {
 
         return (
             <div className="DocEntry">
-                <p className="left">
-                    <span className='bold'>date:</span> {doc.date_received}, &nbsp;
-                    </p>
-                <p className='left'>
-                    <span className='bold'>id:</span> {entry_id}
-                </p>
-            </div >
+                <table className="DocEntryTable">
+                    <tbody>
+                        <tr>
+                            <td className="DocEntryCell" colSpan="2">
+                                <span className='bold'>Summary:</span> &nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="DocEntryCell">
+                                <span className='bold'>date:</span>
+                                {doc.date_received}, &nbsp;
+                            </td>
+                            <td className="DocEntryCell">
+                                <span className='bold'>id:</span>
+                                {entry_id}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }
