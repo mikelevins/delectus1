@@ -8,20 +8,21 @@ import DocList from './DocList.js';
 // ---------------------------------------------------------
 
 class App extends Component {
+
   state = {
     allDocs: [],
     showEditor: false,
     selectedDoc: null,
     localDB: this.props.localPouchDB,
     remoteDB: this.props.remoteCouchDB
-  }
+  } // end state
 
   // methods
   // ---------------------------------------------------------
 
   syncWithRemoteDB() {
     this.state.localDB.sync(this.state.remoteDB);
-  }
+  } // syncWithRemoteDB
 
   refreshAllDocs() {
     var app = this;
@@ -37,30 +38,29 @@ class App extends Component {
         }
       }
     );
-  }
-
+  } // end refreshAllDocs
 
   componentDidMount() {
     document.title = "Opps Daily"
     this.syncWithRemoteDB();
     this.refreshAllDocs();
-  }
+  } // end componentDidMount
 
   saveEditAndDismissEditor() {
     var selectedDoc = this.state.selectedDoc;
     var docID = selectedDoc._id;
 
     this.setState({ showEditor: false })
-  }
+  } // end saveEditAndDismissEditor
 
   cancelEditAndDismissEditor() {
     this.setState({ showEditor: false })
-  }
+  } // end cancelEditAndDismissEditor
 
   editDocument(props) {
     this.setState({ selectedDoc: props.doc });
     this.setState({ showEditor: true })
-  }
+  } // end editDocument
 
   // shorten very long fields for display
   formatForDisplay(props) {
@@ -70,7 +70,7 @@ class App extends Component {
     } else {
       return val;
     }
-  }
+  } //end formatForDisplay
 
   // main render
   // ---------------------------------------------------------
@@ -93,13 +93,11 @@ class App extends Component {
       );
 
     }
-  }
-
-
-}
+  } // end render
+} // end App
 
 // ---------------------------------------------------------
-// main export
+// exports
 // ---------------------------------------------------------
 
 export default App;
