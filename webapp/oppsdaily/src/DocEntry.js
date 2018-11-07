@@ -16,10 +16,12 @@ class DocEntry extends Component {
         return (
             <div className="DocEntry">
                 <p className="left">
-                    <span className='bold'>id:</span> {entry_id}, &nbsp;
-                    <span className='bold'>date:</span> {doc.date_received}
+                    <span className='bold'>date:</span> {doc.date_received}, &nbsp;
+                    </p>
+                <p className='left'>
+                    <span className='bold'>id:</span> {entry_id}
                 </p>
-            </div>
+            </div >
         );
     }
 }
