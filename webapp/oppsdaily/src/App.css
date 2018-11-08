@@ -4,17 +4,6 @@
 
 .bold { font-weight: bold; }
 
-.DocEditor {
-  padding-left: 1em;
-  padding-right: 1em;
-}
-
-.DocEntry {
-  background-color: white;
-  margin-top: 1em;
-  width: 100%;
-}
-
 .Button {
   background-color: #4CAF50;
     border: none;
@@ -25,6 +14,17 @@
     padding: 0.25em 1.25em;
     text-align: center;
     text-decoration: none;
+}
+
+.DocEditor {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.DocEntry {
+  background-color: white;
+  margin-top: 1em;
+  width: 100%;
 }
 
 .DocEntryButtonCell {
@@ -49,7 +49,6 @@
   padding-left: 1em;
   padding-right: 1em;
 }
-
 
 .EditorCell {
   border: 1px solid black;
