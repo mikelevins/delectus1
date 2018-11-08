@@ -60,7 +60,7 @@ class App extends Component {
 
   // use fat arrow to ensure this refers to App
   cancelAndDismissDocumentEditor = () => {
-    this.setState({showEditor: false});
+    this.setState({selectedDoc: null, showEditor: false});
   }
 
   // main render
