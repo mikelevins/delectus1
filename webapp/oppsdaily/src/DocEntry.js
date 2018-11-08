@@ -31,7 +31,7 @@ class DocEntry extends Component {
                                 {doc.date_received}, &nbsp;
                             </td>
                             <td className="DocEntryCell">
-                                <span className='bold'>id:</span>
+                                <span className='bold'>id: </span>
                                 {entry_id}
                             </td>
                         </tr>
