@@ -9,6 +9,7 @@ import DocCompactField from './DocCompactField.js';
 
 class DocEntry extends Component {
     render() {
+        const app = this.props.app;
         const entry = this.props.entry;
         const entry_id = entry.id;
         const doc = entry.doc;
@@ -24,7 +25,11 @@ class DocEntry extends Component {
                         </tr>
                         <tr>
                             <td className="DocEntryButtonCell">
-                                <button className="DocEntryButton">Edit</button>
+                                <button
+                                    className="DocEntryButton"
+                                    onClick={app.editSelectedDocument}>
+                                    Edit
+                                </button>
                             </td>
                             <td className="DocEntryCell">
                                 <span className='bold'>date:</span>

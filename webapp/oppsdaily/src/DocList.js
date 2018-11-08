@@ -13,8 +13,10 @@ class DocList extends Component {
     // ---------------------------------------------------------
 
     render() {
+        const app = this.props.app;
         const docs = this.props.docs;
-        const entries = docs.map((doc) => <DocEntry key={doc.id} entry={doc} />);
+        const entries = docs.map((doc) =>
+            <DocEntry key={doc.id} app={app} entry={doc} />);
 
         return (
             <div className="DocList">
@@ -23,7 +25,8 @@ class DocList extends Component {
                 {entries}
             </div>
         );
-    } // end render
+    }
+
 } // end DocList
 
 

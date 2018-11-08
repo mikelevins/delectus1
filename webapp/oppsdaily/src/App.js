@@ -9,13 +9,20 @@ import DocList from './DocList.js';
 
 class App extends Component {
 
-  state = {
-    allDocs: [],
-    showEditor: false,
-    selectedDoc: null,
-    localDB: this.props.localPouchDB,
-    remoteDB: this.props.remoteCouchDB
-  } // end state
+  // constructor
+  // ---------------------------------------------------------
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      allDocs: [],
+      showEditor: false,
+      selectedDoc: null,
+      localDB: this.props.localPouchDB,
+      remoteDB: this.props.remoteCouchDB
+    }
+  }
 
   // methods
   // ---------------------------------------------------------
@@ -45,6 +52,16 @@ class App extends Component {
     this.syncWithRemoteDB();
     this.refreshAllDocs();
   } // end componentDidMount
+
+  // use fat arrow to ensure this refers to App
+  editSelectedDocument = () => {
+    this.setState({showEditor: true});
+  }
+
+  // use fat arrow to ensure this refers to App
+  dismissDocumentEditor = () => {
+    this.setState({showEditor: false});
+  }
 
   // main render
   // ---------------------------------------------------------
