@@ -19,8 +19,8 @@ class EditorContentsBox extends Component {
             (key) => {
                 return (
                     <tr key={key}>
-                        <td className="bold right EditorCell">{key}:</td>
-                        <td className="left EditorCell">
+                        <td className="bold right Cell">{key}:</td>
+                        <td className="left Cell">
                             <textarea
                                 name={key}
                                 className="EditorTextArea"
@@ -89,7 +89,7 @@ class DocEditor extends Component {
         var doc = this.props.doc;
 
         return (
-            <div className="DocEditor">
+            <div className="Frame">
                 <h1>Opps Daily</h1>
                 <p>Editing document: {doc._id}</p>
                 <EditorContentsBox app={app} doc={doc} />

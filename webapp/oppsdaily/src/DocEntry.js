@@ -9,7 +9,7 @@ import './App.css';
 class DocEntryCell extends Component {
     render() {
         return (
-            <td className="DocEntryCell" colSpan={this.props.colSpan}>
+            <td className="Cell" colSpan={this.props.colSpan}>
                 <span className="bold">{this.props.label}:</span>&nbsp;
                 {this.props.value}
             </td>
@@ -25,7 +25,7 @@ class DocEntryCell extends Component {
 class DocEntryButtonCell extends Component {
     render() {
         return (
-            <td className="DocEntryButtonCell" colSpan={this.props.colSpan}>
+            <td className="Cell" colSpan={this.props.colSpan}>
                 <button
                     className="Button"
                     onClick={this.props.onClick}>

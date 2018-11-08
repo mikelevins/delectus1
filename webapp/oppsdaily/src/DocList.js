@@ -19,7 +19,7 @@ class DocList extends Component {
             <DocEntry key={doc.id} app={app} entry={doc} />);
 
         return (
-            <div className="DocList">
+            <div className="Frame">
                 <h1>Opps Daily</h1>
                 <h4>Document count: {docs.length}</h4>
                 {entries}

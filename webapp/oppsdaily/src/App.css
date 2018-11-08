@@ -9,16 +9,16 @@
     border: none;
     color: white;
     display: inline-block;
-    font-size: small;
+    font-size: medium;
     font-weight: bold;
     padding: 0.25em 1.25em;
     text-align: center;
     text-decoration: none;
 }
 
-.DocEditor {
-  padding-left: 1em;
-  padding-right: 1em;
+.Cell {
+  border: 1px solid black;
+  padding: 0.5em 0.5em;
 }
 
 .DocEntry {
@@ -27,32 +27,10 @@
   width: 100%;
 }
 
-.DocEntryButtonCell {
-  border: 1px solid black;
-  padding: 0.5em 0.25em;
-  text-align: center;
-}
-
-.DocEntryCell {
-  border: 1px solid black;
-  padding: 0.25em 0.5em;
-  text-align: left;
-}
-
 .DocEntryTable {
   border: 1px solid black;
   border-collapse: collapse;
   width: 100%;
-}
-
-.DocList {
-  padding-left: 1em;
-  padding-right: 1em;
-}
-
-.EditorCell {
-  border: 1px solid black;
-  padding: 0.5em 0.5em;
 }
 
 .EditorContentsTable {
@@ -64,9 +42,14 @@
 }
 
 .EditorTextArea {
-  font-size: 11pt;
+  font-size: medium;
   padding: 5px;
   width: 98%;
+}
+
+.Frame {
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .left { text-align: left; }
