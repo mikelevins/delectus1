@@ -19,7 +19,7 @@ class DocEditor extends Component {
         return (
             <div className="DocEditor">
                 <h1>Opps Daily</h1>
-                <h4>Editing Document</h4>
+                <p>Editing document: {doc._id}</p>
                 <EditorButtonBar app={app} editor={this} />
             </div>
         );

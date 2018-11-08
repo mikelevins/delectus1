@@ -61,7 +61,7 @@ class DocEntry extends Component {
                             <DocEntryButtonCell
                                 colSpan="1"
                                 label="Edit"
-                                onClick={app.editSelectedDocument}
+                                onClick={() => app.editSelectedDocument(doc)}
                             />
                             <DocEntryCell colSpan="1" label="date" value={doc.date_received} />
                             <DocEntryCell colSpan="1" label="id" value={entry_id} />

@@ -54,12 +54,12 @@ class App extends Component {
   } // end componentDidMount
 
   // use fat arrow to ensure this refers to App
-  editSelectedDocument = () => {
-    this.setState({showEditor: true});
+  editSelectedDocument = (doc) => {
+    this.setState({selectedDoc: doc, showEditor: true});
   }
 
   // use fat arrow to ensure this refers to App
-  dismissDocumentEditor = () => {
+  cancelAndDismissDocumentEditor = () => {
     this.setState({showEditor: false});
   }
 
