@@ -28,7 +28,7 @@ class DocEntryButtonCell extends Component {
         return (
             <td className="DocEntryButtonCell" colSpan={this.props.colSpan}>
                 <button
-                    className="DocEntryButton"
+                    className="Button"
                     onClick={this.props.onClick}>
                     {this.props.label}
                 </button>

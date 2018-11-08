@@ -15,7 +15,7 @@
   width: 100%;
 }
 
-.DocEntryButton {
+.Button {
   background-color: #4CAF50;
     border: none;
     color: white;
@@ -50,3 +50,20 @@
   padding-right: 1em;
 }
 
+
+.EditorCell {
+  border: 1px solid black;
+  padding: 0.5em 0.5em;
+}
+
+.EditorContentsTable {
+  background-color: white;
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 1em;
+  width: 100%;
+}
+
+.left { text-align: left; }
+
+.right { text-align: right; }
