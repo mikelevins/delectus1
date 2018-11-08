@@ -14,13 +14,18 @@ class EditorContentsBox extends Component {
     render() {
         var app = this.props.app;
         var doc = this.props.doc;
-        var doc_keys = Object.keys(doc);
+        var doc_keys = Object.keys(doc).reverse();
         var field_rows = doc_keys.map(
             (key) => {
                 return (
-                    <tr>
+                    <tr key={key}>
                         <td className="bold right EditorCell">{key}:</td>
-                        <td className="left EditorCell">{doc[key]}</td>
+                        <td className="left EditorCell">
+                            <textarea
+                                name={key}
+                                className="EditorTextArea"
+                                defaultValue={doc[key]} />
+                        </td>
                     </tr>
                 );
             }
@@ -48,20 +53,22 @@ function EditorButtonBar(props) {
 
     return (
         <table>
-            <tr>
-                <td>
-                    <button
-                        className="Button"
-                        onClick={() => { app.cancelAndDismissDocumentEditor() }}>
-                        Save</button>
-                </td>
-                <td>
-                    <button
-                        className="Button"
-                        onClick={() => { app.cancelAndDismissDocumentEditor() }}>
-                        Cancel</button>
-                </td>
-            </tr>
+            <tbody>
+                <tr>
+                    <td>
+                        <button
+                            className="Button"
+                            onClick={() => { app.cancelAndDismissDocumentEditor() }}>
+                            Save</button>
+                    </td>
+                    <td>
+                        <button
+                            className="Button"
+                            onClick={() => { app.cancelAndDismissDocumentEditor() }}>
+                            Cancel</button>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     );
 

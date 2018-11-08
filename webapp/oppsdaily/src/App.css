@@ -63,6 +63,12 @@
   width: 100%;
 }
 
+.EditorTextArea {
+  font-size: 11pt;
+  padding: 5px;
+  width: 98%;
+}
+
 .left { text-align: left; }
 
 .right { text-align: right; }

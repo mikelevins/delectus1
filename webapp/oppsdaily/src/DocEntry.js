@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import DocCompactField from './DocCompactField.js';
 
 // ---------------------------------------------------------
 // DocEntryCell component
