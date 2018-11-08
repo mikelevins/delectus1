@@ -59,7 +59,7 @@ class App extends Component {
       );
 
     } else {
-      // DocEditor inactive
+      // DocList active
       return (
         <div className="App">
           <DocList app={this} docs={this.state.allDocs} />

@@ -7,6 +7,7 @@
 .DocEntry {
   background-color: white;
   margin-top: 1em;
+  width: 100%;
 }
 
 .DocEntryButton {
@@ -14,22 +15,22 @@
     border: none;
     color: white;
     display: inline-block;
-    font-size: 14px;
+    font-size: small;
     font-weight: bold;
-    padding: 8px 20px;
+    padding: 0.25em 1.25em;
     text-align: center;
     text-decoration: none;
 }
 
 .DocEntryButtonCell {
   border: 1px solid black;
-  padding: 0.25em;
+  padding: 0.5em 0.25em;
   text-align: center;
 }
 
 .DocEntryCell {
   border: 1px solid black;
-  padding: 0.25em;
+  padding: 0.25em 0.5em;
   text-align: left;
 }
 
@@ -40,7 +41,6 @@
 }
 
 .DocList {
-  margin-left: 5%;  
-  margin-right: 5%;  
-  width: 90%;
+  padding-left: 1em;
+  padding-right: 1em;
 }
