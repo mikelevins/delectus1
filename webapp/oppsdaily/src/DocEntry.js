@@ -55,7 +55,11 @@ class DocEntry extends Component {
                 <table className="DocEntryTable">
                     <tbody>
                         <tr>
-                            <DocEntryCell colSpan="3" label="Summary" value={summary} />
+                            <DocEntryCell
+                                colSpan="3"
+                                label="Summary"
+                                value={summary}
+                            />
                         </tr>
                         <tr>
                             <DocEntryButtonCell
@@ -63,8 +67,16 @@ class DocEntry extends Component {
                                 label="Edit"
                                 onClick={() => app.editSelectedDocument(doc)}
                             />
-                            <DocEntryCell colSpan="1" label="date" value={doc.date_received} />
-                            <DocEntryCell colSpan="1" label="id" value={entry_id} />
+                            <DocEntryCell
+                                colSpan="1"
+                                label="date received"
+                                value={doc.date_received}
+                            />
+                            <DocEntryCell
+                                colSpan="1"
+                                label="id"
+                                value={entry_id}
+                            />
                         </tr>
                     </tbody>
                 </table>
