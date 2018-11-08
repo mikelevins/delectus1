@@ -12,7 +12,6 @@ class EditorContentsBox extends Component {
     // ---------------------------------------------------------
 
     render() {
-        var app = this.props.app;
         var doc = this.props.doc;
         var doc_keys = Object.keys(doc).reverse();
         var field_rows = doc_keys.map(
@@ -49,10 +48,9 @@ class EditorContentsBox extends Component {
 
 function EditorButtonBar(props) {
     var app = props.app;
-    var editor = props.editor;
 
     return (
-        <table>
+        <table className="EditorButtonBarTable">
             <tbody>
                 <tr>
                     <td>
@@ -85,15 +83,15 @@ class DocEditor extends Component {
     // ---------------------------------------------------------
 
     render() {
-        var app = this.props.app;
-        var doc = this.props.doc;
+        const app = this.props.app;
+        const doc = this.props.doc;
 
         return (
-            <div className="Frame">
+            <div className="Frame" id={doc._id}>
                 <h1>Opps Daily</h1>
                 <p>Editing document: {doc._id}</p>
                 <EditorContentsBox app={app} doc={doc} />
-                <EditorButtonBar app={app} editor={this} />
+                <EditorButtonBar app={app} doc={doc} editor={this} />
             </div>
         );
     }

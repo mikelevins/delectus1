@@ -53,12 +53,12 @@ class App extends Component {
     this.refreshAllDocs();
   } // end componentDidMount
 
-  // use fat arrow to ensure this refers to App
+  // use fat arrow function to ensure 'this' refers to App
   editSelectedDocument = (doc) => {
     this.setState({selectedDoc: doc, showEditor: true});
   }
 
-  // use fat arrow to ensure this refers to App
+  // use fat arrow function to ensure 'this' refers to App
   cancelAndDismissDocumentEditor = () => {
     this.setState({selectedDoc: null, showEditor: false});
   }
