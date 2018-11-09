@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import DocEditor from './DocEditor.js';
 import DocList from './DocList.js';
 
@@ -55,12 +56,12 @@ class App extends Component {
 
   // use fat arrow function to ensure 'this' refers to App
   editSelectedDocument = (doc) => {
-    this.setState({selectedDoc: doc, showEditor: true});
+    this.setState({ selectedDoc: doc, showEditor: true });
   }
 
   // use fat arrow function to ensure 'this' refers to App
   cancelAndDismissDocumentEditor = () => {
-    this.setState({selectedDoc: null, showEditor: false});
+    this.setState({ selectedDoc: null, showEditor: false });
   }
 
   // main render
@@ -70,17 +71,23 @@ class App extends Component {
     if (this.state.showEditor) {
       // DocEditor active
       return (
-        <div className="App">
-          <DocEditor app={this} doc={this.state.selectedDoc} />
-        </div>
+        <React.Fragment>
+          <CssBaseline />
+          <div className="App">
+            <DocEditor app={this} doc={this.state.selectedDoc} />
+          </div>
+        </React.Fragment>
       );
 
     } else {
       // DocList active
       return (
-        <div className="App">
-          <DocList app={this} docs={this.state.allDocs} />
-        </div>
+        <React.Fragment>
+          <CssBaseline />
+          <div className="App">
+            <DocList app={this} docs={this.state.allDocs} />
+          </div>
+        </React.Fragment>
       );
 
     }

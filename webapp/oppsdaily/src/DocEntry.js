@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import ListItem from '@material-ui/core/ListItem';
 
 // ---------------------------------------------------------
 // DocEntryCell component
@@ -52,36 +54,38 @@ class DocEntry extends Component {
         const summary = entry.summary;
 
         return (
-            <div className="DocEntry">
-                <table className="DocEntryTable">
-                    <tbody>
-                        <tr>
-                            <DocEntryCell
-                                colSpan="3"
-                                label="Summary"
-                                value={summary}
-                            />
-                        </tr>
-                        <tr>
-                            <DocEntryButtonCell
-                                colSpan="1"
-                                label="Edit"
-                                onClick={() => app.editSelectedDocument(doc)}
-                            />
-                            <DocEntryCell
-                                colSpan="1"
-                                label="date received"
-                                value={doc.date_received}
-                            />
-                            <DocEntryCell
-                                colSpan="1"
-                                label="id"
-                                value={entry_id}
-                            />
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <ListItem>
+                <Card>
+                    <table className="DocEntryTable">
+                        <tbody>
+                            <tr>
+                                <DocEntryCell
+                                    colSpan="3"
+                                    label="Summary"
+                                    value={summary}
+                                />
+                            </tr>
+                            <tr>
+                                <DocEntryButtonCell
+                                    colSpan="1"
+                                    label="Edit"
+                                    onClick={() => app.editSelectedDocument(doc)}
+                                />
+                                <DocEntryCell
+                                    colSpan="1"
+                                    label="date received"
+                                    value={doc.date_received}
+                                />
+                                <DocEntryCell
+                                    colSpan="1"
+                                    label="id"
+                                    value={entry_id}
+                                />
+                            </tr>
+                        </tbody>
+                    </table>
+                </Card>
+            </ListItem>
         );
     }
 }

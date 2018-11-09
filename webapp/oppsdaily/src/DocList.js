@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import List from '@material-ui/core/List';
 import DocEntry from './DocEntry.js';
 
 // ---------------------------------------------------------
@@ -19,11 +20,11 @@ class DocList extends Component {
             <DocEntry key={doc.id} app={app} entry={doc} />);
 
         return (
-            <div className="Frame">
+            <List>
                 <h1>Opps Daily</h1>
                 <h4>Document count: {docs.length}</h4>
                 {entries}
-            </div>
+            </List>
         );
     }
 
