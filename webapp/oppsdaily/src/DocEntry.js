@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Button from '@material-ui/core/Button';
 
 // ---------------------------------------------------------
 // DocEntryCell component
@@ -26,11 +27,12 @@ class DocEntryButtonCell extends Component {
     render() {
         return (
             <td className="Cell" colSpan={this.props.colSpan}>
-                <button
-                    className="Button"
+                <Button
+                    variant="contained"
+                    color="primary"
                     onClick={this.props.onClick}>
                     {this.props.label}
-                </button>
+                </Button>
             </td>
         );
     }

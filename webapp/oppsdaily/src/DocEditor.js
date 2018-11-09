@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Button from '@material-ui/core/Button';
 
 // ---------------------------------------------------------
 // EditorContentsBox component
@@ -54,16 +55,20 @@ function EditorButtonBar(props) {
             <tbody>
                 <tr>
                     <td>
-                        <button
-                            className="Button"
-                            onClick={() => { app.cancelAndDismissDocumentEditor() }}>
-                            Save</button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={app.cancelAndDismissDocumentEditor}>
+                            Save
+                        </Button>
                     </td>
                     <td>
-                        <button
-                            className="Button"
-                            onClick={() => { app.cancelAndDismissDocumentEditor() }}>
-                            Cancel</button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={app.cancelAndDismissDocumentEditor}>
+                            Cancel
+                        </Button>
                     </td>
                 </tr>
             </tbody>

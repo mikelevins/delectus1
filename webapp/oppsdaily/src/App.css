@@ -4,18 +4,6 @@
 
 .bold { font-weight: bold; }
 
-.Button {
-  background-color: #4CAF50;
-    border: none;
-    color: white;
-    display: inline-block;
-    font-size: medium;
-    font-weight: bold;
-    padding: 0.25em 1.25em;
-    text-align: center;
-    text-decoration: none;
-}
-
 .Cell {
   border: 1px solid black;
   padding: 0.5em 0.5em;
