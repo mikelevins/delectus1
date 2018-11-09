@@ -74,7 +74,7 @@ class DocEditor extends React.Component {
 
         return (
             <form className={classes.container} noValidate autoComplete="off">
-                <div className={classes.sectionHead}>{"Document " + String(doc._id)}
+                <div className={classes.sectionHead}>{"Editing document " + String(doc._id)}
 
                     <div className={classes.buttonBar}>
                         <Button
