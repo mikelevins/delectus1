@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
+
 import CssBaseline from '@material-ui/core/CssBaseline';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+
 import DocEditor from './DocEditor.js';
 import DocList from './DocList.js';
 
@@ -73,9 +78,17 @@ class App extends Component {
       return (
         <React.Fragment>
           <CssBaseline />
-          <div className="App">
-            <DocEditor app={this} doc={this.state.selectedDoc} />
-          </div>
+
+          <AppBar position="static">
+            <Toolbar>
+            <Typography variant="h4" color="inherit">
+              Opps Daily
+              </Typography>
+            </Toolbar>
+          </AppBar>
+
+          <DocEditor app={this} doc={this.state.selectedDoc} />
+
         </React.Fragment>
       );
 
@@ -84,9 +97,16 @@ class App extends Component {
       return (
         <React.Fragment>
           <CssBaseline />
-          <div className="App">
-            <DocList app={this} docs={this.state.allDocs} />
-          </div>
+
+          <AppBar position="static">
+            <Toolbar>
+              <Typography variant="h4" color="inherit">
+              Opps Daily
+              </Typography>
+            </Toolbar>
+          </AppBar>
+
+          <DocList app={this} docs={this.state.allDocs} />
         </React.Fragment>
       );
 

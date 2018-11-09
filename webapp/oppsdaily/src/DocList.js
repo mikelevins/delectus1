@@ -20,11 +20,7 @@ class DocList extends Component {
             <DocEntry key={doc.id} app={app} entry={doc} />);
 
         return (
-            <List>
-                <h1>Opps Daily</h1>
-                <h4>Document count: {docs.length}</h4>
-                {entries}
-            </List>
+            <List>{entries}</List>
         );
     }
 

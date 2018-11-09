@@ -93,8 +93,6 @@ class DocEditor extends Component {
 
         return (
             <div className="Frame" id={doc._id}>
-                <h1>Opps Daily</h1>
-                <p>Editing document: {doc._id}</p>
                 <EditorContentsBox app={app} doc={doc} />
                 <EditorButtonBar app={app} doc={doc} editor={this} />
             </div>
