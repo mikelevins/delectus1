@@ -75,13 +75,13 @@ class App extends Component {
   render() {
     if (this.state.showEditor) {
       // DocEditor active
-      const doc=this.state.selectedDoc;
-      const status = "Document: "+String(doc._id);
+      const doc = this.state.selectedDoc;
+      const status = "Document: " + String(doc._id);
 
       return (
         <React.Fragment>
           <CssBaseline />
-          <OppsDailyAppBar position="static" statusText={status}/>>
+          <OppsDailyAppBar position="static" statusText={status} />>
           <DocEditor app={this} doc={doc} />
 
         </React.Fragment>
@@ -90,12 +90,12 @@ class App extends Component {
     } else {
       // DocList active
       const docCount = this.state.allDocs.length;
-      const status = "Document count: "+String(docCount);
-      
+      const status = "Document count: " + String(docCount);
+
       return (
         <React.Fragment>
           <CssBaseline />
-          <OppsDailyAppBar position="static" statusText={status}/>>
+          <OppsDailyAppBar position="static" statusText={status} />
           <DocList app={this} docs={this.state.allDocs} />
         </React.Fragment>
       );
