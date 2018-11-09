@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import DocEditor from './DocEditor.js';
 import DocList from './DocList.js';
+import OppsDailyAppBar from './OppsDailyAppBar.js';
 
 // ---------------------------------------------------------
 // App component
@@ -75,37 +75,27 @@ class App extends Component {
   render() {
     if (this.state.showEditor) {
       // DocEditor active
+      const doc=this.state.selectedDoc;
+      const status = "Document: "+String(doc._id);
+
       return (
         <React.Fragment>
           <CssBaseline />
-
-          <AppBar position="static">
-            <Toolbar>
-            <Typography variant="h4" color="inherit">
-              Opps Daily
-              </Typography>
-            </Toolbar>
-          </AppBar>
-
-          <DocEditor app={this} doc={this.state.selectedDoc} />
+          <OppsDailyAppBar position="static" statusText={status}/>>
+          <DocEditor app={this} doc={doc} />
 
         </React.Fragment>
       );
 
     } else {
       // DocList active
+      const docCount = this.state.allDocs.length;
+      const status = "Document count: "+String(docCount);
+      
       return (
         <React.Fragment>
           <CssBaseline />
-
-          <AppBar position="static">
-            <Toolbar>
-              <Typography variant="h4" color="inherit">
-              Opps Daily
-              </Typography>
-            </Toolbar>
-          </AppBar>
-
+          <OppsDailyAppBar position="static" statusText={status}/>>
           <DocList app={this} docs={this.state.allDocs} />
         </React.Fragment>
       );
