@@ -1,104 +1,102 @@
-import React, { Component } from 'react';
-import './App.css';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
-// ---------------------------------------------------------
-// EditorContentsBox component
-// ---------------------------------------------------------
-// Presents the contents of a doc for editing
+const styles = theme => ({
+    button: {
+        marginLeft: '1em',
+    },
+    buttonBar: {
+        display: 'inline',
+    },
+    sectionHead: {
+        fontWeight: 'bold',
+        marginLeft: '1em',
+        marginTop: '1em',
+    },
+    container: {
+        display: 'block',
+    },
+    textField: {
+        marginLeft: '2em',
+        marginRight: '2em',
+    },
+    dense: {
+        marginTop: 19,
+    },
+    menu: {
+        width: 200,
+    },
+});
 
-class EditorContentsBox extends Component {
+class DocEditor extends React.Component {
+    state = {
+        name: 'Cat in the Hat',
+        age: '',
+        multiline: 'Controlled',
+        currency: 'EUR',
+    };
 
-    // main render
-    // ---------------------------------------------------------
+    handleChange = name => event => {
+        this.setState({
+            [name]: event.target.value,
+        });
+    };
 
     render() {
-        var doc = this.props.doc;
-        var doc_keys = Object.keys(doc).reverse();
-        var field_rows = doc_keys.map(
+        const { classes } = this.props;
+        const app = this.props.app;
+        const doc = this.props.doc;
+        const doc_keys = Object.keys(doc).reverse();
+        const doc_fields = doc_keys.map(
             (key) => {
                 return (
-                    <tr key={key}>
-                        <td className="bold right Cell">{key}:</td>
-                        <td className="left Cell">
-                            <textarea
-                                name={key}
-                                className="EditorTextArea"
-                                defaultValue={doc[key]} />
-                        </td>
-                    </tr>
+                    <TextField
+                        key={key}
+                        id={key}
+                        label={key}
+                        className={classes.textField}
+                        fullWidth={true}
+                        multiline={true}
+                        value={doc[key]}
+                        onChange={this.handleChange('name')}
+                        margin="normal"
+                    />
                 );
             }
         );
 
         return (
-            <table className="EditorContentsTable">
-                <tbody>
-                    {field_rows}
-                </tbody>
-            </table>
-        );
-    }
+            <form className={classes.container} noValidate autoComplete="off">
+                <div className={classes.sectionHead}>{"Document " + String(doc._id)}
 
-}
-
-// ---------------------------------------------------------
-// EditorButtonBar component
-// ---------------------------------------------------------
-// Displays action buttons for the containing editor
-
-function EditorButtonBar(props) {
-    var app = props.app;
-
-    return (
-        <table className="EditorButtonBarTable">
-            <tbody>
-                <tr>
-                    <td>
+                    <div className={classes.buttonBar}>
                         <Button
+                            className={classes.button}
                             variant="contained"
                             color="primary"
                             onClick={app.cancelAndDismissDocumentEditor}>
                             Save
                         </Button>
-                    </td>
-                    <td>
                         <Button
+                            className={classes.button}
                             variant="contained"
                             color="primary"
                             onClick={app.cancelAndDismissDocumentEditor}>
                             Cancel
                         </Button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    );
-
-}
-
-// ---------------------------------------------------------
-// DocEditor component
-// ---------------------------------------------------------
-// Presents an editor dialog for document entries
-
-class DocEditor extends Component {
-
-    // main render
-    // ---------------------------------------------------------
-
-    render() {
-        const app = this.props.app;
-        const doc = this.props.doc;
-
-        return (
-            <div className="Frame" id={doc._id}>
-                <EditorContentsBox app={app} doc={doc} />
-                <EditorButtonBar app={app} doc={doc} editor={this} />
-            </div>
+                    </div>
+                </div>
+                {doc_fields}
+            </form>
         );
     }
-
 }
 
-export default DocEditor;
+DocEditor.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(DocEditor);

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 
 import DocEditor from './DocEditor.js';
 import DocList from './DocList.js';
@@ -76,12 +74,11 @@ class App extends Component {
     if (this.state.showEditor) {
       // DocEditor active
       const doc = this.state.selectedDoc;
-      const status = "Document: " + String(doc._id);
 
       return (
         <React.Fragment>
           <CssBaseline />
-          <OppsDailyAppBar position="static" statusText={status} />>
+          <OppsDailyAppBar position="static" statusText="" />
           <DocEditor app={this} doc={doc} />
 
         </React.Fragment>
