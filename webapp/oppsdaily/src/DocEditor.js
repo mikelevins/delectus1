@@ -11,6 +11,9 @@ const styles = theme => ({
     buttonBar: {
         display: 'inline',
     },
+    editBox: {
+        width: '90%',
+    },
     sectionHead: {
         fontWeight: 'bold',
         marginLeft: '1em',
@@ -60,6 +63,7 @@ class DocEditor extends React.Component {
                         className={classes.textField}
                         fullWidth={true}
                         multiline={true}
+                        variant='outlined'
                         value={doc[key]}
                         onChange={this.handleChange('name')}
                         margin="normal"
@@ -89,7 +93,9 @@ class DocEditor extends React.Component {
                         </Button>
                     </div>
                 </div>
-                {doc_fields}
+                <div className={classes.editBox}>
+                    {doc_fields}
+                </div>
             </form>
         );
     }
