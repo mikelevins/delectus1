@@ -67,9 +67,13 @@ class App extends Component {
     this.setState({ selectedDoc: null, showEditor: false });
   }
 
+  // use fat arrow function to ensure 'this' refers to App
   saveDocAndDismissDocumentEditor = (updatedDoc) => {
     console.log('Updating doc:');
     console.log(updatedDoc);
+    this.state.localDB.put(updatedDoc);
+    this.syncWithRemoteDB();
+    this.refreshAllDocs();
     this.setState({ selectedDoc: null, showEditor: false });
   }
 
