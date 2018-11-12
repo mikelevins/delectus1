@@ -19,14 +19,24 @@ const styles = {
     },
     industry: {
         fontSize: 16,
+        fontWeight: 'bold',
         marginBottom: 8,
     },
     pos: {
         marginBottom: 8,
     },
     title: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
+    },
+    industry: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    willing_to_pay: {
+        fontSize: 16,
+        marginBottom: 8,
     },
 };
 
@@ -38,6 +48,7 @@ function DocEntry(props) {
     const summary = doc.summary;
     const industry = doc.industry;
     const date_received = doc.date_received;
+    const willing_to_pay = doc.willing_to_pay;
     const { classes } = props;
 
     return (
@@ -51,6 +62,9 @@ function DocEntry(props) {
                 </Typography>
                 <Typography className={classes.industry} color="textSecondary">
                     industry: {industry}
+                </Typography>
+                <Typography className={classes.willing_to_pay} color="textSecondary">
+                    willing to pay: {willing_to_pay}
                 </Typography>
                 <Typography className={classes.pos} color="textSecondary">
                     id: {entry_id}
