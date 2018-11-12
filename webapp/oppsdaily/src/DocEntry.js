@@ -17,12 +17,16 @@ const styles = {
         margin: '0 2px',
         transform: 'scale(0.8)',
     },
-    title: {
+    industry: {
         fontSize: 16,
-        fontWeight: 'bold',
+        marginBottom: 8,
     },
     pos: {
         marginBottom: 8,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 };
 
@@ -32,6 +36,7 @@ function DocEntry(props) {
     const entry_id = entry.id;
     const doc = entry.doc;
     const summary = doc.summary;
+    const industry = doc.industry;
     const date_received = doc.date_received;
     const { classes } = props;
 
@@ -43,6 +48,9 @@ function DocEntry(props) {
                 </Typography>
                 <Typography variant="h6" component="h2">
                     {summary}
+                </Typography>
+                <Typography className={classes.industry} color="textSecondary">
+                    industry: {industry}
                 </Typography>
                 <Typography className={classes.pos} color="textSecondary">
                     id: {entry_id}
