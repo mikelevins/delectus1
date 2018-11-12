@@ -42,6 +42,19 @@ class DocEditor extends React.Component {
         const doc = this.props.doc;
         const doc_keys = Object.keys(doc).reverse();
 
+        // create the button-click handlers
+        const handleSaveClicked = (event) => {
+            console.log('Handling Save...');
+            console.log(String(Object.keys(event)));
+            app.cancelAndDismissDocumentEditor();
+        };
+
+        const handleCancelClicked = (event) => {
+            console.log('Handling Cancel...');
+            console.log(String(Object.keys(event)));
+            app.cancelAndDismissDocumentEditor();
+        };
+
         // build the editor's text fields
         const doc_fields = doc_keys.map(
             (key) => {
@@ -91,7 +104,7 @@ class DocEditor extends React.Component {
                             className={classes.button}
                             variant="contained"
                             color="primary"
-                            onClick={app.cancelAndDismissDocumentEditor}>
+                            onClick={handleSaveClicked}>
                             Save
                         </Button>
                         {/* Cancel button */}
@@ -99,7 +112,7 @@ class DocEditor extends React.Component {
                             className={classes.button}
                             variant="contained"
                             color="primary"
-                            onClick={app.cancelAndDismissDocumentEditor}>
+                            onClick={handleCancelClicked}>
                             Cancel
                         </Button>
                     </div>
