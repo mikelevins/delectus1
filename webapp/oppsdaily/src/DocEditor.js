@@ -45,13 +45,13 @@ class DocEditor extends React.Component {
         // create the button-click handlers
         const handleSaveClicked = (event) => {
             console.log('Handling Save...');
-            console.log(String(Object.keys(event)));
+            console.log(event);
             app.cancelAndDismissDocumentEditor();
         };
 
         const handleCancelClicked = (event) => {
             console.log('Handling Cancel...');
-            console.log(String(Object.keys(event)));
+            console.log(event);
             app.cancelAndDismissDocumentEditor();
         };
 
