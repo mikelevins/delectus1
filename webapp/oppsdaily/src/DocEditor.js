@@ -86,6 +86,7 @@ class DocEditor extends React.Component {
                 <div className={classes.sectionHead}>{"Editing document " + String(doc._id)}
 
                     <div className={classes.buttonBar}>
+                        {/* Save button */}
                         <Button
                             className={classes.button}
                             variant="contained"
@@ -93,6 +94,7 @@ class DocEditor extends React.Component {
                             onClick={app.cancelAndDismissDocumentEditor}>
                             Save
                         </Button>
+                        {/* Cancel button */}
                         <Button
                             className={classes.button}
                             variant="contained"
