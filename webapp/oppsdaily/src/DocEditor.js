@@ -35,15 +35,14 @@ const styles = theme => ({
 });
 
 class DocEditor extends React.Component {
-    state = {};
-
-
     render() {
-        const readOnlyFieldNames = ['_rev','_id','date_received','message_id','content'];
+        const readOnlyFieldNames = ['_rev', '_id', 'date_received', 'message_id', 'content'];
         const { classes } = this.props;
         const app = this.props.app;
         const doc = this.props.doc;
         const doc_keys = Object.keys(doc).reverse();
+
+        // build the editor's text fields
         const doc_fields = doc_keys.map(
             (key) => {
                 if (readOnlyFieldNames.includes(key)) {
@@ -60,7 +59,7 @@ class DocEditor extends React.Component {
                             value={doc[key]}
                             margin="normal"
                         />
-                    );    
+                    );
                 } else {
                     // set the defaultValue attribute, but not the value attribute,
                     // so the text field is editable
@@ -81,6 +80,7 @@ class DocEditor extends React.Component {
             }
         );
 
+        // build and return the DocEditor UI
         return (
             <form className={classes.container} noValidate autoComplete="off">
                 <div className={classes.sectionHead}>{"Editing document " + String(doc._id)}
