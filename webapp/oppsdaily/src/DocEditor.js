@@ -45,13 +45,20 @@ class DocEditor extends React.Component {
         // create the button-click handlers
         const handleSaveClicked = (event) => {
             console.log('Handling Save...');
-            console.log(event);
+
+            var updatedDoc = {};
+            // fill in the data from the displayed form
+            doc_keys.forEach((key) => {
+                updatedDoc[key] = document.getElementById(key).value;
+            });
+            console.log(updatedDoc);
+
             app.cancelAndDismissDocumentEditor();
         };
 
         const handleCancelClicked = (event) => {
             console.log('Handling Cancel...');
-            console.log(event);
+            console.log(doc);
             app.cancelAndDismissDocumentEditor();
         };
 
@@ -95,7 +102,11 @@ class DocEditor extends React.Component {
 
         // build and return the DocEditor UI
         return (
-            <form className={classes.container} noValidate autoComplete="off">
+            <form
+                id="DocEditor"
+                className={classes.container}
+                noValidate
+                autoComplete="off">
                 <div className={classes.sectionHead}>{"Editing document " + String(doc._id)}
 
                     <div className={classes.buttonBar}>
