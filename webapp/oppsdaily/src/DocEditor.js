@@ -35,6 +35,17 @@ const styles = theme => ({
 });
 
 class DocEditor extends React.Component {
+    docValuesFromForm = () => {
+        const doc = this.props.doc;
+        const doc_keys = Object.keys(doc).reverse();
+        var updatedDoc = {};
+            // fill in the data from the displayed form
+            doc_keys.forEach((key) => {
+                updatedDoc[key] = document.getElementById(key).value;
+            });
+        return updatedDoc;
+    };
+
     render() {
         const readOnlyFieldNames = ['_rev', '_id', 'date_received', 'message_id', 'content'];
         const { classes } = this.props;
@@ -44,21 +55,11 @@ class DocEditor extends React.Component {
 
         // create the button-click handlers
         const handleSaveClicked = (event) => {
-            console.log('Handling Save...');
-
-            var updatedDoc = {};
-            // fill in the data from the displayed form
-            doc_keys.forEach((key) => {
-                updatedDoc[key] = document.getElementById(key).value;
-            });
-            console.log(updatedDoc);
-
-            app.cancelAndDismissDocumentEditor();
+            var updatedDoc = this.docValuesFromForm();
+            app.saveDocAndDismissDocumentEditor(updatedDoc);
         };
 
         const handleCancelClicked = (event) => {
-            console.log('Handling Cancel...');
-            console.log(doc);
             app.cancelAndDismissDocumentEditor();
         };
 
