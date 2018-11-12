@@ -35,40 +35,49 @@ const styles = theme => ({
 });
 
 class DocEditor extends React.Component {
-    state = {
-        name: 'Cat in the Hat',
-        age: '',
-        multiline: 'Controlled',
-        currency: 'EUR',
-    };
+    state = {};
 
-    handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value,
-        });
-    };
 
     render() {
+        const readOnlyFieldNames = ['_rev','_id','date_received','message_id','content'];
         const { classes } = this.props;
         const app = this.props.app;
         const doc = this.props.doc;
         const doc_keys = Object.keys(doc).reverse();
         const doc_fields = doc_keys.map(
             (key) => {
-                return (
-                    <TextField
-                        key={key}
-                        id={key}
-                        label={key}
-                        className={classes.textField}
-                        fullWidth={true}
-                        multiline={true}
-                        variant='outlined'
-                        value={doc[key]}
-                        onChange={this.handleChange('name')}
-                        margin="normal"
-                    />
-                );
+                if (readOnlyFieldNames.includes(key)) {
+                    // set the value attribute, so the text field is not editable
+                    return (
+                        <TextField
+                            key={key}
+                            id={key}
+                            label={key}
+                            className={classes.textField}
+                            fullWidth={true}
+                            multiline={true}
+                            variant='outlined'
+                            value={doc[key]}
+                            margin="normal"
+                        />
+                    );    
+                } else {
+                    // set the defaultValue attribute, but not the value attribute,
+                    // so the text field is editable
+                    return (
+                        <TextField
+                            key={key}
+                            id={key}
+                            label={key}
+                            className={classes.textField}
+                            fullWidth={true}
+                            multiline={true}
+                            variant='outlined'
+                            defaultValue={doc[key]}
+                            margin="normal"
+                        />
+                    );
+                }
             }
         );
 
