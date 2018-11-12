@@ -70,6 +70,7 @@ class App extends Component {
   saveDocAndDismissDocumentEditor = (updatedDoc) => {
     console.log('Updating doc:');
     console.log(updatedDoc);
+    this.setState({ selectedDoc: null, showEditor: false });
   }
 
   // main render
