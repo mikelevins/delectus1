@@ -5,53 +5,45 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
-    button: {
-        marginLeft: '1em',
-    },
-    buttonBar: {
-        display: 'inline',
-    },
-    editBox: {
-        width: '90%',
-    },
+    button: { marginLeft: '1em' },
+    buttonBar: { display: 'inline' },
+    container: { display: 'block' },
+    dense: { marginTop: 19 },
+    editBox: { width: '90%' },
+    menu: { width: 200 },
     sectionHead: {
         fontWeight: 'bold',
         marginLeft: '1em',
         marginTop: '1em',
     },
-    container: {
-        display: 'block',
-    },
     textField: {
         marginLeft: '2em',
         marginRight: '2em',
     },
-    dense: {
-        marginTop: 19,
-    },
-    menu: {
-        width: 200,
-    },
 });
 
+const readOnlyFieldNames = ['_rev', '_id', 'date_received', 'message_id', 'content'];
+
+function getDocKeys(doc) { return Object.keys(doc).reverse(); };
+
 class DocEditor extends React.Component {
+
     docValuesFromForm = () => {
         const doc = this.props.doc;
-        const doc_keys = Object.keys(doc).reverse();
+        const doc_keys = getDocKeys(doc);
         var updatedDoc = {};
-            // fill in the data from the displayed form
-            doc_keys.forEach((key) => {
-                updatedDoc[key] = document.getElementById(key).value;
-            });
+        // fill in the updated doc data from the displayed form
+        doc_keys.forEach((key) => {
+            updatedDoc[key] = document.getElementById(key).value;
+        });
         return updatedDoc;
     };
 
     render() {
-        const readOnlyFieldNames = ['_rev', '_id', 'date_received', 'message_id', 'content'];
         const { classes } = this.props;
         const app = this.props.app;
         const doc = this.props.doc;
-        const doc_keys = Object.keys(doc).reverse();
+        const doc_keys = getDocKeys(doc);
 
         // create the button-click handlers
         const handleSaveClicked = (event) => {
