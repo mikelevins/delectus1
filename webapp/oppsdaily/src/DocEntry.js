@@ -20,7 +20,9 @@ const styles = {
     industry: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 6,
+        marginTop: 8,
+        marginBottom: 6
+        ,
     },
     pos: {
         marginBottom: 6,
@@ -29,13 +31,6 @@ const styles = {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 6,
-    },
-    industry: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginTop: 8,
-        marginBottom: 6
-        ,
     },
     willing_to_pay: {
         fontSize: 16,
