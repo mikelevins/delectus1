@@ -20,23 +20,26 @@ const styles = {
     industry: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 8,
+        marginBottom: 6,
     },
     pos: {
-        marginBottom: 8,
+        marginBottom: 6,
     },
     title: {
         fontSize: 16,
         fontWeight: 'bold',
+        marginBottom: 6,
     },
     industry: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 8,
+        marginTop: 8,
+        marginBottom: 6
+        ,
     },
     willing_to_pay: {
         fontSize: 16,
-        marginBottom: 8,
+        marginBottom: 6,
     },
 };
 
@@ -45,6 +48,7 @@ function DocEntry(props) {
     const entry = props.entry;
     const entry_id = entry.id;
     const doc = entry.doc;
+    const rev = doc._rev;
     const summary = doc.summary;
     const industry = doc.industry;
     const date_received = doc.date_received;
@@ -54,6 +58,9 @@ function DocEntry(props) {
     return (
         <Card className={classes.card}>
             <CardContent>
+                <Typography className={classes.pos} color="textSecondary">
+                    {date_received}
+                </Typography>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                     Summary:
                 </Typography>
@@ -70,7 +77,7 @@ function DocEntry(props) {
                     id: {entry_id}
                 </Typography>
                 <Typography className={classes.pos} color="textSecondary">
-                    {date_received}
+                    rev: {rev}
                 </Typography>
             </CardContent>
             <CardActions>
