@@ -45,9 +45,15 @@ class App extends Component {
     document.title = "Couch Inspector"
   } // end componentDidMount
 
-  handleClick = () => {
+  handleGetInfo = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url)
+      .then(response => this.setState({ couchInfo: response }));
+  }
+
+  handleGetDBs = () => {
+    const couch_url = document.getElementById('CouchDB_URL').value;
+    axios.get(couch_url+'/_all_dbs')
       .then(response => this.setState({ couchInfo: response }));
   }
 
@@ -75,12 +81,19 @@ class App extends Component {
             className={classes.button}
             variant="contained"
             color="primary"
-            onClick={app.handleClick}>
-            Get Info
+            onClick={app.handleGetInfo}>
+            Get Couch Info
+        </Button>
+        <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            onClick={app.handleGetDBs}>
+            Get Databases
         </Button>
         </div>
         <div>
-          { (couchInfo) ? <ObjectPresentation object={couchInfo}/> : <EmptyBlock/> }
+          {(couchInfo) ? <ObjectPresentation object={couchInfo} /> : <EmptyBlock />}
         </div>
       </React.Fragment>
     );
