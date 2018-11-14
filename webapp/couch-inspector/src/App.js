@@ -48,13 +48,13 @@ class App extends Component {
   handleGetInfo = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url)
-      .then(response => this.setState({ couchInfo: response }));
+      .then(response => this.setState({ couchInfo: response.data }));
   }
 
   handleGetDBs = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url+'/_all_dbs')
-      .then(response => this.setState({ couchInfo: response }));
+      .then(response => this.setState({ couchInfo: response.data }));
   }
 
   // main render
