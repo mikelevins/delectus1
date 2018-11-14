@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import EmptyBlock from './EmptyBlock.js';
+import ObjectPresentation from './ObjectPresentation.js';
 
 import axios from 'axios';
 
@@ -7,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
+
 
 const styles = theme => ({
   button: {
@@ -29,7 +32,9 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      couchInfo: null
+    };
   }
 
   // methods
@@ -72,8 +77,11 @@ class App extends Component {
             variant="contained"
             color="primary"
             onClick={app.handleClick}>
-            Connect
+            Get Info
         </Button>
+        </div>
+        <div>
+          { (app.state.couchInfo) ? <ObjectPresentation app={app}/> : <EmptyBlock/> }
         </div>
       </React.Fragment>
     );
