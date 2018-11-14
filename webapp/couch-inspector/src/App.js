@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import EmptyBlock from './EmptyBlock.js';
-import ObjectPresentation from './ObjectPresentation.js';
+import Presenter from './Presenter.js';
 
 import axios from 'axios';
 
@@ -53,7 +53,7 @@ class App extends Component {
 
   handleGetDBs = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
-    axios.get(couch_url+'/_all_dbs')
+    axios.get(couch_url + '/_all_dbs')
       .then(response => this.setState({ couchInfo: response.data }));
   }
 
@@ -84,7 +84,7 @@ class App extends Component {
             onClick={app.handleGetInfo}>
             Get Couch Info
         </Button>
-        <Button
+          <Button
             className={classes.button}
             variant="contained"
             color="primary"
@@ -92,9 +92,11 @@ class App extends Component {
             Get Databases
         </Button>
         </div>
-        <div>
-          {(couchInfo) ? <ObjectPresentation object={couchInfo} /> : <EmptyBlock />}
-        </div>
+        <div>{(couchInfo) ? (
+          <Presenter label='CouchDB Info' object={couchInfo} />
+        ) : (
+            <EmptyBlock />
+          )}</div>
       </React.Fragment>
     );
   }
