@@ -93,7 +93,7 @@ class App extends Component {
         </Button>
         </div>
         <div>{(couchInfo) ? (
-          <Presenter label='CouchDB Info' object={couchInfo} />
+          <Presenter object={couchInfo} />
         ) : (
             <EmptyBlock />
           )}</div>

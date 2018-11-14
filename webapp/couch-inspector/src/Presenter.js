@@ -34,7 +34,6 @@ class Presenter extends Component {
         return (
             <React.Fragment>
                 <CssBaseline />
-                <p className={styles.browserLabel}>{presenter.props.label}</p>
                 <PresenterObjectTable object={presenter.props.object} />
             </React.Fragment>
         );
