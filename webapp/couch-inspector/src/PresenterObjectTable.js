@@ -29,7 +29,6 @@ class PresenterObjectTable extends Component {
   // ---------------------------------------------------------
 
   render() {
-    const { classes } = this.props;
     const presenter = this;
     const object = presenter.props.object;
     const object_properties = Object.keys(object);
@@ -38,7 +37,7 @@ class PresenterObjectTable extends Component {
         const val = object[prop];
 
         return (
-          <tr>
+          <tr key={prop}>
             <td style={styles.propertyName}>{prop + ':'}</td>
             <td>{typeof val === 'object' ? (
               <PresenterObjectTable object={val} />

@@ -8,10 +8,9 @@ import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
 
 
-const styles = theme => ({
+const styles = {
   button: {
     marginLeft: '2rem',
     marginTop: '1rem',
@@ -22,7 +21,7 @@ const styles = theme => ({
   textField: {
     marginLeft: '2rem',
   },
-});
+};
 
 class App extends Component {
 
@@ -61,31 +60,30 @@ class App extends Component {
   // ---------------------------------------------------------
 
   render() {
-    const { classes } = this.props;
     const app = this;
     const couchInfo = app.state.couchInfo;
 
     return (
       <React.Fragment>
         <CssBaseline />
-        <h1 className={classes.h1}>Couch Inspector</h1>
+        <h1 style={styles.h1}>Couch Inspector</h1>
         <div>
           <TextField
             id="CouchDB_URL"
             label='CouchDB URL:'
-            className={classes.textField}
+            style={styles.textField}
             defaultValue='http://mars.local:5984'
             margin="normal"
           />
           <Button
-            className={classes.button}
+            style={styles.button}
             variant="contained"
             color="primary"
             onClick={app.handleGetInfo}>
             Get Couch Info
         </Button>
           <Button
-            className={classes.button}
+            style={styles.button}
             variant="contained"
             color="primary"
             onClick={app.handleGetDBs}>
@@ -105,4 +103,4 @@ class App extends Component {
 // exports
 // ---------------------------------------------------------
 
-export default withStyles(styles)(App);
+export default App;

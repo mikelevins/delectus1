@@ -3,14 +3,6 @@ import './App.css';
 import PresenterObjectTable from './PresenterObjectTable.js';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { withStyles } from '@material-ui/core/styles';
-
-
-const styles = theme => ({
-    presenter: {
-        marginLeft: '2rem',
-    },
-});
 
 class Presenter extends Component {
 
@@ -28,7 +20,6 @@ class Presenter extends Component {
     // ---------------------------------------------------------
 
     render() {
-        const { classes } = this.props;
         const presenter = this;
 
         return (
@@ -43,4 +34,4 @@ class Presenter extends Component {
 // exports
 // ---------------------------------------------------------
 
-export default withStyles(styles)(Presenter);
+export default Presenter;
