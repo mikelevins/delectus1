@@ -3,28 +3,77 @@ import './App.css';
 
 import axios from 'axios';
 
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  button: { marginLeft: '1em' },
+  buttonBar: { display: 'inline' },
+  container: { display: 'block' },
+  dense: { marginTop: 19 },
+  editBox: { width: '90%' },
+  menu: { width: 200 },
+  sectionHead: {
+      fontWeight: 'bold',
+      marginLeft: '1em',
+      marginTop: '1em',
+  },
+  textField: {
+      marginLeft: '2em',
+      marginRight: '2em',
+  },
+});
+
 class App extends Component {
+
+  // constructor
+  // ---------------------------------------------------------
+
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  }
+
+  // methods
+  // ---------------------------------------------------------
+
+
   componentDidMount() {
     document.title = "Couch Inspector"
   } // end componentDidMount
 
-  handleClick() {
+  handleClick = () => {
     axios.get('http://mars.local:5984')
-      .then(response => console.log(response));
+      .then(response => this.setState({ couchInfo: response }));
     console.log('Sucess!');
   }
 
+  // main render
+  // ---------------------------------------------------------
+
   render() {
     const app = this;
+    const { classes } = this.props;
 
     return (
-      <div className='button__container'>
-        <button className='button' onClick={app.handleClick}>
+      <React.Fragment>
+        <CssBaseline />
+        <Button
+          className={classes.button}
+          variant="contained"
+          color="primary"
+          onClick={app.handleClick}>
           Click Me
-          </button>
-      </div>
+        </Button>
+
+      </React.Fragment>
     );
   }
 }
 
-export default App;
+// exports
+// ---------------------------------------------------------
+
+export default withStyles(styles)(App);
