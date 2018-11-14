@@ -13,6 +13,7 @@ const styles = {
     },
     objectValue: {
         border: '1px solid black',
+        padding: '8px',
     },
 };
 
@@ -36,7 +37,7 @@ function ObjectValueCell(props) {
     } else {
         return (
             <td style={styles.objectValue}>
-                {String(val)} />
+                {String(val)}
             </td>
         );
     }
