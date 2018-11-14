@@ -55,8 +55,9 @@ class App extends Component {
   // ---------------------------------------------------------
 
   render() {
-    const app = this;
     const { classes } = this.props;
+    const app = this;
+    const couchInfo = app.state.couchInfo;
 
     return (
       <React.Fragment>
@@ -81,7 +82,7 @@ class App extends Component {
         </Button>
         </div>
         <div>
-          { (app.state.couchInfo) ? <ObjectPresentation app={app}/> : <EmptyBlock/> }
+          { (couchInfo) ? <ObjectPresentation object={couchInfo}/> : <EmptyBlock/> }
         </div>
       </React.Fragment>
     );

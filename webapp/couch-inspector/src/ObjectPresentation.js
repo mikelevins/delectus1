@@ -31,12 +31,12 @@ class ObjectPresentation extends Component {
 
     render() {
         const { classes } = this.props;
-        const app = this.props.app;
+        const object = this.props.object;
 
         return (
             <React.Fragment>
                 <CssBaseline />
-                <p className={classes.p}>{JSON.stringify(app.state.couchInfo)}</p>
+                <p className={classes.p}>{JSON.stringify(object)}</p>
             </React.Fragment>
         );
     }
