@@ -5,23 +5,19 @@ import axios from 'axios';
 
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
-  button: { marginLeft: '1em' },
-  buttonBar: { display: 'inline' },
-  container: { display: 'block' },
-  dense: { marginTop: 19 },
-  editBox: { width: '90%' },
-  menu: { width: 200 },
-  sectionHead: {
-      fontWeight: 'bold',
-      marginLeft: '1em',
-      marginTop: '1em',
+  button: {
+    marginLeft: '2rem',
+    marginTop: '1rem',
+  },
+  h1: {
+    marginLeft: '2rem',
   },
   textField: {
-      marginLeft: '2em',
-      marginRight: '2em',
+    marginLeft: '2rem',
   },
 });
 
@@ -45,9 +41,9 @@ class App extends Component {
   } // end componentDidMount
 
   handleClick = () => {
-    axios.get('http://mars.local:5984')
+    const couch_url = document.getElementById('CouchDB_URL').value;
+    axios.get(couch_url)
       .then(response => this.setState({ couchInfo: response }));
-    console.log('Sucess!');
   }
 
   // main render
@@ -60,14 +56,25 @@ class App extends Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Button
-          className={classes.button}
-          variant="contained"
-          color="primary"
-          onClick={app.handleClick}>
-          Click Me
+        <h1 className={classes.h1}>Couch Inspector</h1>
+        <div>
+          <TextField
+            id="CouchDB_URL"
+            label='CouchDB URL:'
+            className={classes.textField}
+            defaultValue='http://mars.local:5984'
+            margin="normal"
+          />
+        </div>
+        <div>
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            onClick={app.handleClick}>
+            Connect
         </Button>
-
+        </div>
       </React.Fragment>
     );
   }
