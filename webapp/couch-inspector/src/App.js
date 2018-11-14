@@ -71,8 +71,6 @@ class App extends Component {
             defaultValue='http://mars.local:5984'
             margin="normal"
           />
-        </div>
-        <div>
           <Button
             className={classes.button}
             variant="contained"

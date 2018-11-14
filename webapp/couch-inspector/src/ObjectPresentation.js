@@ -1,28 +1,43 @@
 import React, { Component } from 'react';
 import './App.css';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { withStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
-    button: { marginLeft: '1em' },
-    buttonBar: { display: 'inline' },
-    container: { display: 'block' },
-    dense: { marginTop: 19 },
-    editBox: { width: '90%' },
-    menu: { width: 200 },
-    p: {
-        marginLeft: '2rem',
-    },
-    sectionHead: {
-        fontWeight: 'bold',
-        marginLeft: '1em',
-        marginTop: '1em',
-    },
-    textField: {
-        marginLeft: '2em',
-        marginRight: '2em',
-    },
-});
+function presentObject(object) {
+    const objectType = typeof object;
+
+    if (objectType === 'object') {
+        const objectRows = Object.keys(object).map(
+            (key) =>
+                <tr key={key}>
+                    <td style={{fontWeight: 'bold'}}>{key}:</td>
+                    <td style={{border: '1px solid black'}}>{presentObject(object[key])}</td>
+                </tr>
+        );
+
+        return (
+            <React.Fragment>
+                <CssBaseline />
+                <table 
+                    style={{
+                        marginLeft: 2 + 'rem',
+                        marginRight: 2 + 'rem',
+                        }}>
+                    <tbody>
+                        {objectRows}
+                    </tbody>
+                </table>
+            </React.Fragment>
+        );
+    } else {
+        return (
+            <React.Fragment>
+                <CssBaseline />
+                <p>{String(object)}</p>
+            </React.Fragment>
+        );
+    }
+
+};
 
 class ObjectPresentation extends Component {
 
@@ -30,19 +45,12 @@ class ObjectPresentation extends Component {
     // ---------------------------------------------------------
 
     render() {
-        const { classes } = this.props;
         const object = this.props.object;
-
-        return (
-            <React.Fragment>
-                <CssBaseline />
-                <p className={classes.p}>{JSON.stringify(object)}</p>
-            </React.Fragment>
-        );
+        return (presentObject(object));
     }
 }
 
 // exports
 // ---------------------------------------------------------
 
-export default withStyles(styles)(ObjectPresentation);
+export default ObjectPresentation;
