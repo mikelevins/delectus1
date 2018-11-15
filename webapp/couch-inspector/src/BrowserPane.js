@@ -4,12 +4,12 @@ import './App.css';
 const styles = {
     browserPane: {
         border: '1px solid black',
-        height: '100%',
         padding: '6px',
         width: '100%',
     },
     browserPaneTitle: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        height: '1rem',
     }
 };
 

@@ -30,6 +30,7 @@ class Browser extends Component {
 
     render() {
         const browser = this;
+        const app = browser.props.app;
         const keyPath = browser.props.app.keyPath;
         const activeKeyPath = (keyPath) ? (lastThree(keyPath)) : ([]);
 
@@ -40,20 +41,20 @@ class Browser extends Component {
                         <tr>
                             <td style={styles.browserPane}>
                                 <BrowserPane
-                                    title='Metasyntactics'
-                                    list={['foo', 'bar', 'baz']}
+                                    title='Databases'
+                                    list={app.state.databases}
                                 />
                             </td>
                             <td style={styles.browserPane}>
                                 <BrowserPane
-                                    title='Fruits'
-                                    list={['Apple', 'Banana', 'Cherry']}
+                                    title=''
+                                    list={[]}
                                 />
                             </td>
                             <td style={styles.browserPane}>
                                 <BrowserPane
-                                    title='Animals'
-                                    list={['aardvark', 'bison', 'chimpanzee', 'duck']}
+                                    title=''
+                                    list={[]}
                                 />
                             </td>
                         </tr>
