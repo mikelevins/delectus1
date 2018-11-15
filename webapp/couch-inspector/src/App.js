@@ -43,9 +43,9 @@ class App extends Component {
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url + '/_all_dbs')
-      .then(response => this.setState({ 
+      .then(response => this.setState({
         couchURL: couch_url,
-        databases: response.data 
+        databases: response.data
       }));
   }
 
@@ -54,7 +54,6 @@ class App extends Component {
 
   render() {
     const app = this;
-    const leftPaneList = app.state.databases;
 
     return (
       <React.Fragment>
@@ -65,12 +64,21 @@ class App extends Component {
           <CouchControls app={app} />
         </div>
 
-        <div style={styles.browser}>
-          <Browser
-            leftPaneList={leftPaneList} 
-            keyPath={app.keyPath} 
+        {(app.state.databases) ? (
+
+          // we have databases; display them
+          <div style={styles.browser}>
+            <Browser
+              leftPaneList={app.state.databases}
+              keyPath={app.keyPath}
             />
-        </div>
+          </div>
+
+        ) : (
+            // we don't have databases; display a blank div
+            <div style={styles.browser}>&nbsp;</div>
+
+          )}
 
       </React.Fragment>
     );
