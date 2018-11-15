@@ -27,7 +27,9 @@ class App extends Component {
     super(props);
 
     this.state = {
-      databases: null
+      couchURL: '',
+      databases: null,
+      keyPath: [], // the sequence of keys displayed in the browser
     };
   }
 
@@ -41,7 +43,10 @@ class App extends Component {
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url + '/_all_dbs')
-      .then(response => this.setState({ databases: response.data }));
+      .then(response => this.setState({ 
+        couchURL: couch_url,
+        databases: response.data 
+      }));
   }
 
   // main render
@@ -49,7 +54,6 @@ class App extends Component {
 
   render() {
     const app = this;
-    const leftPaneTitle = 'Databases';
     const leftPaneList = app.state.databases;
 
     return (
@@ -62,7 +66,10 @@ class App extends Component {
         </div>
 
         <div style={styles.browser}>
-          <Browser title={leftPaneTitle} leftPaneList={leftPaneList}/>
+          <Browser
+            leftPaneList={leftPaneList} 
+            keyPath={app.keyPath} 
+            />
         </div>
 
       </React.Fragment>
