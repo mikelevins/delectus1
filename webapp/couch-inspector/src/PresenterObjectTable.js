@@ -9,7 +9,6 @@ const styles = {
   },
   object: {
     border: '1px solid black',
-    marginLeft: '2rem',
   },
 };
 

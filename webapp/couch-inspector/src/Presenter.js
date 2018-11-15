@@ -24,7 +24,6 @@ class Presenter extends Component {
 
         return (
             <React.Fragment>
-                <CssBaseline />
                 <PresenterObjectTable object={presenter.props.object} />
             </React.Fragment>
         );

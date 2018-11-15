@@ -6,7 +6,6 @@ import Presenter from './Presenter.js';
 import axios from 'axios';
 
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 
 
@@ -15,12 +14,12 @@ const styles = {
     marginLeft: '2rem',
     marginTop: '1rem',
   },
-  h1: {
+  presenter: { 
     marginLeft: '2rem',
+    marginTop: '1rem',
   },
-  textField: {
-    marginLeft: '2rem',
-  },
+  title: { marginLeft: '2rem' },
+  textField: { marginLeft: '2rem' },
 };
 
 class App extends Component {
@@ -65,15 +64,13 @@ class App extends Component {
 
     return (
       <React.Fragment>
-        <CssBaseline />
-        <h1 style={styles.h1}>Couch Inspector</h1>
+        <h1 style={styles.title}>Couch Inspector</h1>
         <div>
           <TextField
             id="CouchDB_URL"
             label='CouchDB URL:'
             style={styles.textField}
             defaultValue='http://mars.local:5984'
-            margin="normal"
           />
           <Button
             style={styles.button}
@@ -90,11 +87,13 @@ class App extends Component {
             Get Databases
         </Button>
         </div>
-        <div>{(couchInfo) ? (
-          <Presenter object={couchInfo} />
-        ) : (
-            <EmptyBlock />
-          )}</div>
+        <div style={styles.presenter}>
+
+          {(couchInfo) ?
+            (<Presenter object={couchInfo} />) :
+            (<EmptyBlock />)}
+
+        </div>
       </React.Fragment>
     );
   }
