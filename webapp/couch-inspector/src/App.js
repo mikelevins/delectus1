@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 import CouchControls from './CouchControls.js';
-import EmptyBlock from './EmptyBlock.js';
-import Presenter from './Presenter.js';
+import Browser from './Browser.js';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from 'axios';
@@ -12,7 +11,7 @@ const styles = {
   controls: {
     width: '70%',
   },
-  presenter: {
+  browser: {
     marginLeft: '2rem',
     marginTop: '1rem',
   },
@@ -28,7 +27,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      couchInfo: null
+      databases: null
     };
   }
 
@@ -39,16 +38,10 @@ class App extends Component {
     document.title = "Couch Inspector"
   } // end componentDidMount
 
-  handleGetInfo = () => {
-    const couch_url = document.getElementById('CouchDB_URL').value;
-    axios.get(couch_url)
-      .then(response => this.setState({ couchInfo: response.data }));
-  }
-
-  handleGetDBs = () => {
+  handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url + '/_all_dbs')
-      .then(response => this.setState({ couchInfo: response.data }));
+      .then(response => this.setState({ databases: response.data }));
   }
 
   // main render
@@ -56,7 +49,8 @@ class App extends Component {
 
   render() {
     const app = this;
-    const couchInfo = app.state.couchInfo;
+    const leftPaneTitle = 'Databases';
+    const leftPaneList = app.state.databases;
 
     return (
       <React.Fragment>
@@ -67,10 +61,8 @@ class App extends Component {
           <CouchControls app={app} />
         </div>
 
-        <div style={styles.presenter}>
-          {(couchInfo) ?
-            (<Presenter object={couchInfo} />) :
-            (<EmptyBlock />)}
+        <div style={styles.browser}>
+          <Browser title={leftPaneTitle} leftPaneList={leftPaneList}/>
         </div>
 
       </React.Fragment>

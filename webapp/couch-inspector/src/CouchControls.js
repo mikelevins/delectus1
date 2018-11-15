@@ -33,15 +33,8 @@ class CouchControls extends Component {
                         style={styles.button}
                         variant="contained"
                         color="primary"
-                        onClick={app.handleGetInfo}>
-                        Get Couch Info
-                    </Button>
-                    <Button
-                        style={styles.button}
-                        variant="contained"
-                        color="primary"
-                        onClick={app.handleGetDBs}>
-                        Get Databases
+                        onClick={app.handleConnect}>
+                        Connect
                     </Button>
                 </div>
 

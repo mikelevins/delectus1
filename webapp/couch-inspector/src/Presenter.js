@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 
 const styles = {
+    presenterTitle: {
+        fontWeight: 'bold',
+    },
     propertyName: {
         fontWeight: 'bold',
     },
@@ -48,6 +51,7 @@ class Presenter extends Component {
 
         return (
             <React.Fragment>
+                <p style={styles.presenterTitle}>Databases</p>
                 <table style={styles.object}>
                     <tbody>{property_rows}</tbody>
                 </table>
