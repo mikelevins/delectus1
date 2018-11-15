@@ -5,6 +5,7 @@ import CouchControls from './CouchControls.js';
 import EmptyBlock from './EmptyBlock.js';
 import Presenter from './Presenter.js';
 
+import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from 'axios';
 
 const styles = {
@@ -59,6 +60,7 @@ class App extends Component {
 
     return (
       <React.Fragment>
+        <CssBaseline />
 
         <h1 style={styles.title}>Couch Inspector</h1>
         <div style={styles.controls}>
