@@ -69,8 +69,7 @@ class App extends Component {
           // we have databases; display them
           <div style={styles.browser}>
             <Browser
-              leftPaneList={app.state.databases}
-              keyPath={app.keyPath}
+              app={app}
             />
           </div>
 

@@ -8,34 +8,36 @@ const styles = {
     },
 };
 
-class Browser extends Component {
+function lastThree(anArray) {
+    const len = anArray.length;
 
-    // constructor
-    // ---------------------------------------------------------
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-        };
+    if (len <= 3) {
+        return anArray;
+    } else {
+        const start = len - 3;
+        return anArray.slice(start, len);
     }
+
+}
+
+class Browser extends Component {
 
     // main render
     // ---------------------------------------------------------
 
     render() {
         const browser = this;
-        const leftPaneTitle = browser.props.leftPaneTitle;
-        const leftPaneList = browser.props.leftPaneList;
+        const keyPath = browser.props.app.keyPath;
+        const activeKeyPath = (keyPath) ? (lastThree(keyPath)) : ([]);
 
         return (
             <React.Fragment>
                 <table style={styles.browser}>
                     <tbody>
                         <tr>
-                            <td><BrowserPane list={leftPaneList} /></td>
-                            <td></td>
-                            <td></td>
+                            <td><BrowserPane list={[]} /></td>
+                            <td><BrowserPane list={[]} /></td>
+                            <td><BrowserPane list={[]} /></td>
                         </tr>
                     </tbody>
                 </table>
