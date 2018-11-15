@@ -4,7 +4,13 @@ import './App.css';
 const styles = {
     browserPane: {
         border: '1px solid black',
+        height: '100%',
+        padding: '6px',
+        width: '100%',
     },
+    browserPaneTitle: {
+        fontWeight: 'bold'
+    }
 };
 
 class BrowserPane extends Component {
@@ -35,7 +41,7 @@ class BrowserPane extends Component {
 
         return (
             <div>
-                <p>{pane.props.title}</p>
+                <p style={styles.browserPaneTitle}>{pane.props.title}</p>
                 <table style={styles.browserPane}>
                     <tbody>
                         {listRows}

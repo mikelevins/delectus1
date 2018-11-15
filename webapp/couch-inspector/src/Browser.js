@@ -5,6 +5,10 @@ import BrowserPane from './BrowserPane.js';
 const styles = {
     browser: {
         border: '1px solid black',
+        borderSpacing: '8px 8px',
+    },
+    browserPane: {
+        verticalAlign: 'top',
     },
 };
 
@@ -17,7 +21,6 @@ function lastThree(anArray) {
         const start = len - 3;
         return anArray.slice(start, len);
     }
-
 }
 
 class Browser extends Component {
@@ -35,9 +38,24 @@ class Browser extends Component {
                 <table style={styles.browser}>
                     <tbody>
                         <tr>
-                            <td><BrowserPane list={[]} /></td>
-                            <td><BrowserPane list={[]} /></td>
-                            <td><BrowserPane list={[]} /></td>
+                            <td style={styles.browserPane}>
+                                <BrowserPane
+                                    title='Metasyntactics'
+                                    list={['foo', 'bar', 'baz']}
+                                />
+                            </td>
+                            <td style={styles.browserPane}>
+                                <BrowserPane
+                                    title='Fruits'
+                                    list={['Apple', 'Banana', 'Cherry']}
+                                />
+                            </td>
+                            <td style={styles.browserPane}>
+                                <BrowserPane
+                                    title='Animals'
+                                    list={['aardvark', 'bison', 'chimpanzee', 'duck']}
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
