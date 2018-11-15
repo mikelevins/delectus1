@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
-import BrowserPane from './BrowserPane.js';
 
 const styles = {
-    browser: {
+    browserPane: {
         border: '1px solid black',
     },
 };
 
-class Browser extends Component {
+class BrowserPane extends Component {
 
     // constructor
     // ---------------------------------------------------------
@@ -24,22 +23,25 @@ class Browser extends Component {
     // ---------------------------------------------------------
 
     render() {
-        const browser = this;
-        const leftPaneTitle = browser.props.leftPaneTitle;
-        const leftPaneList = browser.props.leftPaneList;
+        const pane = this;
+        const list = pane.props.list;
+        var listRows = [];
+
+        if (list) {
+            listRows = list.map(
+                (item) => <tr><td>{item}</td></tr>
+            );
+        }
 
         return (
-            <React.Fragment>
-                <table style={styles.browser}>
+            <div>
+                <p>{pane.props.title}</p>
+                <table style={styles.browserPane}>
                     <tbody>
-                        <tr>
-                            <td><BrowserPane list={leftPaneList} /></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {listRows}
                     </tbody>
                 </table>
-            </React.Fragment>
+            </div>
         );
     }
 }
@@ -47,4 +49,4 @@ class Browser extends Component {
 // exports
 // ---------------------------------------------------------
 
-export default Browser;
+export default BrowserPane;
