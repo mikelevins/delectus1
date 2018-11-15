@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
-import PresenterObjectTable from './PresenterObjectTable.js';
+
+const styles = {
+    propertyName: {
+        fontWeight: 'bold',
+    },
+    object: {
+        border: '1px solid black',
+    },
+};
 
 class Presenter extends Component {
 
@@ -19,10 +27,30 @@ class Presenter extends Component {
 
     render() {
         const presenter = this;
+        const object = presenter.props.object;
+        const object_properties = Object.keys(object);
+        const property_rows = object_properties.map(
+            (prop) => {
+                const val = object[prop];
+
+                return (
+                    <tr key={prop}>
+                        <td style={styles.propertyName}>{prop + ':'}</td>
+                        <td>
+                            {(typeof val === 'object') ? (
+                                <Presenter object={val} />
+                            ) : (String(val))
+                            }
+                        </td>
+                    </tr>
+                )
+            });
 
         return (
             <React.Fragment>
-                <PresenterObjectTable object={presenter.props.object} />
+                <table style={styles.object}>
+                    <tbody>{property_rows}</tbody>
+                </table>
             </React.Fragment>
         );
     }
