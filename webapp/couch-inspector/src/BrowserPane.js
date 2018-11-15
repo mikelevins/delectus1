@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Button from '@material-ui/core/Button';
 
 const styles = {
     browserPane: {
@@ -10,13 +11,23 @@ const styles = {
     browserPaneTitle: {
         fontWeight: 'bold',
         height: '1rem',
+    },
+    button: {
+        textTransform: 'none'
     }
 };
 
 
 class BrowserPane extends Component {
+    makeItemSelector = (item) =>
+        <Button
+            style={styles.button}
+            variant='text'
+        >
+            {item}
+        </Button>;
 
-    makeBrowserRow = (item) => <tr><td>{item}</td></tr>;
+    makeBrowserRow = (item) => <tr><td>{this.makeItemSelector(item)}</td></tr>;
 
     // main render
     // ---------------------------------------------------------
@@ -49,3 +60,4 @@ class BrowserPane extends Component {
 // ---------------------------------------------------------
 
 export default BrowserPane;
+
