@@ -1,25 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
+import CouchControls from './CouchControls.js';
 import EmptyBlock from './EmptyBlock.js';
 import Presenter from './Presenter.js';
 
+
 import axios from 'axios';
 
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-
-
 const styles = {
-  button: {
-    marginLeft: '2rem',
-    marginTop: '1rem',
+  controls: {
+    width: '70%',
   },
-  presenter: { 
+  presenter: {
     marginLeft: '2rem',
     marginTop: '1rem',
   },
   title: { marginLeft: '2rem' },
-  textField: { marginLeft: '2rem' },
 };
 
 class App extends Component {
@@ -37,7 +33,6 @@ class App extends Component {
 
   // methods
   // ---------------------------------------------------------
-
 
   componentDidMount() {
     document.title = "Couch Inspector"
@@ -64,36 +59,18 @@ class App extends Component {
 
     return (
       <React.Fragment>
-        <h1 style={styles.title}>Couch Inspector</h1>
-        <div>
-          <TextField
-            id="CouchDB_URL"
-            label='CouchDB URL:'
-            style={styles.textField}
-            defaultValue='http://mars.local:5984'
-          />
-          <Button
-            style={styles.button}
-            variant="contained"
-            color="primary"
-            onClick={app.handleGetInfo}>
-            Get Couch Info
-        </Button>
-          <Button
-            style={styles.button}
-            variant="contained"
-            color="primary"
-            onClick={app.handleGetDBs}>
-            Get Databases
-        </Button>
-        </div>
-        <div style={styles.presenter}>
 
+        <h1 style={styles.title}>Couch Inspector</h1>
+        <div style={styles.controls}>
+          <CouchControls app={app} />
+        </div>
+
+        <div style={styles.presenter}>
           {(couchInfo) ?
             (<Presenter object={couchInfo} />) :
             (<EmptyBlock />)}
-
         </div>
+
       </React.Fragment>
     );
   }

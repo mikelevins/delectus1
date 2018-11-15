@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import PresenterObjectTable from './PresenterObjectTable.js';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
-
 class Presenter extends Component {
 
     // constructor

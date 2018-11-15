@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import CssBaseline from '@material-ui/core/CssBaseline';
 
 
 const styles = {
@@ -50,7 +49,6 @@ class PresenterObjectTable extends Component {
 
     return (
       <React.Fragment>
-        <CssBaseline />
         <table style={styles.object}>
           <tbody>
             {property_rows}
