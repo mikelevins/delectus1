@@ -35,14 +35,14 @@ class CouchControls extends Component {
                         color="primary"
                         onClick={app.handleGetInfo}>
                         Get Couch Info
-            </Button>
+                    </Button>
                     <Button
                         style={styles.button}
                         variant="contained"
                         color="primary"
                         onClick={app.handleGetDBs}>
                         Get Databases
-            </Button>
+                    </Button>
                 </div>
 
             </React.Fragment>
