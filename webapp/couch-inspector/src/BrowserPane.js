@@ -13,42 +13,35 @@ const styles = {
     }
 };
 
+
 class BrowserPane extends Component {
 
-    // constructor
-    // ---------------------------------------------------------
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-        };
-    }
+    makeBrowserRow = (item) => <tr><td>{item}</td></tr>;
 
     // main render
     // ---------------------------------------------------------
 
     render() {
+        const emptyList = [];
         const pane = this;
         const list = pane.props.list;
-        var listRows = [];
+        var listRows = (list) ? (list.map(this.makeBrowserRow)) : (emptyList);
 
-        if (list) {
-            listRows = list.map(
-                (item) => <tr><td>{item}</td></tr>
+        if (list && list.length > 0) {
+            return (
+                <div>
+                    <p style={styles.browserPaneTitle}>{pane.props.title}</p>
+                    <table style={styles.browserPane}>
+                        <tbody>
+                            {listRows}
+                        </tbody>
+                    </table>
+                </div>
             );
+        } else {
+            return (<div></div>);
         }
 
-        return (
-            <div>
-                <p style={styles.browserPaneTitle}>{pane.props.title}</p>
-                <table style={styles.browserPane}>
-                    <tbody>
-                        {listRows}
-                    </tbody>
-                </table>
-            </div>
-        );
     }
 }
 

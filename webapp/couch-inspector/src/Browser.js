@@ -32,7 +32,9 @@ class Browser extends Component {
         const browser = this;
         const app = browser.props.app;
         const keyPath = browser.props.app.keyPath;
-        const activeKeyPath = (keyPath) ? (lastThree(keyPath)) : ([]);
+        const leftPaneList = app.state.databases;
+        const middlePaneList = [];
+        const rightPaneList = [];
 
         return (
             <React.Fragment>
@@ -42,19 +44,19 @@ class Browser extends Component {
                             <td style={styles.browserPane}>
                                 <BrowserPane
                                     title='Databases'
-                                    list={app.state.databases}
+                                    list={leftPaneList}
                                 />
                             </td>
                             <td style={styles.browserPane}>
                                 <BrowserPane
                                     title=''
-                                    list={[]}
+                                    list={middlePaneList}
                                 />
                             </td>
                             <td style={styles.browserPane}>
                                 <BrowserPane
                                     title=''
-                                    list={[]}
+                                    list={rightPaneList}
                                 />
                             </td>
                         </tr>
