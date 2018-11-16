@@ -18,7 +18,7 @@ const styles = {
 };
 
 
-class BrowserPane extends Component {
+class BrowserDatabasesPane extends Component {
     makeItemSelector = (item) =>
         <Button
             style={styles.button}
@@ -41,7 +41,7 @@ class BrowserPane extends Component {
         if (list && list.length > 0) {
             return (
                 <div>
-                    <p style={styles.browserPaneTitle}>{pane.props.title}</p>
+                    <p style={styles.browserPaneTitle}>Databases</p>
                     <table style={styles.browserPane}>
                         <tbody>
                             {listRows}
@@ -59,5 +59,5 @@ class BrowserPane extends Component {
 // exports
 // ---------------------------------------------------------
 
-export default BrowserPane;
+export default BrowserDatabasesPane;
 

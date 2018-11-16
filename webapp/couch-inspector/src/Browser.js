@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import BrowserPane from './BrowserPane.js';
+import BrowserDatabasesPane from './BrowserDatabasesPane.js';
+import BrowserDocumentsPane from './BrowserDocumentsPane.js';
+import BrowserDocumentContentsPane from './BrowserDocumentContentsPane.js';
 
 const styles = {
     browser: {
@@ -42,20 +44,17 @@ class Browser extends Component {
                     <tbody>
                         <tr>
                             <td style={styles.browserPane}>
-                                <BrowserPane
-                                    title='Databases'
+                                <BrowserDatabasesPane
                                     list={leftPaneList}
                                 />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserPane
-                                    title=''
+                                <BrowserDocumentsPane
                                     list={middlePaneList}
                                 />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserPane
-                                    title=''
+                                <BrowserDocumentContentsPane
                                     list={rightPaneList}
                                 />
                             </td>
