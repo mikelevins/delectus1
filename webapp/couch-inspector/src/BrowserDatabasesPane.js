@@ -46,6 +46,7 @@ class BrowserDatabasesPane extends Component {
 
         return (
             <ListItem
+                key={item}
                 button={true}
                 selected={isSelected}
                 onClick={(event) => { pane.setSelectedItem(item) }} >
