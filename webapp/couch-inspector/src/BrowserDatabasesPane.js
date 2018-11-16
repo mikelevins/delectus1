@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = {
     browserPane: {
@@ -20,25 +22,21 @@ const styles = {
 
 class BrowserDatabasesPane extends Component {
 
-    makeItemSelector = (item) => {
+    setSelectedItem = (itemName) => {
+        const pane = this;
+        const app = pane.props.app;
+
+        app.setState({selectedDatabase: itemName});
+    }
+
+    makeListItem = (item) => {
         const pane = this;
         const app = pane.props.app;
 
         return (
-            <Button
-                style={styles.button}
-                variant='text'
-                onClick={(event) => app.setState({selectedDatabase: item})} >
-                {item}
-            </Button>
-        )
-    };
-
-    makeBrowserRow = (item) => {
-        return (
-            <tr>
-                <td>{this.makeItemSelector(item)}</td>
-            </tr>
+            <ListItem button onClick={(event) => pane.setSelectedItem(item)} >
+                < ListItemText primary={item} />
+            </ListItem>
         )
     };
 
@@ -50,15 +48,13 @@ class BrowserDatabasesPane extends Component {
         const app = pane.props.app;
         const emptyList = [];
         const dblist = app.state.databases;
-        var dbRows = (dblist) ? (dblist.map(this.makeBrowserRow)) : (emptyList);
+        var dbRows = (dblist) ? (dblist.map(this.makeListItem)) : (emptyList);
 
         if (dblist && dblist.length > 0) {
             return (
                 <div>
                     <p style={styles.browserPaneTitle}>Databases</p>
-                    <table style={styles.browserPane}>
-                        <tbody>{dbRows}</tbody>
-                    </table>
+                    <List component="nav">{dbRows}</List>
                 </div>
             );
         } else {
