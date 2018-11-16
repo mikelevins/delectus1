@@ -14,17 +14,6 @@ const styles = {
     },
 };
 
-function lastThree(anArray) {
-    const len = anArray.length;
-
-    if (len <= 3) {
-        return anArray;
-    } else {
-        const start = len - 3;
-        return anArray.slice(start, len);
-    }
-}
-
 class Browser extends Component {
 
     // main render
