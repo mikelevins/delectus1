@@ -21,6 +21,24 @@ class CouchControls extends Component {
             <React.Fragment>
                 <div>
                     <TextField
+                        id="username"
+                        label='Username:'
+                        fullWidth
+                        style={styles.textField}
+                    />
+                </div>
+                <div>
+                    <TextField
+                        id="password"
+                        label='Password:'
+                        fullWidth
+                        type='password'
+                        style={styles.textField}
+                    />
+                </div>
+
+                <div>
+                    <TextField
                         id="CouchDB_URL"
                         label='CouchDB URL:'
                         fullWidth
@@ -28,6 +46,7 @@ class CouchControls extends Component {
                         defaultValue='http://mars.local:5984'
                     />
                 </div>
+
                 <div>
                     <Button
                         style={styles.button}

@@ -4,6 +4,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import axios from 'axios';
+
 const styles = {
     browserPane: {
         border: '1px solid black',
@@ -25,8 +27,16 @@ class BrowserDatabasesPane extends Component {
     setSelectedItem = (itemName) => {
         const pane = this;
         const app = pane.props.app;
+        const couchURL = app.state.couchURL;
+        const docsRequest = '/' + itemName + '/_all_docs';
 
-        app.setState({ selectedDatabase: itemName });
+        console.log(couchURL + docsRequest);
+                
+        axios.get(couchURL + docsRequest)
+            .then(response => app.setState({
+                selectedDatabase: itemName,
+                selectedDocuments: response.data
+            }));
     }
 
     makeListItem = (item) => {

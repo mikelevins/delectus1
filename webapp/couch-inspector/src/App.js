@@ -30,6 +30,7 @@ class App extends Component {
       couchURL: '',
       databases: null,
       selectedDatabase: null,
+      selectedDocuments: null,
       keyPath: [], // the sequence of keys displayed in the browser
     };
   }
