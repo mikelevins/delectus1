@@ -26,15 +26,19 @@ class BrowserDatabasesPane extends Component {
         const pane = this;
         const app = pane.props.app;
 
-        app.setState({selectedDatabase: itemName});
+        app.setState({ selectedDatabase: itemName });
     }
 
     makeListItem = (item) => {
         const pane = this;
         const app = pane.props.app;
+        const isSelected = item === app.state.selectedDatabase;
 
         return (
-            <ListItem button onClick={(event) => pane.setSelectedItem(item)} >
+            <ListItem
+                button={true}
+                selected={isSelected}
+                onClick={(event) => { pane.setSelectedItem(item) }} >
                 < ListItemText primary={item} />
             </ListItem>
         )
