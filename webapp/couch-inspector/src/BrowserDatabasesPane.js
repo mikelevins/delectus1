@@ -27,7 +27,13 @@ class BrowserDatabasesPane extends Component {
             {item}
         </Button>;
 
-    makeBrowserRow = (item) => <tr><td>{this.makeItemSelector(item)}</td></tr>;
+    makeBrowserRow = (item) => {
+        return (
+            <tr>
+                <td>{this.makeItemSelector(item)}</td>
+            </tr>
+        )
+    };
 
     // main render
     // ---------------------------------------------------------
@@ -35,7 +41,7 @@ class BrowserDatabasesPane extends Component {
     render() {
         const emptyList = [];
         const pane = this;
-        const list = pane.props.list;
+        const list = pane.props.app.state.databases;
         var listRows = (list) ? (list.map(this.makeBrowserRow)) : (emptyList);
 
         if (list && list.length > 0) {
@@ -43,9 +49,7 @@ class BrowserDatabasesPane extends Component {
                 <div>
                     <p style={styles.browserPaneTitle}>Databases</p>
                     <table style={styles.browserPane}>
-                        <tbody>
-                            {listRows}
-                        </tbody>
+                        <tbody>{listRows}</tbody>
                     </table>
                 </div>
             );

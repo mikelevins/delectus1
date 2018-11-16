@@ -33,8 +33,6 @@ class Browser extends Component {
     render() {
         const browser = this;
         const app = browser.props.app;
-        const keyPath = browser.props.app.keyPath;
-        const leftPaneList = app.state.databases;
         const middlePaneList = [];
         const rightPaneList = [];
 
@@ -44,9 +42,7 @@ class Browser extends Component {
                     <tbody>
                         <tr>
                             <td style={styles.browserPane}>
-                                <BrowserDatabasesPane
-                                    list={leftPaneList}
-                                />
+                                <BrowserDatabasesPane app={app} />
                             </td>
                             <td style={styles.browserPane}>
                                 <BrowserDocumentsPane

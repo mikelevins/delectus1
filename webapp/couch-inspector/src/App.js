@@ -29,6 +29,7 @@ class App extends Component {
     this.state = {
       couchURL: '',
       databases: null,
+      selectedDatabase: null,
       keyPath: [], // the sequence of keys displayed in the browser
     };
   }
@@ -68,9 +69,7 @@ class App extends Component {
 
           // we have databases; display them
           <div style={styles.browser}>
-            <Browser
-              app={app}
-            />
+            <Browser app={app} />
           </div>
 
         ) : (
