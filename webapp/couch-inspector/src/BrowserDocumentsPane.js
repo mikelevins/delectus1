@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = {
     browserPane: {
@@ -19,13 +22,20 @@ const styles = {
 
 
 class BrowserDocumentsPane extends Component {
-    makeItemSelector = (item) =>
-        <Button
-            style={styles.button}
-            variant='text'
-        >
-            {item}
-        </Button>;
+
+    makeListItem = (item) => {
+        const pane = this;
+        const itemID = item.id;
+
+        return (
+            <ListItem
+                key={itemID}
+                button={true}  >
+                < ListItemText primary={itemID} />
+            </ListItem>
+        )
+    };
+
 
     makeBrowserRow = (item) => <tr><td>{this.makeItemSelector(item)}</td></tr>;
 
@@ -33,20 +43,18 @@ class BrowserDocumentsPane extends Component {
     // ---------------------------------------------------------
 
     render() {
-        const emptyList = [];
         const pane = this;
-        const list = pane.props.list;
-        var listRows = (list) ? (list.map(this.makeBrowserRow)) : (emptyList);
+        const app = pane.props.app;
+        const emptyList = [];
+        const paneTitle = app.state.selectedDatabase + ' documents';
+        const doclist = app.state.selectedDocuments;
+        var docRows = (doclist && doclist.length > 0) ? (doclist.map(this.makeListItem)) : (emptyList);
 
-        if (list && list.length > 0) {
+        if (doclist && doclist.length > 0) {
             return (
                 <div>
-                    <p style={styles.browserPaneTitle}>Databases</p>
-                    <table style={styles.browserPane}>
-                        <tbody>
-                            {listRows}
-                        </tbody>
-                    </table>
+                    <p style={styles.browserPaneTitle}>{paneTitle}</p>
+                    <List component="nav">{docRows}</List>
                 </div>
             );
         } else {

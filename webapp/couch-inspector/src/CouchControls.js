@@ -14,52 +14,35 @@ const styles = {
 
 class CouchControls extends Component {
 
-    render() {
-        const app = this.props.app;
+render() {
+    const controls = this;
+    const app = controls.props.app;
 
-        return (
-            <React.Fragment>
-                <div>
-                    <TextField
-                        id="username"
-                        label='Username:'
-                        fullWidth
-                        style={styles.textField}
-                    />
-                </div>
-                <div>
-                    <TextField
-                        id="password"
-                        label='Password:'
-                        fullWidth
-                        type='password'
-                        style={styles.textField}
-                    />
-                </div>
+    return (
+        <React.Fragment>
+            <div>
+                <TextField
+                    id="CouchDB_URL"
+                    label='CouchDB URL:'
+                    fullWidth
+                    style={styles.textField}
+                    defaultValue='http://mars.local:5984'
+                />
+            </div>
 
-                <div>
-                    <TextField
-                        id="CouchDB_URL"
-                        label='CouchDB URL:'
-                        fullWidth
-                        style={styles.textField}
-                        defaultValue='http://mars.local:5984'
-                    />
-                </div>
-
-                <div>
-                    <Button
-                        style={styles.button}
-                        variant="contained"
-                        color="primary"
-                        onClick={app.handleConnect}>
-                        Connect
+            <div>
+                <Button
+                    style={styles.button}
+                    variant="contained"
+                    color="primary"
+                    onClick={app.handleConnect}>
+                    Connect
                     </Button>
-                </div>
+            </div>
 
-            </React.Fragment>
-        );
-    }
+        </React.Fragment>
+    );
+}
 }
 
 // exports

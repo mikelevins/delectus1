@@ -29,8 +29,8 @@ class App extends Component {
     this.state = {
       couchURL: '',
       databases: null,
-      selectedDatabase: null,
-      selectedDocuments: null,
+      selectedDatabase: [],
+      selectedDocuments: [],
       keyPath: [], // the sequence of keys displayed in the browser
     };
   }
@@ -44,6 +44,7 @@ class App extends Component {
 
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
+
     axios.get(couch_url + '/_all_dbs')
       .then(response => this.setState({
         couchURL: couch_url,

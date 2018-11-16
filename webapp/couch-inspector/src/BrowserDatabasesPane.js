@@ -35,7 +35,7 @@ class BrowserDatabasesPane extends Component {
         axios.get(couchURL + docsRequest)
             .then(response => app.setState({
                 selectedDatabase: itemName,
-                selectedDocuments: response.data
+                selectedDocuments: response.data.rows
             }));
     }
 

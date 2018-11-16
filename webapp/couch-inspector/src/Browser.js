@@ -6,10 +6,11 @@ import BrowserDocumentContentsPane from './BrowserDocumentContentsPane.js';
 
 const styles = {
     browser: {
-        border: '1px solid black',
         borderSpacing: '8px 8px',
     },
     browserPane: {
+        border: '1px solid black',
+        padding: '10px 5px',
         verticalAlign: 'top',
     },
 };
@@ -34,14 +35,10 @@ class Browser extends Component {
                                 <BrowserDatabasesPane app={app} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentsPane
-                                    list={middlePaneList}
-                                />
+                                <BrowserDocumentsPane app={app} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentContentsPane
-                                    list={rightPaneList}
-                                />
+                                <BrowserDocumentContentsPane />
                             </td>
                         </tr>
                     </tbody>
