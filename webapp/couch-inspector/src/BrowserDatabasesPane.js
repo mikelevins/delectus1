@@ -19,11 +19,11 @@ const styles = {
 
 
 class BrowserDatabasesPane extends Component {
+
     makeItemSelector = (item) =>
         <Button
             style={styles.button}
-            variant='text'
-        >
+            variant='text' >
             {item}
         </Button>;
 
@@ -39,17 +39,18 @@ class BrowserDatabasesPane extends Component {
     // ---------------------------------------------------------
 
     render() {
-        const emptyList = [];
         const pane = this;
-        const list = pane.props.app.state.databases;
-        var listRows = (list) ? (list.map(this.makeBrowserRow)) : (emptyList);
+        const app = pane.props.app;
+        const emptyList = [];
+        const dblist = app.state.databases;
+        var dbRows = (dblist) ? (dblist.map(this.makeBrowserRow)) : (emptyList);
 
-        if (list && list.length > 0) {
+        if (dblist && dblist.length > 0) {
             return (
                 <div>
                     <p style={styles.browserPaneTitle}>Databases</p>
                     <table style={styles.browserPane}>
-                        <tbody>{listRows}</tbody>
+                        <tbody>{dbRows}</tbody>
                     </table>
                 </div>
             );
