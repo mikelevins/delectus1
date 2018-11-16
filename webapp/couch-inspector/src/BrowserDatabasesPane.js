@@ -20,12 +20,19 @@ const styles = {
 
 class BrowserDatabasesPane extends Component {
 
-    makeItemSelector = (item) =>
-        <Button
-            style={styles.button}
-            variant='text' >
-            {item}
-        </Button>;
+    makeItemSelector = (item) => {
+        const pane = this;
+        const app = pane.props.app;
+
+        return (
+            <Button
+                style={styles.button}
+                variant='text'
+                onClick={(event) => app.setState({selectedDatabase: item})} >
+                {item}
+            </Button>
+        )
+    };
 
     makeBrowserRow = (item) => {
         return (
