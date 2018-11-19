@@ -12,62 +12,74 @@ const styles = {
     textField: { marginLeft: '2rem' },
 };
 
+function URLField(props) {
+    return (
+        <div>
+            <TextField
+                id="CouchDB_URL"
+                label='CouchDB URL:'
+                fullWidth
+                style={styles.textField}
+                defaultValue='http://mars.local:5984'
+            />
+        </div>
+    );
+}
+
+function UsernameField(props) {
+    return (
+        <div>
+            <TextField
+                id="username"
+                label='Username:'
+                fullWidth
+                style={styles.textField}
+            />
+        </div>
+    );
+}
+
+function PasswordField(props) {
+    return (
+        <div>
+            <TextField
+                id="password"
+                label='Password:'
+                fullWidth
+                type='password'
+                style={styles.textField}
+            />
+        </div>
+    );
+}
+
+function ConnectButton(props) {
+    const app = props.app;
+    return (
+        <div>
+            <Button
+                style={styles.button}
+                variant="contained"
+                color="primary"
+                onClick={app.handleConnect}>
+                Connect
+        </Button>
+        </div>
+    );
+}
+
 class CouchControls extends Component {
 
     render() {
         const controls = this;
         const app = controls.props.app;
 
-        const urlField = (
-            <div>
-                <TextField
-                    id="CouchDB_URL"
-                    label='CouchDB URL:'
-                    fullWidth
-                    style={styles.textField}
-                    defaultValue='http://mars.local:5984'
-                />
-            </div>);
-
-const passwordField = (
-    <div>
-        <TextField
-            id="password"
-            label='Password:'
-            fullWidth
-            type='password'
-            style={styles.textField}
-        />
-    </div>);
-
-const usernameField = (
-    <div>
-        <TextField
-            id="username"
-            label='Username:'
-            fullWidth
-            style={styles.textField}
-        />
-    </div>);
-
-        const connectButton = (
-            <div>
-                <Button
-                    style={styles.button}
-                    variant="contained"
-                    color="primary"
-                    onClick={app.handleConnect}>
-                    Connect
-                </Button>
-            </div>
-        );
-
         return (
             <React.Fragment>
-                {usernameField}
-                {passwordField}
-                {urlField}
-                {connectButton}
+                <UsernameField app={app} />
+                <PasswordField app={app} />
+                <URLField app={app} />
+                <ConnectButton app={app} />
             </React.Fragment>
         );
     }

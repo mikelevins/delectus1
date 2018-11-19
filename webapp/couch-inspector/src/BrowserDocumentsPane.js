@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -25,7 +24,6 @@ const styles = {
 class BrowserDocumentsPane extends Component {
 
     makeListItem = (item) => {
-        const pane = this;
         const itemID = item.id;
 
         return (
