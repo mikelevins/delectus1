@@ -14,12 +14,11 @@ const styles = {
 
 class CouchControls extends Component {
 
-render() {
-    const controls = this;
-    const app = controls.props.app;
+    render() {
+        const controls = this;
+        const app = controls.props.app;
 
-    return (
-        <React.Fragment>
+        const urlField = (
             <div>
                 <TextField
                     id="CouchDB_URL"
@@ -28,8 +27,30 @@ render() {
                     style={styles.textField}
                     defaultValue='http://mars.local:5984'
                 />
-            </div>
+            </div>);
 
+const passwordField = (
+    <div>
+        <TextField
+            id="password"
+            label='Password:'
+            fullWidth
+            type='password'
+            style={styles.textField}
+        />
+    </div>);
+
+const usernameField = (
+    <div>
+        <TextField
+            id="username"
+            label='Username:'
+            fullWidth
+            style={styles.textField}
+        />
+    </div>);
+
+        const connectButton = (
             <div>
                 <Button
                     style={styles.button}
@@ -37,12 +58,19 @@ render() {
                     color="primary"
                     onClick={app.handleConnect}>
                     Connect
-                    </Button>
+                </Button>
             </div>
+        );
 
-        </React.Fragment>
-    );
-}
+        return (
+            <React.Fragment>
+                {usernameField}
+                {passwordField}
+                {urlField}
+                {connectButton}
+            </React.Fragment>
+        );
+    }
 }
 
 // exports

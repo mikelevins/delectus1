@@ -44,7 +44,6 @@ class App extends Component {
 
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
-
     axios.get(couch_url + '/_all_dbs')
       .then(response => this.setState({
         couchURL: couch_url,
