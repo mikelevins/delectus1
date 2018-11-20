@@ -9,7 +9,6 @@ const styles = {
         borderSpacing: '8px 8px',
     },
     browserPane: {
-        border: '1px solid black',
         padding: '10px 5px',
         verticalAlign: 'top',
     },
@@ -38,7 +37,7 @@ class Browser extends Component {
                                 <BrowserDocumentsPane app={app} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentContentsPane />
+                                <BrowserDocumentContentsPane app={app} />
                             </td>
                         </tr>
                     </tbody>

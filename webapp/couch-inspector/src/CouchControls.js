@@ -5,11 +5,19 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
 const styles = {
-    button: {
+    controlsPane: {
+        border: '1px solid black',
         marginLeft: '2rem',
+    },
+    button: {
+        marginBottom: '0.5rem',
+        marginLeft: '0.5rem',
         marginTop: '1rem',
     },
-    textField: { marginLeft: '2rem' },
+    textField: { 
+        marginLeft: '1rem',
+        width: '95%',
+     },
 };
 
 function URLField(props) {
@@ -18,7 +26,6 @@ function URLField(props) {
             <TextField
                 id="CouchDB_URL"
                 label='CouchDB URL:'
-                fullWidth
                 style={styles.textField}
                 defaultValue='http://mars.local:5984'
             />
@@ -32,7 +39,6 @@ function UsernameField(props) {
             <TextField
                 id="username"
                 label='Username:'
-                fullWidth
                 style={styles.textField}
             />
         </div>
@@ -45,7 +51,6 @@ function PasswordField(props) {
             <TextField
                 id="password"
                 label='Password:'
-                fullWidth
                 type='password'
                 style={styles.textField}
             />
@@ -75,12 +80,12 @@ class CouchControls extends Component {
         const app = controls.props.app;
 
         return (
-            <React.Fragment>
+            <div style={styles.controlsPane}>
                 <UsernameField app={app} />
                 <PasswordField app={app} />
                 <URLField app={app} />
                 <ConnectButton app={app} />
-            </React.Fragment>
+            </div>
         );
     }
 }

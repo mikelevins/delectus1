@@ -8,6 +8,7 @@ import axios from 'axios';
 
 const styles = {
     browserPane: {
+        border: '1px solid black',
         height: '20rem',
         overflow: 'auto',
         padding: '6px',
@@ -70,7 +71,7 @@ class BrowserDatabasesPane extends Component {
             return (
                 <div>
                     <p style={styles.browserPaneTitle}>Databases</p>
-                    <List component="nav">{dbRows}</List>
+                    <List  style={styles.browserPane} component="nav">{dbRows}</List>
                 </div>
             );
         } else {

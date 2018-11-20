@@ -6,6 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = {
     browserPane: {
+        border: '1px solid black',
         height: '20rem',
         overflow: 'auto',
         padding: '6px',

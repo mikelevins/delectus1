@@ -12,7 +12,7 @@ const styles = {
     width: '70%',
   },
   browser: {
-    marginLeft: '2rem',
+    marginLeft: '1rem',
     marginTop: '1rem',
   },
   title: { marginLeft: '2rem' },
