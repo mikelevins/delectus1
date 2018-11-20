@@ -22,8 +22,6 @@ class Browser extends Component {
     render() {
         const browser = this;
         const app = browser.props.app;
-        const middlePaneList = [];
-        const rightPaneList = [];
 
         return (
             <React.Fragment>

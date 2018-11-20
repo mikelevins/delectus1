@@ -10,12 +10,13 @@ const styles = {
         marginLeft: '2rem',
     },
     button: {
-        marginBottom: '0.5rem',
-        marginLeft: '0.5rem',
+        marginBottom: '01rem',
+        marginLeft: '01rem',
         marginTop: '1rem',
     },
     textField: { 
         marginLeft: '1rem',
+        marginTop: '1rem',
         width: '95%',
      },
 };
@@ -28,31 +29,6 @@ function URLField(props) {
                 label='CouchDB URL:'
                 style={styles.textField}
                 defaultValue='http://mars.local:5984'
-            />
-        </div>
-    );
-}
-
-function UsernameField(props) {
-    return (
-        <div>
-            <TextField
-                id="username"
-                label='Username:'
-                style={styles.textField}
-            />
-        </div>
-    );
-}
-
-function PasswordField(props) {
-    return (
-        <div>
-            <TextField
-                id="password"
-                label='Password:'
-                type='password'
-                style={styles.textField}
             />
         </div>
     );
@@ -81,8 +57,6 @@ class CouchControls extends Component {
 
         return (
             <div style={styles.controlsPane}>
-                <UsernameField app={app} />
-                <PasswordField app={app} />
                 <URLField app={app} />
                 <ConnectButton app={app} />
             </div>
