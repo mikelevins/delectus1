@@ -46,7 +46,7 @@ class BrowserDocumentsPane extends Component {
         const pane = this;
         const app = pane.props.app;
         const emptyList = [];
-        const paneTitle = app.state.selectedDatabase + ' documents';
+        const paneTitle = '\''+app.state.selectedDatabase+ '\' documents';
         const doclist = app.state.selectedDocuments;
         var docRows = (doclist && doclist.length > 0) ? (doclist.map(this.makeListItem)) : (emptyList);
 

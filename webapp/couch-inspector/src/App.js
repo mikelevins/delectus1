@@ -45,10 +45,23 @@ class App extends Component {
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url + '/_all_dbs')
-      .then(response => this.setState({
+      .then(
+        (response) => this.setState({
         couchURL: couch_url,
         databases: response.data
-      }));
+      }))
+      .catch((err) => {
+        if (err.response) {
+          console.log('The database server sent back an error code');
+          console.log(err);
+        } else if (err.request) {
+          console.log("The database server didn't respond");
+          console.log(err);
+        } else {
+          console.log('Sending the request to the database failed');
+          console.log(err);
+        }
+      });
   }
 
   // main render

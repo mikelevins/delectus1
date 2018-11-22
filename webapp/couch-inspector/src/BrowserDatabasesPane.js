@@ -38,8 +38,10 @@ class BrowserDatabasesPane extends Component {
             .then(response => app.setState({
                 selectedDatabase: itemName,
                 selectedDocuments: response.data.rows
-            }));
+            }))
+            .catch((error) => console.log(JSON.stringify(error)))
     }
+
 
     makeListItem = (item) => {
         const pane = this;
