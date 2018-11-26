@@ -43,11 +43,15 @@ class App extends Component {
   componentDidMount() {
     document.title = "Couch Inspector"
   } // end componentDidMount
-
+  
   docsRequest = (dbName, limit, offset) => {
     const result = ('/' + dbName + '/_all_docs?limit='+String(limit)+'&skip='+String(offset));
     return (result); 
   }
+
+  getDatabases = () => {
+    return this.state.databases;
+  } 
 
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
@@ -103,7 +107,7 @@ class App extends Component {
           <CouchControls app={app} />
         </div>
 
-        {(app.state.databases) ? (
+        {(app.getDatabases()) ? (
 
           // we have databases; display them
           <div style={styles.browser}>

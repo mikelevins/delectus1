@@ -53,7 +53,7 @@ class BrowserDatabasesPane extends Component {
         const pane = this;
         const app = pane.props.app;
         const emptyList = [];
-        const dblist = app.state.databases;
+        const dblist = app.getDatabases();
         var dbRows = (dblist) ? (dblist.map(this.makeListItem)) : (emptyList);
 
         if (dblist && dblist.length > 0) {
