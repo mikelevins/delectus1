@@ -33,7 +33,7 @@ class BrowserDatabasesPane extends Component {
     makeListItem = (item) => {
         const pane = this;
         const app = pane.props.app;
-        const isSelected = item === app.state.selectedDatabase;
+        const isSelected = item === app.getSelectedDatabase();
 
         return (
             <ListItem

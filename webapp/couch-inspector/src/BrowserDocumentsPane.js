@@ -56,7 +56,7 @@ class BrowserDocumentsPane extends Component {
     handlePagePrevious = () => {
         const pane = this;
         const app = pane.props.app;
-        const selectedDB = app.state.selectedDatabase;
+        const selectedDB = app.getSelectedDatabase();
         const pageLimit = app.state.databasesPerPage;
         const pageOffset = app.state.databasesPageOffset;
         var newOffset = pageOffset-pageLimit;
@@ -70,7 +70,7 @@ class BrowserDocumentsPane extends Component {
     handlePageNext = () => {
         const pane = this;
         const app = pane.props.app;
-        const selectedDB = app.state.selectedDatabase;
+        const selectedDB = app.getSelectedDatabase();
         const pageLimit = app.state.databasesPerPage;
         const pageOffset = app.state.databasesPageOffset;
         var newOffset = pageOffset+pageLimit;
@@ -101,7 +101,8 @@ class BrowserDocumentsPane extends Component {
         const pane = this;
         const app = pane.props.app;
         const emptyList = [];
-        const paneTitle = '\'' + app.state.selectedDatabase + '\' documents';
+        const selectedDB = app.getSelectedDatabase();
+        const paneTitle = '\'' + selectedDB + '\' documents';
         const doclist = app.state.selectedDocuments;
         var docRows = (doclist && doclist.length > 0) ? (doclist.map(this.makeListItem)) : (emptyList);
 

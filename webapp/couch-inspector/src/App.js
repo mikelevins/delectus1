@@ -37,6 +37,19 @@ class App extends Component {
     };
   }
 
+  // accessors
+  // ---------------------------------------------------------
+
+  getDatabases = () => {
+    return this.state.databases;
+  } 
+
+  getSelectedDatabase = () => {
+    return this.state.selectedDatabase;
+  } 
+
+
+
   // methods
   // ---------------------------------------------------------
 
@@ -48,10 +61,6 @@ class App extends Component {
     const result = ('/' + dbName + '/_all_docs?limit='+String(limit)+'&skip='+String(offset));
     return (result); 
   }
-
-  getDatabases = () => {
-    return this.state.databases;
-  } 
 
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
