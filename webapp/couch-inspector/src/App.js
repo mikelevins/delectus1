@@ -29,7 +29,9 @@ class App extends Component {
     this.state = {
       couchURL: '',
       databases: null,
-      selectedDatabase: [],
+      databasesPerPage: 10,
+      databasesPageOffset: 0,
+      selectedDatabase: null,
       selectedDocuments: [],
       keyPath: [], // the sequence of keys displayed in the browser
     };
@@ -42,6 +44,11 @@ class App extends Component {
     document.title = "Couch Inspector"
   } // end componentDidMount
 
+  docsRequest = (dbName, limit, offset) => {
+    const result = ('/' + dbName + '/_all_docs?limit='+String(limit)+'&skip='+String(offset));
+    return (result); 
+  }
+
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url + '/_all_dbs')
@@ -51,6 +58,35 @@ class App extends Component {
           databases: response.data
         }));
   }
+
+  setSelectedDatabase = (itemName) => {
+    const app = this;
+    const couchURL = app.state.couchURL;
+    const pageOffset = app.state.databasesPageOffset;
+    const databasesPerPage = app.state.databasesPerPage;
+    const docsRequest = app.docsRequest(itemName,databasesPerPage,pageOffset);
+
+    axios.get(couchURL + docsRequest)
+        .then(response => app.setState({
+            selectedDatabase: itemName,
+            selectedDocuments: response.data.rows
+        }))
+        .catch((error) => {
+            app.setState({
+                selectedDatabase: null,
+                selectedDocuments: []
+            });
+            if (error.response) {
+                // the server returned an error response
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else {
+                // the server never responded
+                console.log("No response from the server");
+            }
+        })
+}
 
   // main render
   // ---------------------------------------------------------

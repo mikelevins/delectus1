@@ -4,12 +4,10 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import axios from 'axios';
-
 const styles = {
     browserPane: {
         border: '1px solid black',
-        height: '20rem',
+        height: '24rem',
         overflow: 'auto',
         padding: '6px',
         width: '100%',
@@ -23,23 +21,12 @@ const styles = {
     }
 };
 
-
 class BrowserDatabasesPane extends Component {
 
     setSelectedItem = (itemName) => {
         const pane = this;
         const app = pane.props.app;
-        const couchURL = app.state.couchURL;
-        const docsRequest = '/' + itemName + '/_all_docs';
-
-        console.log(couchURL + docsRequest);
-                
-        axios.get(couchURL + docsRequest)
-            .then(response => app.setState({
-                selectedDatabase: itemName,
-                selectedDocuments: response.data.rows
-            }))
-            .catch((error) => console.log(JSON.stringify(error)))
+        app.setSelectedDatabase(itemName);
     }
 
 
@@ -73,7 +60,7 @@ class BrowserDatabasesPane extends Component {
             return (
                 <div>
                     <p style={styles.browserPaneTitle}>Databases</p>
-                    <List  style={styles.browserPane} component="nav">{dbRows}</List>
+                    <List style={styles.browserPane} component="nav">{dbRows}</List>
                 </div>
             );
         } else {
@@ -87,4 +74,3 @@ class BrowserDatabasesPane extends Component {
 // ---------------------------------------------------------
 
 export default BrowserDatabasesPane;
-
