@@ -16,6 +16,10 @@ const styles = {
   title: { marginLeft: '2rem' },
 };
 
+function ConstructDocsRequest(dbName, limit, offset) {
+  return ('/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
+}
+
 class App extends Component {
 
   // constructor
@@ -51,7 +55,7 @@ class App extends Component {
   }
 
   setDatabases = (dbs) => {
-    this.setState({ 
+    this.setState({
       databases: dbs,
       selectedDocuments: [],
     });
@@ -93,7 +97,7 @@ class App extends Component {
   // ---------------------------------------------------------
 
   getFormURL = () => {
-    return ( document.getElementById('CouchDB_URL').value );
+    return (document.getElementById('CouchDB_URL').value);
   }
 
   // methods
@@ -108,7 +112,9 @@ class App extends Component {
     const requestStr = couch_url + '/_all_dbs';
 
     this.setCouchURL(couch_url);
-    axios.get(requestStr).then( (response) => this.setDatabases(response.data) );
+    axios.get(requestStr).then(
+      (response) => this.setDatabases(response.data)
+    );
   }
 
   setSelectedDatabase = (dbName) => {
@@ -116,7 +122,7 @@ class App extends Component {
     const couchURL = app.state.couchURL;
     const offset = app.state.databasesPageOffset;
     const limit = app.state.databasesPerPage;
-    const docsRequest = ('/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
+    const docsRequest = ConstructDocsRequest(dbName, limit, offset);
 
     axios.get(couchURL + docsRequest)
       .then(response => app.setState({
