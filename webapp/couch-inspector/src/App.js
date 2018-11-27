@@ -31,8 +31,8 @@ class App extends Component {
     this.state = {
       couchURL: '',
       databases: null,
-      databasesPerPage: 10,
-      databasesPageOffset: 0,
+      documentsPerPage: 10,
+      documentsPageOffset: 0,
       selectedDatabase: null,
       selectedDocuments: [],
       keyPath: [], // the sequence of keys displayed in the browser
@@ -61,16 +61,16 @@ class App extends Component {
     });
   }
 
-  getDatabasesPerPage = () => {
-    return this.state.databasesPerPage;
+  getdocumentsPerPage = () => {
+    return this.state.documentsPerPage;
   }
 
-  setDatabasesPerPage = (dbCount) => {
-    this.setState({ databasesPerPage: dbCount });
+  setdocumentsPerPage = (dbCount) => {
+    this.setState({ documentsPerPage: dbCount });
   }
 
   getDatabasePageOffset = () => {
-    return this.state.databasesPageOffset;
+    return this.state.documentsPageOffset;
   }
 
   setDatabasePageOffset = (offset) => {
@@ -119,9 +119,9 @@ class App extends Component {
 
   setSelectedDatabase = (dbName) => {
     const app = this;
-    const couchURL = app.state.couchURL;
-    const offset = app.state.databasesPageOffset;
-    const limit = app.state.databasesPerPage;
+    const couchURL = app.getCouchURL();
+    const offset = app.getDatabasePageOffset();
+    const limit = app.getdocumentsPerPage();
     const docsRequest = ConstructDocsRequest(dbName, limit, offset);
 
     axios.get(couchURL + docsRequest)
