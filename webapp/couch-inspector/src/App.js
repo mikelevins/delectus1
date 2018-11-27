@@ -35,15 +35,26 @@ class App extends Component {
     };
   }
 
-  // accessors
+  // state accessors
   // ---------------------------------------------------------
+
+  getCouchURL = () => {
+    return this.state.couchURL;
+  }
+
+  setCouchURL = (url) => {
+    this.setState({ couchURL: url });
+  }
 
   getDatabases = () => {
     return this.state.databases;
   }
 
   setDatabases = (dbs) => {
-    this.setState({ databases: dbs });
+    this.setState({ 
+      databases: dbs,
+      selectedDocuments: [],
+    });
   }
 
   getDatabasesPerPage = () => {
@@ -78,6 +89,12 @@ class App extends Component {
     this.setState({ selectedDocuments: docList });
   }
 
+  // view accessors
+  // ---------------------------------------------------------
+
+  getFormURL = () => {
+    return ( document.getElementById('CouchDB_URL').value );
+  }
 
   // methods
   // ---------------------------------------------------------
@@ -87,13 +104,11 @@ class App extends Component {
   } // end componentDidMount
 
   handleConnect = () => {
-    const couch_url = document.getElementById('CouchDB_URL').value;
-    axios.get(couch_url + '/_all_dbs')
-      .then(
-        (response) => this.setState({
-          couchURL: couch_url,
-          databases: response.data
-        }));
+    const couch_url = this.getFormURL();
+    const requestStr = couch_url + '/_all_dbs';
+
+    this.setCouchURL(couch_url);
+    axios.get(requestStr).then( (response) => this.setDatabases(response.data) );
   }
 
   setSelectedDatabase = (dbName) => {
@@ -164,7 +179,7 @@ class App extends Component {
           </div>
 
           <div style={styles.browser}>&nbsp;</div>
-          
+
         </React.Fragment>
       );
     }
