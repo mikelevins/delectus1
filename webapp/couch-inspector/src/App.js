@@ -86,11 +86,6 @@ class App extends Component {
     document.title = "Couch Inspector"
   } // end componentDidMount
   
-  docsRequest = (dbName, limit, offset) => {
-    const result = ('/' + dbName + '/_all_docs?limit='+String(limit)+'&skip='+String(offset));
-    return (result); 
-  }
-
   handleConnect = () => {
     const couch_url = document.getElementById('CouchDB_URL').value;
     axios.get(couch_url + '/_all_dbs')
@@ -101,16 +96,16 @@ class App extends Component {
         }));
   }
 
-  setSelectedDatabase = (itemName) => {
+  setSelectedDatabase = (dbName) => {
     const app = this;
     const couchURL = app.state.couchURL;
-    const pageOffset = app.state.databasesPageOffset;
-    const databasesPerPage = app.state.databasesPerPage;
-    const docsRequest = app.docsRequest(itemName,databasesPerPage,pageOffset);
+    const offset = app.state.databasesPageOffset;
+    const limit = app.state.databasesPerPage;
+    const docsRequest = ('/'+dbName+'/_all_docs?limit='+String(limit)+'&skip='+String(offset));
 
     axios.get(couchURL + docsRequest)
         .then(response => app.setState({
-            selectedDatabase: itemName,
+            selectedDatabase: dbName,
             selectedDocuments: response.data.rows
         }))
         .catch((error) => {
