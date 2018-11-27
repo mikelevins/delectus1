@@ -8,10 +8,12 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from 'axios';
 
 const styles = {
-  controls: { width: '70%' },
+  controls: {
+    width: '70%',
+  },
   browser: {
     marginLeft: '1rem',
-    marginTop: '0.5rem',
+    marginTop: '1rem',
   },
   title: { marginLeft: '2rem' },
 };
@@ -42,41 +44,10 @@ class App extends Component {
     return this.state.databases;
   } 
 
-  setDatabases = (dbs) => {
-    this.setState({databases: dbs});
-  } 
-
-  getDatabasesPerPage = () => {
-    return this.state.databasesPerPage;
-  } 
-
-  setDatabasesPerPage = (dbCount) => {
-    this.setState({databasesPerPage: dbCount});
-  } 
-
-  getDatabasePageOffset = () => {
-    return this.state.databasesPageOffset;
-  } 
-
-  setDatabasePageOffset = (offset) => {
-    this.setState({databasePageOffset: offset});
-  } 
-
   getSelectedDatabase = () => {
     return this.state.selectedDatabase;
   } 
 
-  setSelectedDatabase = (dbName) => {
-    this.setState({selectedDatabase: dbName});
-  } 
-
-  getSelectedDocuments = () => {
-    return this.state.selectedDocuments;
-  } 
-
-  setSelectedDocuments = (docList) => {
-    this.setState({selectedDocuments: docList});
-  } 
 
 
   // methods
