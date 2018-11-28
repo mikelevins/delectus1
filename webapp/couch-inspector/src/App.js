@@ -16,9 +16,51 @@ const styles = {
   title: { marginLeft: '2rem' },
 };
 
+// auxiliary constructors
+// ---------------------------------------------------------
+
 function ConstructDocsRequest(dbName, limit, offset) {
   return ('/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
 }
+
+function CouchInspector(props) {
+  return (
+    <React.Fragment>
+      <CssBaseline />
+
+      <h1 style={styles.title}>Couch Inspector</h1>
+
+      <div style={styles.controls}>
+        <CouchControls app={props.app} />
+      </div>
+
+      <div style={styles.browser}>
+        <Browser app={props.app} />
+      </div>
+
+    </React.Fragment>
+  );
+}
+
+function EmptyInspector(props) {
+  return (
+    <React.Fragment>
+      <CssBaseline />
+
+      <h1 style={styles.title}>Couch Inspector</h1>
+
+      <div style={styles.controls}>
+        <CouchControls app={props.app} />
+      </div>
+
+      <div style={styles.browser}>&nbsp;</div>
+
+    </React.Fragment>
+  );
+}
+
+// App
+// ---------------------------------------------------------
 
 class App extends Component {
 
@@ -155,39 +197,11 @@ class App extends Component {
 
     if (dbList) {
       // we have databases; display them
-      return (
-        <React.Fragment>
-          <CssBaseline />
-
-          <h1 style={styles.title}>Couch Inspector</h1>
-
-          <div style={styles.controls}>
-            <CouchControls app={app} />
-          </div>
-
-          <div style={styles.browser}>
-            <Browser app={app} />
-          </div>
-
-        </React.Fragment>
-      );
+      return (<CouchInspector app={app} />);
 
     } else {
       // we don't have databases; display a blank div
-      return (
-        <React.Fragment>
-          <CssBaseline />
-
-          <h1 style={styles.title}>Couch Inspector</h1>
-
-          <div style={styles.controls}>
-            <CouchControls app={app} />
-          </div>
-
-          <div style={styles.browser}>&nbsp;</div>
-
-        </React.Fragment>
-      );
+      return (<EmptyInspector app={app} />);
     }
   }
 }
