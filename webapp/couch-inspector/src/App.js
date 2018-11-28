@@ -91,19 +91,8 @@ class App extends Component {
     return this.state.couchURL;
   }
 
-  setCouchURL = (url) => {
-    this.setState({ couchURL: url });
-  }
-
   getDatabases = () => {
     return this.state.databases;
-  }
-
-  setDatabases = (dbs) => {
-    this.setState({
-      databases: dbs,
-      selectedDocuments: [],
-    });
   }
 
   getdocumentsPerPage = () => {
@@ -156,9 +145,11 @@ class App extends Component {
     const couch_url = this.getFormURL();
     const requestStr = couch_url + '/_all_dbs';
 
-    this.setCouchURL(couch_url);
     axios.get(requestStr).then(
-      (response) => this.setDatabases(response.data)
+      (response) => this.setState({ 
+        couchURL: couch_url,
+        databases: response.data,
+        selectedDocuments: []})
     );
   }
 
