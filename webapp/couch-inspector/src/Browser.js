@@ -4,6 +4,9 @@ import BrowserDatabasesPane from './BrowserDatabasesPane.js';
 import BrowserDocumentsPane from './BrowserDocumentsPane.js';
 import BrowserDocumentContentsPane from './BrowserDocumentContentsPane.js';
 
+// Browser styles
+// ---------------------------------------------------------
+
 const styles = {
     browser: {
         borderSpacing: '8px 8px',
@@ -13,6 +16,9 @@ const styles = {
         verticalAlign: 'top',
     },
 };
+
+// Browser class
+// ---------------------------------------------------------
 
 class Browser extends Component {
 

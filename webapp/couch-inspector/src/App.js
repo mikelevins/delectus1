@@ -22,7 +22,7 @@ const styles = {
 // auxiliary constructors
 // ---------------------------------------------------------
 
-function ConstructDocsRequest(dbName, limit, offset) {
+function MakeDocsRequest(dbName, limit, offset) {
   return ('/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
 }
 
@@ -164,7 +164,7 @@ class App extends Component {
     const couchURL = app.getCouchURL();
     const offset = app.getDatabasePageOffset();
     const limit = app.getdocumentsPerPage();
-    const docsRequest = ConstructDocsRequest(dbName, limit, offset);
+    const docsRequest = MakeDocsRequest(dbName, limit, offset);
 
     axios.get(couchURL + docsRequest)
       .then(response => app.setState({

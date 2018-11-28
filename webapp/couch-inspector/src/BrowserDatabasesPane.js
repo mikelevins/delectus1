@@ -4,6 +4,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
+// BrowserDatabasesPane styles
+// ---------------------------------------------------------
+
 const styles = {
     browserPane: {
         border: '1px solid black',
@@ -21,17 +24,19 @@ const styles = {
     }
 };
 
+// BrowserDatabasesPane class
+// ---------------------------------------------------------
+
 class BrowserDatabasesPane extends Component {
 
     setSelectedItem = (itemName) => {
-        const pane = this;
-        const app = pane.props.app;
+        const app = this.props.app;
         app.updateSelectedDatabase(itemName);
     }
 
     makeListItem = (item) => {
         const pane = this;
-        const app = pane.props.app;
+        const app = this.props.app;
         const isSelected = item === app.getSelectedDatabase();
 
         return (
@@ -49,11 +54,9 @@ class BrowserDatabasesPane extends Component {
     // ---------------------------------------------------------
 
     render() {
-        const pane = this;
-        const app = pane.props.app;
-        const emptyList = [];
+        const app = this.props.app;
         const dblist = app.getDatabases();
-        var dbRows = (dblist) ? (dblist.map(this.makeListItem)) : (emptyList);
+        var dbRows = (dblist) ? (dblist.map(this.makeListItem)) : ([]);
 
         if (dblist && dblist.length > 0) {
             return (
