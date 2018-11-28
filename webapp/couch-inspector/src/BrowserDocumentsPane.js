@@ -25,7 +25,8 @@ const styles = {
         marginRight: '1rem',
         marginTop: '0.5rem',
         textTransform: 'none'
-    }
+    },
+    controls: { textAlign: 'center' }
 };
 
 // BrowserDocumentsPane auxiliary components
@@ -117,7 +118,7 @@ class BrowserDocumentsPane extends Component {
                         <p style={styles.browserPaneTitle}>{paneTitle}</p>
                         <List component="nav" style={styles.browserPane}>{docRows}</List>
                     </div>
-                    <div>
+                    <div style={styles.controls}>
                         <PreviousButton pane={this} />
                         <NextButton pane={this} />
                     </div>
@@ -126,7 +127,6 @@ class BrowserDocumentsPane extends Component {
         } else {
             return (<div></div>);
         }
-
     }
 }
 

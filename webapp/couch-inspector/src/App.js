@@ -87,43 +87,29 @@ class App extends Component {
   // state accessors
   // ---------------------------------------------------------
 
-  getCouchURL = () => {
-    return this.state.couchURL;
-  }
+  getCouchURL = () => { return this.state.couchURL; }
 
-  getDatabases = () => {
-    return this.state.databases;
-  }
+  getDatabases = () => { return this.state.databases; }
 
-  getdocumentsPerPage = () => {
-    return this.state.documentsPerPage;
-  }
+  getdocumentsPerPage = () => { return this.state.documentsPerPage; }
 
-  getDatabasePageOffset = () => {
-    return this.state.documentsPageOffset;
-  }
+  getDatabasePageOffset = () => { return this.state.documentsPageOffset; }
 
-  getSelectedDatabase = () => {
-    return this.state.selectedDatabase;
-  }
+  getSelectedDatabase = () => { return this.state.selectedDatabase; }
 
-  getSelectedDocuments = () => {
-    return this.state.selectedDocuments;
-  }
+  getSelectedDocuments = () => { return this.state.selectedDocuments; }
 
   // view accessors
   // ---------------------------------------------------------
 
-  getFormURL = () => {
-    return (document.getElementById('CouchDB_URL').value);
-  }
+  getFormURL = () => { return (document.getElementById('CouchDB_URL').value); }
 
   // event handling
   // ---------------------------------------------------------
 
   componentDidMount() {
     document.title = "Couch Inspector"
-  } 
+  }
 
   handleConnect = () => {
     const app = this;
@@ -167,10 +153,13 @@ class App extends Component {
     const docsRequest = MakeDocsRequest(dbName, limit, offset);
 
     axios.get(couchURL + docsRequest)
-      .then(response => app.setState({
-        selectedDatabase: dbName,
-        selectedDocuments: response.data.rows
-      }))
+      .then(response => {
+        console.log(response);
+        app.setState({
+          selectedDatabase: dbName,
+          selectedDocuments: response.data.rows
+        })
+      })
       .catch((error) => {
         app.setState({
           selectedDatabase: null,
