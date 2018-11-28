@@ -139,18 +139,40 @@ class App extends Component {
 
   componentDidMount() {
     document.title = "Couch Inspector"
-  } // end componentDidMount
+  } 
 
   handleConnect = () => {
-    const couch_url = this.getFormURL();
-    const requestStr = couch_url + '/_all_dbs';
+    const app = this;
+    const new_couch_url = this.getFormURL();
+    const requestStr = new_couch_url + '/_all_dbs';
 
-    axios.get(requestStr).then(
-      (response) => this.setState({ 
-        couchURL: couch_url,
-        databases: response.data,
-        selectedDocuments: []})
-    );
+    axios.get(requestStr)
+      .then(
+        (response) => this.setState({
+          couchURL: new_couch_url,
+          databases: response.data,
+          selectedDocuments: []
+        })
+      )
+      .catch((error) => {
+        app.setState({
+          couchURL: new_couch_url,
+          databases: [],
+          selectedDatabase: null,
+          selectedDocuments: []
+        });
+
+        if (error.response) {
+          // the server returned an error response
+          console.log("handleConnect: the server returned an error");
+          console.log(error.response.status);
+          console.log(error.response.data);
+          console.log(error.response.headers);
+        } else {
+          // the server never responded
+          console.log("handleConnect: no response from the server");
+        }
+      })
   }
 
   setSelectedDatabase = (dbName) => {
