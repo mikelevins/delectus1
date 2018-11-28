@@ -111,10 +111,6 @@ class App extends Component {
     return this.state.selectedDocuments;
   }
 
-  setSelectedDocuments = (docList) => {
-    this.setState({ selectedDocuments: docList });
-  }
-
   // view accessors
   // ---------------------------------------------------------
 
