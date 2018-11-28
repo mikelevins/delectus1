@@ -7,6 +7,9 @@ import Browser from './Browser.js';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from 'axios';
 
+// App styles
+// ---------------------------------------------------------
+
 const styles = {
   controls: { width: '70%' },
   browser: {
@@ -59,7 +62,7 @@ function EmptyInspector(props) {
   );
 }
 
-// App
+// App class
 // ---------------------------------------------------------
 
 class App extends Component {
@@ -142,7 +145,7 @@ class App extends Component {
     return (document.getElementById('CouchDB_URL').value);
   }
 
-  // methods
+  // event handling
   // ---------------------------------------------------------
 
   componentDidMount() {
@@ -178,8 +181,8 @@ class App extends Component {
         });
         if (error.response) {
           // the server returned an error response
-          console.log(error.response.data);
           console.log(error.response.status);
+          console.log(error.response.data);
           console.log(error.response.headers);
         } else {
           // the server never responded
