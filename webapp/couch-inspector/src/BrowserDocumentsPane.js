@@ -56,7 +56,6 @@ class BrowserDocumentsPane extends Component {
     handlePagePrevious = () => {
         const pane = this;
         const app = pane.props.app;
-        const selectedDB = app.getSelectedDatabase();
         const pageLimit = app.state.databasesPerPage;
         const pageOffset = app.state.databasesPageOffset;
         var newOffset = pageOffset-pageLimit;
@@ -64,19 +63,16 @@ class BrowserDocumentsPane extends Component {
         if (newOffset < 0) { newOffset = 0; }
 
         app.setState({databasesPageOffset: newOffset});
-        app.setSelectedDatabase(selectedDB);
     }
 
     handlePageNext = () => {
         const pane = this;
         const app = pane.props.app;
-        const selectedDB = app.getSelectedDatabase();
         const pageLimit = app.state.databasesPerPage;
         const pageOffset = app.state.databasesPageOffset;
         var newOffset = pageOffset+pageLimit;
 
         app.setState({databasesPageOffset: newOffset});
-        app.setSelectedDatabase(selectedDB);
     }
 
     makeListItem = (item) => {

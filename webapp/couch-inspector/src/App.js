@@ -99,24 +99,12 @@ class App extends Component {
     return this.state.documentsPerPage;
   }
 
-  setdocumentsPerPage = (dbCount) => {
-    this.setState({ documentsPerPage: dbCount });
-  }
-
   getDatabasePageOffset = () => {
     return this.state.documentsPageOffset;
   }
 
-  setDatabasePageOffset = (offset) => {
-    this.setState({ databasePageOffset: offset });
-  }
-
   getSelectedDatabase = () => {
     return this.state.selectedDatabase;
-  }
-
-  setSelectedDatabase = (dbName) => {
-    this.setState({ selectedDatabase: dbName });
   }
 
   getSelectedDocuments = () => {
@@ -175,7 +163,7 @@ class App extends Component {
       })
   }
 
-  setSelectedDatabase = (dbName) => {
+  updateSelectedDatabase = (dbName) => {
     const app = this;
     const couchURL = app.getCouchURL();
     const offset = app.getDatabasePageOffset();
