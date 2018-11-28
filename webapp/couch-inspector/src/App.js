@@ -79,7 +79,7 @@ class App extends Component {
       documentsPerPage: 10,
       documentsPageOffset: 0,
       selectedDatabase: null,
-      selectedDocuments: [],
+      selectedDBDocuments: [],
       keyPath: [], // the sequence of keys displayed in the browser
     };
   }
@@ -88,16 +88,11 @@ class App extends Component {
   // ---------------------------------------------------------
 
   getCouchURL = () => { return this.state.couchURL; }
-
   getDatabases = () => { return this.state.databases; }
-
   getdocumentsPerPage = () => { return this.state.documentsPerPage; }
-
   getDatabasePageOffset = () => { return this.state.documentsPageOffset; }
-
   getSelectedDatabase = () => { return this.state.selectedDatabase; }
-
-  getSelectedDocuments = () => { return this.state.selectedDocuments; }
+  getselectedDBDocuments = () => { return this.state.selectedDBDocuments; }
 
   // view accessors
   // ---------------------------------------------------------
@@ -121,7 +116,7 @@ class App extends Component {
         (response) => this.setState({
           couchURL: new_couch_url,
           databases: response.data,
-          selectedDocuments: []
+          selectedDBDocuments: []
         })
       )
       .catch((error) => {
@@ -129,7 +124,7 @@ class App extends Component {
           couchURL: new_couch_url,
           databases: [],
           selectedDatabase: null,
-          selectedDocuments: []
+          selectedDBDocuments: []
         });
 
         if (error.response) {
@@ -157,13 +152,13 @@ class App extends Component {
         console.log(response);
         app.setState({
           selectedDatabase: dbName,
-          selectedDocuments: response.data.rows
+          selectedDBDocuments: response.data.rows
         })
       })
       .catch((error) => {
         app.setState({
           selectedDatabase: null,
-          selectedDocuments: []
+          selectedDBDocuments: []
         });
         if (error.response) {
           // the server returned an error response
@@ -191,7 +186,7 @@ class App extends Component {
         console.log(response);
         app.setState({ 
           documentsPageOffset: offset,
-          selectedDocuments: response.data.rows 
+          selectedDBDocuments: response.data.rows 
         })
       })
       .catch((error) => {
@@ -222,7 +217,7 @@ class App extends Component {
         console.log(response);
         app.setState({ 
           documentsPageOffset: newOffset,
-          selectedDocuments: response.data.rows 
+          selectedDBDocuments: response.data.rows 
         })
       })
       .catch((error) => {
