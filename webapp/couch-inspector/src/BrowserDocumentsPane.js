@@ -6,6 +6,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
+// BrowserDocumentsPane styles
+// ---------------------------------------------------------
+
 const styles = {
     browserPane: {
         border: '1px solid black',
@@ -24,6 +27,9 @@ const styles = {
         textTransform: 'none'
     }
 };
+
+// BrowserDocumentsPane auxiliary components
+// ---------------------------------------------------------
 
 function PreviousButton(props) {
     const pane = props.pane;
@@ -50,6 +56,9 @@ function NextButton(props) {
         </Button>
     );
 }
+
+// BrowserDocumentsPane class
+// ---------------------------------------------------------
 
 class BrowserDocumentsPane extends Component {
 
@@ -86,7 +95,6 @@ class BrowserDocumentsPane extends Component {
             </ListItem>
         )
     };
-
 
     makeBrowserRow = (item) => <tr><td>{this.makeItemSelector(item)}</td></tr>;
 
