@@ -167,12 +167,74 @@ class App extends Component {
         });
         if (error.response) {
           // the server returned an error response
+          console.log('App.updateSelectedDatabase: the server returned an error');
           console.log(error.response.status);
           console.log(error.response.data);
           console.log(error.response.headers);
         } else {
           // the server never responded
-          console.log("No response from the server");
+          console.log("App.updateSelectedDatabase: no response from the server");
+        }
+      })
+  }
+
+  updateNextDatabasePage = () => {
+    const app = this;
+    const couchURL = app.getCouchURL();
+    const dbName = app.getSelectedDatabase();
+    const limit = app.getdocumentsPerPage();
+    const offset = app.getDatabasePageOffset()+limit;
+    const docsRequest = MakeDocsRequest(dbName, limit, offset);
+
+    axios.get(couchURL + docsRequest)
+      .then(response => {
+        console.log(response);
+        app.setState({ 
+          documentsPageOffset: offset,
+          selectedDocuments: response.data.rows 
+        })
+      })
+      .catch((error) => {
+        if (error.response) {
+          // the server returned an error response
+          console.log('App.updateNextDatabasePage: the server returned an error');
+          console.log(error.response.status);
+          console.log(error.response.data);
+          console.log(error.response.headers);
+        } else {
+          // the server never responded
+          console.log("App.updateNextDatabasePage: no response from the server");
+        }
+      })
+  }
+
+  updatePreviousDatabasePage = () => {
+    const app = this;
+    const couchURL = app.getCouchURL();
+    const dbName = app.getSelectedDatabase();
+    const limit = app.getdocumentsPerPage();
+    const oldOffset = app.getDatabasePageOffset();
+    const newOffset = (oldOffset-limit <= 0) ? 0 : (oldOffset-limit);
+    const docsRequest = MakeDocsRequest(dbName, limit, newOffset);
+
+    axios.get(couchURL + docsRequest)
+      .then(response => {
+        console.log(response);
+        app.setState({ 
+          documentsPageOffset: newOffset,
+          selectedDocuments: response.data.rows 
+        })
+      })
+      .catch((error) => {
+        if (error.response) {
+          // the server returned an error response
+          console.log('App.updateNextDatabasePage: the server returned an error');
+          console.log(error.response.status);
+          console.log(error.response.data);
+          console.log(error.response.headers);
+        } else {
+          // the server never responded
+          console.log("App.updateNextDatabasePage: no response from the server");
         }
       })
   }
