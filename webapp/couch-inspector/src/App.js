@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import CouchControls from './CouchControls.js';
-import Browser from './Browser.js';
-
 import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from 'axios';
+
+import CouchInspector from './CouchInspector.js';
+import EmptyInspector from './EmptyInspector.js';
 
 // App styles
 // ---------------------------------------------------------
@@ -24,42 +24,6 @@ const styles = {
 
 function MakeAllDocumentsRequest(dbName, limit, offset) {
   return ('/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
-}
-
-function CouchInspector(props) {
-  return (
-    <React.Fragment>
-      <CssBaseline />
-
-      <h1 style={styles.title}>Couch Inspector</h1>
-
-      <div style={styles.controls}>
-        <CouchControls app={props.app} />
-      </div>
-
-      <div style={styles.browser}>
-        <Browser app={props.app} />
-      </div>
-
-    </React.Fragment>
-  );
-}
-
-function EmptyInspector(props) {
-  return (
-    <React.Fragment>
-      <CssBaseline />
-
-      <h1 style={styles.title}>Couch Inspector</h1>
-
-      <div style={styles.controls}>
-        <CouchControls app={props.app} />
-      </div>
-
-      <div style={styles.browser}>&nbsp;</div>
-
-    </React.Fragment>
-  );
 }
 
 // App class
