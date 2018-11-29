@@ -236,7 +236,6 @@ class App extends Component {
 
     axios.get(couchURL + docRequest)
       .then(response => {
-        console.log(response);
         app.setState({
           selectedDocumentID: documentID,
           selectedDocument: response.data,
