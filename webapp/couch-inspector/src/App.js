@@ -61,6 +61,7 @@ class App extends Component {
   getDatabasePageOffset = () => { return this.state.documentsPageOffset; }
   getSelectedDatabase = () => { return this.state.selectedDatabase; }
   getDocuments = () => { return this.state.documents; }
+  getDocumentsCount = () => { return this.state.documentsCount; }
   getSelectedDocument = () => { return this.state.selectedDocument; }
   getSelectedDocumentID = () => { return this.state.selectedDocumentID; }
 
@@ -72,9 +73,7 @@ class App extends Component {
   // event handling
   // ---------------------------------------------------------
 
-  componentDidMount() {
-    document.title = "Couch Inspector"
-  }
+  componentDidMount() { document.title = "Couch Inspector" }
 
   handleConnect = () => {
     const app = this;

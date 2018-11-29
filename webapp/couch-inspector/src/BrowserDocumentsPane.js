@@ -26,7 +26,10 @@ const styles = {
         marginTop: '0.5rem',
         textTransform: 'none'
     },
-    controls: { textAlign: 'center' }
+    controls: { textAlign: 'center' },
+    pageNumber: {
+        marginRight: '1rem'
+    }
 };
 
 // BrowserDocumentsPane auxiliary components
@@ -106,6 +109,11 @@ class BrowserDocumentsPane extends Component {
         const pane = this;
         const app = pane.props.app;
         const selectedDB = app.getSelectedDatabase();
+        const offset = app.getDatabasePageOffset();
+        const pageLimit = app.getDocumentsPerPage();
+        const docsCount = app.getDocumentsCount();
+        const pageNumber = offset/pageLimit;
+        const pagesCount = docsCount/pageLimit;
         const paneTitle = selectedDB;
         const doclist = app.getDocuments();
         var docRows = (doclist && doclist.length > 0) ? (doclist.map(this.makeListItem)) : ([]);
@@ -119,6 +127,7 @@ class BrowserDocumentsPane extends Component {
                     </div>
                     <div style={styles.controls}>
                         <PreviousButton pane={this} />
+                        <span style={styles.pageNumber}> page {pageNumber} of {pagesCount} </span>
                         <NextButton pane={this} />
                     </div>
                 </div>
