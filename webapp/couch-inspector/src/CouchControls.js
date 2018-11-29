@@ -42,7 +42,7 @@ function ConnectButton(props) {
                 style={styles.button}
                 variant="contained"
                 color="primary"
-                onClick={app.handleConnect}>
+                onClick={app.updateServerConnection}>
                 Connect
         </Button>
         </div>

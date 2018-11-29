@@ -75,7 +75,7 @@ class App extends Component {
 
   componentDidMount() { document.title = "Couch Inspector" }
 
-  handleConnect = () => {
+  updateServerConnection = () => {
     const app = this;
     const new_couch_url = this.getFormURL();
     const requestStr = new_couch_url + '/_all_dbs';
