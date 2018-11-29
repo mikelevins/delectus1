@@ -168,7 +168,7 @@ class App extends Component {
         if (error.response) {
           if (error.response.status === 401) {
             // 'Unauthorized'
-            app.setState({authRequested: true});
+            app.setState({ authRequested: true, selectedDatabase: dbName });
           } else {
             this.logServerError(error,'App.updateSelectedDatabase: the server returned an error');
           }
