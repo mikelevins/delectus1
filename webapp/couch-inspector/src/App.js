@@ -29,6 +29,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      authRequested: false,
       couchURL: '',
       databases: null,
       databaseCount: 0,
@@ -45,6 +46,7 @@ class App extends Component {
   // state accessors
   // ---------------------------------------------------------
 
+  getAuthRequested = () => { return this.state.authRequested; }
   getCouchURL = () => { return this.state.couchURL; }
   getDatabases = () => { return this.state.databases; }
   getDatabaseCount = () => { return this.state.databases.length; }
@@ -90,6 +92,7 @@ class App extends Component {
       .then(
         (response) => {
           this.setState({
+            authRequested: false,
             couchURL: new_couch_url,
             databases: response.data,
             databaseCount: response.data.length,
@@ -105,6 +108,7 @@ class App extends Component {
       )
       .catch((error) => {
         app.setState({
+          authRequested: false,
           couchURL: new_couch_url,
           databases: [],
           databaseCount: 0,
@@ -134,6 +138,7 @@ class App extends Component {
     axios.get(docsRequest)
       .then(response => {
         app.setState({
+          authRequested: false,
           couchURL: couchURL,
           databases: app.getDatabases(),
           databaseCount: app.getDatabaseCount(),
@@ -148,19 +153,25 @@ class App extends Component {
       })
       .catch((error) => {
         app.setState({
+          authRequested: false,
           couchURL: couchURL,
           databases: app.getDatabases(),
           databaseCount: app.getDatabaseCount(),
-          selectedDatabase: app.getSelectedDatabase(),
-          documents: app.getDocuments(),
-          documentsCount: app.getDocumentsCount(),
+          selectedDatabase: null,
+          documents: [],
+          documentsCount: 0,
           documentsPerPage: app.getDocumentsPerPage(),
-          documentsPageOffset: app.getDocumentsPageOffset(),
+          documentsPageOffset: 0,
           selectedDocumentID: null,
           selectedDocument: null
         });
         if (error.response) {
-          this.logServerError(error,'App.updateSelectedDatabase: the server returned an error');
+          if (error.response.status === 401) {
+            // 'Unauthorized'
+            app.setState({authRequested: true});
+          } else {
+            this.logServerError(error,'App.updateSelectedDatabase: the server returned an error');
+          }
         } else {
           this.logConnectionError(error,"App.updateSelectedDatabase: no response from the server");
         }
@@ -178,6 +189,7 @@ class App extends Component {
     axios.get(docsRequest)
       .then(response => {
         app.setState({
+          authRequested: app.getAuthRequested(),
           couchURL: couchURL,
           databases: app.getDatabases(),
           documents: response.data.rows,
@@ -209,6 +221,7 @@ class App extends Component {
     axios.get(docsRequest)
       .then(response => {
         app.setState({
+          authRequested: app.getAuthRequested(),
           couchURL: couchURL,
           databases: app.getDatabases(),
           documents: response.data.rows,
