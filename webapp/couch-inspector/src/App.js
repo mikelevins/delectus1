@@ -124,6 +124,7 @@ class App extends Component {
             databaseCount: response.data.length,
             couchURL: new_couch_url,
             databases: response.data,
+            documentsPageOffset: 0,
             documents: [],
             selectedDocument: null
           })
@@ -134,6 +135,7 @@ class App extends Component {
           couchURL: new_couch_url,
           databases: [],
           selectedDatabase: null,
+          documentsPageOffset: 0,
           documents: [],
           selectedDocument: null
         });
@@ -163,6 +165,7 @@ class App extends Component {
         app.setState({
           documentsCount: response.data.total_rows,
           selectedDatabase: dbName,
+          documentsPageOffset: 0,
           documents: response.data.rows,
           selectedDocument: null
         })
@@ -170,6 +173,7 @@ class App extends Component {
       .catch((error) => {
         app.setState({
           selectedDatabase: null,
+          documentsPageOffset: 0,
           documents: [],
           selectedDocument: null
         });

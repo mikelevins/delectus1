@@ -5,17 +5,14 @@ import Button from '@material-ui/core/Button';
 const styles = {
     browserPane: {
         border: '1px solid black',
-        height: '20rem',
+        height: '24rem',
         overflow: 'auto',
         padding: '6px',
-        width: '100%',
+        width: '32rem'
     },
     browserPaneTitle: {
         fontWeight: 'bold',
         height: '1rem',
-    },
-    button: {
-        textTransform: 'none'
     }
 };
 
@@ -29,16 +26,37 @@ class BrowserDocumentContentsPane extends Component {
         const pane = this;
         const app = pane.props.app;
         const docID = pane.props.documentID;
-        const doc = app.getSelectedDocument();
-        const docStr = (doc) ? JSON.stringify(doc) : "" ;
         const paneTitle = docID;
+        const doc = app.getSelectedDocument();
+        const docKeys = (doc) ? Object.keys(doc) : [];
+        const docRows = docKeys.map((key) => {
+            const val = doc[key];
+            return (
+                <tr><td>{key}</td><td>{val}</td></tr>
+            );
+        });
 
-        return (
-            <div>
-                <p style={styles.browserPaneTitle}>{paneTitle}</p>
-                <p style={styles.documentContentsPane}>{docStr}</p>
-            </div>
-        );
+        if (doc) {
+            return (
+                <div>
+                    <p style={styles.browserPaneTitle}>{paneTitle}</p>
+                    <div style={styles.browserPane}>
+                        <table>
+                            <tbody>
+                                {docRows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <p style={styles.browserPaneTitle}>{paneTitle}</p>
+                </div>
+            );
+        }
+
 
 
     }
