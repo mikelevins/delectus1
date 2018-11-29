@@ -22,15 +22,6 @@ const styles = {
 
 class BrowserDocumentContentsPane extends Component {
 
-    makeItemSelector = (item) =>
-        <Button
-            style={styles.button}
-            variant='text' >
-            {item}
-        </Button>;
-
-    makeBrowserRow = (item) => <tr><td>{this.makeItemSelector(item)}</td></tr>;
-
     // main render
     // ---------------------------------------------------------
 

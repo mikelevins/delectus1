@@ -76,6 +76,8 @@ class App extends Component {
     this.state = {
       couchURL: '',
       databases: null,
+      databaseCount: 0,
+      documentsCount: 0,
       documentsPerPage: 10,
       documentsPageOffset: 0,
       selectedDatabase: null,
@@ -115,12 +117,15 @@ class App extends Component {
 
     axios.get(requestStr)
       .then(
-        (response) => this.setState({
-          couchURL: new_couch_url,
-          databases: response.data,
-          documents: [],
-          selectedDocument: null
-        })
+        (response) => {
+          this.setState({
+            databaseCount: response.data.length,
+            couchURL: new_couch_url,
+            databases: response.data,
+            documents: [],
+            selectedDocument: null
+          })
+        }
       )
       .catch((error) => {
         app.setState({
@@ -154,6 +159,7 @@ class App extends Component {
     axios.get(couchURL + docsRequest)
       .then(response => {
         app.setState({
+          documentsCount: response.data.total_rows,
           selectedDatabase: dbName,
           documents: response.data.rows,
           selectedDocument: null
@@ -183,12 +189,13 @@ class App extends Component {
     const couchURL = app.getCouchURL();
     const dbName = app.getSelectedDatabase();
     const limit = app.getDocumentsPerPage();
-    const offset = app.getDatabasePageOffset()+limit;
+    const offset = app.getDatabasePageOffset() + limit;
     const docsRequest = MakeDocsRequest(dbName, limit, offset);
 
     axios.get(couchURL + docsRequest)
       .then(response => {
-        app.setState({ 
+        app.setState({
+          documentsCount: response.data.total_rows,
           documentsPageOffset: offset,
           documents: response.data.rows,
           selectedDocument: null
@@ -214,12 +221,13 @@ class App extends Component {
     const dbName = app.getSelectedDatabase();
     const limit = app.getDocumentsPerPage();
     const oldOffset = app.getDatabasePageOffset();
-    const newOffset = (oldOffset-limit <= 0) ? 0 : (oldOffset-limit);
+    const newOffset = (oldOffset - limit <= 0) ? 0 : (oldOffset - limit);
     const docsRequest = MakeDocsRequest(dbName, limit, newOffset);
 
     axios.get(couchURL + docsRequest)
       .then(response => {
-        app.setState({ 
+        app.setState({
+          documentsCount: response.data.total_rows,
           documentsPageOffset: newOffset,
           documents: response.data.rows,
           selectedDocument: null
@@ -244,7 +252,7 @@ class App extends Component {
     app.setState({ selectedDocument: documentID });
     // TODO: fetch the selected document corresponding to the ID 
     // and display it in the contents pane
-  } 
+  }
 
   // main render
   // ---------------------------------------------------------
