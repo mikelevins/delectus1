@@ -35,15 +35,17 @@ class BrowserDocumentContentsPane extends Component {
     // ---------------------------------------------------------
 
     render() {
-        const emptyList = [];
         const pane = this;
+        const app = pane.props.app;
+        const selectedDoc = app.getSelectedDocument();
+        const paneTitle = selectedDoc;
         const list = pane.props.list;
-        var listRows = (list) ? (list.map(this.makeBrowserRow)) : (emptyList);
+        var listRows = (list) ? (list.map(this.makeBrowserRow)) : ([]);
 
         if (list && list.length > 0) {
             return (
                 <div>
-                    <p style={styles.browserPaneTitle}>Databases</p>
+                    <p style={styles.browserPaneTitle}>{paneTitle}</p>
                     <table style={styles.browserPane}>
                         <tbody>
                             {listRows}

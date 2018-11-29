@@ -93,7 +93,8 @@ class App extends Component {
   getdocumentsPerPage = () => { return this.state.documentsPerPage; }
   getDatabasePageOffset = () => { return this.state.documentsPageOffset; }
   getSelectedDatabase = () => { return this.state.selectedDatabase; }
-  getselectedDBDocuments = () => { return this.state.selectedDBDocuments; }
+  getSelectedDBDocuments = () => { return this.state.selectedDBDocuments; }
+  getSelectedDocument = () => { return this.state.selectedDocument; }
 
   // view accessors
   // ---------------------------------------------------------
@@ -237,6 +238,13 @@ class App extends Component {
         }
       })
   }
+
+  updateSelectedDocument = (documentID) => {
+    const app = this;
+    app.setState({ 
+      selectedDocument: documentID
+    })    
+  } 
 
   // main render
   // ---------------------------------------------------------

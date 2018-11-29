@@ -75,13 +75,23 @@ class BrowserDocumentsPane extends Component {
         app.updateNextDatabasePage();
     }
 
+    setSelectedItem = (itemID) => {
+        const app = this.props.app;
+        app.updateSelectedDocument(itemID);
+    }
+
     makeListItem = (item) => {
         const itemID = item.id;
+        const pane = this;
+        const app = this.props.app;
+        const isSelected = itemID === app.getSelectedDocument();
 
         return (
             <ListItem
                 key={itemID}
-                button={true}  >
+                button={true}
+                selected={isSelected}
+                onClick={(event) => { pane.setSelectedItem(itemID) }} >
                 < ListItemText primary={itemID} />
             </ListItem>
         )
@@ -95,11 +105,10 @@ class BrowserDocumentsPane extends Component {
     render() {
         const pane = this;
         const app = pane.props.app;
-        const emptyList = [];
         const selectedDB = app.getSelectedDatabase();
-        const paneTitle = '\'' + selectedDB + '\' documents';
+        const paneTitle = selectedDB;
         const doclist = app.state.selectedDBDocuments;
-        var docRows = (doclist && doclist.length > 0) ? (doclist.map(this.makeListItem)) : (emptyList);
+        var docRows = (doclist && doclist.length > 0) ? (doclist.map(this.makeListItem)) : ([]);
 
         if (doclist && doclist.length > 0) {
             return (
