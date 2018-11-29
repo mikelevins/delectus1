@@ -79,7 +79,7 @@ class App extends Component {
       documentsPerPage: 10,
       documentsPageOffset: 0,
       selectedDatabase: null,
-      selectedDBDocuments: [],
+      documents: [],
       selectedDocument: null,
       keyPath: [], // the sequence of keys displayed in the browser
     };
@@ -90,10 +90,10 @@ class App extends Component {
 
   getCouchURL = () => { return this.state.couchURL; }
   getDatabases = () => { return this.state.databases; }
-  getdocumentsPerPage = () => { return this.state.documentsPerPage; }
+  getDocumentsPerPage = () => { return this.state.documentsPerPage; }
   getDatabasePageOffset = () => { return this.state.documentsPageOffset; }
   getSelectedDatabase = () => { return this.state.selectedDatabase; }
-  getSelectedDBDocuments = () => { return this.state.selectedDBDocuments; }
+  getDocuments = () => { return this.state.documents; }
   getSelectedDocument = () => { return this.state.selectedDocument; }
 
   // view accessors
@@ -118,7 +118,7 @@ class App extends Component {
         (response) => this.setState({
           couchURL: new_couch_url,
           databases: response.data,
-          selectedDBDocuments: [],
+          documents: [],
           selectedDocument: null
         })
       )
@@ -127,7 +127,7 @@ class App extends Component {
           couchURL: new_couch_url,
           databases: [],
           selectedDatabase: null,
-          selectedDBDocuments: [],
+          documents: [],
           selectedDocument: null
         });
 
@@ -148,21 +148,21 @@ class App extends Component {
     const app = this;
     const couchURL = app.getCouchURL();
     const offset = app.getDatabasePageOffset();
-    const limit = app.getdocumentsPerPage();
+    const limit = app.getDocumentsPerPage();
     const docsRequest = MakeDocsRequest(dbName, limit, offset);
 
     axios.get(couchURL + docsRequest)
       .then(response => {
         app.setState({
           selectedDatabase: dbName,
-          selectedDBDocuments: response.data.rows,
+          documents: response.data.rows,
           selectedDocument: null
         })
       })
       .catch((error) => {
         app.setState({
           selectedDatabase: null,
-          selectedDBDocuments: [],
+          documents: [],
           selectedDocument: null
         });
         if (error.response) {
@@ -190,7 +190,7 @@ class App extends Component {
       .then(response => {
         app.setState({ 
           documentsPageOffset: offset,
-          selectedDBDocuments: response.data.rows,
+          documents: response.data.rows,
           selectedDocument: null
         })
       })
@@ -221,7 +221,7 @@ class App extends Component {
       .then(response => {
         app.setState({ 
           documentsPageOffset: newOffset,
-          selectedDBDocuments: response.data.rows,
+          documents: response.data.rows,
           selectedDocument: null
         })
       })
@@ -241,10 +241,8 @@ class App extends Component {
 
   updateSelectedDocument = (documentID) => {
     const app = this;
-    app.setState({ 
-      selectedDocument: documentID
-    })
-    // TODO: fetchthe selected document corresponding to the ID 
+    app.setState({ selectedDocument: documentID });
+    // TODO: fetch the selected document corresponding to the ID 
     // and display it in the contents pane
   } 
 

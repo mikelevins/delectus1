@@ -28,6 +28,9 @@ class Browser extends Component {
     render() {
         const browser = this;
         const app = browser.props.app;
+        const databases = app.getDatabases();
+        const documents = app.getDocuments();
+        const selectedDoc = app.getSelectedDocument();
 
         return (
             <React.Fragment>
@@ -35,13 +38,13 @@ class Browser extends Component {
                     <tbody>
                         <tr>
                             <td style={styles.browserPane}>
-                                <BrowserDatabasesPane app={app} />
+                                <BrowserDatabasesPane app={app} databases={databases} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentsPane app={app} />
+                                <BrowserDocumentsPane app={app} documents={documents} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentContentsPane app={app} />
+                                <BrowserDocumentContentsPane app={app} document={selectedDoc} />
                             </td>
                         </tr>
                     </tbody>

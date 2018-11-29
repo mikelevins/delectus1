@@ -107,7 +107,7 @@ class BrowserDocumentsPane extends Component {
         const app = pane.props.app;
         const selectedDB = app.getSelectedDatabase();
         const paneTitle = selectedDB;
-        const doclist = app.state.selectedDBDocuments;
+        const doclist = app.getDocuments();
         var docRows = (doclist && doclist.length > 0) ? (doclist.map(this.makeListItem)) : ([]);
 
         if (doclist && doclist.length > 0) {
