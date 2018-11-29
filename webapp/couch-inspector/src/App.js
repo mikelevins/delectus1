@@ -116,9 +116,8 @@ class App extends Component {
   updateSelectedDatabase = (dbName) => {
     const app = this;
     const couchURL = app.getCouchURL();
-    const offset = app.getDatabasePageOffset();
     const limit = app.getDocumentsPerPage();
-    const docsRequest = MakeAllDocumentsRequest(dbName, limit, offset);
+    const docsRequest = MakeAllDocumentsRequest(dbName, limit, 0);
 
     axios.get(couchURL + docsRequest)
       .then(response => {
@@ -144,10 +143,6 @@ class App extends Component {
         }
       })
   }
-
-  // BUG: if you select a database and page forward, then when
-  // you select a second database, the displayed results for the new
-  // database are also paged forward
 
   updateNextDatabasePage = () => {
     const app = this;
