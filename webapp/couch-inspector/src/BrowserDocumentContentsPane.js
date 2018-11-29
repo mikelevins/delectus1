@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import Button from '@material-ui/core/Button';
 
 const styles = {
     browserPane: {
@@ -32,7 +31,7 @@ class BrowserDocumentContentsPane extends Component {
         const docRows = docKeys.map((key) => {
             const val = doc[key];
             return (
-                <tr><td>{key}</td><td>{val}</td></tr>
+                <tr key={key}><td>{key}</td><td>{val}</td></tr>
             );
         });
 

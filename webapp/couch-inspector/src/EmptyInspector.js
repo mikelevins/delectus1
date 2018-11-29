@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-import Browser from './Browser.js';
 import CouchControls from './CouchControls.js';
 
 // EmptyInspector styles

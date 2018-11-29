@@ -1,23 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from 'axios';
 
 import CouchInspector from './CouchInspector.js';
 import EmptyInspector from './EmptyInspector.js';
-
-// App styles
-// ---------------------------------------------------------
-
-const styles = {
-  controls: { width: '70%' },
-  browser: {
-    marginLeft: '1rem',
-    marginTop: '0.5rem',
-  },
-  title: { marginLeft: '2rem' },
-};
 
 // auxiliary constructors
 // ---------------------------------------------------------
@@ -70,10 +57,25 @@ class App extends Component {
 
   getFormURL = () => { return (document.getElementById('CouchDB_URL').value); }
 
-  // event handling
+  // lifecycle events
   // ---------------------------------------------------------
 
   componentDidMount() { document.title = "Couch Inspector" }
+
+  // update state with data from the server
+  // ---------------------------------------------------------
+
+  logServerError = (error, message) => {
+    console.log(message);
+    console.log(error.response.status);
+    console.log(error.response.data);
+    console.log(error.response.headers);
+  }
+
+  logConnectionError = (error, message) => {
+    console.log(message);
+    console.log(error);
+  }
 
   updateServerConnection = () => {
     const app = this;
@@ -104,14 +106,9 @@ class App extends Component {
         });
 
         if (error.response) {
-          // the server returned an error response
-          console.log("handleConnect: the server returned an error");
-          console.log(error.response.status);
-          console.log(error.response.data);
-          console.log(error.response.headers);
+          this.logServerError(error,"handleConnect: the server returned an error");
         } else {
-          // the server never responded
-          console.log("handleConnect: no response from the server");
+          this.logConnectionError(error,"handleConnect: no response from the server");
         }
       })
   }
@@ -141,14 +138,9 @@ class App extends Component {
           selectedDocument: null
         });
         if (error.response) {
-          // the server returned an error response
-          console.log('App.updateSelectedDatabase: the server returned an error');
-          console.log(error.response.status);
-          console.log(error.response.data);
-          console.log(error.response.headers);
+          this.logServerError(error,'App.updateSelectedDatabase: the server returned an error');
         } else {
-          // the server never responded
-          console.log("App.updateSelectedDatabase: no response from the server");
+          this.logConnectionError(error,"App.updateSelectedDatabase: no response from the server");
         }
       })
   }
@@ -176,14 +168,9 @@ class App extends Component {
       })
       .catch((error) => {
         if (error.response) {
-          // the server returned an error response
-          console.log('App.updateNextDatabasePage: the server returned an error');
-          console.log(error.response.status);
-          console.log(error.response.data);
-          console.log(error.response.headers);
+          this.logServerError(error,'App.updateNextDatabasePage: the server returned an error');
         } else {
-          // the server never responded
-          console.log("App.updateNextDatabasePage: no response from the server");
+          this.logConnectionError(error,"App.updateNextDatabasePage: no response from the server");
         }
       })
   }
@@ -208,14 +195,9 @@ class App extends Component {
       })
       .catch((error) => {
         if (error.response) {
-          // the server returned an error response
-          console.log('App.updateNextDatabasePage: the server returned an error');
-          console.log(error.response.status);
-          console.log(error.response.data);
-          console.log(error.response.headers);
+          this.logServerError(error,'App.updateNextDatabasePage: the server returned an error');
         } else {
-          // the server never responded
-          console.log("App.updateNextDatabasePage: no response from the server");
+          this.logConnectionError(error,"App.updateNextDatabasePage: no response from the server");
         }
       })
   }
@@ -237,13 +219,10 @@ class App extends Component {
       .catch((error) => {
         if (error.response) {
           // the server returned an error response
-          console.log('App.updateSelectedDocument: the server returned an error');
-          console.log(error.response.status);
-          console.log(error.response.data);
-          console.log(error.response.headers);
+          this.logServerError(error,'App.updateSelectedDocument: the server returned an error');
         } else {
           // the server never responded
-          console.log("App.updateSelectedDocument: no response from the server");
+          this.logConnectionError(error,"App.updateSelectedDocument: no response from the server");
         }
       })
   }
