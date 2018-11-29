@@ -109,7 +109,7 @@ class BrowserDocumentsPane extends Component {
         const pane = this;
         const app = pane.props.app;
         const selectedDB = app.getSelectedDatabase();
-        const offset = app.getDatabasePageOffset();
+        const offset = app.getDocumentsPageOffset();
         const pageLimit = app.getDocumentsPerPage();
         const docsCount = app.getDocumentsCount();
         const pageNumber = offset/pageLimit;
@@ -127,7 +127,7 @@ class BrowserDocumentsPane extends Component {
                     </div>
                     <div style={styles.controls}>
                         <PreviousButton pane={this} />
-                        <span style={styles.pageNumber}> page {pageNumber} of {pagesCount} </span>
+                        <span style={styles.pageNumber}> page {pageNumber+1} of {pagesCount} </span>
                         <NextButton pane={this} />
                     </div>
                 </div>

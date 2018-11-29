@@ -9,8 +9,12 @@ import EmptyInspector from './EmptyInspector.js';
 // auxiliary constructors
 // ---------------------------------------------------------
 
-function MakeAllDocumentsRequest(dbName, limit, offset) {
-  return ('/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
+function MakeAllDatabasesRequest(url) {
+  return (url+'/_all_dbs');
+}
+
+function MakeAllDocumentsRequest(url,dbName, limit, offset) {
+  return (url+'/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
 }
 
 // App class
@@ -28,14 +32,13 @@ class App extends Component {
       couchURL: '',
       databases: null,
       databaseCount: 0,
+      selectedDatabase: null,
+      documents: [],
       documentsCount: 0,
       documentsPerPage: 10,
       documentsPageOffset: 0,
-      selectedDatabase: null,
-      documents: [],
       selectedDocumentID: null,
-      selectedDocument: null,
-      keyPath: [], // the sequence of keys displayed in the browser
+      selectedDocument: null
     };
   }
 
@@ -44,8 +47,9 @@ class App extends Component {
 
   getCouchURL = () => { return this.state.couchURL; }
   getDatabases = () => { return this.state.databases; }
+  getDatabaseCount = () => { return this.state.databases.length; }
   getDocumentsPerPage = () => { return this.state.documentsPerPage; }
-  getDatabasePageOffset = () => { return this.state.documentsPageOffset; }
+  getDocumentsPageOffset = () => { return this.state.documentsPageOffset; }
   getSelectedDatabase = () => { return this.state.selectedDatabase; }
   getDocuments = () => { return this.state.documents; }
   getDocumentsCount = () => { return this.state.documentsCount; }
@@ -80,17 +84,21 @@ class App extends Component {
   updateServerConnection = () => {
     const app = this;
     const new_couch_url = this.getFormURL();
-    const requestStr = new_couch_url + '/_all_dbs';
+    const requestStr = MakeAllDatabasesRequest(new_couch_url);
 
     axios.get(requestStr)
       .then(
         (response) => {
           this.setState({
-            databaseCount: response.data.length,
             couchURL: new_couch_url,
             databases: response.data,
-            documentsPageOffset: 0,
+            databaseCount: response.data.length,
+            selectedDatabase: null,
             documents: [],
+            documentsCount: 0,
+            documentsPerPage: app.getDocumentsPerPage(),
+            documentsPageOffset: 0,
+            selectedDocumentID: null,
             selectedDocument: null
           })
         }
@@ -99,9 +107,13 @@ class App extends Component {
         app.setState({
           couchURL: new_couch_url,
           databases: [],
+          databaseCount: 0,
           selectedDatabase: null,
-          documentsPageOffset: 0,
           documents: [],
+          documentsCount: 0,
+          documentsPerPage: app.getDocumentsPerPage(),
+          documentsPageOffset: 0,
+          selectedDocumentID: null,
           selectedDocument: null
         });
 
@@ -117,23 +129,34 @@ class App extends Component {
     const app = this;
     const couchURL = app.getCouchURL();
     const limit = app.getDocumentsPerPage();
-    const docsRequest = MakeAllDocumentsRequest(dbName, limit, 0);
+    const docsRequest = MakeAllDocumentsRequest(couchURL,dbName, limit, 0);
 
-    axios.get(couchURL + docsRequest)
+    axios.get(docsRequest)
       .then(response => {
         app.setState({
-          documentsCount: response.data.total_rows,
+          couchURL: couchURL,
+          databases: app.getDatabases(),
+          databaseCount: app.getDatabaseCount(),
           selectedDatabase: dbName,
-          documentsPageOffset: 0,
           documents: response.data.rows,
+          documentsCount: response.data.total_rows,
+          documentsPerPage: app.getDocumentsPerPage(),
+          documentsPageOffset: 0,
+          selectedDocumentID: null,
           selectedDocument: null
         })
       })
       .catch((error) => {
         app.setState({
-          selectedDatabase: null,
-          documentsPageOffset: 0,
-          documents: [],
+          couchURL: couchURL,
+          databases: app.getDatabases(),
+          databaseCount: app.getDatabaseCount(),
+          selectedDatabase: app.getSelectedDatabase(),
+          documents: app.getDocuments(),
+          documentsCount: app.getDocumentsCount(),
+          documentsPerPage: app.getDocumentsPerPage(),
+          documentsPageOffset: app.getDocumentsPageOffset(),
+          selectedDocumentID: null,
           selectedDocument: null
         });
         if (error.response) {
@@ -149,15 +172,19 @@ class App extends Component {
     const couchURL = app.getCouchURL();
     const dbName = app.getSelectedDatabase();
     const limit = app.getDocumentsPerPage();
-    const offset = app.getDatabasePageOffset() + limit;
-    const docsRequest = MakeAllDocumentsRequest(dbName, limit, offset);
+    const offset = app.getDocumentsPageOffset() + limit;
+    const docsRequest = MakeAllDocumentsRequest(couchURL,dbName, limit, offset);
 
-    axios.get(couchURL + docsRequest)
+    axios.get(docsRequest)
       .then(response => {
         app.setState({
-          documentsCount: response.data.total_rows,
-          documentsPageOffset: offset,
+          couchURL: couchURL,
+          databases: app.getDatabases(),
           documents: response.data.rows,
+          documentsCount: app.getDocumentsCount(),
+          documentsPerPage: app.getDocumentsPerPage(),
+          documentsPageOffset: offset,
+          selectedDocumentID: null,
           selectedDocument: null
         })
       })
@@ -175,16 +202,20 @@ class App extends Component {
     const couchURL = app.getCouchURL();
     const dbName = app.getSelectedDatabase();
     const limit = app.getDocumentsPerPage();
-    const oldOffset = app.getDatabasePageOffset();
+    const oldOffset = app.getDocumentsPageOffset();
     const newOffset = (oldOffset - limit <= 0) ? 0 : (oldOffset - limit);
-    const docsRequest = MakeAllDocumentsRequest(dbName, limit, newOffset);
+    const docsRequest = MakeAllDocumentsRequest(couchURL,dbName, limit, newOffset);
 
-    axios.get(couchURL + docsRequest)
+    axios.get(docsRequest)
       .then(response => {
         app.setState({
-          documentsCount: response.data.total_rows,
-          documentsPageOffset: newOffset,
+          couchURL: couchURL,
+          databases: app.getDatabases(),
           documents: response.data.rows,
+          documentsCount: app.getDocumentsCount(),
+          documentsPerPage: app.getDocumentsPerPage(),
+          documentsPageOffset: newOffset,
+          selectedDocumentID: null,
           selectedDocument: null
         })
       })
