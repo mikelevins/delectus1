@@ -30,7 +30,7 @@ class Browser extends Component {
         const app = browser.props.app;
         const databases = app.getDatabases();
         const documents = app.getDocuments();
-        const selectedDoc = app.getSelectedDocument();
+        const selectedDocID = app.getSelectedDocumentID();
 
         return (
             <React.Fragment>
@@ -44,7 +44,7 @@ class Browser extends Component {
                                 <BrowserDocumentsPane app={app} documents={documents} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentContentsPane app={app} documentID={selectedDoc} />
+                                <BrowserDocumentContentsPane app={app} documentID={selectedDocID} />
                             </td>
                         </tr>
                     </tbody>

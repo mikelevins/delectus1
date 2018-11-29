@@ -27,12 +27,16 @@ class BrowserDocumentContentsPane extends Component {
 
     render() {
         const pane = this;
+        const app = pane.props.app;
         const docID = pane.props.documentID;
+        const doc = app.getSelectedDocument();
+        const docStr = (doc) ? JSON.stringify(doc) : "" ;
         const paneTitle = docID;
 
         return (
             <div>
                 <p style={styles.browserPaneTitle}>{paneTitle}</p>
+                <p style={styles.documentContentsPane}>{docStr}</p>
             </div>
         );
 

@@ -82,6 +82,7 @@ class App extends Component {
       documentsPageOffset: 0,
       selectedDatabase: null,
       documents: [],
+      selectedDocumentID: null,
       selectedDocument: null,
       keyPath: [], // the sequence of keys displayed in the browser
     };
@@ -97,6 +98,7 @@ class App extends Component {
   getSelectedDatabase = () => { return this.state.selectedDatabase; }
   getDocuments = () => { return this.state.documents; }
   getSelectedDocument = () => { return this.state.selectedDocument; }
+  getSelectedDocumentID = () => { return this.state.selectedDocumentID; }
 
   // view accessors
   // ---------------------------------------------------------
@@ -249,7 +251,30 @@ class App extends Component {
 
   updateSelectedDocument = (documentID) => {
     const app = this;
-    app.setState({ selectedDocument: documentID });
+    const couchURL = app.getCouchURL();
+    const dbName = app.getSelectedDatabase();
+    const docRequest = ('/' + dbName + '/' + documentID);
+
+    axios.get(couchURL + docRequest)
+      .then(response => {
+        console.log(response);
+        app.setState({ 
+          selectedDocumentID: documentID, 
+          selectedDocument: response.data, 
+        })
+      })
+      .catch((error) => {
+        if (error.response) {
+          // the server returned an error response
+          console.log('App.updateSelectedDocument: the server returned an error');
+          console.log(error.response.status);
+          console.log(error.response.data);
+          console.log(error.response.headers);
+        } else {
+          // the server never responded
+          console.log("App.updateSelectedDocument: no response from the server");
+        }
+      })
   }
 
   // main render

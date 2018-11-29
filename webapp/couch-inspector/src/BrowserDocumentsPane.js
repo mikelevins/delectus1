@@ -84,7 +84,7 @@ class BrowserDocumentsPane extends Component {
         const itemID = item.id;
         const pane = this;
         const app = this.props.app;
-        const isSelected = itemID === app.getSelectedDocument();
+        const isSelected = itemID === app.getSelectedDocumentID();
 
         return (
             <ListItem
