@@ -182,7 +182,7 @@ class App extends Component {
     const app = this;
     const couchURL = app.getCouchURL();
     const dbName = app.getSelectedDatabase();
-    const limit = app.getdocumentsPerPage();
+    const limit = app.getDocumentsPerPage();
     const offset = app.getDatabasePageOffset()+limit;
     const docsRequest = MakeDocsRequest(dbName, limit, offset);
 
@@ -212,7 +212,7 @@ class App extends Component {
     const app = this;
     const couchURL = app.getCouchURL();
     const dbName = app.getSelectedDatabase();
-    const limit = app.getdocumentsPerPage();
+    const limit = app.getDocumentsPerPage();
     const oldOffset = app.getDatabasePageOffset();
     const newOffset = (oldOffset-limit <= 0) ? 0 : (oldOffset-limit);
     const docsRequest = MakeDocsRequest(dbName, limit, newOffset);
