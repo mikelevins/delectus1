@@ -190,6 +190,10 @@ class App extends Component {
       })
   }
 
+  // BUG: if you select a database and page forward, then when
+  // you select a second database, the displayed results for the new
+  // database are also paged forward
+
   updateNextDatabasePage = () => {
     const app = this;
     const couchURL = app.getCouchURL();
@@ -262,9 +266,9 @@ class App extends Component {
     axios.get(couchURL + docRequest)
       .then(response => {
         console.log(response);
-        app.setState({ 
-          selectedDocumentID: documentID, 
-          selectedDocument: response.data, 
+        app.setState({
+          selectedDocumentID: documentID,
+          selectedDocument: response.data,
         })
       })
       .catch((error) => {
