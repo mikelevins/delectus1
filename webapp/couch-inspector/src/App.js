@@ -80,6 +80,7 @@ class App extends Component {
       documentsPageOffset: 0,
       selectedDatabase: null,
       selectedDBDocuments: [],
+      selectedDocument: null,
       keyPath: [], // the sequence of keys displayed in the browser
     };
   }
@@ -116,7 +117,8 @@ class App extends Component {
         (response) => this.setState({
           couchURL: new_couch_url,
           databases: response.data,
-          selectedDBDocuments: []
+          selectedDBDocuments: [],
+          selectedDocument: null
         })
       )
       .catch((error) => {
@@ -124,7 +126,8 @@ class App extends Component {
           couchURL: new_couch_url,
           databases: [],
           selectedDatabase: null,
-          selectedDBDocuments: []
+          selectedDBDocuments: [],
+          selectedDocument: null
         });
 
         if (error.response) {
@@ -149,16 +152,17 @@ class App extends Component {
 
     axios.get(couchURL + docsRequest)
       .then(response => {
-        console.log(response);
         app.setState({
           selectedDatabase: dbName,
-          selectedDBDocuments: response.data.rows
+          selectedDBDocuments: response.data.rows,
+          selectedDocument: null
         })
       })
       .catch((error) => {
         app.setState({
           selectedDatabase: null,
-          selectedDBDocuments: []
+          selectedDBDocuments: [],
+          selectedDocument: null
         });
         if (error.response) {
           // the server returned an error response
@@ -183,10 +187,10 @@ class App extends Component {
 
     axios.get(couchURL + docsRequest)
       .then(response => {
-        console.log(response);
         app.setState({ 
           documentsPageOffset: offset,
-          selectedDBDocuments: response.data.rows 
+          selectedDBDocuments: response.data.rows,
+          selectedDocument: null
         })
       })
       .catch((error) => {
@@ -214,10 +218,10 @@ class App extends Component {
 
     axios.get(couchURL + docsRequest)
       .then(response => {
-        console.log(response);
         app.setState({ 
           documentsPageOffset: newOffset,
-          selectedDBDocuments: response.data.rows 
+          selectedDBDocuments: response.data.rows,
+          selectedDocument: null
         })
       })
       .catch((error) => {
