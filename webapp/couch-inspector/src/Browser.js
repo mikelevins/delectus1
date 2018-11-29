@@ -44,7 +44,7 @@ class Browser extends Component {
                                 <BrowserDocumentsPane app={app} documents={documents} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentContentsPane app={app} document={selectedDoc} />
+                                <BrowserDocumentContentsPane app={app} documentID={selectedDoc} />
                             </td>
                         </tr>
                     </tbody>

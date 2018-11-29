@@ -250,8 +250,6 @@ class App extends Component {
   updateSelectedDocument = (documentID) => {
     const app = this;
     app.setState({ selectedDocument: documentID });
-    // TODO: fetch the selected document corresponding to the ID 
-    // and display it in the contents pane
   }
 
   // main render

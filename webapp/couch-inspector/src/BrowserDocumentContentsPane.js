@@ -27,8 +27,8 @@ class BrowserDocumentContentsPane extends Component {
 
     render() {
         const pane = this;
-        const doc = pane.props.document;
-        const paneTitle = doc;
+        const docID = pane.props.documentID;
+        const paneTitle = docID;
 
         return (
             <div>
