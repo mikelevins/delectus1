@@ -243,7 +243,9 @@ class App extends Component {
     const app = this;
     app.setState({ 
       selectedDocument: documentID
-    })    
+    })
+    // TODO: fetchthe selected document corresponding to the ID 
+    // and display it in the contents pane
   } 
 
   // main render
