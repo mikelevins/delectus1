@@ -24,11 +24,11 @@ const styles = {
         marginTop: '1.5rem',
         textTransform: 'none'
     },
-    textField: { 
+    textField: {
         marginLeft: '1rem',
         marginTop: '1rem',
         width: '95%',
-     },
+    },
 };
 
 // Auxiliary components
@@ -63,11 +63,21 @@ function UsernameField(props) {
 
 function LoginButton(props) {
     const pane = props.pane;
+    const app = props.app;
+    const dbName = props.database;
+
+    const clickHandler = () => {
+        const username = app.getLoginUsername();
+        const password = app.getLoginPassword();
+        app.updateLogin(dbName, username, password);
+    };
+
     return (
         <Button
             style={styles.button}
             variant="contained"
-            color="primary">
+            color="primary"
+            onClick={clickHandler} >
             Log In
         </Button>
     );
@@ -84,14 +94,19 @@ class BrowserAuthPane extends Component {
     render() {
         const pane = this;
         const app = pane.props.app;
+        const dbName = app.getSelectedDatabase();
+        const username = app.getLoginUsername();
+        const password = app.getLoginPassword();
 
         return (
             <div>
-                <div><p style={styles.browserPaneTitle}>Log In</p></div>
+                <div><p style={styles.browserPaneTitle}>Log in to '{dbName}'</p></div>
                 <div style={styles.browserPane}>
-                <UsernameField />
-                <PasswordField />
-                <LoginButton />
+                    <UsernameField />
+                    <PasswordField />
+                    <LoginButton
+                        app={app}
+                        database={dbName} />
                 </div>
             </div>
         );

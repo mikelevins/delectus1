@@ -10,11 +10,11 @@ import EmptyInspector from './EmptyInspector.js';
 // ---------------------------------------------------------
 
 function MakeAllDatabasesRequest(url) {
-  return (url+'/_all_dbs');
+  return (url + '/_all_dbs');
 }
 
-function MakeAllDocumentsRequest(url,dbName, limit, offset) {
-  return (url+'/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
+function MakeAllDocumentsRequest(url, dbName, limit, offset) {
+  return (url + '/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
 }
 
 // App class
@@ -63,6 +63,24 @@ class App extends Component {
   // ---------------------------------------------------------
 
   getFormURL = () => { return (document.getElementById('CouchDB_URL').value); }
+
+  getLoginUsername = () => {
+    const elt = document.getElementById('username');
+    if (elt) {
+      return (elt.value);
+    } else {
+      return ('');
+    }
+  }
+
+  getLoginPassword = () => {
+    const elt = document.getElementById('password');
+    if (elt) {
+      return (elt.value);
+    } else {
+      return ('');
+    }
+  }
 
   // lifecycle events
   // ---------------------------------------------------------
@@ -123,9 +141,9 @@ class App extends Component {
         });
 
         if (error.response) {
-          this.logServerError(error,"handleConnect: the server returned an error");
+          this.logServerError(error, "handleConnect: the server returned an error");
         } else {
-          this.logConnectionError(error,"handleConnect: no response from the server");
+          this.logConnectionError(error, "handleConnect: no response from the server");
         }
       })
   }
@@ -134,7 +152,7 @@ class App extends Component {
     const app = this;
     const couchURL = app.getCouchURL();
     const limit = app.getDocumentsPerPage();
-    const docsRequest = MakeAllDocumentsRequest(couchURL,dbName, limit, 0);
+    const docsRequest = MakeAllDocumentsRequest(couchURL, dbName, limit, 0);
 
     axios.get(docsRequest)
       .then(response => {
@@ -171,10 +189,10 @@ class App extends Component {
             // 'Unauthorized'
             app.setState({ authRequested: true, selectedDatabase: dbName });
           } else {
-            this.logServerError(error,'App.updateSelectedDatabase: the server returned an error');
+            this.logServerError(error, 'App.updateSelectedDatabase: the server returned an error');
           }
         } else {
-          this.logConnectionError(error,"App.updateSelectedDatabase: no response from the server");
+          this.logConnectionError(error, "App.updateSelectedDatabase: no response from the server");
         }
       })
   }
@@ -185,7 +203,7 @@ class App extends Component {
     const dbName = app.getSelectedDatabase();
     const limit = app.getDocumentsPerPage();
     const offset = app.getDocumentsPageOffset() + limit;
-    const docsRequest = MakeAllDocumentsRequest(couchURL,dbName, limit, offset);
+    const docsRequest = MakeAllDocumentsRequest(couchURL, dbName, limit, offset);
 
     axios.get(docsRequest)
       .then(response => {
@@ -203,9 +221,9 @@ class App extends Component {
       })
       .catch((error) => {
         if (error.response) {
-          this.logServerError(error,'App.updateNextDatabasePage: the server returned an error');
+          this.logServerError(error, 'App.updateNextDatabasePage: the server returned an error');
         } else {
-          this.logConnectionError(error,"App.updateNextDatabasePage: no response from the server");
+          this.logConnectionError(error, "App.updateNextDatabasePage: no response from the server");
         }
       })
   }
@@ -217,7 +235,7 @@ class App extends Component {
     const limit = app.getDocumentsPerPage();
     const oldOffset = app.getDocumentsPageOffset();
     const newOffset = (oldOffset - limit <= 0) ? 0 : (oldOffset - limit);
-    const docsRequest = MakeAllDocumentsRequest(couchURL,dbName, limit, newOffset);
+    const docsRequest = MakeAllDocumentsRequest(couchURL, dbName, limit, newOffset);
 
     axios.get(docsRequest)
       .then(response => {
@@ -235,9 +253,9 @@ class App extends Component {
       })
       .catch((error) => {
         if (error.response) {
-          this.logServerError(error,'App.updateNextDatabasePage: the server returned an error');
+          this.logServerError(error, 'App.updateNextDatabasePage: the server returned an error');
         } else {
-          this.logConnectionError(error,"App.updateNextDatabasePage: no response from the server");
+          this.logConnectionError(error, "App.updateNextDatabasePage: no response from the server");
         }
       })
   }
@@ -258,12 +276,21 @@ class App extends Component {
       .catch((error) => {
         if (error.response) {
           // the server returned an error response
-          this.logServerError(error,'App.updateSelectedDocument: the server returned an error');
+          this.logServerError(error, 'App.updateSelectedDocument: the server returned an error');
         } else {
           // the server never responded
-          this.logConnectionError(error,"App.updateSelectedDocument: no response from the server");
+          this.logConnectionError(error, "App.updateSelectedDocument: no response from the server");
         }
       })
+  }
+
+  updateLogin = (dbname, username, password) => {
+    const app = this;
+    app.setState({
+      sessionCredentials: {
+        [dbname]: { username: username, password: password }
+      }
+    })
   }
 
   // main render
