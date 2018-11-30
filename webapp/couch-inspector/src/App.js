@@ -39,7 +39,8 @@ class App extends Component {
       documentsPerPage: 10,
       documentsPageOffset: 0,
       selectedDocumentID: null,
-      selectedDocument: null
+      selectedDocument: null,
+      sessionCredentials: {}
     };
   }
 
@@ -102,7 +103,7 @@ class App extends Component {
             documentsPerPage: app.getDocumentsPerPage(),
             documentsPageOffset: 0,
             selectedDocumentID: null,
-            selectedDocument: null
+            selectedDocument: null,
           })
         }
       )
