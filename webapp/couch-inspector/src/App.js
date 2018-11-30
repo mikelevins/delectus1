@@ -58,6 +58,7 @@ class App extends Component {
   getDocumentsCount = () => { return this.state.documentsCount; }
   getSelectedDocument = () => { return this.state.selectedDocument; }
   getSelectedDocumentID = () => { return this.state.selectedDocumentID; }
+  getSessionCredentials = () => { return this.state.sessionCredentials; }
 
   // view accessors
   // ---------------------------------------------------------
@@ -284,13 +285,12 @@ class App extends Component {
       })
   }
 
-  updateLogin = (dbname, username, password) => {
+  updateLoginSessions = (dbname, username, password) => {
     const app = this;
-    app.setState({
-      sessionCredentials: {
-        [dbname]: { username: username, password: password }
-      }
-    })
+    const oldSessions = app.getSessionCredentials();
+    const newCredentials = { [dbname]: { username: username, password: password }};
+    const newSessions = Object.assign({},oldSessions,newCredentials);
+    app.setState({ sessionCredentials: newSessions })
   }
 
   // main render
