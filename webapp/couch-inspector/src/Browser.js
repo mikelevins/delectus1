@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import BrowserAuthPane from './BrowserAuthPane.js';
 import BrowserDatabasesPane from './BrowserDatabasesPane.js';
 import BrowserDocumentsPane from './BrowserDocumentsPane.js';
 import BrowserDocumentContentsPane from './BrowserDocumentContentsPane.js';
@@ -28,6 +29,7 @@ class Browser extends Component {
     render() {
         const browser = this;
         const app = browser.props.app;
+        const authRequested = app.getAuthRequested();
         const databases = app.getDatabases();
         const documents = app.getDocuments();
         const selectedDocID = app.getSelectedDocumentID();
@@ -41,7 +43,10 @@ class Browser extends Component {
                                 <BrowserDatabasesPane app={app} databases={databases} />
                             </td>
                             <td style={styles.browserPane}>
-                                <BrowserDocumentsPane app={app} documents={documents} />
+                                {(authRequested)
+                                    ? <BrowserAuthPane app={app} />
+                                     : <BrowserDocumentsPane app={app} documents={documents} />}
+
                             </td>
                             <td style={styles.browserPane}>
                                 <BrowserDocumentContentsPane app={app} documentID={selectedDocID} />
