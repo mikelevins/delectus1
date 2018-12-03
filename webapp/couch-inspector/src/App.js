@@ -14,7 +14,9 @@ function MakeAllDatabasesRequest(url) {
 }
 
 function MakeAllDocumentsRequest(url, dbName, limit, offset) {
-  return (url + '/' + dbName + '/_all_docs?limit=' + String(limit) + '&skip=' + String(offset));
+  return (
+    url + '/' + dbName + '/_all_docs?limit=' +
+    String(limit) + '&skip=' + String(offset));
 }
 
 // App class
