@@ -88,7 +88,7 @@ class App extends Component {
 
   componentDidMount() { document.title = "Couch Inspector" }
 
-  // update state with data from the server
+  // logging
   // ---------------------------------------------------------
 
   logServerError = (error, message) => {
@@ -103,6 +103,9 @@ class App extends Component {
     console.log(error);
   }
 
+  // update state with data from the server
+  // ---------------------------------------------------------
+
   updateServerConnection = () => {
     const app = this;
     const new_couch_url = this.getFormURL();
@@ -111,7 +114,7 @@ class App extends Component {
     axios.get(requestStr)
       .then(
         (response) => {
-          this.setState({
+          app.setState({
             authRequested: false,
             couchURL: new_couch_url,
             databases: response.data,
@@ -119,7 +122,6 @@ class App extends Component {
             selectedDatabase: null,
             documents: [],
             documentsCount: 0,
-            documentsPerPage: app.getDocumentsPerPage(),
             documentsPageOffset: 0,
             selectedDocumentID: null,
             selectedDocument: null,
@@ -135,7 +137,6 @@ class App extends Component {
           selectedDatabase: null,
           documents: [],
           documentsCount: 0,
-          documentsPerPage: app.getDocumentsPerPage(),
           documentsPageOffset: 0,
           selectedDocumentID: null,
           selectedDocument: null
@@ -160,12 +161,9 @@ class App extends Component {
         app.setState({
           authRequested: false,
           couchURL: couchURL,
-          databases: app.getDatabases(),
-          databaseCount: app.getDatabaseCount(),
           selectedDatabase: dbName,
           documents: response.data.rows,
           documentsCount: response.data.total_rows,
-          documentsPerPage: app.getDocumentsPerPage(),
           documentsPageOffset: 0,
           selectedDocumentID: null,
           selectedDocument: null
@@ -175,12 +173,9 @@ class App extends Component {
         app.setState({
           authRequested: false,
           couchURL: couchURL,
-          databases: app.getDatabases(),
-          databaseCount: app.getDatabaseCount(),
           selectedDatabase: null,
           documents: [],
           documentsCount: 0,
-          documentsPerPage: app.getDocumentsPerPage(),
           documentsPageOffset: 0,
           selectedDocumentID: null,
           selectedDocument: null
@@ -209,12 +204,8 @@ class App extends Component {
     axios.get(docsRequest)
       .then(response => {
         app.setState({
-          authRequested: app.getAuthRequested(),
           couchURL: couchURL,
-          databases: app.getDatabases(),
           documents: response.data.rows,
-          documentsCount: app.getDocumentsCount(),
-          documentsPerPage: app.getDocumentsPerPage(),
           documentsPageOffset: offset,
           selectedDocumentID: null,
           selectedDocument: null
@@ -241,12 +232,8 @@ class App extends Component {
     axios.get(docsRequest)
       .then(response => {
         app.setState({
-          authRequested: app.getAuthRequested(),
           couchURL: couchURL,
-          databases: app.getDatabases(),
           documents: response.data.rows,
-          documentsCount: app.getDocumentsCount(),
-          documentsPerPage: app.getDocumentsPerPage(),
           documentsPageOffset: newOffset,
           selectedDocumentID: null,
           selectedDocument: null
@@ -288,9 +275,11 @@ class App extends Component {
   updateLoginSessions = (dbname, username, password) => {
     const app = this;
     const oldSessions = app.getSessionCredentials();
-    const newCredentials = { [dbname]: { username: username, password: password }};
-    const newSessions = Object.assign({},oldSessions,newCredentials);
-    app.setState({ sessionCredentials: newSessions })
+    const newCredentials = { [dbname]: { username: username, password: password } };
+    const newSessions = Object.assign({}, oldSessions, newCredentials);
+    app.setState({
+      sessionCredentials: newSessions
+    })
   }
 
   // main render
