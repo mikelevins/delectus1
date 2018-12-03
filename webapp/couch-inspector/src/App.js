@@ -186,8 +186,8 @@ class App extends Component {
     const limit = app.getDocumentsPerPage();
     const docsRequest = MakeAllDocumentsRequest(couchURL, dbName, limit, 0);
 
-    // TODO: is authRequested, send credentials to the remote Couch instance 
-    // and watch for authentication failures
+    // TODO: if authRequested, send credentials to the remote Couch instance 
+    // and watch for authentication failures; also clear auth Requested on success
     axios.get(docsRequest)
       .then(response => {
         app.setState({
