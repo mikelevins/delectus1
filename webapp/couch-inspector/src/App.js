@@ -109,8 +109,20 @@ class App extends Component {
   // ---------------------------------------------------------
 
   handleLogin = (dbName, username, password) => {
-    this.updateLoginSessions(dbName, username, password);
+    this.addLoginSession(dbName, username, password);
   }
+
+  addLoginSession = (dbname, username, password) => {
+    const app = this;
+    const oldSessions = app.getSessionCredentials();
+    const newCredentials = { [dbname]: { username: username, password: password } };
+    const newSessions = Object.assign({}, oldSessions, newCredentials);
+    app.setState({
+      sessionCredentials: newSessions
+    })
+  }
+
+  // TODO: add removeLoginSession to handle logouts and failed authentications
 
   // update state with data from the server
   // ---------------------------------------------------------
@@ -279,16 +291,6 @@ class App extends Component {
           this.logConnectionError(error, "App.updateSelectedDocument: no response from the server");
         }
       })
-  }
-
-  updateLoginSessions = (dbname, username, password) => {
-    const app = this;
-    const oldSessions = app.getSessionCredentials();
-    const newCredentials = { [dbname]: { username: username, password: password } };
-    const newSessions = Object.assign({}, oldSessions, newCredentials);
-    app.setState({
-      sessionCredentials: newSessions
-    })
   }
 
   // main render
