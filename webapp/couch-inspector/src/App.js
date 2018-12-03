@@ -105,6 +105,13 @@ class App extends Component {
     console.log(error);
   }
 
+  // authenticate users
+  // ---------------------------------------------------------
+
+  handleLogin = (dbName, username, password) => {
+    this.updateLoginSessions(dbName, username, password);
+  }
+
   // update state with data from the server
   // ---------------------------------------------------------
 

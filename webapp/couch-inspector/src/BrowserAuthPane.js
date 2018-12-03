@@ -69,7 +69,7 @@ function LoginButton(props) {
     const clickHandler = () => {
         const username = app.getLoginUsername();
         const password = app.getLoginPassword();
-        app.updateLoginSessions(dbName, username, password);
+        app.handleLogin(dbName, username, password);
     };
 
     return (
