@@ -31,6 +31,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      authMessage: null,
       authRequested: false,
       couchURL: '',
       databases: null,
@@ -49,6 +50,7 @@ class App extends Component {
   // state accessors
   // ---------------------------------------------------------
 
+  getAuthMessage = () => { return this.state.authMessage; }
   getAuthRequested = () => { return this.state.authRequested; }
   getCouchURL = () => { return this.state.couchURL; }
   getDatabases = () => { return this.state.databases; }
@@ -171,7 +173,8 @@ class App extends Component {
       })
   }
 
-  updateSelectedDatabase = (dbName) => {
+  updateSelectedDatabase = (props) => {
+    const dbName = props.dbName;
     const app = this;
     const couchURL = app.getCouchURL();
     const limit = app.getDocumentsPerPage();

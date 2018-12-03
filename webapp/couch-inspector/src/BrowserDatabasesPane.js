@@ -31,7 +31,7 @@ class BrowserDatabasesPane extends Component {
 
     setSelectedItem = (itemName) => {
         const app = this.props.app;
-        app.updateSelectedDatabase(itemName);
+        app.updateSelectedDatabase({dbName: itemName});
     }
 
     makeListItem = (item) => {
