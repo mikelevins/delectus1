@@ -188,41 +188,45 @@ class App extends Component {
 
     // TODO: if authRequested, send credentials to the remote Couch instance 
     // and watch for authentication failures; also clear auth Requested on success
-    axios.get(docsRequest)
-      .then(response => {
-        app.setState({
-          authRequested: false,
-          couchURL: couchURL,
-          selectedDatabase: dbName,
-          documents: response.data.rows,
-          documentsCount: response.data.total_rows,
-          documentsPageOffset: 0,
-          selectedDocumentID: null,
-          selectedDocument: null
+    if (authRequested) {
+      alert('this will be where we send auth credentials to couch');
+    } else {
+      axios.get(docsRequest)
+        .then(response => {
+          app.setState({
+            authRequested: false,
+            couchURL: couchURL,
+            selectedDatabase: dbName,
+            documents: response.data.rows,
+            documentsCount: response.data.total_rows,
+            documentsPageOffset: 0,
+            selectedDocumentID: null,
+            selectedDocument: null
+          })
         })
-      })
-      .catch((error) => {
-        app.setState({
-          authRequested: false,
-          couchURL: couchURL,
-          selectedDatabase: null,
-          documents: [],
-          documentsCount: 0,
-          documentsPageOffset: 0,
-          selectedDocumentID: null,
-          selectedDocument: null
-        });
-        if (error.response) {
-          if (error.response.status === 401) {
-            // 'Unauthorized'
-            app.setState({ authRequested: true, selectedDatabase: dbName });
+        .catch((error) => {
+          app.setState({
+            authRequested: false,
+            couchURL: couchURL,
+            selectedDatabase: null,
+            documents: [],
+            documentsCount: 0,
+            documentsPageOffset: 0,
+            selectedDocumentID: null,
+            selectedDocument: null
+          });
+          if (error.response) {
+            if (error.response.status === 401) {
+              // 'Unauthorized'
+              app.setState({ authRequested: true, selectedDatabase: dbName });
+            } else {
+              this.logServerError(error, 'App.updateSelectedDatabase: the server returned an error');
+            }
           } else {
-            this.logServerError(error, 'App.updateSelectedDatabase: the server returned an error');
+            this.logConnectionError(error, "App.updateSelectedDatabase: no response from the server");
           }
-        } else {
-          this.logConnectionError(error, "App.updateSelectedDatabase: no response from the server");
-        }
-      })
+        })
+    }
   }
 
   updateNextDatabasePage = () => {
