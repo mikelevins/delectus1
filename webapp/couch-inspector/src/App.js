@@ -112,6 +112,11 @@ class App extends Component {
 
   handleLogin = (dbName, username, password) => {
     this.addLoginSession(dbName, username, password);
+    this.updateSelectedDatabase({
+      dbName: dbName,
+      username: username,
+      password: password
+    });
   }
 
   addLoginSession = (dbname, username, password) => {
@@ -176,10 +181,13 @@ class App extends Component {
   updateSelectedDatabase = (props) => {
     const dbName = props.dbName;
     const app = this;
+    const authRequested = app.getAuthRequested();
     const couchURL = app.getCouchURL();
     const limit = app.getDocumentsPerPage();
     const docsRequest = MakeAllDocumentsRequest(couchURL, dbName, limit, 0);
 
+    // TODO: is authRequested, send credentials to the remote Couch instance 
+    // and watch for authentication failures
     axios.get(docsRequest)
       .then(response => {
         app.setState({
