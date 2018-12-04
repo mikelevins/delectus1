@@ -107,7 +107,7 @@ class App extends Component {
     console.log(error);
   }
 
-  // authenticate users
+  // authentication
   // ---------------------------------------------------------
 
   handleLogin = (dbName, username, password) => {
@@ -116,6 +116,14 @@ class App extends Component {
       dbName: dbName,
       username: username,
       password: password
+    });
+  }
+
+  handleLoginCanceled = () => {
+    const app = this;
+    app.setState({
+      authRequested: false,
+      selectedDatabase: null,
     });
   }
 
@@ -129,6 +137,16 @@ class App extends Component {
         sessionCookie: null
       }
     };
+    const newSessions = Object.assign({}, oldSessions, newCredentials);
+    app.setState({
+      sessionCredentials: newSessions
+    })
+  }
+
+  removeLoginSession = (dbname) => {
+    const app = this;
+    const oldSessions = app.getSessionCredentials();
+    const newCredentials = { [dbname]: null };
     const newSessions = Object.assign({}, oldSessions, newCredentials);
     app.setState({
       sessionCredentials: newSessions
@@ -192,52 +210,45 @@ class App extends Component {
     const limit = app.getDocumentsPerPage();
     const docsRequest = MakeAllDocumentsRequest(couchURL, dbName, limit, 0);
 
-    // TODO: if authRequested, send credentials to the remote Couch instance 
-    // and watch for authentication failures; also clear auth Requested on success
     if (authRequested) {
-      const username = props.username;
-      const password = props.password;
-
-      console.log(props);
-
-      alert('this will be where we send auth credentials to couch');
-    } else {
-      axios.get(docsRequest)
-        .then(response => {
-          app.setState({
-            authRequested: false,
-            couchURL: couchURL,
-            selectedDatabase: dbName,
-            documents: response.data.rows,
-            documentsCount: response.data.total_rows,
-            documentsPageOffset: 0,
-            selectedDocumentID: null,
-            selectedDocument: null
-          })
-        })
-        .catch((error) => {
-          app.setState({
-            authRequested: false,
-            couchURL: couchURL,
-            selectedDatabase: null,
-            documents: [],
-            documentsCount: 0,
-            documentsPageOffset: 0,
-            selectedDocumentID: null,
-            selectedDocument: null
-          });
-          if (error.response) {
-            if (error.response.status === 401) {
-              // 'Unauthorized'
-              app.setState({ authRequested: true, selectedDatabase: dbName });
-            } else {
-              this.logServerError(error, 'App.updateSelectedDatabase: the server returned an error');
-            }
-          } else {
-            this.logConnectionError(error, "App.updateSelectedDatabase: no response from the server");
-          }
-        })
+      this.handleLoginCanceled();
     }
+
+    axios.get(docsRequest)
+      .then(response => {
+        app.setState({
+          authRequested: false,
+          couchURL: couchURL,
+          selectedDatabase: dbName,
+          documents: response.data.rows,
+          documentsCount: response.data.total_rows,
+          documentsPageOffset: 0,
+          selectedDocumentID: null,
+          selectedDocument: null
+        })
+      })
+      .catch((error) => {
+        app.setState({
+          authRequested: false,
+          couchURL: couchURL,
+          selectedDatabase: null,
+          documents: [],
+          documentsCount: 0,
+          documentsPageOffset: 0,
+          selectedDocumentID: null,
+          selectedDocument: null
+        });
+        if (error.response) {
+          if (error.response.status === 401) {
+            // 'Unauthorized'
+            app.setState({ authRequested: true, selectedDatabase: dbName });
+          } else {
+            this.logServerError(error, 'App.updateSelectedDatabase: the server returned an error');
+          }
+        } else {
+          this.logConnectionError(error, "App.updateSelectedDatabase: no response from the server");
+        }
+      })
   }
 
   updateNextDatabasePage = () => {

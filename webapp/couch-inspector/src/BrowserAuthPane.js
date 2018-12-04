@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import CancelLoginButton from './CancelLoginButton.js';
 import LoginButton from './LoginButton.js';
 import PasswordField from './PasswordField.js';
 import UsernameField from './UsernameField.js';
@@ -57,6 +58,9 @@ class BrowserAuthPane extends Component {
                     <UsernameField />
                     <PasswordField />
                     <LoginButton
+                        app={app}
+                        database={dbName} />
+                    <CancelLoginButton
                         app={app}
                         database={dbName} />
                 </div>
