@@ -31,7 +31,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      authMessage: null,
+      authErrorMessage: null,
       authRequested: false,
       couchURL: '',
       databases: null,
@@ -50,7 +50,7 @@ class App extends Component {
   // state accessors
   // ---------------------------------------------------------
 
-  getAuthMessage = () => { return this.state.authMessage; }
+  getAuthErrorMessage = () => { return this.state.authErrorMessage; }
   getAuthRequested = () => { return this.state.authRequested; }
   getCouchURL = () => { return this.state.couchURL; }
   getDatabases = () => { return this.state.databases; }

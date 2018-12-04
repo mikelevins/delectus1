@@ -8,8 +8,8 @@ import TextField from '@material-ui/core/TextField';
 // ---------------------------------------------------------
 
 const styles = {
-    authMessage: {
-        marginBottm: '0rem',
+    authErrorMessage: {
+        marginBottom: '0rem',
         marginLeft: '1rem',
         marginTop: '0.5rem',
     },
@@ -100,7 +100,7 @@ class BrowserAuthPane extends Component {
         const pane = this;
         const app = pane.props.app;
         const dbName = app.getSelectedDatabase();
-        const authMessage = app.getAuthMessage();
+        const authErrorMessage = app.getAuthErrorMessage();
         const username = app.getLoginUsername();
         const password = app.getLoginPassword();
 
@@ -108,8 +108,8 @@ class BrowserAuthPane extends Component {
             <div>
                 <div><p style={styles.browserPaneTitle}>Log in to '{dbName}'</p></div>
                 <div style={styles.browserPane}>
-                    <p style={styles.authMessage}>
-                        {(authMessage) ? authMessage
+                    <p style={styles.authErrorMessage}>
+                        {(authErrorMessage) ? authErrorMessage
                             : 'Enter your username and password:'}
                     </p>
                     <UsernameField />
