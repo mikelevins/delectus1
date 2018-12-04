@@ -119,10 +119,16 @@ class App extends Component {
     });
   }
 
-  addLoginSession = (dbname, username, password) => {
+  addLoginSession = (dbname, username, password, cookie) => {
     const app = this;
     const oldSessions = app.getSessionCredentials();
-    const newCredentials = { [dbname]: { username: username, password: password } };
+    const newCredentials = {
+      [dbname]: {
+        username: username,
+        password: password,
+        sessionCookie: null
+      }
+    };
     const newSessions = Object.assign({}, oldSessions, newCredentials);
     app.setState({
       sessionCredentials: newSessions
