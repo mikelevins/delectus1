@@ -195,6 +195,11 @@ class App extends Component {
     // TODO: if authRequested, send credentials to the remote Couch instance 
     // and watch for authentication failures; also clear auth Requested on success
     if (authRequested) {
+      const username = props.username;
+      const password = props.password;
+
+      console.log(props);
+
       alert('this will be where we send auth credentials to couch');
     } else {
       axios.get(docsRequest)
