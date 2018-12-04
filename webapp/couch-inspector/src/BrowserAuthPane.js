@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import LoginButton from './LoginButton.js';
 import TextField from '@material-ui/core/TextField';
+
+import LoginButton from './LoginButton.js';
+import UsernameField from './UsernameField.js';
 
 // BrowserAuthPane styles
 // ---------------------------------------------------------
@@ -48,18 +50,6 @@ function PasswordField(props) {
     );
 }
 
-function UsernameField(props) {
-    return (
-        <div>
-            <TextField
-                id="username"
-                label='Username:'
-                style={styles.textField}
-                defaultValue=''
-            />
-        </div>
-    );
-}
 
 // BrowserAuthPane class
 // ---------------------------------------------------------
