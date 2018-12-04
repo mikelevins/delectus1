@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import Button from '@material-ui/core/Button';
+import LoginButton from './LoginButton.js';
 import TextField from '@material-ui/core/TextField';
 
 // BrowserAuthPane styles
@@ -23,11 +23,6 @@ const styles = {
     browserPaneTitle: {
         fontWeight: 'bold',
         height: '1rem',
-    },
-    button: {
-        marginLeft: '1rem',
-        marginTop: '1.5rem',
-        textTransform: 'none'
     },
     textField: {
         marginLeft: '1rem',
@@ -66,28 +61,6 @@ function UsernameField(props) {
     );
 }
 
-function LoginButton(props) {
-    const pane = props.pane;
-    const app = props.app;
-    const dbName = props.database;
-
-    const clickHandler = () => {
-        const username = app.getLoginUsername();
-        const password = app.getLoginPassword();
-        app.handleLogin(dbName, username, password);
-    };
-
-    return (
-        <Button
-            style={styles.button}
-            variant="contained"
-            color="primary"
-            onClick={clickHandler} >
-            Log In
-        </Button>
-    );
-}
-
 // BrowserAuthPane class
 // ---------------------------------------------------------
 
@@ -101,8 +74,6 @@ class BrowserAuthPane extends Component {
         const app = pane.props.app;
         const dbName = app.getSelectedDatabase();
         const authErrorMessage = app.getAuthErrorMessage();
-        const username = app.getLoginUsername();
-        const password = app.getLoginPassword();
 
         return (
             <div>
