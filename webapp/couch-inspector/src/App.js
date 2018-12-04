@@ -210,7 +210,14 @@ class App extends Component {
     const limit = app.getDocumentsPerPage();
     const docsRequest = MakeAllDocumentsRequest(couchURL, dbName, limit, 0);
 
+
+    // if there's a pending auth request then we need to clear it
     if (authRequested) {
+      // TODO: if there is a pending authRequest in app.state then
+      // updateSelectedDatabase needs to obtain auth and clear the pending request
+      // before proceeding. Then it needs to update the app's state to display
+      // the fetched db data. If there's no such pending request, then
+      // it simply gets the dbdata and displays it.
       this.handleLoginCanceled();
     }
 
