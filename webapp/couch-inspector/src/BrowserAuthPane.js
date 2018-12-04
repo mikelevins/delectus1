@@ -49,11 +49,11 @@ class BrowserAuthPane extends Component {
 
         return (
             <div>
-                <div><p style={styles.browserPaneTitle}>Log in to '{dbName}'</p></div>
+                <div><p style={styles.browserPaneTitle}>Log in:</p></div>
                 <div style={styles.browserPane}>
                     <p style={styles.authErrorMessage}>
                         {(authErrorMessage) ? authErrorMessage
-                            : 'Enter your username and password:'}
+                            : ("Database: '"+dbName+"'")}
                     </p>
                     <UsernameField />
                     <PasswordField />
