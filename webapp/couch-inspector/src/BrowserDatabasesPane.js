@@ -19,9 +19,6 @@ const styles = {
         fontWeight: 'bold',
         height: '1rem',
     },
-    button: {
-        textTransform: 'none'
-    }
 };
 
 // BrowserDatabasesPane class
