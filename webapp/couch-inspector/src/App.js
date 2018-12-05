@@ -43,7 +43,7 @@ class App extends Component {
       documentsPageOffset: 0,
       selectedDocumentID: null,
       selectedDocument: null,
-      sessionCredentials: {}
+      sessionCookies: {}
     };
   }
 
@@ -62,7 +62,7 @@ class App extends Component {
   getDocumentsCount = () => { return this.state.documentsCount; }
   getSelectedDocument = () => { return this.state.selectedDocument; }
   getSelectedDocumentID = () => { return this.state.selectedDocumentID; }
-  getSessionCredentials = () => { return this.state.sessionCredentials; }
+  getSessionCookies = () => { return this.state.sessionCookies; }
 
   // view accessors
   // ---------------------------------------------------------
@@ -110,13 +110,17 @@ class App extends Component {
   // authentication
   // ---------------------------------------------------------
 
+  authenticateUser = (dbname, username, password) => {
+    const url = this.getCouchURL();
+    const arbitraryCookieStandin = (dbname+username+password);
+    alert('this is where we ask CouchDB to authenticate us');
+    return arbitraryCookieStandin;
+  }
+
   handleLogin = (dbName, username, password) => {
-    this.addLoginSession(dbName, username, password);
-    this.updateSelectedDatabase({
-      dbName: dbName,
-      username: username,
-      password: password
-    });
+    const loginCookie = this.authenticateUser(dbName, username, password);
+    this.addLoginSession(dbName, loginCookie);
+    this.updateSelectedDatabase({ dbName: dbName });
   }
 
   handleLoginCanceled = () => {
@@ -127,19 +131,13 @@ class App extends Component {
     });
   }
 
-  addLoginSession = (dbname, username, password, cookie) => {
+  addLoginSession = (dbname, cookie) => {
     const app = this;
-    const oldSessions = app.getSessionCredentials();
-    const newCredentials = {
-      [dbname]: {
-        username: username,
-        password: password,
-        sessionCookie: null
-      }
-    };
-    const newSessions = Object.assign({}, oldSessions, newCredentials);
+    const oldCookies = app.getSessionCookies();
+    const newCookie = { [dbname]: cookie };
+    const newCookies = Object.assign({}, oldCookies, newCookie);
     app.setState({
-      sessionCredentials: newSessions
+      sessionCookies: newCookies
     })
   }
 
