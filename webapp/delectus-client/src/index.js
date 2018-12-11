@@ -5,14 +5,14 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import PouchDB from 'pouchdb';
+import PouchDBAuth from 'pouchdb-authentication';
 import PouchDBFind from 'pouchdb-find';
 
+PouchDB.plugin(PouchDBAuth);
 PouchDB.plugin(PouchDBFind);
-const localPouchDB = new PouchDB('oppsdaily');
-const remoteCouchDB = new PouchDB('http://mars:5984/oppsdaily');
 
 ReactDOM.render(
-    <App localPouchDB={localPouchDB} remoteCouchDB={remoteCouchDB}/>, 
+    <App/>, 
     document.getElementById('root')
 );
 

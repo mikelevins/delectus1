@@ -13,6 +13,10 @@ function MakeAllDatabasesRequest(url) {
   return (url + '/_all_dbs');
 }
 
+function MakeAuthenticationRequest(url, dbname, username, password) {
+  return (url + '/_session/' + 'name=' + username + '&password=' + password);
+}
+
 function MakeAllDocumentsRequest(url, dbName, limit, offset) {
   return (
     url + '/' + dbName + '/_all_docs?limit=' +
@@ -29,6 +33,8 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+
+    this.axios = axios;
 
     this.state = {
       authErrorMessage: null,
@@ -111,16 +117,23 @@ class App extends Component {
   // ---------------------------------------------------------
 
   authenticateUser = (dbname, username, password) => {
+    const app = this;
     const url = this.getCouchURL();
-    const arbitraryCookieStandin = (dbname+username+password);
-    alert('this is where we ask CouchDB to authenticate us');
-    return arbitraryCookieStandin;
+    const requestStr = (url + '/_session');
+    console.log(requestStr);
+    axios.request({
+      method: 'post',
+      data: {username: username, password: password},
+      url: requestStr,
+      maxRedirects: 5,
+    })
+      .then((response) => {
+        this.updateSelectedDatabase({dbName: dbname});
+      });
   }
 
   handleLogin = (dbName, username, password) => {
-    const loginCookie = this.authenticateUser(dbName, username, password);
-    this.addLoginSession(dbName, loginCookie);
-    this.updateSelectedDatabase({ dbName: dbName });
+    this.authenticateUser(dbName, username, password);
   }
 
   handleLoginCanceled = () => {
