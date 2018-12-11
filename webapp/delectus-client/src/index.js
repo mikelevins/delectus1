@@ -11,11 +11,8 @@ import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBAuth);
 PouchDB.plugin(PouchDBFind);
 
-const preferencesDB = new PouchDB('DelectusPreferences');
-
-
 ReactDOM.render(
-    <App preferencesDB={preferencesDB}/>, 
+    <App/>, 
     document.getElementById('root')
 );
 

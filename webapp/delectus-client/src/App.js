@@ -20,6 +20,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      preferencesDB: new PouchDB('DelectusPreferences'),
       localDB: new PouchDB('Delectus'),
       remoteDB: new PouchDB('http://mars:5984/mikel.evins') // TODO: initialize the username properly
     }
