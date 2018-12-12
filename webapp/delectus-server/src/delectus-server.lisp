@@ -17,6 +17,6 @@
 (defun stop-server ()
   (hunchentoot:stop *delectus-server*))
 
-;;; (defparameter *delectus-server* (start-server))
+;;; (defparameter *delectus-server* (start-server :port (server-port)))
 ;;; (stop-server *delectus-server*)
 
