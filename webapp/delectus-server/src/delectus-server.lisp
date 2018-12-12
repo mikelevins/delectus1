@@ -6,14 +6,16 @@
 (defparameter *delectus-dispatcher* nil)
 
 (defun start-server (&key (port (server-port)))
-  (let* ((acceptor (make-instance 'hunchentoot:easy-acceptor
-                                  :port port))
+  (let* ((acceptor (make-instance 'hunchentoot:acceptor
+                                  :port port
+                                  :document-root (server-pathname :public)))
          (dispatcher (snooze:make-hunchentoot-app)))
     ;; 1. setf (acceptor-document-root acceptor) to the public directory
     (setf (hunchentoot:acceptor-document-root acceptor)
           (server-pathname :public))
-    ;; 2. push the dispatcher onto hunchentoot:*dispatch-table*
-    (push dispatcher hunchentoot:*dispatch-table*)
+    ;; 2. put the dispatcher onto hunchentoot:*dispatch-table*
+    (setf hunchentoot:*dispatch-table*
+          (list dispatcher 'hunchentoot:dispatch-easy-handlers))
     ;; 3. hunchentoot:start acceptor
     (hunchentoot:start acceptor)
     ;; 4. store the dispatcher and acceptor
@@ -27,4 +29,6 @@
 
 ;;; (start-server :port (server-port))
 ;;; (stop-server *delectus-server*)
+
+;;; (setf *delectus-server* (hunchentoot:start (make-instance 'hunchentoot:acceptor :port 9000 :document-root #P"/Users/mikel/Workshop/src/delectus/webapp/delectus-server/public/")))
 
