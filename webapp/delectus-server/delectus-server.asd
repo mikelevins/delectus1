@@ -10,6 +10,7 @@
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
+                                     (:file "configuration")
                                      (:file "delectus-server")))))
 
 ;;; (asdf:load-system :delectus-server)
