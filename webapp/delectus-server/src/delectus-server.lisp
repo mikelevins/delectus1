@@ -3,6 +3,7 @@
 (in-package #:delectus-server)
 
 (defparameter *delectus-server* nil)
+(defparameter *delectus-dispatcher* nil)
 
 (defun start-server (&key (port (server-port)))
   (let* ((acceptor (make-instance 'hunchentoot:easy-acceptor
@@ -15,12 +16,15 @@
     (push dispatcher hunchentoot:*dispatch-table*)
     ;; 3. hunchentoot:start acceptor
     (hunchentoot:start acceptor)
-    ;; 4. return the acceptor
-    acceptor))
+    ;; 4. store the dispatcher and acceptor
+    (setf *delectus-server* acceptor)
+    (setf *delectus-dispatcher* dispatcher)
+    ;; 5. return the acceptor and dispatcher
+    (values acceptor dispatcher)))
 
 (defun stop-server (server)
   (hunchentoot:stop server))
 
-;;; (defparameter *delectus-server* (start-server :port (server-port)))
+;;; (start-server :port (server-port))
 ;;; (stop-server *delectus-server*)
 
