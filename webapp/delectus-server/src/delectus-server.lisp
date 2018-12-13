@@ -30,4 +30,4 @@
   (setq *delectus-server* (hunchentoot:start (make-instance 'delectus-acceptor :port port))))
 
 ;;; (start-server)
-;;; (stop-server *delectus-server*)q
+;;; (stop-server)
