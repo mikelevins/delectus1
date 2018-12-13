@@ -1,4 +1,4 @@
 ;;;; package.lisp
 
 (defpackage #:delectus-server
-  (:use #:cl))
+  (:use #:cl #:snooze))

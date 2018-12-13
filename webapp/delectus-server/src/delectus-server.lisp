@@ -2,32 +2,32 @@
 
 (in-package #:delectus-server)
 
+(defclass delectus-acceptor (hunchentoot:easy-acceptor) ())
+
+(defparameter *delectus-dispatch-table*
+  (list
+   (hunchentoot:create-folder-dispatcher-and-handler
+    "/images/" (server-pathname :public/images))
+   (hunchentoot:create-folder-dispatcher-and-handler
+    "/js/" (server-pathname :public/js))
+   (hunchentoot:create-folder-dispatcher-and-handler
+    "/css/" (server-pathname :public/css))
+   (make-hunchentoot-app '((*home-resource* . homepage)))))
+
+(defmethod hunchentoot:acceptor-dispatch-request :around ((a delectus-acceptor) request)
+  (let ((hunchentoot:*dispatch-table* *delectus-dispatch-table*))
+    (call-next-method)))
+
 (defparameter *delectus-server* nil)
-(defparameter *delectus-dispatcher* nil)
+
+(defun stop-server ()
+  (when *delectus-server*
+    (hunchentoot:stop *delectus-server*)
+    (setq *delectus-server* nil)))
 
 (defun start-server (&key (port (server-port)))
-  (setq cl-who:*attribute-quote-char* #\") ; to make it easier to use strings in html attributes
-  (let* ((acceptor (make-instance 'hunchentoot:acceptor
-                                  :port port
-                                  :document-root (server-pathname :public)))
-         (dispatcher (snooze:make-hunchentoot-app)))
-    ;; 1. setf (acceptor-document-root acceptor) to the public directory
-    (setf (hunchentoot:acceptor-document-root acceptor)
-          (server-pathname :public))
-    ;; 2. put the dispatcher onto hunchentoot:*dispatch-table*
-    (setf hunchentoot:*dispatch-table*
-          (list dispatcher 'hunchentoot:dispatch-easy-handlers))
-    ;; 3. hunchentoot:start acceptor
-    (hunchentoot:start acceptor)
-    ;; 4. store the dispatcher and acceptor
-    (setf *delectus-server* acceptor)
-    (setf *delectus-dispatcher* dispatcher)
-    ;; 5. return the acceptor and dispatcher
-    (values acceptor dispatcher)))
+  (stop-server)
+  (setq *delectus-server* (hunchentoot:start (make-instance 'delectus-acceptor :port port))))
 
-(defun stop-server (server)
-  (hunchentoot:stop server))
-
-;;; (start-server :port (server-port))
-;;; (stop-server *delectus-server*)
-
+;;; (start-server)
+;;; (stop-server *delectus-server*)q

@@ -11,6 +11,8 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "configuration")
+                                     (:file "templates")
+                                     (:file "routes")
                                      (:file "delectus-server")))))
 
 ;;; (asdf:load-system :delectus-server)

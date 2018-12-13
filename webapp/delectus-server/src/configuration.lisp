@@ -36,6 +36,9 @@
 (defmethod %server-pathname ((which (eql :public/images)))
   (merge-pathnames "public/images/" (%server-pathname :root)))
 
-(defmethod %server-pathname ((which (eql :public/templates)))
-  (merge-pathnames "public/templates/" (%server-pathname :root)))
+(defmethod %server-pathname ((which (eql :templates)))
+  (merge-pathnames "templates/" (%server-pathname :root)))
 
+(defun path (prefix leaf-path)
+  (merge-pathnames leaf-path
+                   (server-pathname prefix)))
