@@ -6,7 +6,7 @@
   :license  "Apache 2"
   :version "0.0.1"
   :serial t
-  :depends-on (:hunchentoot :cl-emb :snooze)
+  :depends-on (:hunchentoot :cl-who :cl-emb :snooze :parenscript)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")

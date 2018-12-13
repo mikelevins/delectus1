@@ -6,6 +6,7 @@
 (defparameter *delectus-dispatcher* nil)
 
 (defun start-server (&key (port (server-port)))
+  (setq cl-who:*attribute-quote-char* #\") ; to make it easier to use strings in html attributes
   (let* ((acceptor (make-instance 'hunchentoot:acceptor
                                   :port port
                                   :document-root (server-pathname :public)))
@@ -29,6 +30,4 @@
 
 ;;; (start-server :port (server-port))
 ;;; (stop-server *delectus-server*)
-
-;;; (setf *delectus-server* (hunchentoot:start (make-instance 'hunchentoot:acceptor :port 9000 :document-root #P"/Users/mikel/Workshop/src/delectus/webapp/delectus-server/public/")))
 
