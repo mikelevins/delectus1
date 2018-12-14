@@ -4,6 +4,7 @@ import './App.css';
 import PouchDB from 'pouchdb';
 
 import Delectus from './Delectus.js';
+import DelectusLogin from './DelectusLogin.js';
 
 // ---------------------------------------------------------
 // App component
@@ -48,9 +49,11 @@ class App extends Component {
   // ---------------------------------------------------------
 
   render() {
+    const username = this.state.username;
+
     return (
       <div className="App">
-        <Delectus />
+        <DelectusLogin username={username}/>
       </div>
     );
   }

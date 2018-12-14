@@ -15,13 +15,13 @@ const styles = {
     },
     title: {
         background: '#663322',
-        fontSize: '20pt',
+        fontSize: '16pt',
         marginTop: '0',
         textAlign: 'center',
     },
 };
 
-class Delectus extends Component {
+class DelectusLogin extends Component {
 
     render() {
         const controls = this;
@@ -30,7 +30,7 @@ class Delectus extends Component {
         return (
             <div id='appBackdrop' style={styles.appBackdrop}>
                 <div id='delectusPane' style={styles.delectusPane}>
-                    <h1 style={styles.title}>Delectus</h1>
+                    <h1 style={styles.title}>Log in to Delectus</h1>
                 </div>
             </div>
         );
@@ -40,4 +40,4 @@ class Delectus extends Component {
 // exports
 // ---------------------------------------------------------
 
-export default Delectus;
+export default DelectusLogin;
