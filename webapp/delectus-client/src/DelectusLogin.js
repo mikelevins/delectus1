@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 
+import LoginButtonBar from './LoginButtonBar.js';
 import PasswordField from './PasswordField.js';
 import UsernameField from './UsernameField.js';
 
@@ -48,6 +49,7 @@ class DelectusLogin extends Component {
                     <div id='formContainer' style={styles.formContainer}>
                         <UsernameField />
                         <PasswordField />
+                        <LoginButtonBar />
                     </div>
                 </div>
             </div>
