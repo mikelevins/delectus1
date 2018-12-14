@@ -3,6 +3,8 @@ import './App.css';
 
 import PouchDB from 'pouchdb';
 
+import Delectus from './Delectus.js';
+
 // ---------------------------------------------------------
 // App component
 // ---------------------------------------------------------
@@ -48,7 +50,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Delectus</h1>
+        <Delectus />
       </div>
     );
   }
