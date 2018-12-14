@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import indigo from '@material-ui/core/colors/indigo';
-
 import LoginButtonBar from './LoginButtonBar.js';
 import PasswordField from './PasswordField.js';
 import UsernameField from './UsernameField.js';
@@ -28,8 +26,6 @@ const styles = {
         marginLeft: '1.5rem',
     },
     title: {
-        background: indigo['600'],
-        color: 'white',
         fontSize: '16pt',
         marginTop: '0',
         textAlign: 'center',
