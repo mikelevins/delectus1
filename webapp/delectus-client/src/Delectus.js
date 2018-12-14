@@ -7,10 +7,9 @@ const styles = {
     },
     delectusPane: {
         border: '1px solid #884422',
-        color: 'white',
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: '2rem',
+        marginTop: '2rem', 
         maxWidth: '24rem',
     },
     title: {
