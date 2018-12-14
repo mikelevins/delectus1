@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import indigo from '@material-ui/core/colors/indigo';
 
 import LoginButtonBar from './LoginButtonBar.js';
 import PasswordField from './PasswordField.js';
@@ -11,7 +12,7 @@ const styles = {
         width: '100%',
     },
     delectusPane: {
-        border: '1px solid #884422',
+        border: '1px solid #224488',
         marginLeft: 'auto',
         marginRight: 'auto',
         marginTop: '2rem',
@@ -27,7 +28,7 @@ const styles = {
         marginLeft: '1.5rem',
     },
     title: {
-        background: '#663322',
+        background: indigo['600'],
         color: 'white',
         fontSize: '16pt',
         marginTop: '0',

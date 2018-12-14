@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import CssBaseline from '@material-ui/core/CssBaseline';
+
 import PouchDB from 'pouchdb';
 
 import DelectusLogin from './DelectusLogin.js';
@@ -51,9 +53,12 @@ class App extends Component {
     const username = this.state.username;
 
     return (
-      <div className="App">
-        <DelectusLogin username={username}/>
-      </div>
+      <React.Fragment>
+        <CssBaseline />
+        <div className="App">
+          <DelectusLogin username={username} />
+        </div>
+      </React.Fragment>
     );
   }
 
