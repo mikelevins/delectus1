@@ -3,7 +3,6 @@ import './App.css';
 
 import PouchDB from 'pouchdb';
 
-import Delectus from './Delectus.js';
 import DelectusLogin from './DelectusLogin.js';
 
 // ---------------------------------------------------------

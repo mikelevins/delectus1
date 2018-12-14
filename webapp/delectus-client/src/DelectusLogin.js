@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import PasswordField from './PasswordField.js';
+import UsernameField from './UsernameField.js';
+
 const styles = {
     appBackdrop: {
         width: '100%',
@@ -12,6 +15,12 @@ const styles = {
         marginRight: 'auto',
         marginTop: '2rem',
         maxWidth: '24rem',
+    },
+    formContainer: {
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        padding: '1rem',
+        width: '85%',
     },
     title: {
         background: '#663322',
@@ -31,6 +40,10 @@ class DelectusLogin extends Component {
             <div id='appBackdrop' style={styles.appBackdrop}>
                 <div id='delectusPane' style={styles.delectusPane}>
                     <h1 style={styles.title}>Log in to Delectus</h1>
+                    <div id='formContainer' style={styles.formContainer}>
+                        <UsernameField />
+                        <PasswordField />
+                    </div>
                 </div>
             </div>
         );
