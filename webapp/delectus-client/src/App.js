@@ -4,10 +4,6 @@ import './App.css';
 import PouchDB from 'pouchdb';
 
 // ---------------------------------------------------------
-// helper functions
-// ---------------------------------------------------------
-
-// ---------------------------------------------------------
 // App component
 // ---------------------------------------------------------
 
@@ -18,19 +14,32 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      preferencesDB: new PouchDB('DelectusPreferences'),
-      localDB: new PouchDB('Delectus'),
-      remoteDB: new PouchDB('http://mars:5984/mikel.evins') // TODO: initialize the username properly
+      username: localStorage.getItem('delectus_username')
     }
   }
+
+  // accessor methods
+  // ---------------------------------------------------------
+
 
   // lifecycle methods
   // ---------------------------------------------------------
 
+  initDatabases = () => {
+    const username = this.state.username;
+    const localDB = new PouchDB('Delectus');
+    const remoteDB = (username) ? username : null;
+
+    this.setState({
+      localDB: localDB,
+      remoteDB: remoteDB
+    });
+  }
+
   componentDidMount() {
-    document.title = "Delectus"
+    document.title = "Delectus";
+    this.initDatabases();
   }
 
   // main render
