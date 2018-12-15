@@ -21,8 +21,7 @@ const styles = {
     root: {
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: '2rem',
-        width: '50%',
+        width: '100%',
     },
 };
 
@@ -33,9 +32,6 @@ class Landing extends Component {
             <div id='appBackdrop' className={classes.root}>
                 <AppBar position='static'>
                     <Toolbar>
-                        <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-                            <MenuIcon />
-                        </IconButton>
                         <Typography variant='title' color='inherit' className={classes.grow}>
                             Delectus
                         </Typography>
