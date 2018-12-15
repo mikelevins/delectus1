@@ -18,22 +18,32 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      username: localStorage.getItem('delectus_username')
-    }
+
+    var remoteCouch = localStorage.getItem('delectus_couchURL');
+    if (!remoteCouch) { remoteCouch = this.defaultCouchURL(); }
+
+      this.state = {
+        username: localStorage.getItem('delectus_username'),
+        couchURL: remoteCouch
+      }
   }
 
-  // accessor methods
+  // default values
   // ---------------------------------------------------------
 
+  // TODO: change to public Delectus couch when it's available
+  defaultCouchURL = () => 'http://mars.local:5984';
 
   // lifecycle methods
   // ---------------------------------------------------------
 
   initDatabases = () => {
+    const url = this.state.couchURL;
     const username = this.state.username;
     const localDB = new PouchDB('Delectus');
-    const remoteDB = (username) ? username : null;
+    var remoteDB = null;
+
+    if (username && url) { remoteDB = (url + '/' + username); }
 
     this.setState({
       localDB: localDB,
@@ -50,13 +60,13 @@ class App extends Component {
   // ---------------------------------------------------------
 
   render() {
-    const username = this.state.username;
+
 
     return (
       <React.Fragment>
         <CssBaseline />
         <div className="App">
-          <DelectusLogin username={username} />
+          <DelectusLogin />
         </div>
       </React.Fragment>
     );
