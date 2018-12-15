@@ -3,9 +3,6 @@ import './App.css';
 
 
 const styles = {
-    appBackdrop: {
-        width: '100%',
-    },
     delectusPane: {
         border: '1px solid #884422',
         marginLeft: 'auto',

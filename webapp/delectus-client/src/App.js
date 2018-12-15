@@ -2,10 +2,19 @@ import React, { Component } from 'react';
 import './App.css';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { MuiThemeProvider, createMuiTheme, withTheme } from '@material-ui/core/styles';
 
 import PouchDB from 'pouchdb';
 
-import DelectusLogin from './DelectusLogin.js';
+import Landing from './Landing.js';
+
+// ---------------------------------------------------------
+// theme
+// ---------------------------------------------------------
+
+const delectusTheme = createMuiTheme({
+  typography: { useNextVariants: true }
+});
 
 // ---------------------------------------------------------
 // App component
@@ -22,10 +31,10 @@ class App extends Component {
     var remoteCouch = localStorage.getItem('delectus_couchURL');
     if (!remoteCouch) { remoteCouch = this.defaultCouchURL(); }
 
-      this.state = {
-        username: localStorage.getItem('delectus_username'),
-        couchURL: remoteCouch
-      }
+    this.state = {
+      username: localStorage.getItem('delectus_username'),
+      couchURL: remoteCouch
+    }
   }
 
   // default values
@@ -51,23 +60,19 @@ class App extends Component {
     });
   }
 
-  componentDidMount() {
-    document.title = "Delectus";
-    this.initDatabases();
-  }
+  componentDidMount() { this.initDatabases(); }
 
   // main render
   // ---------------------------------------------------------
 
   render() {
-
-
+    console.log(this.props.theme);
     return (
       <React.Fragment>
         <CssBaseline />
-        <div className="App">
-          <DelectusLogin />
-        </div>
+        <MuiThemeProvider theme={delectusTheme}>
+          <Landing />
+        </MuiThemeProvider>
       </React.Fragment>
     );
   }
@@ -78,4 +83,4 @@ class App extends Component {
 // main export
 // ---------------------------------------------------------
 
-export default App;
+export default withTheme()(App);
