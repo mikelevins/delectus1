@@ -11,15 +11,18 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
-    root: {
-        flexGrow: 1,
-    },
     grow: {
         flexGrow: 1,
     },
     menuButton: {
         marginLeft: -12,
         marginRight: 20,
+    },
+    root: {
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: '2rem',
+        width: '50%',
     },
 };
 
@@ -28,7 +31,7 @@ class Landing extends Component {
         const { classes } = this.props;
         return (
             <div id='appBackdrop' className={classes.root}>
-                <AppBar>
+                <AppBar position='static'>
                     <Toolbar>
                         <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
                             <MenuIcon />
@@ -39,10 +42,10 @@ class Landing extends Component {
                         <Button color="inherit">Log in</Button>
                         <Button color="inherit">Sign up</Button>
                     </Toolbar>
-                    <Paper>
-                        <Typography component='p'>Welcome to Delectus</Typography>
-                    </Paper>
                 </AppBar>
+                <Paper square='true' elevation='1'>
+                    <Typography variant='title' align='center'>Welcome to Delectus</Typography>
+                </Paper>
             </div>
         );
     }
