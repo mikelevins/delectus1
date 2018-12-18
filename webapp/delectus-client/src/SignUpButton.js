@@ -2,17 +2,17 @@ import React from 'react';
 
 import Button from '@material-ui/core/Button';
 
-function LoginButton(props) {
+function SignUpButton(props) {
 
     const clickHandler = () => {
-        console.log('Log In clicked');
+        console.log('Sign Up clicked');
     };
 
     return (
         <Button
             color="inherit"
             onClick={clickHandler} >
-            Log In
+            Sign Up
         </Button>
     );
 }
@@ -21,4 +21,4 @@ function LoginButton(props) {
 // exports
 // ---------------------------------------------------------
 
-export default LoginButton;
+export default SignUpButton;

@@ -3,12 +3,13 @@ import './App.css';
 
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+
+import LoginButton from './LoginButton.js';
+import SignUpButton from './SignUpButton.js';
 
 const styles = {
     grow: {
@@ -32,15 +33,17 @@ class Landing extends Component {
             <div id='appBackdrop' className={classes.root}>
                 <AppBar position='static'>
                     <Toolbar>
-                        <Typography variant='title' color='inherit' className={classes.grow}>
+                        <Typography variant='h6' 
+                        color='inherit' 
+                        className={classes.grow}>
                             Delectus
                         </Typography>
-                        <Button color="inherit">Log in</Button>
-                        <Button color="inherit">Sign up</Button>
+                        <LoginButton/>
+                        <SignUpButton/>
                     </Toolbar>
                 </AppBar>
-                <Paper square='true' elevation='1'>
-                    <Typography variant='title' align='center'>Welcome to Delectus</Typography>
+                <Paper square={true} elevation={1}>
+                    <Typography variant='h6' align='center'>Welcome to Delectus</Typography>
                 </Paper>
             </div>
         );
