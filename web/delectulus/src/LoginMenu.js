@@ -5,6 +5,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import React from "react";
+import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 import App from "./App";
 
@@ -13,10 +14,13 @@ const styles = (theme) => ({
     width: "100%",
     maxWidth: 360,
   },
+  grow: {
+    flexGrow: 1,
+  },
   menuButton: {
     color: "#ffffff",
     backgroundColor: theme.palette.background,
-    fontSize: "14pt"
+    fontSize: "14pt",
   },
 });
 
@@ -59,7 +63,7 @@ class LoginMenu extends React.Component {
               classes={{ primary: classes.menuButton }}
               primary={
                 this.state.selectedIndex > -1
-                  ? options[this.state.selectedIndex]
+                  ? "User: "+options[this.state.selectedIndex]
                   : "Pick a User"
               }
             />
