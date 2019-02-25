@@ -5,7 +5,8 @@ export var AppState = observable({
         host: "mars.local",
         port: "5984",
         protocol: "http",
-        database: "delectulus"
+        dbName: "delectulus",
+        remoteCouch: null
     },
     Users: ["granny","greer","mikel"],
     SelectedUser: null,
@@ -13,4 +14,8 @@ export var AppState = observable({
 
   AppState.updateUserSelection = action(function setUser(user) {
     AppState.SelectedUser = user;
+  });
+
+  AppState.updateRemoteCouch = action(function setCouch(remote) {
+    AppState.DelectulusInstance.remoteCouch = remote;
   });
