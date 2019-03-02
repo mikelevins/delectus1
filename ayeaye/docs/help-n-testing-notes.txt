@@ -1,0 +1,114 @@
+I. Help
+
+   Document main workflow:
+
+   A. Creating and saving a new document
+   B. Opening an existing document
+   C. Adding and naming columns
+   D. Adding rows and contents
+   E. Sorting by columns
+   F. Filtering
+   G. Deleting rows and columns
+
+II. Testing
+    
+    1. Create document
+       A. Start Delectus
+       B. Close the untitled doc and create a new one
+       C. Add two columns
+       D. Resize the first column
+DONE
+
+    2. Open saved documents
+       A. Open the document from (1)
+       B. Confirm that the created columns exist, and the resizing of
+          column 1 is preserved
+       C. Reorder and save columns
+       D. Close and reopen. Confirm that the new order is preserved.
+DONE
+
+    3. Import Movies.csv.
+       A. Confirm that the import worked.
+       B. Sort by a text column
+       C. Save and close 
+BUG: can't save a csv doc. should not try to save csv
+       D. Reopen, confirm that the sort is preserved.
+       E. Sort by a numeric column.
+BUG: a sort should not cause the columns to scroll horizontally
+       F. Save and close.
+       G. Reopen, confirm that the sort is preserved.
+DONE
+
+   4. Create entries
+      A. Create a new untitled doc
+      B. Save the doc
+      C. Add three columns, "Title", "Author", "Topic"
+      D. Add rows for ten books; enter the data
+      E. Save and exit
+      F. Reopen the books file; confirm data
+      G. Add three more rows
+      H. Sort on Author
+      I. Save and exit
+      J. Reopen and confirm data and sort
+DONE
+
+   5. Filter entries
+      A. Open Movies.delectus
+      B. Type "hom" into filer box
+      C. Confirm entries are filtered
+DONE
+
+   6. Sort numeric
+      A. Open zipcodes.csv
+      B. Sort on numeric column
+      C. Confirm sort is numeric
+      D. Add non-numeric entry to the same column
+      E. Sort; confirm sort is no longer numeric
+DONE
+
+   7. Delete rows
+      A. Open Movies.delectus
+      B. Delete two rows
+      C. Save as a new file; exit
+      D. Open the new file; confirm that the two deleted rows are
+          marked deleted
+      E. Use the trash button to show and hide deleted items; confirm
+         deleted rows are shown and hidden
+      F. Sort by Title; confirm that sorting works with shown and
+         hidden deleted rows
+DONE
+
+   8. Delete columns
+      A. Open Movies.delectus
+      B. Delete two columns
+      C. Save as a new file; exit
+      D. Open the new file; confirm that the two deleted columns are
+          marked deleted
+      E. Use the trash button to show and hide deleted items; confirm
+         deleted columns are shown and hidden
+      F. Sort by Title; confirm that sorting works with shown and
+         hidden deleted columns
+      G. Delete Title; close and exit
+      H. Reopen the saved file; confirm that file opens without
+         problem, is not sorted by deleted column
+BUG: opened file is sorted by deleted column
+      I. Purge deleted columns; save; exit
+      J. Reopen the saved file;confirm that file opens without
+         problem, is not sorted by deleted column; deleted columns are
+         gone.
+BUG (SHOWSTOPPER): Purging deleted columns purges all data!
+
+   9. Rename column
+      A. Open Movies.delectus
+      B. Rename 1 column
+      C. Save as a new file; exit
+      D. Open the new file; confirm that the renamed column is present
+         with the new name
+      E. Rename a column again; sort by the column; save and exit
+      F. Reopen the file, confirm that it is sorted by the renamed
+         column
+      G. Rename another column; delete it; save and exit
+      H. Reopen the saved file; confirm that the renamed column is
+         present as a deleted column
+DONE
+
