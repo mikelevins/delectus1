@@ -1,0 +1,2 @@
+The JSON (virtual) structure of a Delectus document
+

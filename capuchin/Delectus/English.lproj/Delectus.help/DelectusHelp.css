@@ -1,0 +1,33 @@
+body {
+	font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	margin: 2em;
+}
+
+h1 {
+	font-size: large;
+}
+
+h2 {
+	font-size: large;
+}
+
+.navbar {
+	background-color: #e1d5bf;
+	color: #553921;
+	text-decoration: none;
+	font: bold small "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	background-image: none;
+	padding: 1em;
+}
+
+.navbar a {
+	background-color: #e1d5bf;
+	color: #553921;
+	text-decoration: none;
+}
+
+.navbar a:hover {
+	background-color: #e1d5bf;
+	color: #553921;
+	text-decoration: underline;
+}
