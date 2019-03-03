@@ -162,12 +162,13 @@
     }
 }
 
-- (NSString*)valueAtColumn:(NSString*)label andRow:(int)index{
+- (NSString*)valueAtColumn:(NSString*)label andRow:(NSInteger)index{
     if (documentID==VAL_NO_DOCUMENT){
         return nil;
     }else{
-        char* colname = (char*)[label cStringUsingEncoding:NSASCIIStringEncoding];    
-        char* val=value_at(documentID,colname,index);
+        char* colname = (char*)[label cStringUsingEncoding:NSASCIIStringEncoding];
+        int castIndex = (int)index;
+        char* val=value_at(documentID,colname,castIndex);
         NSString* result = [self convertToNSString:val];
         return result;
     }

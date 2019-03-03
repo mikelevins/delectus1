@@ -69,7 +69,7 @@
 }
 
 - (void)recordColumnInfo{
-    int colcount = [tableView numberOfColumns];
+    long colcount = [tableView numberOfColumns];
     NSMutableDictionary* newWidthInfo=[NSMutableDictionary dictionaryWithCapacity:colcount];
     NSMutableArray* newOrderInfo=[NSMutableArray array];
     if(colcount>0){
@@ -119,7 +119,7 @@
 }
 
 - (void)setupColumns{
-    int colcount = [tableView numberOfColumns];
+    long colcount = [tableView numberOfColumns];
     if(colcount>0){
         NSArray* cols = [NSArray arrayWithArray:[tableView tableColumns]];
         for(int i=0;i<colcount;i++){
@@ -145,7 +145,7 @@
     
     NSMutableArray* columnLabels = [[NSMutableArray arrayWithArray:savedLabels] retain];
     //remove labels that are in the saved set but not in the source set
-    for(int i=([columnLabels count]-1);i>=0;i--){
+    for(long i=([columnLabels count]-1);i>=0;i--){
         NSString* lbl = [columnLabels objectAtIndex:i];
         NSInteger foundIndex = [sourceLabels indexOfObject:lbl];
         if(foundIndex==NSNotFound){[columnLabels removeObjectAtIndex:i];}
@@ -160,7 +160,7 @@
     NSFont* headerFont = [NSFont systemFontOfSize:13.0];
     DelectusDelegate* delegate = [NSApp delegate];
     NSFont* contentFont = [delegate contentFont];
-    int labelcount = [columnLabels count];
+    long labelcount = [columnLabels count];
     for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
         NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
@@ -274,7 +274,7 @@
         if (err == ERR_NO_ERROR){
             [self updateChangeCount: NSChangeDone];
             [tableView reloadData];
-            int rowCount = [tableView numberOfRows];
+            long rowCount = [tableView numberOfRows];
             if(rowCount>0){
                 [tableView scrollRowToVisible:(rowCount-1)];
                 [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
@@ -292,7 +292,7 @@
 }
 
 - (IBAction)toggleRowDeleted:(id)sender{
-    int rowIndex=[tableView selectedRow];
+    NSInteger rowIndex=[tableView selectedRow];
     if(rowIndex>=0){
         // first make the window take over FirstResponder status, to force 
         // any active cells to end editing
@@ -321,7 +321,7 @@
 }
 
 - (IBAction)toggleColumnDeleted:(id)sender{
-    int colIndex=[tableView selectedColumn];
+    long colIndex=[tableView selectedColumn];
     if(colIndex>=0){
         [documentWindow makeFirstResponder: nil];
         NSTableColumn* col = (NSTableColumn*)[[tableView tableColumns] objectAtIndex: colIndex];
@@ -347,7 +347,7 @@
     int sortOrder = [dataSource sortOrder];
     NSString* filterText = [filterField stringValue];
     [tableView deselectAll: self];
-    if([showDeletedButton state]==NSOnState){
+    if([showDeletedButton state]==NSControlStateValueOn){
         [dataSource getViewIncludingDeleted:YES withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
         [deletedColsField setHidden:NO];
         [deletedRowsField setHidden:NO];
@@ -465,7 +465,7 @@
     DelectusDelegate* delegate = [NSApp delegate];
     [delegate setContentFont: newFont];
     NSArray* cols = [tableView tableColumns];
-    int colcount = [cols count];
+    long colcount = [cols count];
     for(int i = 0;i<colcount;i++){
         NSTableColumn* col = [cols objectAtIndex:i];
         [[col dataCell] setFont:newFont];
@@ -622,7 +622,7 @@
                 [self setupColumns];
                 [tableView reloadData];
                 [self recordColumnInfo];
-                int colCount = [tableView numberOfColumns];
+                long colCount = [tableView numberOfColumns];
                 if(colCount>0){
                     [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];
                     [tableView scrollColumnToVisible:(colCount-1)];

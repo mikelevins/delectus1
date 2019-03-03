@@ -39,7 +39,7 @@
 - (NSString*)filterText;
 - (int)countRows;
 - (int)countDeletedRows;
-- (NSString*)valueAtColumn:(NSString*)label andRow:(int)index;
+- (NSString*)valueAtColumn:(NSString*)label andRow:(NSInteger)index;
 - (int)putValue:(NSString*)valStr atColumn:(NSString*)label andRow:(NSInteger)index;
 - (int)addRow;
 - (int)addColumn:(NSString*)label;
@@ -47,8 +47,8 @@
 - (BOOL)isColumnDeleted:(NSString*)label;
 - (BOOL)isDuplicateLabel:(NSString*)label;
 - (int)markColumn:(NSString*)label deleted: (BOOL)yesOrNo;
-- (BOOL)isRowDeleted:(int)index;
-- (int)markRow:(int)index deleted:(BOOL)yesOrNo;
+- (BOOL)isRowDeleted:(NSInteger)index;
+- (int)markRow:(NSInteger)index deleted:(BOOL)yesOrNo;
 - (int)compact;
 - (BOOL)hasDeleted;
 - (int)writeDelectusFile:(NSURL*)url;
