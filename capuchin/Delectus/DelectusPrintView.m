@@ -64,12 +64,15 @@
                 }
             }else{
                 NSString* col = [cols objectAtIndex:0];
-                [self insertText:col];
+                selectedRange = [self selectedRange];
+                [self insertText:col replacementRange:selectedRange];
                 if(colcount>1){
                     for(int i=1;i<colcount;i++){
-                        [self insertText:@", "];
+                        selectedRange = [self selectedRange];
+                        [self insertText:@", " replacementRange:selectedRange];
                         NSString* col = [cols objectAtIndex:i];
-                        [self insertText:col];
+                        selectedRange = [self selectedRange];
+                        [self insertText:col replacementRange:selectedRange];
                     }
                 }
             }
