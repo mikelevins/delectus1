@@ -246,20 +246,22 @@
     }
 }
 
-- (BOOL)isRowDeleted:(int)index{
+- (BOOL)isRowDeleted:(NSInteger)index{
     if (documentID==VAL_NO_DOCUMENT){
         return NO;
     }else{
-        BOOL result = is_row_deleted(documentID,index);
+        int castIndex = (int)index;
+        BOOL result = is_row_deleted(documentID,castIndex);
         return result;
     }
 }
 
-- (int)markRow:(int)index deleted:(BOOL)yesOrNo{
+- (int)markRow:(NSInteger)index deleted:(BOOL)yesOrNo{
     if (documentID==VAL_NO_DOCUMENT){
         return ERR_NO_DOCUMENT;
     }else{
-        int result = mark_row_deleted(documentID,index,yesOrNo);
+        int castIndex = (int)index;
+        int result = mark_row_deleted(documentID,castIndex,yesOrNo);
         return result;
     }
 }
