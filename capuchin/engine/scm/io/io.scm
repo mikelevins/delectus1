@@ -30,6 +30,18 @@
       (let ((new-chunk (u8vector-append chunk (car more-chunks))))
         (%concat-chunks new-chunk (cdr more-chunks)))))
 
+(define (io:read-bytes path n)
+  (let* ((in #f)
+         (data-bytes #f)
+         (data-buffer (make-u8vector n 0)))
+    (dynamic-wind
+        (lambda () (set! in (open-input-file path)))
+        (lambda ()
+          ;; read bytes from the file
+          (set! data-bytes (read-subu8vector data-buffer 0 n in)))
+        (lambda () (close-input-port in)))
+    (subu8vector data-buffer 0 data-bytes)))
+
 (define (io:read-binary-file path)
   (let* ((in #f)
          (data-bytes #f)
@@ -52,9 +64,11 @@
 
 (define (delectus-format-version src-path)
   (if-error "INVALID"
-            (let* ((raw (io:read-binary-file src-path))
-                   (data (u8vector->object raw)))
-              (delectus-format data))))
+            (if (delectus-sqlite-file? src-path)
+                $delectus-format-2.0
+                (let* ((raw (io:read-binary-file src-path))
+                       (data (u8vector->object raw)))
+                  (delectus-format data)))))
 
 ;;; (define $inpath "/Users/mikel/Workshop/src/delectus/lecter/test-data/junior-movies.delectus")
 ;;; (define $data (delectus->lisp $inpath))

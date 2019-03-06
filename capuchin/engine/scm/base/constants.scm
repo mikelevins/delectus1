@@ -44,6 +44,7 @@
 (define $delectus-format-alpha-4 2)
 (define $delectus-format-beta-2 3)
 (define $delectus-format-1.0 4)
+(define $delectus-format-2.0 5) ; initial CouchBaseLite/SQLite-3 format
 
 (define $max-sort-fixnum 2305843009213693951)
 (define $max-sort-string "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

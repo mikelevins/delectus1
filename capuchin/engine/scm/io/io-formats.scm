@@ -41,6 +41,12 @@
        (= (serialized-store-format data)
           $delectus-format-beta-2)))
 
+(define (delectus-sqlite-file? path)
+  (let* ((sentinel-bytes (u8vector->list (io:read-bytes path 15)))
+         (sentinel-characters (map integer->char sentinel-bytes))
+         (sentinel-string (list->string sentinel-characters)))
+    (string=? "SQLite format 3" sentinel-string)))
+
 (define (delectus-format data)
   (cond
    ((delectus-table? data) $delectus-format-1.0)
@@ -56,12 +62,15 @@
         ((equal? format-number $delectus-format-alpha-4) "delectus-format-alpha-4")
         ((equal? format-number $delectus-format-beta-2) "delectus-format-beta-2")
         ((equal? format-number $delectus-format-1.0) "delectus-format-1.0")
+        ((equal? format-number $delectus-format-2.0) "delectus-format-2.0")
         (else "INVALID")))
 
 (define (delectus-file-format path)
   (let* ((raw (io:read-binary-file path))
          (data (u8vector->object raw)))
     (delectus-format data)))
+
+
 
 ;;; ----------------------------------------------------------------------
 ;;; converting delectus formats
