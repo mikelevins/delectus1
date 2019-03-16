@@ -1,0 +1,1 @@
+/Library/Gambit/current/include/gambit.h
