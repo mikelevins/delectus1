@@ -383,7 +383,7 @@
 
 (define (make-couch-listitem delectus-list columns row)
   (let* ((uuid (make-uuid))
-         (itemid (string-append "item:" uuid))
+         (itemid (string-append "item-" uuid))
          (list-identifier (assoc "_id" delectus-list))
          (listid (if list-identifier (cdr list-identifier) "null"))
          (fields (map cons columns row)))
@@ -402,7 +402,7 @@
                           (loop (cdr tail))))))))
 
 (define (write-list-row listid columns row)
-  (let ((id (string-append "item:" (make-uuid)))
+  (let ((id (string-append "item-" (make-uuid)))
         (fields (map cons columns row)))
     (display "{")(write "_id")(display ":")(write id)(display ", ")
     (write "type")(display ":")(write "ListItem")(display ", ")
@@ -438,7 +438,7 @@
          (rows-tail (member 'ROWS data))
          (rows (if rows-tail (cadr rows-tail) '()))
          (list-uuid (make-uuid))
-         (listid (string-append "list:" list-uuid)))
+         (listid (string-append "list-" list-uuid)))
     (display "{")
     (write "_id")(display ":")(write listid)(display ",")
     (write "name")(display ":")(write name)(display ",")
