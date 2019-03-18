@@ -35,8 +35,8 @@
   (display "  lecter --raw PATH # prints the serialized data structures stored in the Delectus file")(newline)
   (display "  lecter --gambit PATH # prints the deserialized Gambit objects stored in the Delectus file")(newline)
   (display "  lecter --csv PATH # prints the Delectus data to stdio as CSV")(newline)
-  (display "  lecter --json PATH # prints the Delectus data to stdio as JSON")(newline)
-  (display "  lecter --couchdb PATH # prints the Delectus data to stdio as a CouchDB document")(newline))
+  (display "  lecter --json PATH # prints the Delectus data to stdio as a JSON object")(newline)
+  (display "  lecter --jsonl PATH # prints the Delectus data to stdio as json, one object per line")(newline))
 
 
 (let ((args (cdr (command-line))))
@@ -61,7 +61,7 @@
               ((equal? option "--gambit") (write-gambit (list-ref args 1)))
               ((equal? option "--csv") (write-csv (list-ref args 1)))
               ((equal? option "--json") (write-json (list-ref args 1)))
-              ((equal? option "--couchdb") (write-couchdb (list-ref args 1)))
+              ((equal? option "--jsonl") (write-couchdb (list-ref args 1)))
               (else (print-lecter-usage))))))
 
 
