@@ -35,7 +35,7 @@
   (display "  lecter --raw PATH # prints the serialized data structures stored in the Delectus file")(newline)
   (display "  lecter --gambit PATH # prints the deserialized Gambit objects stored in the Delectus file")(newline)
   (display "  lecter --csv PATH # prints the Delectus data to stdio as CSV")(newline)
-  (display "  lecter --json PATH # prints the Delectus data to stdio as a JSON object")(newline)
+  (display "  lecter --json PATH # writes the Delectus data to stdio as JSON")(newline)
   (display "  lecter --jsonl PATH # prints the Delectus data to stdio as json, one object per line")(newline))
 
 
