@@ -10,8 +10,8 @@
 
 ;;; modify if the Delectus sources are at another pathname
 
-(define $delectus-root "/Users/mikel/Projects/delectus/delectus/bonobo/engine/scm/")
-(define $test-data-root "/Users/mikel/Projects/delectus/delectus/test-data/")
+(define $delectus-root "/Users/mikel/Workshop/src/delectus/capuchin/engine/scm/")
+(define $test-data-root "/Users/mikel/Workshop/src/delectus/test-data/")
 
 ;;; Scheme files to load for interactive development
 ;;; ----------------------------------------------------------------------
