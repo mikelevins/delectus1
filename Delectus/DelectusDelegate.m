@@ -11,6 +11,7 @@
 #define ___VERSION 408009
 #include "gambit.h"
 #include "Delectus.h"
+#include <CouchbaseLite/CouchbaseLite.h>
 
 
 @implementation DelectusDelegate
@@ -26,15 +27,73 @@
         }else{
             contentFont = [[NSFont userFontOfSize:fontSize] retain];
         }
-
+        // run a quick smoke test of CouchBase Lite
+        //[self testCBL];
     }
     return self;
 }
+
 
 - (void)dealloc
 {
     [super dealloc];
 }
+
+// ensure CouchBaseLite functions as expected
+- (void)testCBL
+{
+    NSURL *appSupportPath = [self applicationDataDirectory];
+    CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
+    NSString *path = [appSupportPath path];
+    [conf setDirectory:path];
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc]
+                             initWithName:@"TestCBLDB"
+                             config:conf
+                             error:&error];
+    NSLog(@"created CouchBase Lite Database at %@", path);
+    // Create a new document (i.e. a record) in the database.
+    CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
+    [mutableDoc setString:@"TestCBLdoc" forKey:@"identifier"];
+    [mutableDoc setString:@"test_data" forKey:@"type"];
+    NSLog(@"created a new document with identifier == \"TestCBLdoc\" and type == \"test_data\"");
+    // Save it to the database.
+    [database saveDocument:mutableDoc error:&error];
+    if (error) {
+        NSLog(@"error saving the document: %@", error);
+    } else {
+        NSLog(@"saved the new document at %@", path);
+    }
+    // Read it back
+    NSLog(@"Attempting to read the  document from %@", path);
+    CBLDocument *foundDoc = [database documentWithID:mutableDoc.id];
+    NSLog(@"found the documentat %@", path);
+    NSLog(@"found type = %@", [foundDoc stringForKey:@"type"]);
+    NSLog(@"found identifier = %@", [foundDoc stringForKey:@"identifier"]);
+}
+
+- (NSURL*)applicationDataDirectory {
+    NSFileManager* sharedFM = [NSFileManager defaultManager];
+    NSArray* possibleURLs = [sharedFM URLsForDirectory:NSApplicationSupportDirectory
+                                             inDomains:NSUserDomainMask];
+    NSURL* appSupportDir = nil;
+    NSURL* appDirectory = nil;
+    
+    if ([possibleURLs count] >= 1) {
+        // Use the first directory (if multiple are returned)
+        appSupportDir = [possibleURLs objectAtIndex:0];
+    }
+    
+    // If a valid app support directory exists, add the
+    // app's bundle ID to it to specify the final directory.
+    if (appSupportDir) {
+        NSString* appBundleID = [[NSBundle mainBundle] bundleIdentifier];
+        appDirectory = [appSupportDir URLByAppendingPathComponent:appBundleID];
+    }
+    
+    return appDirectory;
+}
+
 
 - (DelectusDataSource*)newDelectus{
     DelectusDataSource* src = [[[DelectusDataSource alloc] initWithDocumentID:0] retain];
