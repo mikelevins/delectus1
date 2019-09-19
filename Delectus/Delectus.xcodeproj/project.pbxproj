@@ -17,6 +17,9 @@
 		975F0011222AE55700A4F673 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 975F0010222AE55700A4F673 /* libgambit.a */; };
 		97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 97814B611330C1D5008BD174 /* DelectusDataSource.m */; };
 		97D44A58132B7B780048ADA8 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97D44A57132B7B780048ADA8 /* libDelectus.a */; };
+		97E493CA2333AD7D003F52B7 /* CouchbaseLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; };
+		97E493CB2333ADA4003F52B7 /* CouchbaseLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; };
+		97E493CC2333ADA4003F52B7 /* CouchbaseLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */; };
 		97EA5C01133FCEE900BD41F9 /* Delectus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5BFF133FCEE900BD41F9 /* Delectus.icns */; };
 		97EA5C04133FD3D700BD41F9 /* DelectusDoc.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5C02133FD3D700BD41F9 /* DelectusDoc.icns */; };
@@ -26,6 +29,20 @@
 		97EB7F1A132BF8F600F99745 /* DelectusDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EB7F19132BF8F600F99745 /* DelectusDelegate.m */; };
 		97EB7F1C132FB6D900F99745 /* nodeleted.png in Resources */ = {isa = PBXBuildFile; fileRef = 97EB7F1B132FB6D900F99745 /* nodeleted.png */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		97E493CD2333ADA4003F52B7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				97E493CC2333ADA4003F52B7 /* CouchbaseLite.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -48,6 +65,7 @@
 		97853DCA132B7DC1008D485C /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = /usr/local/gambit/MacOSX/lib/libgambc.a; sourceTree = "<absolute>"; };
 		97D44A56132B7B6D0048ADA8 /* Delectus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../engine/include/Delectus.h; sourceTree = SOURCE_ROOT; };
 		97D44A57132B7B780048ADA8 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../engine/libDelectus.a; sourceTree = SOURCE_ROOT; };
+		97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLite.framework; sourceTree = "<group>"; };
 		97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusPrintView.h; sourceTree = "<group>"; };
 		97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusPrintView.m; sourceTree = "<group>"; };
 		97EA5C00133FCEE900BD41F9 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = English; path = English.lproj/Delectus.icns; sourceTree = "<group>"; };
@@ -66,8 +84,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97E493CB2333ADA4003F52B7 /* CouchbaseLite.framework in Frameworks */,
 				975F0011222AE55700A4F673 /* libgambit.a in Frameworks */,
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
+				97E493CA2333AD7D003F52B7 /* CouchbaseLite.framework in Frameworks */,
 				97D44A58132B7B780048ADA8 /* libDelectus.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -160,6 +180,7 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */,
 				975F0010222AE55700A4F673 /* libgambit.a */,
 				97D44A57132B7B780048ADA8 /* libDelectus.a */,
 				97853DCA132B7DC1008D485C /* libgambc.a */,
@@ -179,6 +200,7 @@
 				8D15AC2B0486D014006FF6A4 /* Resources */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
+				97E493CD2333ADA4003F52B7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -318,6 +340,10 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -327,6 +353,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include/;
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
@@ -346,12 +373,17 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
 				HEADER_SEARCH_PATHS = /usr/local/include/;
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
