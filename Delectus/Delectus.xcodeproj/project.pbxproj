@@ -20,6 +20,7 @@
 		97E493CA2333AD7D003F52B7 /* CouchbaseLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; };
 		97E493CB2333ADA4003F52B7 /* CouchbaseLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; };
 		97E493CC2333ADA4003F52B7 /* CouchbaseLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		97E493D02333FD65003F52B7 /* Delectus2Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 97E493CF2333FD65003F52B7 /* Delectus2Document.m */; };
 		97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */; };
 		97EA5C01133FCEE900BD41F9 /* Delectus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5BFF133FCEE900BD41F9 /* Delectus.icns */; };
 		97EA5C04133FD3D700BD41F9 /* DelectusDoc.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5C02133FD3D700BD41F9 /* DelectusDoc.icns */; };
@@ -62,10 +63,11 @@
 		975F0010222AE55700A4F673 /* libgambit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambit.a; path = ../../../../../../../../Library/Gambit/v4.8.9/lib/libgambit.a; sourceTree = "<group>"; };
 		97814B601330C1D5008BD174 /* DelectusDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataSource.h; sourceTree = "<group>"; };
 		97814B611330C1D5008BD174 /* DelectusDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDataSource.m; sourceTree = "<group>"; };
-		97853DCA132B7DC1008D485C /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = /usr/local/gambit/MacOSX/lib/libgambc.a; sourceTree = "<absolute>"; };
 		97D44A56132B7B6D0048ADA8 /* Delectus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../engine/include/Delectus.h; sourceTree = SOURCE_ROOT; };
 		97D44A57132B7B780048ADA8 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../engine/libDelectus.a; sourceTree = SOURCE_ROOT; };
 		97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLite.framework; sourceTree = "<group>"; };
+		97E493CE2333FD4E003F52B7 /* Delectus2Document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delectus2Document.h; sourceTree = "<group>"; };
+		97E493CF2333FD65003F52B7 /* Delectus2Document.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Delectus2Document.m; sourceTree = "<group>"; };
 		97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusPrintView.h; sourceTree = "<group>"; };
 		97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusPrintView.m; sourceTree = "<group>"; };
 		97EA5C00133FCEE900BD41F9 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = English; path = English.lproj/Delectus.icns; sourceTree = "<group>"; };
@@ -139,7 +141,9 @@
 				97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */,
 				97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */,
 				2A37F4AEFDCFA73011CA2CEA /* DelectusDocument.h */,
+				97E493CE2333FD4E003F52B7 /* Delectus2Document.h */,
 				2A37F4ACFDCFA73011CA2CEA /* DelectusDocument.m */,
+				97E493CF2333FD65003F52B7 /* Delectus2Document.m */,
 				97EB7F18132BF8F600F99745 /* DelectusDelegate.h */,
 				97EB7F19132BF8F600F99745 /* DelectusDelegate.m */,
 				97814B601330C1D5008BD174 /* DelectusDataSource.h */,
@@ -183,7 +187,6 @@
 				97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */,
 				975F0010222AE55700A4F673 /* libgambit.a */,
 				97D44A57132B7B780048ADA8 /* libDelectus.a */,
-				97853DCA132B7DC1008D485C /* libgambc.a */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
@@ -264,6 +267,7 @@
 			files = (
 				8D15AC310486D014006FF6A4 /* DelectusDocument.m in Sources */,
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
+				97E493D02333FD65003F52B7 /* Delectus2Document.m in Sources */,
 				97EB7F1A132BF8F600F99745 /* DelectusDelegate.m in Sources */,
 				97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */,
 				97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */,

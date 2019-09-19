@@ -25,6 +25,20 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>delectus2</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>DelectusDoc.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>delectus2</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>Delectus2Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>csv</string>
 			</array>
 			<key>CFBundleTypeName</key>

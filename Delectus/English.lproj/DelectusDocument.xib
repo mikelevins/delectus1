@@ -229,8 +229,8 @@
             <rect key="frame" x="0.0" y="0.0" width="240" height="135"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <clipView key="contentView" id="Csi-Vq-1Oc">
-                <rect key="frame" x="1" y="25" width="238" height="109"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <rect key="frame" x="1" y="0.0" width="238" height="134"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="100399" id="100401">
                         <rect key="frame" x="0.0" y="0.0" width="238" height="109"/>
@@ -288,7 +288,7 @@
             <rect key="contentRect" x="235" y="449" width="456" height="110"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1178"/>
             <view key="contentView" id="100438">
-                <rect key="frame" x="7" y="11" width="456" height="110"/>
+                <rect key="frame" x="0.0" y="0.0" width="456" height="110"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="100442">

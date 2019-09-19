@@ -6,7 +6,7 @@
 //  Copyright 2011 mikel evins. All rights reserved.
 //
 
-#import "DelectusDocument.h"
+#import "Delectus2Document.h"
 #import "DelectusDelegate.h"
 #import "DelectusDataSource.h"
 #import "DelectusDataCell.h"
@@ -15,7 +15,7 @@
 #include "gambit.h"
 #include "Delectus.h"
 
-@implementation DelectusDocument
+@implementation Delectus2Document
 
 #pragma mark - init
 // --------------------------------------------------------------------------------
