@@ -16,6 +16,11 @@
 
 @implementation DelectusDelegate
 
+#pragma mark - Initialization
+// --------------------------------------------------------------------------------
+// Initialization
+// --------------------------------------------------------------------------------
+
 - (id)init
 {
     self = [super init];
@@ -34,43 +39,21 @@
 }
 
 
+#pragma mark - Finalization
+// --------------------------------------------------------------------------------
+// Finalization
+// --------------------------------------------------------------------------------
+
 - (void)dealloc
 {
     [super dealloc];
 }
 
-// ensure CouchBaseLite functions as expected
-- (void)testCBL
-{
-    NSURL *appSupportPath = [self applicationDataDirectory];
-    CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
-    NSString *path = [appSupportPath path];
-    [conf setDirectory:path];
-    NSError *error;
-    CBLDatabase *database = [[CBLDatabase alloc]
-                             initWithName:@"TestCBLDB"
-                             config:conf
-                             error:&error];
-    NSLog(@"created CouchBase Lite Database at %@", path);
-    // Create a new document (i.e. a record) in the database.
-    CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
-    [mutableDoc setString:@"TestCBLdoc" forKey:@"identifier"];
-    [mutableDoc setString:@"test_data" forKey:@"type"];
-    NSLog(@"created a new document with identifier == \"TestCBLdoc\" and type == \"test_data\"");
-    // Save it to the database.
-    [database saveDocument:mutableDoc error:&error];
-    if (error) {
-        NSLog(@"error saving the document: %@", error);
-    } else {
-        NSLog(@"saved the new document at %@", path);
-    }
-    // Read it back
-    NSLog(@"Attempting to read the  document from %@", path);
-    CBLDocument *foundDoc = [database documentWithID:mutableDoc.id];
-    NSLog(@"found the documentat %@", path);
-    NSLog(@"found type = %@", [foundDoc stringForKey:@"type"]);
-    NSLog(@"found identifier = %@", [foundDoc stringForKey:@"identifier"]);
-}
+
+#pragma mark - Document lifecycle
+// --------------------------------------------------------------------------------
+// Document lifecycle
+// --------------------------------------------------------------------------------
 
 - (NSURL*)applicationDataDirectory {
     NSFileManager* sharedFM = [NSFileManager defaultManager];
@@ -93,7 +76,6 @@
     
     return appDirectory;
 }
-
 
 - (DelectusDataSource*)newDelectus{
     DelectusDataSource* src = [[[DelectusDataSource alloc] initWithDocumentID:0] retain];
@@ -125,6 +107,12 @@
         return src;
     }
 }
+
+
+#pragma mark - UI
+// --------------------------------------------------------------------------------
+// Document UI
+// --------------------------------------------------------------------------------
 
 - (void)setContentFont:(NSFont*)newFont{
     contentFont = newFont;
@@ -183,6 +171,47 @@
         [purgeDeletedItemsMenu setEnabled:NO];
     }
 }
+
+
+#pragma mark - Tests
+// --------------------------------------------------------------------------------
+// Tests
+// --------------------------------------------------------------------------------
+
+
+// ensure CouchBaseLite functions as expected
+- (void)testCBL
+{
+    NSURL *appSupportPath = [self applicationDataDirectory];
+    CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
+    NSString *path = [appSupportPath path];
+    [conf setDirectory:path];
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc]
+                             initWithName:@"TestCBLDB"
+                             config:conf
+                             error:&error];
+    NSLog(@"created CouchBase Lite Database at %@", path);
+    // Create a new document (i.e. a record) in the database.
+    CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
+    [mutableDoc setString:@"TestCBLdoc" forKey:@"identifier"];
+    [mutableDoc setString:@"test_data" forKey:@"type"];
+    NSLog(@"created a new document with identifier == \"TestCBLdoc\" and type == \"test_data\"");
+    // Save it to the database.
+    [database saveDocument:mutableDoc error:&error];
+    if (error) {
+        NSLog(@"error saving the document: %@", error);
+    } else {
+        NSLog(@"saved the new document at %@", path);
+    }
+    // Read it back
+    NSLog(@"Attempting to read the  document from %@", path);
+    CBLDocument *foundDoc = [database documentWithID:mutableDoc.id];
+    NSLog(@"found the documentat %@", path);
+    NSLog(@"found type = %@", [foundDoc stringForKey:@"type"]);
+    NSLog(@"found identifier = %@", [foundDoc stringForKey:@"identifier"]);
+}
+
 
 
 @end

@@ -21,6 +21,7 @@
     IBOutlet id purgeDeletedItemsMenu;
 }
 
+- (NSURL*)applicationDataDirectory;
 - (DelectusDataSource*)newDelectus;
 - (DelectusDataSource*)readDelectusFile:(NSURL*)url;
 - (DelectusDataSource*)readCSVFile:(NSURL*)url;
