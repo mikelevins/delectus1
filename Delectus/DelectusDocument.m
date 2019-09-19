@@ -14,6 +14,7 @@
 #define ___VERSION 408009
 #include "gambit.h"
 #include "Delectus.h"
+#include <CouchbaseLite/CouchbaseLite.h>
 
 @implementation DelectusDocument
 
@@ -550,10 +551,16 @@
 
 - (BOOL)writeCBLToURL:(NSURL *)absoluteURL error:(NSError **)outError{
     NSLog(@"Here's where we write the new CBL format");
-    DelectusDelegate *appDelegate = (DelectusDelegate *)[[NSApplication sharedApplication] delegate];
-    NSString * path = [absoluteURL path];
+    NSString *path = [absoluteURL path];
     NSLog(@"Saving to %@", path);
-
+    CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
+    [conf setDirectory:path];
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc]
+                             initWithName:@"TestCBLDB"
+                             config:conf
+                             error:&error];
+    NSLog(@"created CouchBase Lite Database at %@", path);
     return YES;
 }
 
