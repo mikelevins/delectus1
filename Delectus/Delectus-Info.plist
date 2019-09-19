@@ -19,6 +19,8 @@
 			<string>delectus</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 			<key>NSDocumentClass</key>
 			<string>DelectusDocument</string>
 		</dict>
@@ -28,13 +30,15 @@
 				<string>delectus2</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>DelectusDoc.icns</string>
+			<string></string>
 			<key>CFBundleTypeName</key>
 			<string>delectus2</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>1</integer>
 			<key>NSDocumentClass</key>
-			<string>Delectus2Document</string>
+			<string>DelectusDocument</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -45,6 +49,8 @@
 			<string>csv</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 			<key>NSDocumentClass</key>
 			<string>DelectusDocument</string>
 		</dict>
@@ -69,8 +75,6 @@
 	<string>2.0d1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
-	<array/>
 	<key>CFBundleVersion</key>
 	<string>2.0d1</string>
 	<key>LSApplicationCategoryType</key>
@@ -83,11 +87,5 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>NSServices</key>
-	<array/>
-	<key>UTExportedTypeDeclarations</key>
-	<array/>
-	<key>UTImportedTypeDeclarations</key>
-	<array/>
 </dict>
 </plist>

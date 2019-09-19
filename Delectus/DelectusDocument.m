@@ -536,8 +536,6 @@
     }
 }
 
-
-
 - (BOOL)writeCSVToURL:(NSURL *)absoluteURL error:(NSError **)outError{
     NSDictionary* errDict;
     int result = [dataSource writeDelectusCSV:absoluteURL];
@@ -550,20 +548,22 @@
     }
 }
 
+- (BOOL)writeCBLToURL:(NSURL *)absoluteURL error:(NSError **)outError{
+    NSLog(@"Here's where we write the new CBL format");
+    return YES;
+}
 
 - (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError{
     NSDictionary* errDict;
     if([typeName isEqualToString: @"delectus"]){
         BOOL result = [self writeDelectusToURL:absoluteURL error:outError];
         return result;
+    }else if ([typeName isEqualToString: @"delectus2"]){
+        BOOL result = [self writeCBLToURL:absoluteURL error:outError];
+        return result;
     }else if ([typeName isEqualToString: @"csv"]){
         BOOL result = [self writeCSVToURL:absoluteURL error:outError];
         return result;
-    }else if ([typeName isEqualToString: @"delectus2"]){
-        errDict = [NSDictionary
-                   dictionaryWithObjectsAndKeys:@"Saving to delectus2 format is not yet implemented", NSLocalizedDescriptionKey, nil];
-        *outError = [[NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict] autorelease];
-        return NO;
     }else{
         errDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Save Failed", NSLocalizedDescriptionKey, nil];
         *outError = [[NSError errorWithDomain:@"DelectusSaveError" code:3 userInfo:errDict] autorelease];
