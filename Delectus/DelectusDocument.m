@@ -550,6 +550,10 @@
 
 - (BOOL)writeCBLToURL:(NSURL *)absoluteURL error:(NSError **)outError{
     NSLog(@"Here's where we write the new CBL format");
+    DelectusDelegate *appDelegate = (DelectusDelegate *)[[NSApplication sharedApplication] delegate];
+    NSString * path = [absoluteURL path];
+    NSLog(@"Saving to %@", path);
+
     return YES;
 }
 
