@@ -434,7 +434,7 @@
     }
     [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:nextLabel andSortOrder:sortOrder andFilterText:[filterField stringValue]];
     [tableView reloadData];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",(int)[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
@@ -493,7 +493,8 @@
     if ([typeName isEqualToString: @"csv"]) {
         errStr=@"CSVFormatError";
         errMsg=@"Couldn't read CSV data from the file";
-        DelectusDataSource* src=[[NSApp delegate] readCSVFile:absoluteURL];
+        DelectusDelegate *delegate = [NSApp delegate];
+        DelectusDataSource* src=[delegate readCSVFile:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
@@ -506,7 +507,8 @@
     } else if ([typeName isEqualToString: @"delectus"]) {
         errStr=@"DelectusFormatError";
         errMsg=@"Couldn't read Delectus data from the file";
-        DelectusDataSource* src=[[NSApp delegate] readDelectus1File:absoluteURL];
+        DelectusDelegate *delegate = [NSApp delegate];
+        DelectusDataSource* src=[delegate readDelectus1File:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
