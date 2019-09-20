@@ -358,7 +358,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus2;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
 			};
@@ -389,7 +389,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus2;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
 			};

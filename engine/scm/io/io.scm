@@ -92,12 +92,15 @@
 
 (define (write-columns-csv tbl out)
   (let* ((cols (table:column-labels tbl)))
-    (write (car cols) out)
-    (for-each (lambda (col)
-                (write-char #\, out)
-                (write col out))
-              (cdr cols))
-    (newline out)))
+    (if (null? cols)
+        #f
+        (begin
+          (write (car cols) out)
+          (for-each (lambda (col)
+                      (write-char #\, out)
+                      (write col out))
+                    (cdr cols))
+          (newline out)))))
 
 (define (write-row-csv r out)
   (let ((eltcount (vector-length (row:entries r))))
@@ -114,8 +117,12 @@
 
 (define (write-table-csv tbl out)
   (write-columns-csv tbl out)
-  (vector-for-each (lambda (r)(write-row-csv r out)(newline out))
-                   (table:rows tbl)))
+  (let ((rows (table:rows tbl)))
+    (if (> (vector-length rows) 0)
+        (vector-for-each (lambda (r)(write-row-csv r out)(newline out))
+                         rows)
+        #f))
+  (newline out))
 
 (define (write-csv-file tbl dest-path)
   (let ((out #f))
