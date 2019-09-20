@@ -44,16 +44,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
-		1DDD58290DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DelectusDocument.xib; sourceTree = "<group>"; };
-		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		2564AD2C0F5327BB00F57823 /* Delectus_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delectus_Prefix.pch; sourceTree = "<group>"; };
 		2A37F4ACFDCFA73011CA2CEA /* DelectusDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDocument.m; sourceTree = "<group>"; };
 		2A37F4AEFDCFA73011CA2CEA /* DelectusDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDocument.h; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D15AC360486D014006FF6A4 /* Delectus-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Delectus-Info.plist"; sourceTree = "<group>"; };
@@ -61,14 +57,18 @@
 		975F0010222AE55700A4F673 /* libgambit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambit.a; path = ../../../../../../../../Library/Gambit/v4.8.9/lib/libgambit.a; sourceTree = "<group>"; };
 		97814B601330C1D5008BD174 /* DelectusDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataSource.h; sourceTree = "<group>"; };
 		97814B611330C1D5008BD174 /* DelectusDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDataSource.m; sourceTree = "<group>"; };
+		97BF48292335019500484058 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		97BF482A2335019500484058 /* en */ = {isa = PBXFileReference; lastKnownFileType = folder; name = en; path = en.lproj/Delectus.help; sourceTree = "<group>"; };
+		97BF482B2335019500484058 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = en; path = en.lproj/Delectus.icns; sourceTree = "<group>"; };
+		97BF482C2335019500484058 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = en; path = en.lproj/DelectusDoc.icns; sourceTree = "<group>"; };
+		97BF482E2335019500484058 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		97BF48302335019E00484058 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DelectusDocument.xib; sourceTree = "<group>"; };
+		97BF48312335019E00484058 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		97D44A56132B7B6D0048ADA8 /* Delectus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../engine/include/Delectus.h; sourceTree = SOURCE_ROOT; };
 		97D44A57132B7B780048ADA8 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../engine/libDelectus.a; sourceTree = SOURCE_ROOT; };
 		97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLite.framework; sourceTree = "<group>"; };
 		97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusPrintView.h; sourceTree = "<group>"; };
 		97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusPrintView.m; sourceTree = "<group>"; };
-		97EA5C00133FCEE900BD41F9 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = English; path = English.lproj/Delectus.icns; sourceTree = "<group>"; };
-		97EA5C03133FD3D700BD41F9 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = English; path = English.lproj/DelectusDoc.icns; sourceTree = "<group>"; };
-		97EA5C4A133FDFAE00BD41F9 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/Delectus.help; sourceTree = "<group>"; };
 		97EA5C6213457F8800BD41F9 /* DelectusDataCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataCell.h; sourceTree = "<group>"; };
 		97EA5C6313457F8800BD41F9 /* DelectusDataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDataCell.m; sourceTree = "<group>"; };
 		97EB7F16132BF7AE00F99745 /* deleted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = deleted.png; path = assets/deleted.png; sourceTree = "<group>"; };
@@ -218,13 +218,14 @@
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Delectus" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				de,
+				en,
+				ja,
+				Base,
+				fr,
 			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Delectus */;
 			projectDirPath = "";
@@ -274,7 +275,7 @@
 		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C1660FE840EACC02AAC07 /* English */,
+				97BF482E2335019500484058 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -282,7 +283,7 @@
 		1DDD58280DA1D0D100B32029 /* DelectusDocument.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1DDD58290DA1D0D100B32029 /* English */,
+				97BF48302335019E00484058 /* Base */,
 			);
 			name = DelectusDocument.xib;
 			sourceTree = "<group>";
@@ -290,7 +291,7 @@
 		1DDD582A0DA1D0D100B32029 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1DDD582B0DA1D0D100B32029 /* English */,
+				97BF48312335019E00484058 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -298,7 +299,7 @@
 		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				2A37F4BAFDCFA73011CA2CEA /* English */,
+				97BF48292335019500484058 /* en */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
@@ -306,7 +307,7 @@
 		97EA5BFF133FCEE900BD41F9 /* Delectus.icns */ = {
 			isa = PBXVariantGroup;
 			children = (
-				97EA5C00133FCEE900BD41F9 /* English */,
+				97BF482B2335019500484058 /* en */,
 			);
 			name = Delectus.icns;
 			sourceTree = "<group>";
@@ -314,7 +315,7 @@
 		97EA5C02133FD3D700BD41F9 /* DelectusDoc.icns */ = {
 			isa = PBXVariantGroup;
 			children = (
-				97EA5C03133FD3D700BD41F9 /* English */,
+				97BF482C2335019500484058 /* en */,
 			);
 			name = DelectusDoc.icns;
 			sourceTree = "<group>";
@@ -322,7 +323,7 @@
 		97EA5C49133FDFAE00BD41F9 /* Delectus.help */ = {
 			isa = PBXVariantGroup;
 			children = (
-				97EA5C4A133FDFAE00BD41F9 /* English */,
+				97BF482A2335019500484058 /* en */,
 			);
 			name = Delectus.help;
 			sourceTree = "<group>";
@@ -354,10 +355,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					/usr/local/gambit/MacOSX/current/lib,
 					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
@@ -386,10 +386,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					/usr/local/gambit/MacOSX/current/lib,
 					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
@@ -428,8 +427,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/gambit/MacOSX/include/;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				HEADER_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -465,8 +464,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/gambit/MacOSX/include/;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				HEADER_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};

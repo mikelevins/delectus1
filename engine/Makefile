@@ -46,15 +46,13 @@ OBJS = scm/base/constants.o \
 
 LIB = libDelectus.a
 
-OBJ_FLAGS = -I${GSC_INC} -L${GSC_LIB} -Wno-unused -O1 -fno-math-errno -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp 
-
 lib: obj
 	ar rc ${LIB} ${OBJS} && ranlib ${LIB}
 	rm -f ${C_SOURCES}
 	rm -f ${OBJECTS}
 
 obj: compile_scheme
-	${GSC} -obj -cc-options "-D___LIBRARY" ${C_SOURCES}
+	${GSC} -obj -cc-options "-D___LIBRARY -mmacosx-version-min=10.13" ${C_SOURCES}
 
 compile_scheme:
 	${GSC} -link ${SCHEME_SOURCES}
