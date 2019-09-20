@@ -82,7 +82,7 @@
     return src;
 }
 
-- (DelectusDataSource*)readDelectusFile:(NSURL*)url{
+- (DelectusDataSource*)readDelectus1File:(NSURL*)url{
     NSString* urlPath = [url path];
     char* path = (char*)[urlPath cStringUsingEncoding:NSASCIIStringEncoding];
     int docid = read_delectus_file(path);

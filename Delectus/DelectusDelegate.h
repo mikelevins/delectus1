@@ -23,7 +23,7 @@
 
 - (NSURL*)applicationDataDirectory;
 - (DelectusDataSource*)newDelectus;
-- (DelectusDataSource*)readDelectusFile:(NSURL*)url;
+- (DelectusDataSource*)readDelectus1File:(NSURL*)url;
 - (DelectusDataSource*)readCSVFile:(NSURL*)url;
 - (void)setContentFont:(NSFont*)newFont;
 - (NSFont*)contentFont;
