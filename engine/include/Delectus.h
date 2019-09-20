@@ -25,8 +25,8 @@
 #define ERR_BAD_FORMAT         (-10)
 #define ERR_NO_DOCUMENT        (-11)
 
-extern char* version ();
-extern int new_delectus ();
+extern char* version (void);
+extern int new_delectus (void);
 extern int update_view(int id, bool include_deleted, char* sort_column, int sort_order, char* filter_text);
 extern int count_columns (int id);
 extern int count_deleted_columns (int id);

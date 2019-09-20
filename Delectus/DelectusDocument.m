@@ -146,7 +146,7 @@
     
     NSMutableArray* columnLabels = [[NSMutableArray arrayWithArray:savedLabels] retain];
     //remove labels that are in the saved set but not in the source set
-    for(int i=([columnLabels count]-1);i>=0;i--){
+    for(int i=((int)[columnLabels count]-1);i>=0;i--){
         NSString* lbl = [columnLabels objectAtIndex:i];
         NSInteger foundIndex = [sourceLabels indexOfObject:lbl];
         if(foundIndex==NSNotFound){[columnLabels removeObjectAtIndex:i];}
@@ -159,8 +159,9 @@
     }
         
     NSFont* headerFont = [NSFont systemFontOfSize:13.0];
-    NSFont* contentFont = [[NSApp delegate] contentFont];
-    int labelcount = [columnLabels count];
+    DelectusDelegate *delegate = [NSApp delegate];
+    NSFont* contentFont = [delegate contentFont];
+    int labelcount = (int)[columnLabels count];
     for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
         NSTableColumn* col = [[NSTableColumn alloc] initWithIdentifier: label];
@@ -205,7 +206,8 @@
     }else{
         [delRowButton setEnabled: NO];
     }
-    [[NSApp delegate] updateUIForDocument:self withSelectedColumn: [tableView selectedColumn] andRow:[tableView selectedRow]];
+    DelectusDelegate *delegate = [NSApp delegate];
+    [delegate updateUIForDocument:self withSelectedColumn: [tableView selectedColumn] andRow:[tableView selectedRow]];
 }
 
 
@@ -214,7 +216,8 @@
     [self closePristineDocuments:self];
     [super windowControllerDidLoadNib:aController];
     if (dataSource==nil){
-        dataSource=[[[NSApp delegate] newDelectus] retain];
+        DelectusDelegate *delegate = [NSApp delegate];
+        dataSource=[[delegate newDelectus] retain];
     }
     [tableView setDataSource: dataSource];
     [tableView setDelegate: self];
@@ -227,7 +230,7 @@
     [showDeletedButton setTarget: self];
     [self setupColumns];
     [self updateUIForSelectionChange];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",(int)[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     // make sure this doc ends up in front
@@ -462,9 +465,10 @@
 // --------------------------------------------------------------------------------
 
 - (void)setFont:(NSFont*)newFont{
-    [[NSApp delegate] setContentFont: newFont];
+    DelectusDelegate *delegate = [NSApp delegate];
+    [delegate setContentFont: newFont];
     NSArray* cols = [tableView tableColumns];
-    int colcount = [cols count];
+    int colcount = (int)[cols count];
     for(int i = 0;i<colcount;i++){
         NSTableColumn* col = [cols objectAtIndex:i];
         [[col dataCell] setFont:newFont];
@@ -475,7 +479,8 @@
 
 - (void)changeFont:(id)sender
 {    
-    NSFont *oldFont = [[NSApp delegate] contentFont];
+    DelectusDelegate *delegate = [NSApp delegate];
+    NSFont *oldFont = [delegate contentFont];
     NSFont *newFont = [sender convertFont:oldFont];
     [self setFont:newFont];
     return;
