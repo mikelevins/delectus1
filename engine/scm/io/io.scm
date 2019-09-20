@@ -115,7 +115,8 @@
 (define (write-table-csv tbl out)
   (write-columns-csv tbl out)
   (vector-for-each (lambda (r)(write-row-csv r out)(newline out))
-                   (table:rows tbl)))
+                   (table:rows tbl))
+  (newline out))
 
 (define (write-csv-file tbl dest-path)
   (let ((out #f))
