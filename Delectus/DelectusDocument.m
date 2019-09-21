@@ -536,8 +536,24 @@
             return YES;
         }
     } else if ([typeName isEqualToString: @"delectus2"]) {
-        NSString * path = [absoluteURL path];
-        NSLog(@"Attempting to open a delectus2 document at %@", path);
+        NSString *path = [absoluteURL path];
+        NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
+        NSString *dbdir = [dirs objectAtIndex:0];
+        NSString *dbname = [dbdir stringByDeletingPathExtension];
+        CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
+        NSString *dbpath = [path stringByAppendingPathComponent:dbname];
+        [conf setDirectory:path];
+        NSError *error;
+        CBLDatabase *database = [[CBLDatabase alloc]
+                                 initWithName:dbname
+                                 config:conf
+                                 error:&error];
+        NSLog(@"opened CouchBase Lite Database at %@", path);
+        CBLDocument *foundDoc = [database documentWithID:dbname];
+        NSLog(@"found the document at %@", path);
+        NSLog(@"found id = %@", [foundDoc id]);
+        NSLog(@"found revision = %@", [foundDoc revisionID]);
+        return YES;
     } else {
         errStr=@"FileFormatError";
         errMsg=@"Unrecognized file type";
@@ -589,18 +605,12 @@
                              error:&error];
     CBLMutableDocument* doc = [self newCBLDocumentWithID:idString];
     NSError *saveError;
-    [database saveDocument:doc error:&error];
+    [database saveDocument:doc error:&saveError];
     if (saveError) {
         NSLog(@"error saving the document: %@", saveError);
     } else {
         NSLog(@"saved the new document at %@", path);
     }
-    // read it back to check that it worked
-    NSLog(@"Attempting to read the document from %@", path);
-    CBLDocument *foundDoc = [database documentWithID:doc.id];
-    NSLog(@"found the document at %@", path);
-    NSLog(@"found id = %@", [foundDoc id]);
-    NSLog(@"found revision = %@", [foundDoc revisionID]);
 
     return YES;
 }
