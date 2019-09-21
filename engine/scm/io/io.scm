@@ -40,13 +40,15 @@
 ;;; reading delectus files
 ;;; ----------------------------------------------------------------------
 
-(define (read-delectus-file path)
+(define (read-delectus-data path)
   (let* ((raw (io:read-binary-file path))
-         (data (u8vector->object raw))
-         (tbl (if (delectus-table? data)
-                  data
-                  (data->table data))))
-    (reg:register-delectus! tbl)))
+         (data (u8vector->object raw)))
+    (if (delectus-table? data)
+        data
+        (data->table data))))
+
+(define (read-delectus-file path)
+  (reg:register-delectus! (read-delectus-data path)))
 
 ;;; (define $jr-path "/Users/mikel/Projects/delectus/delectus/test-data/junior-movies.delectus")
 ;;; (define $jr (read-delectus-file $jr-path))
