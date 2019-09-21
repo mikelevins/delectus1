@@ -535,6 +535,9 @@
             [self updateChangeCount: NSChangeDone];
             return YES;
         }
+    } else if ([typeName isEqualToString: @"delectus2"]) {
+        NSString * path = [absoluteURL path];
+        NSLog(@"Attempting to open a delectus2 document at %@", path);
     } else {
         errStr=@"FileFormatError";
         errMsg=@"Unrecognized file type";
