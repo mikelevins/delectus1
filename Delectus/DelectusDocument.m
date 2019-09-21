@@ -58,6 +58,18 @@
     return result;
 }
 
+-(NSString*) getFileName:(NSURL*) url
+{
+    return [url lastPathComponent];
+}
+
+-(NSString*) getFileBasename:(NSURL*) url
+{
+    return [[url lastPathComponent] stringByDeletingPathExtension];
+}
+
+
+
 
 #pragma mark - window init
 // --------------------------------------------------------------------------------
@@ -556,18 +568,37 @@
     }
 }
 
+- (CBLMutableDocument*) newCBLDocumentWithID: (NSString *)docid {
+    CBLMutableDocument* doc = [CBLMutableDocument documentWithID:docid];
+    return doc;
+}
+
 - (BOOL)writeCBLToURL:(NSURL *)absoluteURL error:(NSError **)outError{
-    NSLog(@"Here's where we write the new CBL format");
     NSString *path = [absoluteURL path];
-    NSLog(@"Saving to %@", path);
+    NSUUID *uuid = [NSUUID UUID];
+    NSString *idString = [uuid UUIDString];
     CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
     [conf setDirectory:path];
     NSError *error;
     CBLDatabase *database = [[CBLDatabase alloc]
-                             initWithName:@"TestCBLDB"
+                             initWithName:idString
                              config:conf
                              error:&error];
-    NSLog(@"created CouchBase Lite Database at %@", path);
+    CBLMutableDocument* doc = [self newCBLDocumentWithID:idString];
+    NSError *saveError;
+    [database saveDocument:doc error:&error];
+    if (saveError) {
+        NSLog(@"error saving the document: %@", saveError);
+    } else {
+        NSLog(@"saved the new document at %@", path);
+    }
+    // read it back to check that it worked
+    NSLog(@"Attempting to read the document from %@", path);
+    CBLDocument *foundDoc = [database documentWithID:doc.id];
+    NSLog(@"found the document at %@", path);
+    NSLog(@"found id = %@", [foundDoc id]);
+    NSLog(@"found revision = %@", [foundDoc revisionID]);
+
     return YES;
 }
 
