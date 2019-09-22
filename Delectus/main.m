@@ -7,14 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#define ___VERSION 408009
+#define ___VERSION 409003
 #include "gambit.h"
 #include "Delectus.h"
 
-#define SCHEME_LIBRARY_LINKER ____20_Delectus__
+#define SCHEME_LIBRARY_LINKER ___LNK_Delectus__
 
 ___BEGIN_C_LINKAGE
-extern ___mod_or_lnk SCHEME_LIBRARY_LINKER (___global_state_struct*);
+extern ___mod_or_lnk SCHEME_LIBRARY_LINKER (___global_state);
 ___END_C_LINKAGE
 
 

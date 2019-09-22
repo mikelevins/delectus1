@@ -1,6 +1,6 @@
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-  GAMBIT_HOME=/usr/local
+  GAMBIT_HOME=/usr/local/Gambit
 endif
 ifeq ($(UNAME_S),Linux)
   GAMBIT_HOME=/usr/local/Gambit
@@ -52,7 +52,7 @@ lib: obj
 	rm -f ${OBJECTS}
 
 obj: compile_scheme
-	${GSC} -obj -cc-options "-D___LIBRARY -mmacosx-version-min=10.13" ${C_SOURCES}
+	${GSC} -obj -cc-options "-D___LIBRARY -mmacosx-version-min=10.12" ${C_SOURCES}
 
 compile_scheme:
 	${GSC} -link ${SCHEME_SOURCES}

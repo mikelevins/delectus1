@@ -348,16 +348,16 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = /usr/local/Gambit/include/;
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
+					/usr/local/Gambit/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus2;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
@@ -379,16 +379,16 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = /usr/local/Gambit/include/;
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
+					/usr/local/Gambit/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus2;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
@@ -428,7 +428,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -465,7 +465,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};

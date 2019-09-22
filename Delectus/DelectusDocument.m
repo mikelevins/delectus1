@@ -11,7 +11,7 @@
 #import "DelectusDataSource.h"
 #import "DelectusDataCell.h"
 #import "DelectusPrintView.h"
-#define ___VERSION 408009
+#define ___VERSION 409003
 #include "gambit.h"
 #include "Delectus.h"
 #include <CouchbaseLite/CouchbaseLite.h>
