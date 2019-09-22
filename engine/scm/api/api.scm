@@ -49,6 +49,11 @@
   (require-type 'int
                 (if-error $OBJ_NO_OID (eng:new-delectus))))
 
+(define (api:release-delectus id)
+  (require-type 'int
+                (if-error $ERR_CANT_RELEASE (eng:release-delectus id))))
+
+
 (define (api:update-view! id include-deleted? sort-column sort-order filter-text)
   (require-type 'int
                 (if-error $OBJ_NO_OID

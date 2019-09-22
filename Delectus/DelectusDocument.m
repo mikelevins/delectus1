@@ -636,7 +636,10 @@
 
 - (void)close
 {
-    NSLog(@"Call a delectus function here to evict the document's delectus table from the registry");
+    int docID = [dataSource documentID];
+    NSLog(@"Releasing Delectus document %d",docID);
+    release_delectus(docID);
+    NSLog(@"Delectus document %d released",docID);
     [super close];
 }
 

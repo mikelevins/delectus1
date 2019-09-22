@@ -11,6 +11,9 @@
 (define (eng:new-delectus)
   (reg:register-delectus! (table:make)))
 
+(define (eng:release-delectus id)
+  (reg:unregister-delectus! id))
+
 (define (eng:update-view! id 
                           #!key
                           (include-deleted #f)

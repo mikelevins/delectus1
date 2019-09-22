@@ -32,5 +32,12 @@
           tblid))
       (error "invalid argument to eng:register-delectus!" tbl)))
 
+(define (reg:unregister-delectus! id)
+  ;; clear the $tables reference to id
+  (table-set! $tables id)
+  ;; clear the $views reference to id
+  (table-set! $views id)
+  id)
+
 
 
