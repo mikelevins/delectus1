@@ -358,7 +358,7 @@
 					/usr/local/Gambit/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
 			};
@@ -389,7 +389,7 @@
 					/usr/local/Gambit/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
 			};
