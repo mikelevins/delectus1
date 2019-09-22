@@ -231,6 +231,7 @@
 ;;; (define $movies-in (string-append $test-data-root "Movies.delectus"))
 ;;; (define $movies-out "/Users/mikel/Desktop/Movies.csv")
 ;;; (delectus->csv-file $movies-in $movies-out)
+;;; (define $movies (read-delectus-file $movies-in))
 
 ;;; (define $zips-in (string-append $test-data-root "zipcode.delectus"))
 ;;; (define $zips-out "/Users/mikel/Desktop/zipcode.csv")
