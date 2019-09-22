@@ -634,6 +634,12 @@
     return NO; // default--should never be reached
 }
 
+- (void)close
+{
+    NSLog(@"Call a delectus function here to evict the document's delectus table from the registry");
+    [super close];
+}
+
 #pragma mark - NSTableView delegate methods
 // ----------------------------------------
 // NSTableView delegate methods
