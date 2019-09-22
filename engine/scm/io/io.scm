@@ -75,6 +75,18 @@
 ;;; (define $ziptest (read-delectus-file $ziptest-path))
 
 ;;; ======================================================================
+;;; compaction
+;;; ======================================================================
+;;; creates a copy of a delectus table without deleted data, for
+;;; export formats
+
+(define (compacted-delectus-table tbl)
+  (let* ((old-data (object->u8vector tbl))
+         (new-table (u8vector->object old-data)))
+    (table:compact! new-table)
+    new-table))
+
+;;; ======================================================================
 ;;; CSV I/O
 ;;; ======================================================================
 
@@ -92,6 +104,13 @@
 ;;; (define $doc (read-csv-file $in-path))
 ;;; (api:write-delectus-csv $doc $out-path)
 
+
+(define (value->csv val)
+  (cond ((equal? #t val) "True")
+        ((equal? #f val) "")
+        ((equal? '() val) "")
+        (else val)))
+
 (define (write-columns-csv tbl out)
   (let* ((cols (table:column-labels tbl)))
     (if (null? cols)
@@ -103,6 +122,15 @@
                       (write col out))
                     (cdr cols))
           (newline out)))))
+
+(define (print-columns-csv tbl)
+  (let* ((cols (table:column-labels tbl)))
+    (write (car cols))
+    (for-each (lambda (col)
+                (write-char #\,)
+                (write col))
+              (cdr cols))
+    (newline)))
 
 (define (write-row-csv r out)
   (let ((eltcount (vector-length (row:entries r))))
@@ -117,6 +145,19 @@
                       (write (row:element r i) out)
                       (loop (+ i 1))))))))))
 
+(define (print-row-csv r)
+  (let ((eltcount (vector-length (row:entries r))))
+    (if (> eltcount 0)
+        (begin
+          (write (value->csv (row:element r 0)))
+          (if (> eltcount 1)
+              (let loop ((i 1))
+                (if (< i eltcount)
+                    (begin
+                      (write-char #\,)
+                      (write (value->csv (row:element r i)))
+                      (loop (+ i 1))))))))))
+
 (define (write-table-csv tbl out)
   (write-columns-csv tbl out)
   (let ((rows (table:rows tbl)))
@@ -125,6 +166,11 @@
                          rows)
         #f))
   (newline out))
+
+(define (print-table-csv tbl)
+  (print-columns-csv tbl)
+  (vector-for-each (lambda (r)(print-row-csv r)(newline))
+                   (table:rows tbl)))
 
 (define (write-csv-file tbl dest-path)
   (let ((out #f))
@@ -137,3 +183,25 @@
 
 ;;; (define $ziptest-path "/Users/mikel/Desktop/ziptest.csv")
 ;;; (write-csv-file (find-document $zipid) $ziptest-path)
+
+;;; =====================================================================
+;;; conversions to text output formats
+;;; =====================================================================
+
+(define (delectus->csv src-path)
+  (let* ((raw (io:read-binary-file src-path))
+         (data (u8vector->object raw))
+         (converter (converter-for-format data))
+         (tbl (if (delectus-table? data)
+                  (compacted-delectus-table data)
+                  (compacted-delectus-table (data->table data)))))
+    (if tbl
+        (print-table-csv tbl)
+        (begin (format "~%Not a Delectus 1.x file: ~s" src-path)
+               (format "~%No output written.~%")
+               $ERR_BAD_FORMAT))))
+
+;;; (define $inpath (string-append $test-data-root "Movies.delectus"))
+;;; (define $outpath "/Users/mikel/Desktop/Movies.csv")
+;;; (delectus->csv $inpath)
+
