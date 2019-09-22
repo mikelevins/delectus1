@@ -136,13 +136,13 @@
   (let ((eltcount (vector-length (row:entries r))))
     (if (> eltcount 0)
         (begin
-          (write (row:element r 0) out)
+          (write (value->csv (row:element r 0)) out)
           (if (> eltcount 1)
               (let loop ((i 1))
                 (if (< i eltcount)
                     (begin
                       (write-char #\, out)
-                      (write (row:element r i) out)
+                      (write (value->csv (row:element r i)) out)
                       (loop (+ i 1))))))))))
 
 (define (print-row-csv r)
@@ -162,10 +162,11 @@
   (write-columns-csv tbl out)
   (let ((rows (table:rows tbl)))
     (if (> (vector-length rows) 0)
-        (vector-for-each (lambda (r)(write-row-csv r out)(newline out))
+        (vector-for-each (lambda (r)
+                           (write-row-csv r out)
+                           (newline out))
                          rows)
-        #f))
-  (newline out))
+        (newline out))))
 
 (define (print-table-csv tbl)
   (print-columns-csv tbl)
@@ -188,6 +189,10 @@
 ;;; conversions to text output formats
 ;;; =====================================================================
 
+;;; ---------------------------------------------------------------------
+;;; CSV
+;;; ---------------------------------------------------------------------
+
 (define (delectus->csv src-path)
   (let* ((raw (io:read-binary-file src-path))
          (data (u8vector->object raw))
@@ -202,6 +207,31 @@
                $ERR_BAD_FORMAT))))
 
 ;;; (define $inpath (string-append $test-data-root "Movies.delectus"))
-;;; (define $outpath "/Users/mikel/Desktop/Movies.csv")
 ;;; (delectus->csv $inpath)
 
+(define (delectus->csv-file in-path out-path)
+  (let* ((raw (io:read-binary-file in-path))
+         (data (u8vector->object raw))
+         (converter (converter-for-format data))
+         (tbl (if (delectus-table? data)
+                  (compacted-delectus-table data)
+                  (compacted-delectus-table (data->table data)))))
+    (if tbl
+        (let ((out #f))
+          (dynamic-wind
+              (lambda () (set! out (open-output-file out-path)))
+              (lambda () 
+                (write-table-csv tbl out)
+                $ERR_NO_ERROR)
+              (lambda () (close-output-port out))))
+        (begin (format "~%Not a Delectus 1.x file: ~s" in-path)
+               (format "~%No output written.~%")
+               $ERR_BAD_FORMAT))))
+
+;;; (define $movies-in (string-append $test-data-root "Movies.delectus"))
+;;; (define $movies-out "/Users/mikel/Desktop/Movies.csv")
+;;; (delectus->csv-file $movies-in $movies-out)
+
+;;; (define $zips-in (string-append $test-data-root "zipcode.delectus"))
+;;; (define $zips-out "/Users/mikel/Desktop/zipcode.csv")
+;;; (delectus->csv-file $zips-in $zips-out)
