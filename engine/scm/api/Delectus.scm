@@ -16,6 +16,10 @@
           int "new_delectus" ""
           (api:new-delectus))
 
+(c-define (c:release-delectus id) (int) 
+          int "release_delectus" ""
+          (api:release-delectus id))
+
 (c-define (c:update-view! id include-deleted? sort-column sort-order filter-text) 
           (int bool char-string int char-string)
           int "update_view" ""

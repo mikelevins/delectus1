@@ -38,6 +38,7 @@
 (define $ERR_CANT_READ          -9)
 (define $ERR_BAD_FORMAT         -10)
 (define $ERR_NO_DOCUMENT        -11)
+(define $ERR_CANT_RELEASE       -12)
 
 (define $delectus-format-alpha-1 0)
 (define $delectus-format-alpha-2 1)
