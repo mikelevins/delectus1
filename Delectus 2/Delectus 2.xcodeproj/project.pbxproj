@@ -152,13 +152,13 @@
 				97F78AA32339143C00BFCB2A /* MainMenu.xib */,
 				97F78AA62339143C00BFCB2A /* Info.plist */,
 				97F78AA72339143C00BFCB2A /* Delectus_2.entitlements */,
-				97F78ACA233914AD00BFCB2A /* Frameworks */,
 				97F78AC92339149900BFCB2A /* Headers */,
 				97F78AE12339186100BFCB2A /* engine.h */,
 				97F78AE22339186100BFCB2A /* engine.c */,
 				97F78ADE2339186100BFCB2A /* Delectus 2-Bridging-Header.h */,
 				97F78ADF2339186100BFCB2A /* Delectus 2Tests-Bridging-Header.h */,
 				97F78AE02339186100BFCB2A /* Delectus 2UITests-Bridging-Header.h */,
+				97F78ACA233914AD00BFCB2A /* Frameworks */,
 				97F78AEA2339190E00BFCB2A /* Libraries */,
 			);
 			path = "Delectus 2";
