@@ -12,6 +12,19 @@
 		9777D36423395E5800052407 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9777D36223395E5800052407 /* MainMenu.xib */; };
 		9777D37023395E5800052407 /* Delectus_2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D36F23395E5800052407 /* Delectus_2Tests.swift */; };
 		9777D37B23395E5800052407 /* Delectus_2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D37A23395E5800052407 /* Delectus_2UITests.swift */; };
+		9777D38D23395FC100052407 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D38C23395FC100052407 /* libDelectus.a */; };
+		9777D38E23395FC100052407 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D38C23395FC100052407 /* libDelectus.a */; };
+		9777D38F23395FC100052407 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D38C23395FC100052407 /* libDelectus.a */; };
+		9777D391233960AB00052407 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D390233960AB00052407 /* libgambit.a */; };
+		9777D392233960AB00052407 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D390233960AB00052407 /* libgambit.a */; };
+		9777D393233960AB00052407 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D390233960AB00052407 /* libgambit.a */; };
+		9777D39B2339611100052407 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 9777D39A2339611100052407 /* engine.c */; };
+		9777D39C2339611100052407 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 9777D39A2339611100052407 /* engine.c */; };
+		9777D39D2339611100052407 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 9777D39A2339611100052407 /* engine.c */; };
+		9777D3A12339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; };
+		9777D3A22339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; };
+		9777D3A32339625500052407 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; };
+		9777D3A42339625500052407 /* CouchbaseLiteSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +44,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		9777D3A52339625500052407 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9777D3A42339625500052407 /* CouchbaseLiteSwift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		9777D35B23395E5700052407 /* Delectus 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delectus 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9777D35E23395E5700052407 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -44,6 +71,17 @@
 		9777D37623395E5800052407 /* Delectus 2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Delectus 2UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9777D37A23395E5800052407 /* Delectus_2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delectus_2UITests.swift; sourceTree = "<group>"; };
 		9777D37C23395E5800052407 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9777D38C23395FC100052407 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../../../engine/libDelectus.a; sourceTree = "<group>"; };
+		9777D390233960AB00052407 /* libgambit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgambit.a; sourceTree = "<group>"; };
+		9777D394233960E100052407 /* gambit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gambit.h; sourceTree = "<group>"; };
+		9777D395233960E100052407 /* gambit-not409003.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gambit-not409003.h"; sourceTree = "<group>"; };
+		9777D3962339611000052407 /* Delectus 2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus 2-Bridging-Header.h"; sourceTree = "<group>"; };
+		9777D3972339611000052407 /* Delectus 2Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus 2Tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		9777D3982339611000052407 /* Delectus 2UITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus 2UITests-Bridging-Header.h"; sourceTree = "<group>"; };
+		9777D3992339611100052407 /* engine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
+		9777D39A2339611100052407 /* engine.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = engine.c; sourceTree = "<group>"; };
+		9777D39E2339616C00052407 /* Delectus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../../engine/include/Delectus.h; sourceTree = "<group>"; };
+		9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLiteSwift.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +89,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9777D3A32339625500052407 /* CouchbaseLiteSwift.framework in Frameworks */,
+				9777D38D23395FC100052407 /* libDelectus.a in Frameworks */,
+				9777D391233960AB00052407 /* libgambit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +99,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9777D3A12339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */,
+				9777D38E23395FC100052407 /* libDelectus.a in Frameworks */,
+				9777D392233960AB00052407 /* libgambit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +109,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9777D3A22339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */,
+				9777D38F23395FC100052407 /* libDelectus.a in Frameworks */,
+				9777D393233960AB00052407 /* libgambit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,11 +141,21 @@
 		9777D35D23395E5700052407 /* Delectus 2 */ = {
 			isa = PBXGroup;
 			children = (
+				9777D39E2339616C00052407 /* Delectus.h */,
+				9777D395233960E100052407 /* gambit-not409003.h */,
+				9777D394233960E100052407 /* gambit.h */,
 				9777D35E23395E5700052407 /* AppDelegate.swift */,
-				9777D36023395E5800052407 /* Assets.xcassets */,
-				9777D36223395E5800052407 /* MainMenu.xib */,
-				9777D36523395E5800052407 /* Info.plist */,
 				9777D36623395E5800052407 /* Delectus_2.entitlements */,
+				9777D36523395E5800052407 /* Info.plist */,
+				9777D3992339611100052407 /* engine.h */,
+				9777D39A2339611100052407 /* engine.c */,
+				9777D3962339611000052407 /* Delectus 2-Bridging-Header.h */,
+				9777D3972339611000052407 /* Delectus 2Tests-Bridging-Header.h */,
+				9777D3982339611000052407 /* Delectus 2UITests-Bridging-Header.h */,
+				9777D36023395E5800052407 /* Assets.xcassets */,
+				9777D38B23395F7900052407 /* Frameworks */,
+				9777D38A23395F6400052407 /* Libraries */,
+				9777D38923395EFA00052407 /* Resources */,
 			);
 			path = "Delectus 2";
 			sourceTree = "<group>";
@@ -121,6 +178,31 @@
 			path = "Delectus 2UITests";
 			sourceTree = "<group>";
 		};
+		9777D38923395EFA00052407 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9777D36223395E5800052407 /* MainMenu.xib */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		9777D38A23395F6400052407 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				9777D390233960AB00052407 /* libgambit.a */,
+				9777D38C23395FC100052407 /* libDelectus.a */,
+			);
+			path = Libraries;
+			sourceTree = "<group>";
+		};
+		9777D38B23395F7900052407 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -131,6 +213,7 @@
 				9777D35723395E5700052407 /* Sources */,
 				9777D35823395E5700052407 /* Frameworks */,
 				9777D35923395E5700052407 /* Resources */,
+				9777D3A52339625500052407 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -189,13 +272,16 @@
 				TargetAttributes = {
 					9777D35A23395E5700052407 = {
 						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1100;
 					};
 					9777D36A23395E5800052407 = {
 						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1100;
 						TestTargetID = 9777D35A23395E5700052407;
 					};
 					9777D37523395E5800052407 = {
 						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1100;
 						TestTargetID = 9777D35A23395E5700052407;
 					};
 				};
@@ -252,6 +338,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9777D35F23395E5700052407 /* AppDelegate.swift in Sources */,
+				9777D39B2339611100052407 /* engine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +347,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9777D37023395E5800052407 /* Delectus_2Tests.swift in Sources */,
+				9777D39C2339611100052407 /* engine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9777D37B23395E5800052407 /* Delectus_2UITests.swift in Sources */,
+				9777D39D2339611100052407 /* engine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,20 +504,32 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Delectus 2/Delectus_2.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+				);
 				INFOPLIST_FILE = "Delectus 2/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../engine",
+					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MARKETING_VERSION = 2.0d2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -437,20 +538,31 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Delectus 2/Delectus_2.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+				);
 				INFOPLIST_FILE = "Delectus 2/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../engine",
+					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MARKETING_VERSION = 2.0d2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -460,18 +572,29 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+				);
 				INFOPLIST_FILE = "Delectus 2Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Delectus 2.app/Contents/MacOS/Delectus 2";
 			};
@@ -482,18 +605,28 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+				);
 				INFOPLIST_FILE = "Delectus 2Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2Tests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Delectus 2.app/Contents/MacOS/Delectus 2";
 			};
@@ -503,17 +636,28 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+				);
 				INFOPLIST_FILE = "Delectus 2UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2UITests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Delectus 2";
 			};
@@ -523,17 +667,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+				);
 				INFOPLIST_FILE = "Delectus 2UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2UITests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Delectus 2";
 			};
