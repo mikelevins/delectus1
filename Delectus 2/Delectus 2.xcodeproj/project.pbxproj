@@ -141,11 +141,10 @@
 		9777D35D23395E5700052407 /* Delectus 2 */ = {
 			isa = PBXGroup;
 			children = (
+				9777D35E23395E5700052407 /* AppDelegate.swift */,
 				9777D39E2339616C00052407 /* Delectus.h */,
 				9777D395233960E100052407 /* gambit-not409003.h */,
 				9777D394233960E100052407 /* gambit.h */,
-				9777D35E23395E5700052407 /* AppDelegate.swift */,
-				9777D36623395E5800052407 /* Delectus_2.entitlements */,
 				9777D36523395E5800052407 /* Info.plist */,
 				9777D3992339611100052407 /* engine.h */,
 				9777D39A2339611100052407 /* engine.c */,
@@ -153,6 +152,7 @@
 				9777D3972339611000052407 /* Delectus 2Tests-Bridging-Header.h */,
 				9777D3982339611000052407 /* Delectus 2UITests-Bridging-Header.h */,
 				9777D36023395E5800052407 /* Assets.xcassets */,
+				9777D36623395E5800052407 /* Delectus_2.entitlements */,
 				9777D38B23395F7900052407 /* Frameworks */,
 				9777D38A23395F6400052407 /* Libraries */,
 				9777D38923395EFA00052407 /* Resources */,
