@@ -12,6 +12,7 @@ import CouchbaseLiteSwift
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     
+    // computed property that gets the data directory from the app's container
     var dataDirectory: URL? {
         get {
             let defaultDataDirs = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
