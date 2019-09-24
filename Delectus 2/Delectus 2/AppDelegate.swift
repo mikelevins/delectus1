@@ -11,6 +11,7 @@ import CouchbaseLiteSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    // TODO: Open or create the default Collection (i.e. CBL db) at app startup
 
     @IBOutlet weak var window: NSWindow!
 
@@ -22,33 +23,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         get { appDataDirectory() }
     }
     
-    let couchBase: Database
-
-    // MARK: - Initializers
-    override init(){
-        if let dataDir = appDataDirectory()
-        {
-            let conf = DatabaseConfiguration()
-            conf.directory = dataDir.path;
-            var db: Database
-            do {
-                db = try Database(name: "DelectusDB", config: conf)
-                self.couchBase = db
-            } catch {
-                fatalError("Unable to connect to CouchBase")
-            }
-        } else {
-            fatalError("No data directory found.")
-        }
-
-    }
-    
     // MARK: - Methods
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         init_delectus1_engine()
-        print("Application data directory: ", self.dataDirectory)
-        print("The CouchBase instance is: ", self.couchBase.name)
+        print("Application data directory: ", self.dataDirectory ?? "<none>")
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
