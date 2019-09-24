@@ -9,7 +9,7 @@
 import Cocoa
 import CouchbaseLiteSwift
 
-let DefaultCollectionName = "DefaultDelectusCollection"
+let DefaultCollectionName = "DefaultCollection"
 let CollectionMetadataID = "list_metadata"
 
 @NSApplicationMain
