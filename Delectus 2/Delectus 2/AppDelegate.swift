@@ -9,6 +9,9 @@
 import Cocoa
 import CouchbaseLiteSwift
 
+let DefaultCollectionName = "DefaultDelectusCollection"
+let CollectionMetadataID = "list_metadata"
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     // TODO: Open or create the default Collection (i.e. CBL db) at app startup
@@ -23,11 +26,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         get { appDataDirectory() }
     }
     
+    var defaultCollectionDB: Database
+    
     // MARK: - Methods
-
+    override init() {
+        defaultCollectionDB = openOrCreateDefaultCollectionDB()
+        super.init()
+    }
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         init_delectus1_engine()
         print("Application data directory: ", self.dataDirectory ?? "<none>")
+        print("Default collection database: ", self.defaultCollectionDB)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -40,3 +50,42 @@ func appDataDirectory () -> URL? {
     return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
 }
 
+func openOrCreateDefaultCollectionDB () -> Database {
+    if  let dataDir = appDataDirectory() {
+        let dataPath = dataDir.path
+        let conf = DatabaseConfiguration()
+        conf.directory = dataPath
+        do {
+            let db = try Database(name: DefaultCollectionName, config: conf)
+            print("created the default collection DB")
+            if let metadoc = db.document(withID: CollectionMetadataID) {
+                print("found default collection metadata: ", metadoc)
+                return db
+            } else {
+                let new_metadoc = MutableDocument(id: CollectionMetadataID)
+                try db.saveDocument(new_metadoc)
+                print("Created default collection metadata: ", new_metadoc)
+                return db
+            }
+        } catch {
+            fatalError("Can't open or create the default collection database")
+        }
+    } else {
+        fatalError("Can't locate the application data directory")
+    }
+}
+
+
+//if  let dataDir = appDataDirectory() {
+//    let defaultDBName = "DefaultCollectionDB"
+//    let conf = DatabaseConfiguration()
+//    conf.directory = dataDir.path
+//    do {
+//        var db: Database;
+//        try db = Database(name: defaultDBName, config: conf)
+//    } catch {
+//        fatalError("Can't open or create the default collection database")
+//    }
+//} else {
+//    fatalError("Can't locate the application data directory")
+//}
