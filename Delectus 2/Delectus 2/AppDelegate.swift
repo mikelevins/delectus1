@@ -67,15 +67,11 @@ func openOrCreateDefaultCollectionDB () -> Database {
                 print("found default collection metadata: ", metadoc)
                 return db
             } else {
-                let timeFormatter = ISO8601DateFormatter()
-                let now = Date()
-                let metadata: [String:Any] = [
-                    "type" : "delectus_collection",
-                    "created" : timeFormatter.string(from: now),
-                    "modified" : timeFormatter.string(from: now),
-                    "deleted" : false,
-                ]
-                let new_metadoc = MutableDocument(id: CollectionMetadataID, data: metadata)
+                let new_metadoc = MutableDocument(id: CollectionMetadataID)
+                    .setString("delectus_collection", forKey: "type")
+                    .setDate(Date(), forKey: "created")
+                    .setDate(Date(), forKey: "modified")
+                    .setBoolean(false, forKey: "deleted")
                 try db.saveDocument(new_metadoc)
                 return db
             }
