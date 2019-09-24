@@ -38,6 +38,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         init_delectus1_engine()
         print("Application data directory: ", self.dataDirectory ?? "<none>")
         print("Default collection database: ", self.defaultCollectionDB)
+        if let meta = defaultCollectionDB.document(withID: CollectionMetadataID) {
+            print("Found the default collection DB with metadata ",meta.toDictionary())
+        } else {
+            print("No default collection DB found ")
+        }
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -62,9 +67,16 @@ func openOrCreateDefaultCollectionDB () -> Database {
                 print("found default collection metadata: ", metadoc)
                 return db
             } else {
-                let new_metadoc = MutableDocument(id: CollectionMetadataID)
+                let timeFormatter = ISO8601DateFormatter()
+                let now = Date()
+                let metadata: [String:Any] = [
+                    "type" : "delectus_collection",
+                    "created" : timeFormatter.string(from: now),
+                    "modified" : timeFormatter.string(from: now),
+                    "deleted" : false,
+                ]
+                let new_metadoc = MutableDocument(id: CollectionMetadataID, data: metadata)
                 try db.saveDocument(new_metadoc)
-                print("Created default collection metadata: ", new_metadoc)
                 return db
             }
         } catch {
