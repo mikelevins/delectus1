@@ -38,11 +38,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         init_delectus1_engine()
         print("Application data directory: ", self.dataDirectory ?? "<none>")
         print("Default collection database: ", self.defaultCollectionDB)
+        
         if let meta = defaultCollectionDB.document(withID: CollectionMetadataID) {
             print("Found the default collection DB with metadata ",meta.toDictionary())
         } else {
             print("No default collection DB found ")
         }
+        
+        let lists = knownLists()
+        print("Known lists = ", lists)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -54,6 +58,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 func appDataDirectory () -> URL? {
     return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
 }
+
+func knownLists () -> [String] {
+    let mgr = FileManager.default
+    if let url = appDataDirectory() {
+        var lists = [String]()
+        let enumerator: FileManager.DirectoryEnumerator = mgr.enumerator(atPath: url.path)!
+        while let element = enumerator.nextObject() {
+            let eltpath = element as? String
+            if let listpath = eltpath {
+                if (listpath.hasSuffix("cblite2")) {
+                    lists.append(listpath)
+                }
+            }
+        }
+        return lists
+    } else {
+        return []
+    }
+}
+
 
 func openOrCreateDefaultCollectionDB () -> Database {
     if  let dataDir = appDataDirectory() {
