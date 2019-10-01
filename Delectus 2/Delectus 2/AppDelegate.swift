@@ -48,8 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let collectionPaths = knownCollections()
         let collectionURLs = collectionPaths.map({ URL(fileURLWithPath: $0) })
         let collections = collectionURLs.map({ DxCollection(withPathURL: $0) })
-        let foundPaths = collections.map({ $0.pathURL })
-        print("Known collections = ", foundPaths)
+        print("Known collections = ", collections)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

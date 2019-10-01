@@ -10,10 +10,21 @@ import Foundation
 
 class DxCollection: NSObject {
     var pathURL: URL
+
+    var baseName: String {
+        get {
+            return pathURL.deletingPathExtension().lastPathComponent
+        }
+    }
     
+    override var description: String {
+        return "DxCollection (\(baseName))"
+    }
+
     init(withPathURL path: URL) {
         pathURL = path
         super.init()
     }
+    
 }
 
