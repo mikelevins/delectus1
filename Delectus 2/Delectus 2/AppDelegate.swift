@@ -45,8 +45,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("No default collection DB found ")
         }
         
-        let collections = knownCollections()
-        print("Known collections = ", collections)
+        let collectionPaths = knownCollections()
+        let collectionURLs = collectionPaths.map({ URL(fileURLWithPath: $0) })
+        let collections = collectionURLs.map({ DxCollection(withPathURL: $0) })
+        let foundPaths = collections.map({ $0.pathURL })
+        print("Known collections = ", foundPaths)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

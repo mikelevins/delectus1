@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		97638FB92343A95E008B640B /* DxCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97638FB82343A95E008B640B /* DxCollection.swift */; };
 		9777D35F23395E5700052407 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D35E23395E5700052407 /* AppDelegate.swift */; };
 		9777D36123395E5800052407 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9777D36023395E5800052407 /* Assets.xcassets */; };
 		9777D36423395E5800052407 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9777D36223395E5800052407 /* MainMenu.xib */; };
@@ -59,6 +60,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		97638FB82343A95E008B640B /* DxCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DxCollection.swift; sourceTree = "<group>"; };
 		9777D35B23395E5700052407 /* Delectus 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delectus 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9777D35E23395E5700052407 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9777D36023395E5800052407 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 			children = (
 				9777D35E23395E5700052407 /* AppDelegate.swift */,
 				9777D39E2339616C00052407 /* Delectus.h */,
+				97638FB82343A95E008B640B /* DxCollection.swift */,
 				9777D395233960E100052407 /* gambit-not409003.h */,
 				9777D394233960E100052407 /* gambit.h */,
 				9777D36523395E5800052407 /* Info.plist */,
@@ -338,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9777D35F23395E5700052407 /* AppDelegate.swift in Sources */,
+				97638FB92343A95E008B640B /* DxCollection.swift in Sources */,
 				9777D39B2339611100052407 /* engine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
