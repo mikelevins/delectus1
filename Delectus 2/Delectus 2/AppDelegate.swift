@@ -68,9 +68,11 @@ func knownLists () -> [String] {
             let result = paths.filter({ $0.hasSuffix(".cblite2")})
             return result
         } catch {
+            print("Unable to get the contents of the app data directory")
             return []
         }
     } else {
+        print("Unable to locate the app data directory")
         return []
     }
 }
