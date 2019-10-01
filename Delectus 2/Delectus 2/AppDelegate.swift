@@ -83,17 +83,3 @@ func openOrCreateDefaultCollectionDB () -> Database {
     }
 }
 
-
-//if  let dataDir = appDataDirectory() {
-//    let defaultDBName = "DefaultCollectionDB"
-//    let conf = DatabaseConfiguration()
-//    conf.directory = dataDir.path
-//    do {
-//        var db: Database;
-//        try db = Database(name: defaultDBName, config: conf)
-//    } catch {
-//        fatalError("Can't open or create the default collection database")
-//    }
-//} else {
-//    fatalError("Can't locate the application data directory")
-//}
