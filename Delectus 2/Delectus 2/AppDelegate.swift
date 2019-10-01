@@ -62,17 +62,14 @@ func appDataDirectory () -> URL? {
 func knownLists () -> [String] {
     let mgr = FileManager.default
     if let url = appDataDirectory() {
-        var lists = [String]()
-        let enumerator: FileManager.DirectoryEnumerator = mgr.enumerator(atPath: url.path)!
-        while let element = enumerator.nextObject() {
-            let eltpath = element as? String
-            if let listpath = eltpath {
-                if (listpath.hasSuffix("cblite2")) {
-                    lists.append(listpath)
-                }
-            }
+        let path = url.path
+        do {
+            let paths = try mgr.contentsOfDirectory(atPath: path)
+            let result = paths.filter({ $0.hasSuffix(".cblite2")})
+            return result
+        } catch {
+            return []
         }
-        return lists
     } else {
         return []
     }
