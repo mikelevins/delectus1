@@ -45,8 +45,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("No default collection DB found ")
         }
         
-        let lists = knownLists()
-        print("Known lists = ", lists)
+        let collections = knownCollections()
+        print("Known collections = ", collections)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -59,7 +59,7 @@ func appDataDirectory () -> URL? {
     return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
 }
 
-func knownLists () -> [String] {
+func knownCollections () -> [String] {
     let mgr = FileManager.default
     if let url = appDataDirectory() {
         let path = url.path
