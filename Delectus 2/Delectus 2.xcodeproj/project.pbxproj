@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		97404AE7234512BA003E6FC2 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97404AE6234512BA003E6FC2 /* MainMenu.xib */; };
 		97638FB92343A95E008B640B /* DxCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97638FB82343A95E008B640B /* DxCollection.swift */; };
 		97638FBB2344F818008B640B /* DxList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97638FBA2344F818008B640B /* DxList.swift */; };
 		97638FC1234508B2008B640B /* DxStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97638FC0234508B2008B640B /* DxStore.swift */; };
 		9777D35F23395E5700052407 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D35E23395E5700052407 /* AppDelegate.swift */; };
 		9777D36123395E5800052407 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9777D36023395E5800052407 /* Assets.xcassets */; };
-		9777D36423395E5800052407 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9777D36223395E5800052407 /* MainMenu.xib */; };
 		9777D37023395E5800052407 /* Delectus_2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D36F23395E5800052407 /* Delectus_2Tests.swift */; };
 		9777D37B23395E5800052407 /* Delectus_2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D37A23395E5800052407 /* Delectus_2UITests.swift */; };
 		9777D38D23395FC100052407 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D38C23395FC100052407 /* libDelectus.a */; };
@@ -62,13 +62,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		97404AE6234512BA003E6FC2 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		97638FB82343A95E008B640B /* DxCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DxCollection.swift; sourceTree = "<group>"; };
 		97638FBA2344F818008B640B /* DxList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DxList.swift; sourceTree = "<group>"; };
 		97638FC0234508B2008B640B /* DxStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DxStore.swift; sourceTree = "<group>"; };
 		9777D35B23395E5700052407 /* Delectus 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delectus 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9777D35E23395E5700052407 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9777D36023395E5800052407 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		9777D36323395E5800052407 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		9777D36523395E5800052407 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9777D36623395E5800052407 /* Delectus_2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Delectus_2.entitlements; sourceTree = "<group>"; };
 		9777D36B23395E5800052407 /* Delectus 2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Delectus 2Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -190,7 +190,7 @@
 		9777D38923395EFA00052407 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9777D36223395E5800052407 /* MainMenu.xib */,
+				97404AE6234512BA003E6FC2 /* MainMenu.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -321,7 +321,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9777D36123395E5800052407 /* Assets.xcassets in Resources */,
-				9777D36423395E5800052407 /* MainMenu.xib in Resources */,
+				97404AE7234512BA003E6FC2 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,17 +386,6 @@
 			targetProxy = 9777D37723395E5800052407 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		9777D36223395E5800052407 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9777D36323395E5800052407 /* Base */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		9777D37D23395E5800052407 /* Debug */ = {
