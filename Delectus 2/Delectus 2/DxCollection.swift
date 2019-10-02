@@ -9,20 +9,14 @@
 import Foundation
 
 class DxCollection: NSObject {
-    var pathURL: URL
-
-    var baseName: String {
-        get {
-            return pathURL.deletingPathExtension().lastPathComponent
-        }
-    }
+    var name: String
     
     override var description: String {
-        return "DxCollection (\(baseName))"
+        return "DxCollection (\(name))"
     }
 
-    init(withPathURL path: URL) {
-        pathURL = path
+    init(name: String) {
+        self.name = name
         super.init()
     }
     

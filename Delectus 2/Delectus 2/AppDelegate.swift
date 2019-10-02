@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let collectionPaths = knownCollections()
         let collectionURLs = collectionPaths.map({ URL(fileURLWithPath: $0) })
-        let collections = collectionURLs.map({ DxCollection(withPathURL: $0) })
+        let collections = collectionURLs.map({ DxCollection(name:$0.deletingPathExtension().lastPathComponent) })
         print("Known collections = ", collections)
     }
 
