@@ -1,26 +1,23 @@
 //
-//  DxCollection.swift
+//  DxList.swift
 //  Delectus 2
 //
-//  Created by mikel evins on 10/1/19.
+//  Created by mikel evins on 10/2/19.
 //  Copyright © 2019 mikel evins. All rights reserved.
 //
 
 import Foundation
 
-class DxCollection: NSObject {
+class DxList: NSObject {
     var name: String
-    var members = [DxList]()
 
-    
     override var description: String {
-        return "DxCollection (\(name))"
+        return "DxList \(name)"
     }
 
-    init(name: String) {
+    init(name: String, collection: String) {
         self.name = name
         super.init()
     }
     
 }
-
