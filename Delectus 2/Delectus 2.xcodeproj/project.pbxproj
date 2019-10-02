@@ -7,54 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		97404AE7234512BA003E6FC2 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97404AE6234512BA003E6FC2 /* MainMenu.xib */; };
-		97638FB92343A95E008B640B /* DxCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97638FB82343A95E008B640B /* DxCollection.swift */; };
-		97638FBB2344F818008B640B /* DxList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97638FBA2344F818008B640B /* DxList.swift */; };
-		97638FC1234508B2008B640B /* DxStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97638FC0234508B2008B640B /* DxStore.swift */; };
-		9777D35F23395E5700052407 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D35E23395E5700052407 /* AppDelegate.swift */; };
-		9777D36123395E5800052407 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9777D36023395E5800052407 /* Assets.xcassets */; };
-		9777D37023395E5800052407 /* Delectus_2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D36F23395E5800052407 /* Delectus_2Tests.swift */; };
-		9777D37B23395E5800052407 /* Delectus_2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9777D37A23395E5800052407 /* Delectus_2UITests.swift */; };
-		9777D38D23395FC100052407 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D38C23395FC100052407 /* libDelectus.a */; };
-		9777D38E23395FC100052407 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D38C23395FC100052407 /* libDelectus.a */; };
-		9777D38F23395FC100052407 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D38C23395FC100052407 /* libDelectus.a */; };
-		9777D391233960AB00052407 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D390233960AB00052407 /* libgambit.a */; };
-		9777D392233960AB00052407 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D390233960AB00052407 /* libgambit.a */; };
-		9777D393233960AB00052407 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D390233960AB00052407 /* libgambit.a */; };
-		9777D39B2339611100052407 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 9777D39A2339611100052407 /* engine.c */; };
-		9777D39C2339611100052407 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 9777D39A2339611100052407 /* engine.c */; };
-		9777D39D2339611100052407 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 9777D39A2339611100052407 /* engine.c */; };
-		9777D3A12339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; };
-		9777D3A22339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; };
-		9777D3A32339625500052407 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; };
-		9777D3A42339625500052407 /* CouchbaseLiteSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		97404B4E23451990003E6FC2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97404B4D23451990003E6FC2 /* AppDelegate.swift */; };
+		97404B5023451990003E6FC2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97404B4F23451990003E6FC2 /* ViewController.swift */; };
+		97404B5223451992003E6FC2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97404B5123451992003E6FC2 /* Assets.xcassets */; };
+		97404B5523451992003E6FC2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97404B5323451992003E6FC2 /* Main.storyboard */; };
+		97404B6123451992003E6FC2 /* Delectus_2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97404B6023451992003E6FC2 /* Delectus_2Tests.swift */; };
+		97404B6C23451992003E6FC2 /* Delectus_2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97404B6B23451992003E6FC2 /* Delectus_2UITests.swift */; };
+		97404B7C23451AA8003E6FC2 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97404B7A23451A91003E6FC2 /* CouchbaseLiteSwift.framework */; };
+		97404B7D23451AA8003E6FC2 /* CouchbaseLiteSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97404B7A23451A91003E6FC2 /* CouchbaseLiteSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		97404B8123451AF6003E6FC2 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97404B8023451AF6003E6FC2 /* libgambit.a */; };
+		97404B8323451B12003E6FC2 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97404B8223451B12003E6FC2 /* libDelectus.a */; };
+		97404B8B23451C59003E6FC2 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 97404B8A23451C59003E6FC2 /* engine.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9777D36C23395E5800052407 /* PBXContainerItemProxy */ = {
+		97404B5D23451992003E6FC2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9777D35323395E5700052407 /* Project object */;
+			containerPortal = 97404B4223451990003E6FC2 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9777D35A23395E5700052407;
+			remoteGlobalIDString = 97404B4923451990003E6FC2;
 			remoteInfo = "Delectus 2";
 		};
-		9777D37723395E5800052407 /* PBXContainerItemProxy */ = {
+		97404B6823451992003E6FC2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9777D35323395E5700052407 /* Project object */;
+			containerPortal = 97404B4223451990003E6FC2 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9777D35A23395E5700052407;
+			remoteGlobalIDString = 97404B4923451990003E6FC2;
 			remoteInfo = "Delectus 2";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9777D3A52339625500052407 /* Embed Frameworks */ = {
+		97404B7E23451AA8003E6FC2 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9777D3A42339625500052407 /* CouchbaseLiteSwift.framework in Embed Frameworks */,
+				97404B7D23451AA8003E6FC2 /* CouchbaseLiteSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -62,167 +52,153 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		97404AE6234512BA003E6FC2 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
-		97638FB82343A95E008B640B /* DxCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DxCollection.swift; sourceTree = "<group>"; };
-		97638FBA2344F818008B640B /* DxList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DxList.swift; sourceTree = "<group>"; };
-		97638FC0234508B2008B640B /* DxStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DxStore.swift; sourceTree = "<group>"; };
-		9777D35B23395E5700052407 /* Delectus 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delectus 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9777D35E23395E5700052407 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		9777D36023395E5800052407 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		9777D36523395E5800052407 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9777D36623395E5800052407 /* Delectus_2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Delectus_2.entitlements; sourceTree = "<group>"; };
-		9777D36B23395E5800052407 /* Delectus 2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Delectus 2Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9777D36F23395E5800052407 /* Delectus_2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delectus_2Tests.swift; sourceTree = "<group>"; };
-		9777D37123395E5800052407 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9777D37623395E5800052407 /* Delectus 2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Delectus 2UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9777D37A23395E5800052407 /* Delectus_2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delectus_2UITests.swift; sourceTree = "<group>"; };
-		9777D37C23395E5800052407 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9777D38C23395FC100052407 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../../../engine/libDelectus.a; sourceTree = "<group>"; };
-		9777D390233960AB00052407 /* libgambit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgambit.a; sourceTree = "<group>"; };
-		9777D394233960E100052407 /* gambit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gambit.h; sourceTree = "<group>"; };
-		9777D395233960E100052407 /* gambit-not409003.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gambit-not409003.h"; sourceTree = "<group>"; };
-		9777D3962339611000052407 /* Delectus 2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus 2-Bridging-Header.h"; sourceTree = "<group>"; };
-		9777D3972339611000052407 /* Delectus 2Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus 2Tests-Bridging-Header.h"; sourceTree = "<group>"; };
-		9777D3982339611000052407 /* Delectus 2UITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus 2UITests-Bridging-Header.h"; sourceTree = "<group>"; };
-		9777D3992339611100052407 /* engine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
-		9777D39A2339611100052407 /* engine.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = engine.c; sourceTree = "<group>"; };
-		9777D39E2339616C00052407 /* Delectus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../../engine/include/Delectus.h; sourceTree = "<group>"; };
-		9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLiteSwift.framework; sourceTree = "<group>"; };
+		97404B4A23451990003E6FC2 /* Delectus 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delectus 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		97404B4D23451990003E6FC2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		97404B4F23451990003E6FC2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		97404B5123451992003E6FC2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		97404B5423451992003E6FC2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		97404B5623451992003E6FC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		97404B5723451992003E6FC2 /* Delectus_2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Delectus_2.entitlements; sourceTree = "<group>"; };
+		97404B5C23451992003E6FC2 /* Delectus 2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Delectus 2Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		97404B6023451992003E6FC2 /* Delectus_2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delectus_2Tests.swift; sourceTree = "<group>"; };
+		97404B6223451992003E6FC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		97404B6723451992003E6FC2 /* Delectus 2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Delectus 2UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		97404B6B23451992003E6FC2 /* Delectus_2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delectus_2UITests.swift; sourceTree = "<group>"; };
+		97404B6D23451992003E6FC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		97404B7A23451A91003E6FC2 /* CouchbaseLiteSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLiteSwift.framework; sourceTree = "<group>"; };
+		97404B8023451AF6003E6FC2 /* libgambit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgambit.a; sourceTree = "<group>"; };
+		97404B8223451B12003E6FC2 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../../../engine/libDelectus.a; sourceTree = "<group>"; };
+		97404B8523451BD5003E6FC2 /* Delectus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../../../engine/include/Delectus.h; sourceTree = "<group>"; };
+		97404B8623451BEC003E6FC2 /* gambit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gambit.h; sourceTree = "<group>"; };
+		97404B8723451BEC003E6FC2 /* gambit-not409003.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gambit-not409003.h"; sourceTree = "<group>"; };
+		97404B8823451C59003E6FC2 /* Delectus 2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus 2-Bridging-Header.h"; sourceTree = "<group>"; };
+		97404B8923451C59003E6FC2 /* engine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
+		97404B8A23451C59003E6FC2 /* engine.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = engine.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		9777D35823395E5700052407 /* Frameworks */ = {
+		97404B4723451990003E6FC2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9777D3A32339625500052407 /* CouchbaseLiteSwift.framework in Frameworks */,
-				9777D38D23395FC100052407 /* libDelectus.a in Frameworks */,
-				9777D391233960AB00052407 /* libgambit.a in Frameworks */,
+				97404B8323451B12003E6FC2 /* libDelectus.a in Frameworks */,
+				97404B7C23451AA8003E6FC2 /* CouchbaseLiteSwift.framework in Frameworks */,
+				97404B8123451AF6003E6FC2 /* libgambit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9777D36823395E5800052407 /* Frameworks */ = {
+		97404B5923451992003E6FC2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9777D3A12339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */,
-				9777D38E23395FC100052407 /* libDelectus.a in Frameworks */,
-				9777D392233960AB00052407 /* libgambit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9777D37323395E5800052407 /* Frameworks */ = {
+		97404B6423451992003E6FC2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9777D3A22339624B00052407 /* CouchbaseLiteSwift.framework in Frameworks */,
-				9777D38F23395FC100052407 /* libDelectus.a in Frameworks */,
-				9777D393233960AB00052407 /* libgambit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9777D35223395E5700052407 = {
+		97404B4123451990003E6FC2 = {
 			isa = PBXGroup;
 			children = (
-				9777D35D23395E5700052407 /* Delectus 2 */,
-				9777D36E23395E5800052407 /* Delectus 2Tests */,
-				9777D37923395E5800052407 /* Delectus 2UITests */,
-				9777D35C23395E5700052407 /* Products */,
+				97404B4C23451990003E6FC2 /* Delectus 2 */,
+				97404B5F23451992003E6FC2 /* Delectus 2Tests */,
+				97404B6A23451992003E6FC2 /* Delectus 2UITests */,
+				97404B4B23451990003E6FC2 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		9777D35C23395E5700052407 /* Products */ = {
+		97404B4B23451990003E6FC2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9777D35B23395E5700052407 /* Delectus 2.app */,
-				9777D36B23395E5800052407 /* Delectus 2Tests.xctest */,
-				9777D37623395E5800052407 /* Delectus 2UITests.xctest */,
+				97404B4A23451990003E6FC2 /* Delectus 2.app */,
+				97404B5C23451992003E6FC2 /* Delectus 2Tests.xctest */,
+				97404B6723451992003E6FC2 /* Delectus 2UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9777D35D23395E5700052407 /* Delectus 2 */ = {
+		97404B4C23451990003E6FC2 /* Delectus 2 */ = {
 			isa = PBXGroup;
 			children = (
-				9777D35E23395E5700052407 /* AppDelegate.swift */,
-				9777D39E2339616C00052407 /* Delectus.h */,
-				97638FB82343A95E008B640B /* DxCollection.swift */,
-				97638FBA2344F818008B640B /* DxList.swift */,
-				97638FC0234508B2008B640B /* DxStore.swift */,
-				9777D395233960E100052407 /* gambit-not409003.h */,
-				9777D394233960E100052407 /* gambit.h */,
-				9777D36523395E5800052407 /* Info.plist */,
-				9777D3992339611100052407 /* engine.h */,
-				9777D39A2339611100052407 /* engine.c */,
-				9777D3962339611000052407 /* Delectus 2-Bridging-Header.h */,
-				9777D3972339611000052407 /* Delectus 2Tests-Bridging-Header.h */,
-				9777D3982339611000052407 /* Delectus 2UITests-Bridging-Header.h */,
-				9777D36023395E5800052407 /* Assets.xcassets */,
-				9777D36623395E5800052407 /* Delectus_2.entitlements */,
-				9777D38B23395F7900052407 /* Frameworks */,
-				9777D38A23395F6400052407 /* Libraries */,
-				9777D38923395EFA00052407 /* Resources */,
+				97404B4D23451990003E6FC2 /* AppDelegate.swift */,
+				97404B4F23451990003E6FC2 /* ViewController.swift */,
+				97404B5123451992003E6FC2 /* Assets.xcassets */,
+				97404B5323451992003E6FC2 /* Main.storyboard */,
+				97404B5623451992003E6FC2 /* Info.plist */,
+				97404B5723451992003E6FC2 /* Delectus_2.entitlements */,
+				97404B7923451A68003E6FC2 /* Frameworks */,
+				97404B8423451BBD003E6FC2 /* Engine */,
+				97404B7F23451AC2003E6FC2 /* Libraries */,
 			);
 			path = "Delectus 2";
 			sourceTree = "<group>";
 		};
-		9777D36E23395E5800052407 /* Delectus 2Tests */ = {
+		97404B5F23451992003E6FC2 /* Delectus 2Tests */ = {
 			isa = PBXGroup;
 			children = (
-				9777D36F23395E5800052407 /* Delectus_2Tests.swift */,
-				9777D37123395E5800052407 /* Info.plist */,
+				97404B6023451992003E6FC2 /* Delectus_2Tests.swift */,
+				97404B6223451992003E6FC2 /* Info.plist */,
 			);
 			path = "Delectus 2Tests";
 			sourceTree = "<group>";
 		};
-		9777D37923395E5800052407 /* Delectus 2UITests */ = {
+		97404B6A23451992003E6FC2 /* Delectus 2UITests */ = {
 			isa = PBXGroup;
 			children = (
-				9777D37A23395E5800052407 /* Delectus_2UITests.swift */,
-				9777D37C23395E5800052407 /* Info.plist */,
+				97404B6B23451992003E6FC2 /* Delectus_2UITests.swift */,
+				97404B6D23451992003E6FC2 /* Info.plist */,
 			);
 			path = "Delectus 2UITests";
 			sourceTree = "<group>";
 		};
-		9777D38923395EFA00052407 /* Resources */ = {
+		97404B7923451A68003E6FC2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				97404AE6234512BA003E6FC2 /* MainMenu.xib */,
+				97404B7A23451A91003E6FC2 /* CouchbaseLiteSwift.framework */,
 			);
-			path = Resources;
+			path = Frameworks;
 			sourceTree = "<group>";
 		};
-		9777D38A23395F6400052407 /* Libraries */ = {
+		97404B7F23451AC2003E6FC2 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				9777D390233960AB00052407 /* libgambit.a */,
-				9777D38C23395FC100052407 /* libDelectus.a */,
+				97404B8223451B12003E6FC2 /* libDelectus.a */,
+				97404B8023451AF6003E6FC2 /* libgambit.a */,
 			);
 			path = Libraries;
 			sourceTree = "<group>";
 		};
-		9777D38B23395F7900052407 /* Frameworks */ = {
+		97404B8423451BBD003E6FC2 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				9777D39F2339624B00052407 /* CouchbaseLiteSwift.framework */,
+				97404B8523451BD5003E6FC2 /* Delectus.h */,
+				97404B8723451BEC003E6FC2 /* gambit-not409003.h */,
+				97404B8623451BEC003E6FC2 /* gambit.h */,
+				97404B8923451C59003E6FC2 /* engine.h */,
+				97404B8A23451C59003E6FC2 /* engine.c */,
+				97404B8823451C59003E6FC2 /* Delectus 2-Bridging-Header.h */,
 			);
-			path = Frameworks;
+			path = Engine;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9777D35A23395E5700052407 /* Delectus 2 */ = {
+		97404B4923451990003E6FC2 /* Delectus 2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9777D37F23395E5800052407 /* Build configuration list for PBXNativeTarget "Delectus 2" */;
+			buildConfigurationList = 97404B7023451992003E6FC2 /* Build configuration list for PBXNativeTarget "Delectus 2" */;
 			buildPhases = (
-				9777D35723395E5700052407 /* Sources */,
-				9777D35823395E5700052407 /* Frameworks */,
-				9777D35923395E5700052407 /* Resources */,
-				9777D3A52339625500052407 /* Embed Frameworks */,
+				97404B4623451990003E6FC2 /* Sources */,
+				97404B4723451990003E6FC2 /* Frameworks */,
+				97404B4823451990003E6FC2 /* Resources */,
+				97404B7E23451AA8003E6FC2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -230,72 +206,70 @@
 			);
 			name = "Delectus 2";
 			productName = "Delectus 2";
-			productReference = 9777D35B23395E5700052407 /* Delectus 2.app */;
+			productReference = 97404B4A23451990003E6FC2 /* Delectus 2.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9777D36A23395E5800052407 /* Delectus 2Tests */ = {
+		97404B5B23451992003E6FC2 /* Delectus 2Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9777D38223395E5800052407 /* Build configuration list for PBXNativeTarget "Delectus 2Tests" */;
+			buildConfigurationList = 97404B7323451992003E6FC2 /* Build configuration list for PBXNativeTarget "Delectus 2Tests" */;
 			buildPhases = (
-				9777D36723395E5800052407 /* Sources */,
-				9777D36823395E5800052407 /* Frameworks */,
-				9777D36923395E5800052407 /* Resources */,
+				97404B5823451992003E6FC2 /* Sources */,
+				97404B5923451992003E6FC2 /* Frameworks */,
+				97404B5A23451992003E6FC2 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9777D36D23395E5800052407 /* PBXTargetDependency */,
+				97404B5E23451992003E6FC2 /* PBXTargetDependency */,
 			);
 			name = "Delectus 2Tests";
 			productName = "Delectus 2Tests";
-			productReference = 9777D36B23395E5800052407 /* Delectus 2Tests.xctest */;
+			productReference = 97404B5C23451992003E6FC2 /* Delectus 2Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		9777D37523395E5800052407 /* Delectus 2UITests */ = {
+		97404B6623451992003E6FC2 /* Delectus 2UITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9777D38523395E5800052407 /* Build configuration list for PBXNativeTarget "Delectus 2UITests" */;
+			buildConfigurationList = 97404B7623451992003E6FC2 /* Build configuration list for PBXNativeTarget "Delectus 2UITests" */;
 			buildPhases = (
-				9777D37223395E5800052407 /* Sources */,
-				9777D37323395E5800052407 /* Frameworks */,
-				9777D37423395E5800052407 /* Resources */,
+				97404B6323451992003E6FC2 /* Sources */,
+				97404B6423451992003E6FC2 /* Frameworks */,
+				97404B6523451992003E6FC2 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9777D37823395E5800052407 /* PBXTargetDependency */,
+				97404B6923451992003E6FC2 /* PBXTargetDependency */,
 			);
 			name = "Delectus 2UITests";
 			productName = "Delectus 2UITests";
-			productReference = 9777D37623395E5800052407 /* Delectus 2UITests.xctest */;
+			productReference = 97404B6723451992003E6FC2 /* Delectus 2UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		9777D35323395E5700052407 /* Project object */ = {
+		97404B4223451990003E6FC2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1100;
 				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "mikel evins";
 				TargetAttributes = {
-					9777D35A23395E5700052407 = {
+					97404B4923451990003E6FC2 = {
 						CreatedOnToolsVersion = 11.0;
 						LastSwiftMigration = 1100;
 					};
-					9777D36A23395E5800052407 = {
+					97404B5B23451992003E6FC2 = {
 						CreatedOnToolsVersion = 11.0;
-						LastSwiftMigration = 1100;
-						TestTargetID = 9777D35A23395E5700052407;
+						TestTargetID = 97404B4923451990003E6FC2;
 					};
-					9777D37523395E5800052407 = {
+					97404B6623451992003E6FC2 = {
 						CreatedOnToolsVersion = 11.0;
-						LastSwiftMigration = 1100;
-						TestTargetID = 9777D35A23395E5700052407;
+						TestTargetID = 97404B4923451990003E6FC2;
 					};
 				};
 			};
-			buildConfigurationList = 9777D35623395E5700052407 /* Build configuration list for PBXProject "Delectus 2" */;
+			buildConfigurationList = 97404B4523451990003E6FC2 /* Build configuration list for PBXProject "Delectus 2" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -303,36 +277,36 @@
 				en,
 				Base,
 			);
-			mainGroup = 9777D35223395E5700052407;
-			productRefGroup = 9777D35C23395E5700052407 /* Products */;
+			mainGroup = 97404B4123451990003E6FC2;
+			productRefGroup = 97404B4B23451990003E6FC2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9777D35A23395E5700052407 /* Delectus 2 */,
-				9777D36A23395E5800052407 /* Delectus 2Tests */,
-				9777D37523395E5800052407 /* Delectus 2UITests */,
+				97404B4923451990003E6FC2 /* Delectus 2 */,
+				97404B5B23451992003E6FC2 /* Delectus 2Tests */,
+				97404B6623451992003E6FC2 /* Delectus 2UITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		9777D35923395E5700052407 /* Resources */ = {
+		97404B4823451990003E6FC2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9777D36123395E5800052407 /* Assets.xcassets in Resources */,
-				97404AE7234512BA003E6FC2 /* MainMenu.xib in Resources */,
+				97404B5223451992003E6FC2 /* Assets.xcassets in Resources */,
+				97404B5523451992003E6FC2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9777D36923395E5800052407 /* Resources */ = {
+		97404B5A23451992003E6FC2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9777D37423395E5800052407 /* Resources */ = {
+		97404B6523451992003E6FC2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -342,53 +316,60 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		9777D35723395E5700052407 /* Sources */ = {
+		97404B4623451990003E6FC2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9777D35F23395E5700052407 /* AppDelegate.swift in Sources */,
-				97638FB92343A95E008B640B /* DxCollection.swift in Sources */,
-				97638FC1234508B2008B640B /* DxStore.swift in Sources */,
-				9777D39B2339611100052407 /* engine.c in Sources */,
-				97638FBB2344F818008B640B /* DxList.swift in Sources */,
+				97404B5023451990003E6FC2 /* ViewController.swift in Sources */,
+				97404B4E23451990003E6FC2 /* AppDelegate.swift in Sources */,
+				97404B8B23451C59003E6FC2 /* engine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9777D36723395E5800052407 /* Sources */ = {
+		97404B5823451992003E6FC2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9777D37023395E5800052407 /* Delectus_2Tests.swift in Sources */,
-				9777D39C2339611100052407 /* engine.c in Sources */,
+				97404B6123451992003E6FC2 /* Delectus_2Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9777D37223395E5800052407 /* Sources */ = {
+		97404B6323451992003E6FC2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9777D37B23395E5800052407 /* Delectus_2UITests.swift in Sources */,
-				9777D39D2339611100052407 /* engine.c in Sources */,
+				97404B6C23451992003E6FC2 /* Delectus_2UITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		9777D36D23395E5800052407 /* PBXTargetDependency */ = {
+		97404B5E23451992003E6FC2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9777D35A23395E5700052407 /* Delectus 2 */;
-			targetProxy = 9777D36C23395E5800052407 /* PBXContainerItemProxy */;
+			target = 97404B4923451990003E6FC2 /* Delectus 2 */;
+			targetProxy = 97404B5D23451992003E6FC2 /* PBXContainerItemProxy */;
 		};
-		9777D37823395E5800052407 /* PBXTargetDependency */ = {
+		97404B6923451992003E6FC2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9777D35A23395E5700052407 /* Delectus 2 */;
-			targetProxy = 9777D37723395E5800052407 /* PBXContainerItemProxy */;
+			target = 97404B4923451990003E6FC2 /* Delectus 2 */;
+			targetProxy = 97404B6823451992003E6FC2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		97404B5323451992003E6FC2 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				97404B5423451992003E6FC2 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
-		9777D37D23395E5800052407 /* Debug */ = {
+		97404B6E23451992003E6FC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -448,7 +429,7 @@
 			};
 			name = Debug;
 		};
-		9777D37E23395E5800052407 /* Release */ = {
+		97404B6F23451992003E6FC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -501,7 +482,7 @@
 			};
 			name = Release;
 		};
-		9777D38023395E5800052407 /* Debug */ = {
+		97404B7123451992003E6FC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -513,7 +494,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+					"$(PROJECT_DIR)/Delectus\\ 2",
 					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
 				);
 				INFOPLIST_FILE = "Delectus 2/Info.plist";
@@ -522,20 +503,21 @@
 					"@executable_path/../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../engine",
+					"$(inherited)",
 					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+					"\"$(SRCROOT)/../engine\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 2.0d2;
+				MARKETING_VERSION = 2.0d3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Engine/Delectus 2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		9777D38123395E5800052407 /* Release */ = {
+		97404B7223451992003E6FC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -547,7 +529,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
+					"$(PROJECT_DIR)/Delectus\\ 2",
 					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
 				);
 				INFOPLIST_FILE = "Delectus 2/Info.plist";
@@ -556,139 +538,98 @@
 					"@executable_path/../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../engine",
+					"$(inherited)",
 					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
+					"\"$(SRCROOT)/../engine\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 2.0d2;
+				MARKETING_VERSION = 2.0d3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Engine/Delectus 2-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		9777D38323395E5800052407 /* Debug */ = {
+		97404B7423451992003E6FC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
-				);
 				INFOPLIST_FILE = "Delectus 2Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
-				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2Tests-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Delectus 2.app/Contents/MacOS/Delectus 2";
 			};
 			name = Debug;
 		};
-		9777D38423395E5800052407 /* Release */ = {
+		97404B7523451992003E6FC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
-				);
 				INFOPLIST_FILE = "Delectus 2Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
-				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2Tests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Delectus 2.app/Contents/MacOS/Delectus 2";
 			};
 			name = Release;
 		};
-		9777D38623395E5800052407 /* Debug */ = {
+		97404B7723451992003E6FC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
-				);
 				INFOPLIST_FILE = "Delectus 2UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2UITests-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Delectus 2";
 			};
 			name = Debug;
 		};
-		9777D38723395E5800052407 /* Release */ = {
+		97404B7823451992003E6FC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Frameworks",
-				);
 				INFOPLIST_FILE = "Delectus 2UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Delectus\\ 2/Libraries",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mikelevins.macos.Delectus-2UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Delectus 2/Delectus 2UITests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Delectus 2";
 			};
@@ -697,43 +638,43 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9777D35623395E5700052407 /* Build configuration list for PBXProject "Delectus 2" */ = {
+		97404B4523451990003E6FC2 /* Build configuration list for PBXProject "Delectus 2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9777D37D23395E5800052407 /* Debug */,
-				9777D37E23395E5800052407 /* Release */,
+				97404B6E23451992003E6FC2 /* Debug */,
+				97404B6F23451992003E6FC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9777D37F23395E5800052407 /* Build configuration list for PBXNativeTarget "Delectus 2" */ = {
+		97404B7023451992003E6FC2 /* Build configuration list for PBXNativeTarget "Delectus 2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9777D38023395E5800052407 /* Debug */,
-				9777D38123395E5800052407 /* Release */,
+				97404B7123451992003E6FC2 /* Debug */,
+				97404B7223451992003E6FC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9777D38223395E5800052407 /* Build configuration list for PBXNativeTarget "Delectus 2Tests" */ = {
+		97404B7323451992003E6FC2 /* Build configuration list for PBXNativeTarget "Delectus 2Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9777D38323395E5800052407 /* Debug */,
-				9777D38423395E5800052407 /* Release */,
+				97404B7423451992003E6FC2 /* Debug */,
+				97404B7523451992003E6FC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9777D38523395E5800052407 /* Build configuration list for PBXNativeTarget "Delectus 2UITests" */ = {
+		97404B7623451992003E6FC2 /* Build configuration list for PBXNativeTarget "Delectus 2UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9777D38623395E5800052407 /* Debug */,
-				9777D38723395E5800052407 /* Release */,
+				97404B7723451992003E6FC2 /* Debug */,
+				97404B7823451992003E6FC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 9777D35323395E5700052407 /* Project object */;
+	rootObject = 97404B4223451990003E6FC2 /* Project object */;
 }
