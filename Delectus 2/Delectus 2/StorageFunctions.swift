@@ -22,10 +22,9 @@ func collectionURLToName (url: URL) -> String {
 func getDataDirectory() -> URL? {
     let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
     let appSupportDir = urls[0]
-    print("appSupportDir = ",appSupportDir.path)
     let dataPath = appSupportDir.appendingPathComponent(DelectusStoreName)
     print("dataPath = ",dataPath.path)
-    if (FileManager.default.fileExists(atPath: dataPath.absoluteString)) {
+    if (FileManager.default.fileExists(atPath: dataPath.path)) {
         print("dataPath exists!")
         return dataPath
     } else {
