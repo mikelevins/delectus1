@@ -8,12 +8,37 @@
 
 import Foundation
 
-func collectionPathToName (url: URL) -> String {
+let DelectusStoreName = "com.mikelevins.delectus.Store"
+
+func collectionURLToName (url: URL) -> String {
     if (url.isFileURL) {
         return url.deletingPathExtension().lastPathComponent
     } else {
         let msg = "Not a file url: \(url.absoluteString)"
         fatalError(msg)
+    }
+}
+
+func getDataDirectory() -> URL? {
+    let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+    let appSupportDir = urls[0]
+    print("appSupportDir = ",appSupportDir.path)
+    let dataPath = appSupportDir.appendingPathComponent(DelectusStoreName)
+    print("dataPath = ",dataPath.path)
+    if (FileManager.default.fileExists(atPath: dataPath.absoluteString)) {
+        print("dataPath exists!")
+        return dataPath
+    } else {
+        print("dataPath does not exist")
+        do {
+            try FileManager.default.createDirectory(atPath: dataPath.path, withIntermediateDirectories: true, attributes: nil)
+            print("dataPath created")
+            return dataPath
+        } catch {
+            print("Failed to create dataPath")
+            print(error.localizedDescription);
+            return nil
+        }
     }
 }
 
@@ -29,8 +54,9 @@ func isDelectusCollection (url: URL) -> Bool {
 
 func knownCollections () -> [URL] {
     let mgr = FileManager.default
-    if let url = storeDataDirectory() {
+    if let url = getDataDirectory() {
         do {
+            print("Data directory = ", url.path)
             let paths = try mgr.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants)
             let result = paths.filter({ isDelectusCollection(url: $0)} )
             return result
@@ -42,8 +68,4 @@ func knownCollections () -> [URL] {
         print("\nUnable to locate the app data directory")
         return []
     }
-}
-
-func storeDataDirectory() -> URL? {
-    return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
 }
