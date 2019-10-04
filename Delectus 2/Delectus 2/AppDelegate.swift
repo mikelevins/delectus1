@@ -16,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let storeDB = openLocalStore() {
             print("The local Delectus database is\n  ", (storeDB.path ?? "<absent>"))
         } else {
-            print("Unable to locate the local Delectus store")
+            fatalError("Unable to locate the local Delectus store")
         }
     }
     
