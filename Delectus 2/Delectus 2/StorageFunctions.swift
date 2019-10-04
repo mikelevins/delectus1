@@ -10,61 +10,48 @@ import Foundation
 
 let DelectusStoreName = "com.mikelevins.delectus.Store"
 
-func collectionURLToName (url: URL) -> String {
-    if (url.isFileURL) {
-        return url.deletingPathExtension().lastPathComponent
-    } else {
-        let msg = "Not a file url: \(url.absoluteString)"
-        fatalError(msg)
-    }
-}
-
-func getDataDirectory() -> URL? {
+func getAppSupportURL () -> URL {
     let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-    let appSupportDir = urls[0]
-    let dataPath = appSupportDir.appendingPathComponent(DelectusStoreName)
-    print("dataPath = ",dataPath.path)
-    if (FileManager.default.fileExists(atPath: dataPath.path)) {
-        print("dataPath exists!")
-        return dataPath
+    if let url = urls.first {
+        return url
     } else {
-        print("dataPath does not exist")
-        do {
-            try FileManager.default.createDirectory(atPath: dataPath.path, withIntermediateDirectories: true, attributes: nil)
-            print("dataPath created")
-            return dataPath
-        } catch {
-            print("Failed to create dataPath")
-            print(error.localizedDescription);
-            return nil
-        }
+        fatalError("Can't locate the Delectus application container")
     }
 }
 
-func isDelectusCollection (url: URL) -> Bool {
-    let isFile = url.isFileURL
-    let isCBLite = url.path.hasSuffix("cblite2")
-    if (isFile && isCBLite) {
+func getStoreURL () -> URL {
+    let appSupportDir = getAppSupportURL()
+    return appSupportDir.appendingPathComponent(DelectusStoreName)
+}
+
+func createLocalStore() -> Bool {
+    let storeURL = getStoreURL()
+    do {
+        try FileManager.default.createDirectory(atPath: storeURL.path, withIntermediateDirectories: true, attributes: nil)
+        print("Local store created")
         return true
-    } else {
+    } catch {
+        print("Failed to create local store")
+        print(error.localizedDescription);
         return false
     }
 }
 
-func knownCollections () -> [URL] {
-    let mgr = FileManager.default
-    if let url = getDataDirectory() {
-        do {
-            print("Data directory = ", url.path)
-            let paths = try mgr.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants)
-            let result = paths.filter({ isDelectusCollection(url: $0)} )
-            return result
-        } catch {
-            print("\nUnable to get the contents of the app data directory")
-            return []
-        }
+func getLocalStore() -> URL? {
+    let url = getStoreURL()
+    if (FileManager.default.fileExists(atPath: url.path)) {
+        print("Store directory exists!")
+        return url
     } else {
-        print("\nUnable to locate the app data directory")
-        return []
+        print("Store directory does not exist; trying to create it")
+        do {
+            try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
+            print("Store directory created at \(url.path)")
+            return url
+        } catch {
+            print("Failed to create the store directory at \(url.path)")
+            print(error.localizedDescription);
+            return nil
+        }
     }
 }
