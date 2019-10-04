@@ -12,24 +12,27 @@ import CouchbaseLiteSwift
 // MARK: -
 // MARK: store constants
 
-let DelectusStoreDirectoryName = "com.mikelevins.delectus.Store"
-let DelectusStoreDBName = "DelectusDB"
-let DelectusStoreMetadataID = "DelectusStoreMetadata"
-let DelectusStoreFormatVersion = "2.0d1"
+let kDelectusStoreDBName = "DelectusDB"
+let kDelectusStoreDirectoryName = "com.mikelevins.delectus.Store"
+let kDelectusStoreFormatVersion = "2.0d1"
+let kDelectusStoreMetadataID = "DelectusStoreMetadata"
+let kMetadataKeyCreated = "created"
+let kMetadataKeyFormatVersion = "format_version"
+let kMetadataKeyModified = "modified"
 
 // MARK: -
 // MARK: store metadata
 
-func makeStoreMetadata () -> MutableDocument {
-    let metadoc = MutableDocument(id: DelectusStoreMetadataID)
-        .setString(DelectusStoreFormatVersion, forKey: "format_version")
-        .setDate(Date(), forKey: "created")
-        .setDate(Date(), forKey: "modified")
+func makeStoreMetadataDocument () -> MutableDocument {
+    let metadoc = MutableDocument(id: kDelectusStoreMetadataID)
+        .setString(kDelectusStoreFormatVersion, forKey: kMetadataKeyFormatVersion)
+        .setDate(Date(), forKey: kMetadataKeyCreated)
+        .setDate(Date(), forKey: kMetadataKeyModified)
     return metadoc
 }
 
 func printStoreMetadata (metadoc: Document) {
-    print("Delectus local store metadata:")
+    print("Delectus store metadata:")
     
     if let format = metadoc.string(forKey: "format_version") {
         print("  format_version: ", format)
@@ -56,15 +59,15 @@ func printStoreMetadata (metadoc: Document) {
 
 func getStoreURL () -> URL? {
     if let appSupportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-        return appSupportDir.appendingPathComponent(DelectusStoreDirectoryName, isDirectory: true)
+        return appSupportDir.appendingPathComponent(kDelectusStoreDirectoryName, isDirectory: true)
     } else {
-        print("Failed to locate the Application SUpport directory")
+        print("Failed to locate the Application Support directory")
         return nil
     }
 }
 
 func getStoreMetadata (db: Database) -> Document? {
-    return db.document(withID: DelectusStoreMetadataID)
+    return db.document(withID: kDelectusStoreMetadataID)
 }
 
 func findOrCreateStoreDirectory() -> URL? {
@@ -95,12 +98,12 @@ func openStore() -> Database? {
         let conf = DatabaseConfiguration()
         conf.directory = dataPath
         do {
-            let db = try Database(name: DelectusStoreDBName, config: conf)
+            let db = try Database(name: kDelectusStoreDBName, config: conf)
             print("opened the Delectus database")
             if let metadoc = getStoreMetadata(db: db) {
                 printStoreMetadata(metadoc: metadoc)
             } else {
-                let metadoc = makeStoreMetadata()
+                let metadoc = makeStoreMetadataDocument()
                 print("creating new metadata document:")
                 printStoreMetadata(metadoc: metadoc)
                 try db.saveDocument(metadoc)
@@ -108,9 +111,9 @@ func openStore() -> Database? {
             }
             return db
         } catch {
-            fatalError("Can't create the local Delectus database")
+            fatalError("Can't open the Delectus store")
         }
     } else {
-        fatalError("Can't locate the local Delectus database")
+        fatalError("Can't locate the Delectus store")
     }
 }
