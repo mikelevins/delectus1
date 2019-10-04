@@ -33,24 +33,13 @@ func makeStoreMetadataDocument () -> MutableDocument {
 
 func printStoreMetadata (metadoc: Document) {
     print("Delectus store metadata:")
+    let format = metadoc.string(forKey: "format_version")
+    let created = metadoc.date(forKey: "created")
+    let modified = metadoc.date(forKey: "modified")
     
-    if let format = metadoc.string(forKey: "format_version") {
-        print("  format_version: ", format)
-    } else {
-        print("  format_version: <missing>")
-    }
-    
-    if let created = metadoc.date(forKey: "created") {
-        print("         created: ", created)
-    } else {
-        print("         created: <missing>")
-    }
-    
-    if let modified = metadoc.date(forKey: "modified") {
-        print("        modified: ", modified)
-    } else {
-        print("        modified: <missing>")
-    }
+    print("    format: ", format ?? "<missing>")
+    print("   created: ", created ?? "<missing>")
+    print("  modified: ", modified ?? "<missing>")
 }
 
 
