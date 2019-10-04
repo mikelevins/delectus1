@@ -21,6 +21,11 @@ let kMetadataKeyFormatVersion = "format_version"
 let kMetadataKeyModified = "modified"
 
 // MARK: -
+// MARK: store variables
+
+var delectusStore: Database?
+
+// MARK: -
 // MARK: store metadata
 
 func makeStoreMetadataDocument () -> MutableDocument {
@@ -82,27 +87,48 @@ func findOrCreateStoreDirectory() -> URL? {
 }
 
 func openStore() -> Database? {
-    if  let dataDir = findOrCreateStoreDirectory() {
-        let dataPath = dataDir.path
-        let conf = DatabaseConfiguration()
-        conf.directory = dataPath
-        do {
-            let db = try Database(name: kDelectusStoreDBName, config: conf)
-            print("opened the Delectus database")
-            if let metadoc = getStoreMetadata(db: db) {
-                printStoreMetadata(metadoc: metadoc)
-            } else {
-                let metadoc = makeStoreMetadataDocument()
-                print("creating new metadata document:")
-                printStoreMetadata(metadoc: metadoc)
-                try db.saveDocument(metadoc)
-                print("new metadata saved")
-            }
-            return db
-        } catch {
-            fatalError("Can't open the Delectus store")
-        }
+    if (delectusStore != nil) {
+        return delectusStore
     } else {
-        fatalError("Can't locate the Delectus store")
+        if  let dataDir = findOrCreateStoreDirectory() {
+            let dataPath = dataDir.path
+            let conf = DatabaseConfiguration()
+            conf.directory = dataPath
+            do {
+                let db = try Database(name: kDelectusStoreDBName, config: conf)
+                print("opened the Delectus database")
+                if let metadoc = getStoreMetadata(db: db) {
+                    printStoreMetadata(metadoc: metadoc)
+                } else {
+                    let metadoc = makeStoreMetadataDocument()
+                    print("creating new metadata document:")
+                    printStoreMetadata(metadoc: metadoc)
+                    try db.saveDocument(metadoc)
+                    print("new metadata saved")
+                }
+                delectusStore = db
+                return db
+            } catch {
+                fatalError("Can't open the Delectus store")
+            }
+        } else {
+            fatalError("Can't locate the Delectus store")
+        }
     }
 }
+
+func closeStore () {
+    if let store = delectusStore {
+        do {
+            try store.close()
+        } catch {
+            print("Unable to close the Delectus store")
+        }
+    }
+}
+
+
+// MARK: -
+// MARK: lists
+
+

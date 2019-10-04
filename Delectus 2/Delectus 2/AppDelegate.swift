@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import CouchbaseLiteSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -14,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         init_delectus1_engine()
         if let storeDB = openStore() {
-            print("The local Delectus database is\n  ", (storeDB.path ?? "<absent>"))
+            print("The local Delectus store is\n  ", (storeDB.path ?? "<absent>"))
         } else {
             fatalError("Unable to locate the local Delectus store")
         }
