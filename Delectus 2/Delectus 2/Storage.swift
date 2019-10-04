@@ -56,6 +56,28 @@ func makeStoreDBMetadata () -> MutableDocument {
     return metadoc
 }
 
+func printLocalStoreMetadata (metadoc: Document) {
+    print("Delectus local store metadata:")
+    
+    if let format = metadoc.string(forKey: "format_version") {
+        print("  format_version: ", format)
+    } else {
+        print("  format_version: <missing>")
+    }
+    
+    if let created = metadoc.date(forKey: "created") {
+        print("  created: ", created)
+    } else {
+        print("  created: <missing>")
+    }
+    
+    if let modified = metadoc.date(forKey: "modified") {
+        print("  modified: ", modified)
+    } else {
+        print("  modified: <missing>")
+    }
+}
+
 func openLocalStore() -> Database? {
     if  let dataDir = getLocalStoreDirectory() {
         let dataPath = dataDir.path
@@ -65,22 +87,17 @@ func openLocalStore() -> Database? {
             let db = try Database(name: DelectusStoreDBName, config: conf)
             print("opened the Delectus database")
             if let metadoc = db.document(withID: DelectusStoreMetadataID) {
-                print("found store metadata:")
-                print("  local store format: ", metadoc.string(forKey: "format_version"))
-                print("  local store created: ", metadoc.date(forKey: "created"))
-                print("  local store modified: ", metadoc.date(forKey: "modified"))
-                return db
+                printLocalStoreMetadata(metadoc: metadoc)
             } else {
                 let metadoc = makeStoreDBMetadata()
-                print("created store metadata; saving...")
+                print("saving new metadata document...")
                 try db.saveDocument(metadoc)
-                print("  local store format: ", metadoc.string(forKey: "format_version"))
-                print("  local store created: ", metadoc.date(forKey: "created"))
-                print("  local store modified: ", metadoc.date(forKey: "modified"))
-                return db
+                print("new metadata saved")
+                printLocalStoreMetadata(metadoc: metadoc)
             }
+            return db
         } catch {
-            fatalError("Can't create the local Delectus database: failed to save the database metadata")
+            fatalError("Can't create the local Delectus database")
         }
     } else {
         fatalError("Can't locate the local Delectus database")
