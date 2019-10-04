@@ -13,7 +13,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         init_delectus1_engine()
-        if let store = getLocalStore() {
+        if let store = getLocalStoreDirectory() {
             print("The local Delectus store is at \(store.path)")
         } else {
             print("Unable to locate the local Delectus store")

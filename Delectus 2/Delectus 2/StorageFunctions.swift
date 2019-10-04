@@ -8,7 +8,8 @@
 
 import Foundation
 
-let DelectusStoreName = "com.mikelevins.delectus.Store"
+let DelectusStoreDirectoryName = "com.mikelevins.delectus.Store"
+let DelectusStoreDBName = "DelectusDB"
 
 func getAppSupportURL () -> URL {
     let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
@@ -21,10 +22,10 @@ func getAppSupportURL () -> URL {
 
 func getStoreURL () -> URL {
     let appSupportDir = getAppSupportURL()
-    return appSupportDir.appendingPathComponent(DelectusStoreName)
+    return appSupportDir.appendingPathComponent(DelectusStoreDirectoryName)
 }
 
-func createLocalStore() -> Bool {
+func createLocalStoreDirectory() -> Bool {
     let storeURL = getStoreURL()
     do {
         try FileManager.default.createDirectory(atPath: storeURL.path, withIntermediateDirectories: true, attributes: nil)
@@ -37,7 +38,7 @@ func createLocalStore() -> Bool {
     }
 }
 
-func getLocalStore() -> URL? {
+func getLocalStoreDirectory() -> URL? {
     let url = getStoreURL()
     if (FileManager.default.fileExists(atPath: url.path)) {
         print("Store directory exists!")
