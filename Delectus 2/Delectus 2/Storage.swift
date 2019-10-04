@@ -7,9 +7,12 @@
 //
 
 import Foundation
+import CouchbaseLiteSwift
 
 let DelectusStoreDirectoryName = "com.mikelevins.delectus.Store"
 let DelectusStoreDBName = "DelectusDB"
+let DelectusStoreMetadataID = "DelectusStoreMetadata"
+let DelectusStoreFormatVersion = "2.0d1"
 
 func appSupportURL () -> URL? {
     return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
@@ -45,3 +48,41 @@ func getLocalStoreDirectory() -> URL? {
     }
 }
 
+func makeStoreDBMetadata () -> MutableDocument {
+    let metadoc = MutableDocument(id: DelectusStoreMetadataID)
+        .setString(DelectusStoreFormatVersion, forKey: "format_version")
+        .setDate(Date(), forKey: "created")
+        .setDate(Date(), forKey: "modified")
+    return metadoc
+}
+
+func openLocalStore() -> Database? {
+    if  let dataDir = getLocalStoreDirectory() {
+        let dataPath = dataDir.path
+        let conf = DatabaseConfiguration()
+        conf.directory = dataPath
+        do {
+            let db = try Database(name: DelectusStoreDBName, config: conf)
+            print("opened the Delectus database")
+            if let metadoc = db.document(withID: DelectusStoreMetadataID) {
+                print("found store metadata:")
+                print("  local store format: ", metadoc.string(forKey: "format_version"))
+                print("  local store created: ", metadoc.date(forKey: "created"))
+                print("  local store modified: ", metadoc.date(forKey: "modified"))
+                return db
+            } else {
+                let metadoc = makeStoreDBMetadata()
+                print("created store metadata; saving...")
+                try db.saveDocument(metadoc)
+                print("  local store format: ", metadoc.string(forKey: "format_version"))
+                print("  local store created: ", metadoc.date(forKey: "created"))
+                print("  local store modified: ", metadoc.date(forKey: "modified"))
+                return db
+            }
+        } catch {
+            fatalError("Can't create the local Delectus database: failed to save the database metadata")
+        }
+    } else {
+        fatalError("Can't locate the local Delectus database")
+    }
+}
