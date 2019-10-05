@@ -37,7 +37,6 @@ func makeStoreMetadataDocument () -> MutableDocument {
 }
 
 func printStoreMetadata (metadoc: Document) {
-    print("Delectus store metadata:")
     let format = metadoc.string(forKey: "format_version")
     let created = metadoc.date(forKey: "created")
     let modified = metadoc.date(forKey: "modified")
@@ -96,15 +95,15 @@ func openStore() -> Database? {
             conf.directory = dataPath
             do {
                 let db = try Database(name: kDelectusStoreDBName, config: conf)
-                print("opened the Delectus database")
                 if let metadoc = getStoreMetadata(db: db) {
+                    print("Delectus store:")
                     printStoreMetadata(metadoc: metadoc)
                 } else {
                     let metadoc = makeStoreMetadataDocument()
-                    print("creating new metadata document:")
+                    print("creating new metadata document...")
+                    print("Delectus store:")
                     printStoreMetadata(metadoc: metadoc)
                     try db.saveDocument(metadoc)
-                    print("new metadata saved")
                 }
                 delectusStore = db
                 return db
