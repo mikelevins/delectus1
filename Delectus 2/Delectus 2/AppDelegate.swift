@@ -20,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
         init_delectus1_engine()
         print("\n\(store)")
-        if let metadoc = getStoreMetadata(db: store.database) {
+        if let metadoc = store.metadata {
             printStoreMetadata(metadoc: metadoc)
         } else {
          print("missing metadata document in \(store)")

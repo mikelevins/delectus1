@@ -10,11 +10,13 @@ import Foundation
 import CouchbaseLiteSwift
 
 // MARK: -
-// MARK: store struct
+// MARK: class Store
 
 class Store : CustomStringConvertible{
     var pathURL = findOrCreateStoreDirectory()
     lazy var database = openCBLDatabase(pathURL)
+    
+    var metadata: Document? { get { return database.document(withID: kDelectusStoreMetadataID) } }
     
     var description: String {
         let path = pathURL.path
@@ -56,10 +58,6 @@ func getStoreURL () -> URL? {
     }
 }
 
-func getStoreMetadata (db: Database) -> Document? {
-    return db.document(withID: kDelectusStoreMetadataID)
-}
-
 func findOrCreateStoreDirectory() -> URL {
     if let storeURL = getStoreURL() {
         if (urlPathExists(storeURL)) {
@@ -84,7 +82,7 @@ func openCBLDatabase(_ url:URL) -> Database {
     conf.directory = dataPath
     do {
         let db = try Database(name: kDelectusStoreDBName, config: conf)
-        if (getStoreMetadata(db: db) != nil) {
+        if (db.document(withID: kDelectusStoreMetadataID) != nil) {
             return db
         } else {
             let metadoc = makeStoreMetadataDocument()
