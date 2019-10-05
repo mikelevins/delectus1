@@ -18,8 +18,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // works only if the NSSupportsSuddenTermination key in Info.plist has the value NO
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
+        // initialize the Delectus 1 engine for file conversions
         init_delectus1_engine()
+        // print store, forcing it to be initialized
         print("\n\(store)")
+        // check for a metadata documentin the store
         if let metadoc = store.metadata {
             printStoreMetadata(metadoc: metadoc)
         } else {
