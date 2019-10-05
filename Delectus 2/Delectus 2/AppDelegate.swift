@@ -13,6 +13,10 @@ import CouchbaseLiteSwift
 class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // used to close open databases
+        // works only if the NSSupportsSuddenTermination key in Info.plist has the value NO
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
         init_delectus1_engine()
         if let storeDB = openStore() {
             print("The local Delectus store is\n  ", (storeDB.path ?? "<absent>"))
@@ -22,9 +26,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
+        print("Application about to terminate")
     }
-    
     
 }
 
