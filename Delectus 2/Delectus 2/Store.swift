@@ -51,10 +51,9 @@ func printStoreMetadata (metadoc: Document) {
 // MARK: store operations
 
 func getStoreURL () -> URL? {
-    if let appSupportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-        return appSupportDir.appendingPathComponent(kDelectusStoreDirectoryName, isDirectory: true)
+    if let suppURL = applicationSupportURL() {
+        return suppURL.appendingPathComponent(kDelectusStoreDirectoryName, isDirectory: true)
     } else {
-        print("Failed to locate the Application Support directory")
         return nil
     }
 }
@@ -64,23 +63,16 @@ func getStoreMetadata (db: Database) -> Document? {
 }
 
 func findOrCreateStoreDirectory() -> URL? {
-    if let getStoreURL = getStoreURL() {
-        if (FileManager.default.fileExists(atPath: getStoreURL.path)) {
-            print("Store directory exists")
-            return getStoreURL
+    if let storeURL = getStoreURL() {
+        if (urlPathExists(storeURL)) {
+            print("\nStore directory exists; returning it...\n")
+            return storeURL
         } else {
-            print("Store directory does not exist; trying to create it")
-            do {
-                try FileManager.default.createDirectory(atPath: getStoreURL.path, withIntermediateDirectories: true, attributes: nil)
-                print("Local store created")
-                return getStoreURL
-            } catch {
-                print("Failed to create local store")
-                print(error.localizedDescription);
-                return nil
-            }
+            print("\nStore directory does not exist; trying to create it...\n")
+            return createURLPath(storeURL)
         }
     } else {
+        print("\nFailed to get the store path")
         return nil
     }
 }
@@ -96,11 +88,11 @@ func openStore() -> Database? {
             do {
                 let db = try Database(name: kDelectusStoreDBName, config: conf)
                 if let metadoc = getStoreMetadata(db: db) {
-                    print("Delectus store:")
+                    print("\nDelectus store:")
                     printStoreMetadata(metadoc: metadoc)
                 } else {
                     let metadoc = makeStoreMetadataDocument()
-                    print("creating new metadata document...")
+                    print("\ncreating new metadata document...")
                     print("Delectus store:")
                     printStoreMetadata(metadoc: metadoc)
                     try db.saveDocument(metadoc)

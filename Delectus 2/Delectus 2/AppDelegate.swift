@@ -20,14 +20,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         init_delectus1_engine()
         if let storeDB = openStore() {
             let storePath = storeDB.path ?? "<absent>"
-            print("The local Delectus store is:\n  \(storePath)")
+            print("\nThe local Delectus store is:\n  \(storePath)")
         } else {
-            fatalError("Unable to locate the Delectus store")
+            fatalError("\nUnable to locate the Delectus store")
         }
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
-        print("Application about to terminate")
+        print("\nApplication about to terminate")
         closeStore()
         print("Closed the Delectus store")
     }
