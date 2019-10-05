@@ -20,6 +20,7 @@
 		97404B8B23451C59003E6FC2 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 97404B8A23451C59003E6FC2 /* engine.c */; };
 		97404B9123454647003E6FC2 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97404B9023454647003E6FC2 /* Store.swift */; };
 		9776E08E234917F5007373CC /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9776E08D234917F5007373CC /* Utilities.swift */; };
+		9776E09023491BC0007373CC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9776E08F23491BC0007373CC /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 		97404B8A23451C59003E6FC2 /* engine.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = engine.c; sourceTree = "<group>"; };
 		97404B9023454647003E6FC2 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		9776E08D234917F5007373CC /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		9776E08F23491BC0007373CC /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				97404B4D23451990003E6FC2 /* AppDelegate.swift */,
+				9776E08F23491BC0007373CC /* Constants.swift */,
 				97404B9023454647003E6FC2 /* Store.swift */,
 				9776E08D234917F5007373CC /* Utilities.swift */,
 				97404B4F23451990003E6FC2 /* ViewController.swift */,
@@ -331,6 +334,7 @@
 				97404B4E23451990003E6FC2 /* AppDelegate.swift in Sources */,
 				9776E08E234917F5007373CC /* Utilities.swift in Sources */,
 				97404B8B23451C59003E6FC2 /* engine.c in Sources */,
+				9776E09023491BC0007373CC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,6 +11,7 @@ import CouchbaseLiteSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    lazy var store = Store()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // used to close open databases
@@ -18,18 +19,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
         init_delectus1_engine()
-        if let storeDB = openStore() {
-            let storePath = storeDB.path ?? "<absent>"
-            print("\nThe local Delectus store is:\n  \(storePath)")
+        print("\n\(store)")
+        if let metadoc = getStoreMetadata(db: store.database) {
+            printStoreMetadata(metadoc: metadoc)
         } else {
-            fatalError("\nUnable to locate the Delectus store")
+         print("missing metadata document in \(store)")
         }
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
         print("\nApplication about to terminate")
-        closeStore()
-        print("Closed the Delectus store")
+        //closeStore()
+        //print("Closed the Delectus store")
     }
     
 }

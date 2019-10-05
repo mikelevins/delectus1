@@ -10,20 +10,18 @@ import Foundation
 import CouchbaseLiteSwift
 
 // MARK: -
-// MARK: store constants
+// MARK: store struct
 
-let kDelectusStoreDBName = "DelectusDB"
-let kDelectusStoreDirectoryName = "com.mikelevins.delectus.Store"
-let kDelectusStoreFormatVersion = "2.0d1"
-let kDelectusStoreMetadataID = "DelectusStoreMetadata"
-let kMetadataKeyCreated = "created"
-let kMetadataKeyFormatVersion = "format_version"
-let kMetadataKeyModified = "modified"
-
-// MARK: -
-// MARK: store variables
-
-var delectusStore: Database?
+class Store : CustomStringConvertible{
+    var pathURL = findOrCreateStoreDirectory()
+    lazy var database = openCBLDatabase(pathURL)
+    
+    var description: String {
+        let path = pathURL.path
+        let name = database.name
+        return "Store:\n  name: \(name)\n  path: \(path)"
+    }
+}
 
 // MARK: -
 // MARK: store metadata
@@ -41,11 +39,11 @@ func printStoreMetadata (metadoc: Document) {
     let created = metadoc.date(forKey: "created")
     let modified = metadoc.date(forKey: "modified")
     
+    print("\nStore metadata:")
     print("    format: ", format ?? "<missing>")
     print("   created: ", created ?? "<missing>")
     print("  modified: ", modified ?? "<missing>")
 }
-
 
 // MARK: -
 // MARK: store operations
@@ -62,58 +60,50 @@ func getStoreMetadata (db: Database) -> Document? {
     return db.document(withID: kDelectusStoreMetadataID)
 }
 
-func findOrCreateStoreDirectory() -> URL? {
+func findOrCreateStoreDirectory() -> URL {
     if let storeURL = getStoreURL() {
         if (urlPathExists(storeURL)) {
             print("\nStore directory exists; returning it...\n")
             return storeURL
         } else {
             print("\nStore directory does not exist; trying to create it...\n")
-            return createURLPath(storeURL)
-        }
-    } else {
-        print("\nFailed to get the store path")
-        return nil
-    }
-}
-
-func openStore() -> Database? {
-    if (delectusStore != nil) {
-        return delectusStore
-    } else {
-        if  let dataDir = findOrCreateStoreDirectory() {
-            let dataPath = dataDir.path
-            let conf = DatabaseConfiguration()
-            conf.directory = dataPath
-            do {
-                let db = try Database(name: kDelectusStoreDBName, config: conf)
-                if let metadoc = getStoreMetadata(db: db) {
-                    print("\nDelectus store:")
-                    printStoreMetadata(metadoc: metadoc)
-                } else {
-                    let metadoc = makeStoreMetadataDocument()
-                    print("\ncreating new metadata document...")
-                    print("Delectus store:")
-                    printStoreMetadata(metadoc: metadoc)
-                    try db.saveDocument(metadoc)
-                }
-                delectusStore = db
-                return db
-            } catch {
-                fatalError("Can't open the Delectus store")
+            if let result = createURLPath(storeURL) {
+                return result
+            } else {
+                fatalError("Can't create the Store directotry at \(storeURL.path)")
             }
-        } else {
-            fatalError("Can't locate the Delectus store")
         }
+    } else {
+        fatalError("\nFailed to get the store path")
     }
 }
 
-func closeStore () {
-    if let store = delectusStore {
-        do { try store.close() }
-        catch { print("Unable to close the Delectus store") }
+func openCBLDatabase(_ url:URL) -> Database {
+    let dataPath = url.path
+    let conf = DatabaseConfiguration()
+    conf.directory = dataPath
+    do {
+        let db = try Database(name: kDelectusStoreDBName, config: conf)
+        if (getStoreMetadata(db: db) != nil) {
+            return db
+        } else {
+            let metadoc = makeStoreMetadataDocument()
+            print("\ncreating new metadata document...")
+            print("Delectus store:")
+            try db.saveDocument(metadoc)
+            return db
+        }
+    } catch {
+        fatalError("Can't open the Delectus store")
     }
 }
+
+//func closeStore () {
+//    if let store = delectusStore {
+//        do { try store.close() }
+//        catch { print("Unable to close the Delectus store") }
+//    }
+//}
 
 
 // MARK: -
