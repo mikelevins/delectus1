@@ -119,11 +119,8 @@ func openStore() -> Database? {
 
 func closeStore () {
     if let store = delectusStore {
-        do {
-            try store.close()
-        } catch {
-            print("Unable to close the Delectus store")
-        }
+        do { try store.close() }
+        catch { print("Unable to close the Delectus store") }
     }
 }
 
