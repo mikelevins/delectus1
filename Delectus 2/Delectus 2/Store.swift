@@ -14,26 +14,13 @@ import CouchbaseLiteSwift
 
 class Store : CustomStringConvertible{
     var pathURL = findOrCreateStoreDirectory()
-    lazy var database = openCBLDatabase(pathURL)
+    lazy var database = openStoreDatabase(pathURL)
+    var metadata: Document? { get { return getStoreMetadataDocument(database) } }
+    var description: String { return describeStore(self) }
     
-    var metadata: Document? { get { return database.document(withID: kDelectusStoreMetadataID) } }
-    
-    var description: String {
-        let path = pathURL.path
-        let name = database.name
-        var metadescription: String
-        
-        if let meta = metadata {
-            metadescription = describeStoreMetadata(metadoc: meta)
-        } else {
-            metadescription = "\n<missing metadata>\n"
-        }
-        
-        let result = """
-        Store:\n  name: \(name)\n  path: \(path)
-        \(metadescription)
-        """
-        return result
+    func close () {
+        do { try database.close() }
+        catch { print("Unable to close the Delectus store") }
     }
 }
 
@@ -49,7 +36,11 @@ func makeStoreMetadataDocument () -> MutableDocument {
     return metadoc
 }
 
-func describeStoreMetadata (metadoc: Document) ->String {
+func getStoreMetadataDocument(_ db: Database) -> Document? {
+    return db.document(withID: kDelectusStoreMetadataID)
+}
+
+func describeStoreMetadata (_ metadoc: Document) ->String {
     let doctype = metadoc.string(forKey: kKeyType)
     let format = metadoc.string(forKey: kMetadataKeyFormatVersion)
     let created = metadoc.date(forKey: kMetadataKeyCreated)
@@ -84,14 +75,13 @@ func getStoreURL () -> URL? {
 func findOrCreateStoreDirectory() -> URL {
     if let storeURL = getStoreURL() {
         if (urlPathExists(storeURL)) {
-            print("\nStore directory exists; returning it...\n")
             return storeURL
         } else {
             print("\nStore directory does not exist; trying to create it...\n")
             if let result = createURLPath(storeURL) {
                 return result
             } else {
-                fatalError("Can't create the Store directotry at \(storeURL.path)")
+                fatalError("Can't create the Store directory at \(storeURL.path)")
             }
         }
     } else {
@@ -99,32 +89,55 @@ func findOrCreateStoreDirectory() -> URL {
     }
 }
 
-func openCBLDatabase(_ url:URL) -> Database {
+func openStoreDatabase(_ url:URL) -> Database {
     let dataPath = url.path
     let conf = DatabaseConfiguration()
     conf.directory = dataPath
+    var db: Database
+    
+    // open the database
     do {
-        let db = try Database(name: kDelectusStoreDBName, config: conf)
-        if (db.document(withID: kDelectusStoreMetadataID) != nil) {
-            return db
-        } else {
-            let metadoc = makeStoreMetadataDocument()
-            print("\ncreating new metadata document...")
-            print("Delectus store:")
-            try db.saveDocument(metadoc)
-            return db
-        }
+        db = try Database(name: kDelectusStoreDBName, config: conf)
     } catch {
         fatalError("Can't open the Delectus store")
     }
+    
+    // check to make sure the opened db has a metadata document
+    let metadoc = getStoreMetadataDocument(db)
+    if (metadoc == nil) {
+        // no metadata found; create and save it
+        print("\ncreating new metadata document...")
+        let new_metadoc = makeStoreMetadataDocument()
+        do {
+            try db.saveDocument(new_metadoc)
+            return db
+        } catch {
+            fatalError("Can't save the store's metadata")
+        }
+    } else {
+        // we got a good metadata document; return the database
+        return db
+    }
 }
 
-//func closeStore () {
-//    if let store = delectusStore {
-//        do { try store.close() }
-//        catch { print("Unable to close the Delectus store") }
-//    }
-//}
+func describeStore (_ store: Store) ->String {
+    let path = store.pathURL.path
+    let name = store.database.name
+    var metadescription: String
+    
+    if let meta = store.metadata {
+        metadescription = describeStoreMetadata(meta)
+    } else {
+        metadescription = "\n<missing metadata>\n"
+    }
+    
+    let result = """
+    Store:\n  name: \(name)\n  path: \(path)
+    \(metadescription)
+    """
+    return result
+}
+
 
 
 // MARK: -

@@ -15,9 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // used to close open databases
-        // works only if the NSSupportsSuddenTermination key in Info.plist has the value NO
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
+        registerTerminationObserver()
         // initialize the Delectus 1 engine for file conversions
         init_delectus1_engine()
         print("\n\(store)")
@@ -25,8 +23,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationWillTerminate(_ aNotification: Notification) {
         print("\nApplication about to terminate")
-        //closeStore()
-        //print("Closed the Delectus store")
+        store.close()
+        print("Closed the Delectus store")
+    }
+    
+    func registerTerminationObserver() {
+        // works only if the NSSupportsSuddenTermination key in Info.plist has the value NO
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
     }
     
 }
