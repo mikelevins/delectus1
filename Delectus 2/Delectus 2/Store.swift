@@ -21,7 +21,19 @@ class Store : CustomStringConvertible{
     var description: String {
         let path = pathURL.path
         let name = database.name
-        return "Store:\n  name: \(name)\n  path: \(path)"
+        var metadescription: String
+        
+        if let meta = metadata {
+            metadescription = describeStoreMetadata(metadoc: meta)
+        } else {
+            metadescription = "\n<missing metadata>\n"
+        }
+        
+        let result = """
+        Store:\n  name: \(name)\n  path: \(path)
+        \(metadescription)
+        """
+        return result
     }
 }
 
@@ -37,17 +49,25 @@ func makeStoreMetadataDocument () -> MutableDocument {
     return metadoc
 }
 
-func printStoreMetadata (metadoc: Document) {
+func describeStoreMetadata (metadoc: Document) ->String {
     let doctype = metadoc.string(forKey: kKeyType)
     let format = metadoc.string(forKey: kMetadataKeyFormatVersion)
     let created = metadoc.date(forKey: kMetadataKeyCreated)
+    var createdString: String
     let modified = metadoc.date(forKey: kMetadataKeyModified)
+    var modifiedString: String
     
-    print("\nStore metadata:")
-    print("      type: ", doctype ?? "<missing>")
-    print("    format: ", format ?? "<missing>")
-    print("   created: ", created ?? "<missing>")
-    print("  modified: ", modified ?? "<missing>")
+    if let created = created { createdString = String(describing: created) } else { createdString = "<missing>" }
+    if let modified = modified { modifiedString = String(describing: modified) } else { modifiedString = "<missing>" }
+
+    let result = """
+    Store metadata:
+          type: \(doctype ?? "<missing>")
+        format: \(format ?? "<missing>")
+       created: \(createdString)
+      modified: \(modifiedString)
+    """
+    return result
 }
 
 // MARK: -

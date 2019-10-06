@@ -11,7 +11,7 @@ import CouchbaseLiteSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    lazy var store = Store()
+    var store = Store()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // used to close open databases
@@ -20,14 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
         // initialize the Delectus 1 engine for file conversions
         init_delectus1_engine()
-        // print store, forcing it to be initialized
         print("\n\(store)")
-        // check for a metadata documentin the store
-        if let metadoc = store.metadata {
-            printStoreMetadata(metadoc: metadoc)
-        } else {
-         print("missing metadata document in \(store)")
-        }
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
