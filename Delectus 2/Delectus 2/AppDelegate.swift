@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import CouchbaseLiteSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
