@@ -12,11 +12,80 @@ import CouchbaseLiteSwift
 // MARK: -
 // MARK: class Store
 
-class Store : CustomStringConvertible{
+class Store : CustomStringConvertible {
     var pathURL = findOrCreateStoreDirectory()
-    lazy var database = openStoreDatabase(pathURL)
+    lazy var database = openStoreDatabase()
     var metadata: Document? { get { return database.document(withID: kDelectusStoreMetadataID) } }
-    var description: String { return describeStore(self) }
+    var description: String { return describeStore() }
+    
+    func describeStore () ->String {
+        let path = pathURL.path
+        let name = database.name
+        let metadescription = describeStoreMetadata()
+        
+        let result = """
+        Store:\n  name: \(name)\n  path: \(path)
+        \(metadescription ?? "<metadata missing>")
+        """
+        return result
+    }
+    
+    func openStoreDatabase() -> Database {
+        let dataPath = pathURL.path
+        let conf = DatabaseConfiguration()
+        conf.directory = dataPath
+        var db: Database
+        
+        // open the database
+        do {
+            db = try Database(name: kDelectusStoreDBName, config: conf)
+        } catch {
+            fatalError("Can't open the Delectus store")
+        }
+        
+        // check to make sure the opened db has a metadata document
+        let metadoc = db.document(withID: kDelectusStoreMetadataID)
+        if (metadoc == nil) {
+            // no metadata found; create and save it
+            print("\ncreating new metadata document...")
+            let new_metadoc = makeStoreMetadataDocument()
+            do {
+                try db.saveDocument(new_metadoc)
+                return db
+            } catch {
+                fatalError("Can't save the store's metadata")
+            }
+        } else {
+            // we got a good metadata document; return the database
+            return db
+        }
+    }
+    
+    func describeStoreMetadata () -> String? {
+        if let metadoc = metadata {
+            let doctype = metadoc.string(forKey: kKeyType)
+            let format = metadoc.string(forKey: kMetadataKeyFormatVersion)
+            let created = metadoc.date(forKey: kMetadataKeyCreated)
+            var createdString: String
+            let modified = metadoc.date(forKey: kMetadataKeyModified)
+            var modifiedString: String
+            
+            if let created = created { createdString = String(describing: created) } else { createdString = "<missing>" }
+            if let modified = modified { modifiedString = String(describing: modified) } else { modifiedString = "<missing>" }
+            
+            let result = """
+            Store metadata:
+            type: \(doctype ?? "<missing>")
+            format: \(format ?? "<missing>")
+            created: \(createdString)
+            modified: \(modifiedString)
+            """
+            return result
+        } else {
+            return nil
+        }
+        
+    }
     
     func close () {
         do {
@@ -39,40 +108,12 @@ func makeStoreMetadataDocument () -> MutableDocument {
     return metadoc
 }
 
-func describeStoreMetadata (_ metadoc: Document) ->String {
-    let doctype = metadoc.string(forKey: kKeyType)
-    let format = metadoc.string(forKey: kMetadataKeyFormatVersion)
-    let created = metadoc.date(forKey: kMetadataKeyCreated)
-    var createdString: String
-    let modified = metadoc.date(forKey: kMetadataKeyModified)
-    var modifiedString: String
-    
-    if let created = created { createdString = String(describing: created) } else { createdString = "<missing>" }
-    if let modified = modified { modifiedString = String(describing: modified) } else { modifiedString = "<missing>" }
-
-    let result = """
-    Store metadata:
-          type: \(doctype ?? "<missing>")
-        format: \(format ?? "<missing>")
-       created: \(createdString)
-      modified: \(modifiedString)
-    """
-    return result
-}
 
 // MARK: -
-// MARK: store operations
-
-func getStoreURL () -> URL? {
-    if let suppURL = applicationSupportURL() {
-        return suppURL.appendingPathComponent(kDelectusStoreDirectoryName, isDirectory: true)
-    } else {
-        return nil
-    }
-}
+// MARK: store auxiliary operations
 
 func findOrCreateStoreDirectory() -> URL {
-    if let storeURL = getStoreURL() {
+    if let storeURL = applicationSupportURL()?.appendingPathComponent(kDelectusStoreDirectoryName, isDirectory: true) {
         if (urlPathExists(storeURL)) {
             return storeURL
         } else {
@@ -88,54 +129,6 @@ func findOrCreateStoreDirectory() -> URL {
     }
 }
 
-func openStoreDatabase(_ url:URL) -> Database {
-    let dataPath = url.path
-    let conf = DatabaseConfiguration()
-    conf.directory = dataPath
-    var db: Database
-    
-    // open the database
-    do {
-        db = try Database(name: kDelectusStoreDBName, config: conf)
-    } catch {
-        fatalError("Can't open the Delectus store")
-    }
-    
-    // check to make sure the opened db has a metadata document
-    let metadoc = db.document(withID: kDelectusStoreMetadataID)
-    if (metadoc == nil) {
-        // no metadata found; create and save it
-        print("\ncreating new metadata document...")
-        let new_metadoc = makeStoreMetadataDocument()
-        do {
-            try db.saveDocument(new_metadoc)
-            return db
-        } catch {
-            fatalError("Can't save the store's metadata")
-        }
-    } else {
-        // we got a good metadata document; return the database
-        return db
-    }
-}
-
-func describeStore (_ store: Store) ->String {
-    let path = store.pathURL.path
-    let name = store.database.name
-    var metadescription: String
-    
-    if let meta = store.metadata {
-        metadescription = describeStoreMetadata(meta)
-    } else {
-        metadescription = "\n<missing metadata>\n"
-    }
-    
-    let result = """
-    Store:\n  name: \(name)\n  path: \(path)
-    \(metadescription)
-    """
-    return result
-}
 
 
 
