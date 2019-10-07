@@ -10,6 +10,7 @@ import Cocoa
 import CouchbaseLiteSwift
 
 enum Delectus1Error: Error {
+    // initialize the Delectus 1 engine for file conversions
     case cantInitializeDelectus1
 }
 
@@ -32,8 +33,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func initDelectus1Engine()  {
-        // initialize the Delectus 1 engine for file conversions
-        // TODO: add error checking
         let status = init_delectus1();
         if (status == ERR_NO_ERROR) {
             print("Delectus 1 compatibility engine initialized")
