@@ -21,11 +21,17 @@ class Store : CustomStringConvertible {
     func describeStore () ->String {
         let path = pathURL.path
         let name = database.name
-        let metadescription = describeStoreMetadata()
+        
+        var metadescription: String
+        if let metadoc = metadata {
+            metadescription = describeStoreMetadata(metadoc)
+        } else {
+            metadescription = "<metadata missing>"
+        }
         
         let result = """
         Store:\n  name: \(name)\n  path: \(path)
-        \(metadescription ?? "<metadata missing>")
+        \(metadescription)
         """
         return result
     }
@@ -51,29 +57,7 @@ class Store : CustomStringConvertible {
         
         return db
     }
-    
-    func describeStoreMetadata () -> String? {
-        if let metadoc = metadata {
-            let doctype = metadoc.string(forKey: kKeyType)
-            let format = metadoc.string(forKey: kMetadataKeyFormatVersion)
-            let created = metadoc.date(forKey: kMetadataKeyCreated)
-            let createdString = (created != nil) ? String(describing: created) : "<missing>"
-            let modified = metadoc.date(forKey: kMetadataKeyModified)
-            let modifiedString = (modified != nil) ? String(describing: modified) : "<missing>"
-                        
-            let result = """
-            Store metadata:
-            type: \(doctype ?? "<missing>")
-            format: \(format ?? "<missing>")
-            created: \(createdString)
-            modified: \(modifiedString)
-            """
-            return result
-        } else {
-            return nil
-        }
-        
-    }
+
     
     func close () {
         do {
@@ -83,19 +67,6 @@ class Store : CustomStringConvertible {
         catch { print("Unable to close the Delectus store") }
     }
 }
-
-// MARK: -
-// MARK: store metadata
-
-func makeStoreMetadataDocument () -> MutableDocument {
-    let metadoc = MutableDocument(id: kDelectusStoreMetadataID)
-        .setString(kTypeStoreMetadata, forKey: kKeyType)
-        .setString(kDelectusStoreFormatVersion, forKey: kMetadataKeyFormatVersion)
-        .setDate(Date(), forKey: kMetadataKeyCreated)
-        .setDate(Date(), forKey: kMetadataKeyModified)
-    return metadoc
-}
-
 
 // MARK: -
 // MARK: store auxiliary operations
