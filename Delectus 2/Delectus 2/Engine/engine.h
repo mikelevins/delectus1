@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-void init_delectus1_engine(void);
-void deinit_delectus1_engine(void);
+int init_delectus1(void);
+void deinit_delectus1(void);
 
 #endif /* engine_h */

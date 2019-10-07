@@ -25,6 +25,7 @@
 #define ERR_BAD_FORMAT         (-10)
 #define ERR_NO_DOCUMENT        (-11)
 #define ERR_CANT_RELEASE       (-12)
+#define ERR_CANT_INIT_ENGINE  (-13)
 
 extern const char* version (void);
 extern int new_delectus (void);

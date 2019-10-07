@@ -9,13 +9,21 @@
 import Cocoa
 import CouchbaseLiteSwift
 
+enum Delectus1Error: Error {
+    case cantInitializeDelectus1
+}
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var store = Store()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // for legacy file conversions
-        initDelectus1Engine()
+        do {
+            // for legacy file conversions
+            try initDelectus1Engine()
+        } catch {
+            fatalError("Can't initialize the Delectus 1 compatibility engine")
+        }
         // make sure the store's local DB closes on termination
         registerTerminationObserver()
         // print the store to confirm that it initialized properly
@@ -25,14 +33,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ aNotification: Notification) {
         print("\nApplication about to terminate")
         store.close()
-        deinit_delectus1_engine()
+        deinit_delectus1()
     }
     
-    func initDelectus1Engine() {
+    func initDelectus1Engine() throws {
         // initialize the Delectus 1 engine for file conversions
         // TODO: add error checking
-        init_delectus1_engine()
-        print("Delectus 1 engine initialized")
+        let status = init_delectus1();
+        if (status == ERR_NO_ERROR) {
+            
+        } else {
+            
+        }
     }
     
     func registerTerminationObserver() {
