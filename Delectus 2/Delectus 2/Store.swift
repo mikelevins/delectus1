@@ -13,11 +13,11 @@ import CouchbaseLiteSwift
 // MARK: class Store
 
 class Store : CustomStringConvertible {
-    var pathURL = findOrCreateStoreDirectory()
-    lazy var database = openStoreDatabase()
-    var metadata: Document? { get { return database.document(withID: kDelectusStoreMetadataID) } }
+    var pathURL: URL  { findOrCreateStoreDirectory() }
+    var metadata: Document? { return database.document(withID: kDelectusStoreMetadataID) }
     var description: String { return describeStore() }
-    
+    lazy var database = openStoreDatabase()
+
     func describeStore () ->String {
         let path = pathURL.path
         let name = database.name
@@ -102,14 +102,15 @@ func makeStoreMetadataDocument () -> MutableDocument {
 
 func findOrCreateStoreDirectory() -> URL {
     if let storeURL = applicationSupportURL()?.appendingPathComponent(kDelectusStoreDirectoryName, isDirectory: true) {
-        if (urlPathExists(storeURL)) {
+        if (FileManager.default.fileExists(atPath: storeURL.path)) {
             return storeURL
         } else {
             print("\nStore directory does not exist; trying to create it...\n")
-            if let result = createURLPath(storeURL) {
-                return result
-            } else {
-                fatalError("Can't create the Store directory at \(storeURL.path)")
+            do {
+                try FileManager.default.createDirectory(atPath: storeURL.path, withIntermediateDirectories: true, attributes: nil)
+                return storeURL
+            } catch {
+                fatalError("Failed to create file or directory at path \(storeURL.path)")
             }
         }
     } else {

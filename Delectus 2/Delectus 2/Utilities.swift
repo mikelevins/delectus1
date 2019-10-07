@@ -12,19 +12,4 @@ func applicationSupportURL () -> URL? {
     return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
 }
 
-func createURLPath(_ url: URL) -> URL? {
-    do {
-        try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
-        return url
-    } catch {
-        print("Failed to create file or directory at path \(url.path)")
-        return nil
-    }
-}
-
-
-func urlPathExists(_ url: URL) -> Bool {
-    return FileManager.default.fileExists(atPath: url.path)
-}
-
 
