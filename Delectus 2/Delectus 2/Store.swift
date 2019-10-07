@@ -32,7 +32,7 @@ class Store : CustomStringConvertible{
 
 func makeStoreMetadataDocument () -> MutableDocument {
     let metadoc = MutableDocument(id: kDelectusStoreMetadataID)
-        .setString(kTypeMetadata, forKey: kKeyType)
+        .setString(kTypeStoreMetadata, forKey: kKeyType)
         .setString(kDelectusStoreFormatVersion, forKey: kMetadataKeyFormatVersion)
         .setDate(Date(), forKey: kMetadataKeyCreated)
         .setDate(Date(), forKey: kMetadataKeyModified)
