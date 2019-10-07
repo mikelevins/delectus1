@@ -10,7 +10,6 @@ import Cocoa
 import CouchbaseLiteSwift
 
 enum Delectus1Error: Error {
-    // initialize the Delectus 1 engine for file conversions
     case cantInitializeDelectus1
 }
 
@@ -19,6 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var store = Store()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // initialize the Delectus 1 engine for file conversions
         initDelectus1Engine()
         // make sure the store's local DB closes on termination
         registerTerminationObserver()
