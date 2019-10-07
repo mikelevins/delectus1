@@ -14,15 +14,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var store = Store()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // for legacy file conversions
         initDelectus1Engine()
-        // used to close open databases
+        // make sure the store's local DB closes on termination
         registerTerminationObserver()
+        // print the store to confirm that it initialized properly
         print("\n\(store)")
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
         print("\nApplication about to terminate")
         store.close()
+        deinit_delectus1_engine()
     }
     
     func initDelectus1Engine() {

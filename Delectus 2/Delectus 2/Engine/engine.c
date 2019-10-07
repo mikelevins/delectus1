@@ -30,3 +30,9 @@ void init_delectus1_engine() {
     ___setup (&setup_params);
     
 }
+
+void deinit_delectus1_engine()
+{
+  ___cleanup ();
+}
+
