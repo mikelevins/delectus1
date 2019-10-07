@@ -18,12 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var store = Store()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        do {
-            // for legacy file conversions
-            try initDelectus1Engine()
-        } catch {
-            fatalError("Can't initialize the Delectus 1 compatibility engine")
-        }
+        initDelectus1Engine()
         // make sure the store's local DB closes on termination
         registerTerminationObserver()
         // print the store to confirm that it initialized properly
@@ -36,14 +31,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         deinit_delectus1()
     }
     
-    func initDelectus1Engine() throws {
+    func initDelectus1Engine()  {
         // initialize the Delectus 1 engine for file conversions
         // TODO: add error checking
         let status = init_delectus1();
         if (status == ERR_NO_ERROR) {
-            
+            print("Delectus 1 compatibility engine initialized")
         } else {
-            
+            fatalError("Can't initialize the Delectus 1 compatibility engine")
         }
     }
     
