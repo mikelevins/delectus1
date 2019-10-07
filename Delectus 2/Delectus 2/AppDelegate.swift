@@ -9,10 +9,6 @@
 import Cocoa
 import CouchbaseLiteSwift
 
-enum Delectus1Error: Error {
-    case cantInitializeDelectus1
-}
-
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var store = Store()
@@ -42,6 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func registerTerminationObserver() {
+        // watches for impending app termination
         // works only if the NSSupportsSuddenTermination key in Info.plist has the value NO
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(applicationWillTerminate), name: Notification.Name("ApplicationWillTerminate"), object: nil)
