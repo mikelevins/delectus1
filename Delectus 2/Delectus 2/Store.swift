@@ -31,34 +31,25 @@ class Store : CustomStringConvertible {
     }
     
     func openStoreDatabase() -> Database {
-        let dataPath = pathURL.path
         let conf = DatabaseConfiguration()
-        conf.directory = dataPath
+        conf.directory = pathURL.path
         var db: Database
         
         // open the database
-        do {
-            db = try Database(name: kDelectusStoreDBName, config: conf)
-        } catch {
-            fatalError("Can't open the Delectus store")
-        }
+        do { db = try Database(name: kDelectusStoreDBName, config: conf) }
+        catch { fatalError("Can't open the Delectus store") }
         
         // check to make sure the opened db has a metadata document
-        let metadoc = db.document(withID: kDelectusStoreMetadataID)
-        if (metadoc == nil) {
+        if (db.document(withID: kDelectusStoreMetadataID) == nil) {
             // no metadata found; create and save it
             print("\ncreating new metadata document...")
-            let new_metadoc = makeStoreMetadataDocument()
-            do {
-                try db.saveDocument(new_metadoc)
-                return db
-            } catch {
-                fatalError("Can't save the store's metadata")
-            }
-        } else {
-            // we got a good metadata document; return the database
-            return db
+            let metadoc = makeStoreMetadataDocument()
+            
+            do { try db.saveDocument(metadoc) }
+            catch { fatalError("\nCan't save the store's metadata") }
         }
+        
+        return db
     }
     
     func describeStoreMetadata () -> String? {
@@ -66,13 +57,10 @@ class Store : CustomStringConvertible {
             let doctype = metadoc.string(forKey: kKeyType)
             let format = metadoc.string(forKey: kMetadataKeyFormatVersion)
             let created = metadoc.date(forKey: kMetadataKeyCreated)
-            var createdString: String
+            let createdString = (created != nil) ? String(describing: created) : "<missing>"
             let modified = metadoc.date(forKey: kMetadataKeyModified)
-            var modifiedString: String
-            
-            if let created = created { createdString = String(describing: created) } else { createdString = "<missing>" }
-            if let modified = modified { modifiedString = String(describing: modified) } else { modifiedString = "<missing>" }
-            
+            let modifiedString = (modified != nil) ? String(describing: modified) : "<missing>"
+                        
             let result = """
             Store metadata:
             type: \(doctype ?? "<missing>")
