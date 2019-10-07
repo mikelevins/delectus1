@@ -10,7 +10,7 @@ import Foundation
 import CouchbaseLiteSwift
 
 // MARK: -
-// MARK: class Store
+// MARK: the Store class
 
 class Store : CustomStringConvertible {
     var pathURL: URL  { findOrCreateStoreDirectory() }
@@ -20,7 +20,7 @@ class Store : CustomStringConvertible {
 }
 
 // MARK: -
-// MARK: store auxiliary operations
+// MARK: store functions
 
 func findOrCreateStoreDirectory() -> URL {
     if let storeURL = applicationSupportURL()?.appendingPathComponent(kDelectusStoreDirectoryName, isDirectory: true) {
@@ -31,9 +31,9 @@ func findOrCreateStoreDirectory() -> URL {
             do {
                 try FileManager.default.createDirectory(atPath: storeURL.path, withIntermediateDirectories: true, attributes: nil)
                 return storeURL
-            } catch {
-                fatalError("Failed to create file or directory at path \(storeURL.path)")
+                
             }
+            catch { fatalError("Failed to create file or directory at path \(storeURL.path)") }
         }
     } else {
         fatalError("\nFailed to get the store path")
