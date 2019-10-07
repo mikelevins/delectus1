@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		971F2A6E234BE57F00DCD465 /* StoreDocuments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971F2A6D234BE57F00DCD465 /* StoreDocuments.swift */; };
+		971F2A70234BEAEA00DCD465 /* Lists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971F2A6F234BEAEA00DCD465 /* Lists.swift */; };
 		97404B4E23451990003E6FC2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97404B4D23451990003E6FC2 /* AppDelegate.swift */; };
 		97404B5023451990003E6FC2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97404B4F23451990003E6FC2 /* ViewController.swift */; };
 		97404B5223451992003E6FC2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97404B5123451992003E6FC2 /* Assets.xcassets */; };
@@ -57,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		971F2A6D234BE57F00DCD465 /* StoreDocuments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreDocuments.swift; sourceTree = "<group>"; };
+		971F2A6F234BEAEA00DCD465 /* Lists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lists.swift; sourceTree = "<group>"; };
 		97404B4A23451990003E6FC2 /* Delectus 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delectus 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		97404B4D23451990003E6FC2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97404B4F23451990003E6FC2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 			children = (
 				97404B4D23451990003E6FC2 /* AppDelegate.swift */,
 				9776E08F23491BC0007373CC /* Constants.swift */,
+				971F2A6F234BEAEA00DCD465 /* Lists.swift */,
 				97404B9023454647003E6FC2 /* Store.swift */,
 				971F2A6D234BE57F00DCD465 /* StoreDocuments.swift */,
 				9776E08D234917F5007373CC /* Utilities.swift */,
@@ -337,6 +340,7 @@
 				971F2A6E234BE57F00DCD465 /* StoreDocuments.swift in Sources */,
 				97404B4E23451990003E6FC2 /* AppDelegate.swift in Sources */,
 				9776E08E234917F5007373CC /* Utilities.swift in Sources */,
+				971F2A70234BEAEA00DCD465 /* Lists.swift in Sources */,
 				97404B8B23451C59003E6FC2 /* engine.c in Sources */,
 				9776E09023491BC0007373CC /* Constants.swift in Sources */,
 			);

@@ -40,7 +40,6 @@ func findOrCreateStoreDirectory() -> URL {
     }
 }
 
-
 func describeStore (_ store: Store) ->String {
     let path = store.pathURL.path
     let name = store.database.name
@@ -52,11 +51,10 @@ func describeStore (_ store: Store) ->String {
         metadescription = "<metadata missing>"
     }
     
-    let result = """
+    return """
     Store:\n  name: \(name)\n  path: \(path)
     \(metadescription)
     """
-    return result
 }
 
 func openStoreDatabase(_ store: Store) -> Database {
@@ -73,13 +71,12 @@ func openStoreDatabase(_ store: Store) -> Database {
         // no metadata found (this happens when first creating the database); create and save it
         print("\ncreating new metadata document...")
         let metadoc = makeStoreMetadataDocument()
-        
         do { try db.saveDocument(metadoc) }
         catch { fatalError("\nCan't save the store's metadata") }
     }
+    
     return db
 }
-
 
 func closeStore (_ store: Store) {
     do {
@@ -88,10 +85,4 @@ func closeStore (_ store: Store) {
     }
     catch { print("Unable to close the Delectus store") }
 }
-
-
-
-// MARK: -
-// MARK: lists
-
 
