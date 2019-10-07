@@ -15,11 +15,14 @@ import CouchbaseLiteSwift
 class Store : CustomStringConvertible{
     var pathURL = findOrCreateStoreDirectory()
     lazy var database = openStoreDatabase(pathURL)
-    var metadata: Document? { get { return getStoreMetadataDocument(database) } }
+    var metadata: Document? { get { return database.document(withID: kDelectusStoreMetadataID) } }
     var description: String { return describeStore(self) }
     
     func close () {
-        do { try database.close() }
+        do {
+            try database.close()
+            print("Closed the Delectus store")
+        }
         catch { print("Unable to close the Delectus store") }
     }
 }
@@ -34,10 +37,6 @@ func makeStoreMetadataDocument () -> MutableDocument {
         .setDate(Date(), forKey: kMetadataKeyCreated)
         .setDate(Date(), forKey: kMetadataKeyModified)
     return metadoc
-}
-
-func getStoreMetadataDocument(_ db: Database) -> Document? {
-    return db.document(withID: kDelectusStoreMetadataID)
 }
 
 func describeStoreMetadata (_ metadoc: Document) ->String {
@@ -103,7 +102,7 @@ func openStoreDatabase(_ url:URL) -> Database {
     }
     
     // check to make sure the opened db has a metadata document
-    let metadoc = getStoreMetadataDocument(db)
+    let metadoc = db.document(withID: kDelectusStoreMetadataID)
     if (metadoc == nil) {
         // no metadata found; create and save it
         print("\ncreating new metadata document...")

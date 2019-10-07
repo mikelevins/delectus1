@@ -14,17 +14,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var store = Store()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        initDelectus1Engine()
         // used to close open databases
         registerTerminationObserver()
-        // initialize the Delectus 1 engine for file conversions
-        init_delectus1_engine()
         print("\n\(store)")
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
         print("\nApplication about to terminate")
         store.close()
-        print("Closed the Delectus store")
+    }
+    
+    func initDelectus1Engine() {
+        // initialize the Delectus 1 engine for file conversions
+        // TODO: add error checking
+        init_delectus1_engine()
+        print("Delectus 1 engine initialized")
     }
     
     func registerTerminationObserver() {
