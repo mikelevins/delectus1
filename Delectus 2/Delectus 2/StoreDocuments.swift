@@ -21,7 +21,6 @@ func makeStoreMetadataDocument () -> MutableDocument {
     return metadoc
 }
 
-
 func describeStoreMetadata (_ metadoc: Document) -> String {
     let doctype = metadoc.string(forKey: kKeyType)
     let format = metadoc.string(forKey: kMetadataKeyFormatVersion)

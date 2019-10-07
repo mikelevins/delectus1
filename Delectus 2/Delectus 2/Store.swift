@@ -15,57 +15,8 @@ import CouchbaseLiteSwift
 class Store : CustomStringConvertible {
     var pathURL: URL  { findOrCreateStoreDirectory() }
     var metadata: Document? { return database.document(withID: kDelectusStoreMetadataID) }
-    var description: String { return describeStore() }
-    lazy var database = openStoreDatabase()
-
-    func describeStore () ->String {
-        let path = pathURL.path
-        let name = database.name
-        
-        var metadescription: String
-        if let metadoc = metadata {
-            metadescription = describeStoreMetadata(metadoc)
-        } else {
-            metadescription = "<metadata missing>"
-        }
-        
-        let result = """
-        Store:\n  name: \(name)\n  path: \(path)
-        \(metadescription)
-        """
-        return result
-    }
-    
-    func openStoreDatabase() -> Database {
-        let conf = DatabaseConfiguration()
-        conf.directory = pathURL.path
-        var db: Database
-        
-        // open the database
-        do { db = try Database(name: kDelectusStoreDBName, config: conf) }
-        catch { fatalError("Can't open the Delectus store") }
-        
-        // check to make sure the opened db has a metadata document
-        if (db.document(withID: kDelectusStoreMetadataID) == nil) {
-            // no metadata found; create and save it
-            print("\ncreating new metadata document...")
-            let metadoc = makeStoreMetadataDocument()
-            
-            do { try db.saveDocument(metadoc) }
-            catch { fatalError("\nCan't save the store's metadata") }
-        }
-        
-        return db
-    }
-
-    
-    func close () {
-        do {
-            try database.close()
-            print("Closed the Delectus store")
-        }
-        catch { print("Unable to close the Delectus store") }
-    }
+    var description: String { return describeStore(self) }
+    lazy var database = openStoreDatabase(self)
 }
 
 // MARK: -
@@ -89,6 +40,54 @@ func findOrCreateStoreDirectory() -> URL {
     }
 }
 
+
+func describeStore (_ store: Store) ->String {
+    let path = store.pathURL.path
+    let name = store.database.name
+    
+    var metadescription: String
+    if let metadoc = store.metadata {
+        metadescription = describeStoreMetadata(metadoc)
+    } else {
+        metadescription = "<metadata missing>"
+    }
+    
+    let result = """
+    Store:\n  name: \(name)\n  path: \(path)
+    \(metadescription)
+    """
+    return result
+}
+
+func openStoreDatabase(_ store: Store) -> Database {
+    let conf = DatabaseConfiguration()
+    conf.directory = store.pathURL.path
+    var db: Database
+    
+    // open the database
+    do { db = try Database(name: kDelectusStoreDBName, config: conf) }
+    catch { fatalError("Can't open the Delectus store") }
+    
+    // ensure the db has a metadata document
+    if (db.document(withID: kDelectusStoreMetadataID) == nil) {
+        // no metadata found (this happens when first creating the database); create and save it
+        print("\ncreating new metadata document...")
+        let metadoc = makeStoreMetadataDocument()
+        
+        do { try db.saveDocument(metadoc) }
+        catch { fatalError("\nCan't save the store's metadata") }
+    }
+    return db
+}
+
+
+func closeStore (_ store: Store) {
+    do {
+        try store.database.close()
+        print("Closed the Delectus store")
+    }
+    catch { print("Unable to close the Delectus store") }
+}
 
 
 

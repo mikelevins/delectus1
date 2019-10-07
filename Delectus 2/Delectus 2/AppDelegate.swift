@@ -23,7 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationWillTerminate(_ aNotification: Notification) {
         print("\nApplication about to terminate")
-        store.close()
+        closeStore(store)
         deinit_delectus1()
     }
     
