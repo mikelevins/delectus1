@@ -64,7 +64,7 @@
 (defn -main
   "This is our main entry point"
   [& args]
-  (let [port (Integer/parseInt (or (System/getenv "PORT") "3000"))]
+  (let [port (Integer/parseInt (or (System/getenv "PORT") "9000"))]
     ;; Run the server with Ring.defaults middleware
     (server/run-server (wrap-defaults #'app-routes site-defaults) {:port port})
     ;; Run the server without ring defaults
