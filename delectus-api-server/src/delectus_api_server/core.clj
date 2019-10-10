@@ -33,6 +33,19 @@
            (.authenticate couch "admin" "password")
            (.exportToJson diagnostics))})
 
+
+(defn travel-page [req]
+  {:status 200
+   :headers {"Content-type" "text/plain"}
+   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+           (.authenticate couch "admin" "password")
+           (let [bucket (.openBucket couch "travel-sample")]
+             (.createN1qlPrimaryIndex (.bucketManager bucket)
+                                      true false)
+             (let [result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
+                                          "SELECT id FROM `travel-sample`"))]
+               (clojure.pprint/cl-format nil "~S" result))))})
+
 ;;; ---------------------------------------------------------------------
 ;;; routes
 ;;; ---------------------------------------------------------------------
@@ -41,6 +54,7 @@
   (GET "/" [] landing-page)
   (GET "/hello" [] hello-name)
   (GET "/couch" [] couch-page)
+  (GET "/travel" [] travel-page)
   (route/not-found "Error, page not found!"))
 
 ;;; ---------------------------------------------------------------------
