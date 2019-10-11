@@ -10,7 +10,60 @@
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
-;;; 
+;;; the Delectus 2 API
+;;; ---------------------------------------------------------------------
+;;;
+;;; engine
+;;; ---------------------------------------------------------------------
+;;; version
+;;;
+;;; collections
+;;; ---------------------------------------------------------------------
+;;; find_collection_by_id
+;;; find_collection_by_name
+;;; create_collection
+;;; rename_collection
+;;; delete_collection
+;;; purge_collection
+;;;
+;;; lists
+;;; ---------------------------------------------------------------------
+;;; find_list_by_id
+;;; find_list_by_name
+;;; create_list
+;;; rename_list
+;;; delete_list
+;;; purge_list
+;;; include_deleted
+;;; has_deleted
+;;; add_row
+;;; add_column
+;;;
+;;; columns
+;;; ---------------------------------------------------------------------
+;;; count_columns
+;;; count_deleted_columns
+;;; find_column_by_id
+;;; find_column_by_label
+;;; find_column_by_index
+;;; is_duplicate_label
+;;; relabel_column
+;;; is_column_deleted
+;;; mark_column_deleted
+;;;
+;;; rows
+;;; ---------------------------------------------------------------------
+;;; count_rows
+;;; count_deleted_rows
+;;; value_at
+;;; put_value_at
+;;; rename_column
+;;; is_row_deleted
+;;; mark_row_deleted
+
+
+;;; ---------------------------------------------------------------------
+;;; handlers
 ;;; ---------------------------------------------------------------------
 
 (defn landing-page [req]
@@ -33,7 +86,6 @@
            (.authenticate couch "admin" "password")
            (.exportToJson diagnostics))})
 
-
 (defn travel-page [req]
   {:status 200
    :headers {"Content-type" "text/plain"}
@@ -55,6 +107,7 @@
   (GET "/hello" [] hello-name)
   (GET "/couch" [] couch-page)
   (GET "/travel" [] travel-page)
+  ;; default route
   (route/not-found "Error, page not found!"))
 
 ;;; ---------------------------------------------------------------------
