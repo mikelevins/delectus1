@@ -75,16 +75,17 @@
   {:status 200
    :headers {"Content-type" "text/html"}
    :body (->
-          (clojure.pprint/pprint req)
+          (pp/pprint req)
           (str "Hello, " (:name (:params req))))})
 
-(defn couch-page [req]
+(defn status [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])
-               diagnostics (.diagnostics couch)]
+   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
            (.authenticate couch "admin" "password")
-           (.exportToJson diagnostics))})
+           (let [mgr (.clusterManager couch)
+                 info (.raw (.info mgr))]
+             (.toString info)))})
 
 ;;; returns: ("airline" "airport" "hotel" "landmark" "route")
 (defn travel-entity-types [req]
@@ -101,7 +102,7 @@
                    objs (map (fn [v](json/read-json (.toString v))) vals)
                    types (distinct (map (fn [o] (:type (:travel-sample o))) objs))
                    ]
-               (clojure.pprint/cl-format nil "~s" types))))})
+               (pp/cl-format nil "~s" types))))})
 
 (defn airlines [req]
   {:status 200
@@ -116,7 +117,7 @@
                    vals (map (fn [r]
                                (:name (json/read-json (.toString (.value r)))))
                              result)]
-               (clojure.pprint/cl-format nil "~s" vals))))})
+               (pp/cl-format nil "~s" vals))))})
 
 (defn hotels [req]
   {:status 200
@@ -131,7 +132,7 @@
                    vals (map (fn [r]
                                (:name (json/read-json (.toString (.value r)))))
                              result)]
-               (clojure.pprint/cl-format nil "~s" vals))))})
+               (pp/cl-format nil "~s" vals))))})
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
@@ -140,7 +141,7 @@
 (defroutes app-routes
   (GET "/" [] landing-page)
   (GET "/hello" [] hello-name)
-  (GET "/couch" [] couch-page)
+  (GET "/status" [] status)
   (GET "/travel-types" [] travel-entity-types)
   (GET "/airlines" [] airlines)
   (GET "/hotels" [] hotels)
