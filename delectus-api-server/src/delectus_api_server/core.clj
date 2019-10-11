@@ -86,7 +86,8 @@
            (.authenticate couch "admin" "password")
            (.exportToJson diagnostics))})
 
-(defn travel-page [req]
+;;; returns: ("airline" "airport" "hotel" "landmark" "route")
+(defn travel-entity-types [req]
   {:status 200
    :headers {"Content-type" "text/plain"}
    :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
@@ -95,8 +96,42 @@
              (.createN1qlPrimaryIndex (.bucketManager bucket)
                                       true false)
              (let [result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
-                                          "SELECT id FROM `travel-sample`"))]
-               (clojure.pprint/cl-format nil "~S" result))))})
+                                          "SELECT * FROM `travel-sample` WHERE type IS NOT MISSING"))
+                   vals (map (fn [r] (.value r)) result)
+                   objs (map (fn [v](json/read-json (.toString v))) vals)
+                   types (distinct (map (fn [o] (:type (:travel-sample o))) objs))
+                   ]
+               (clojure.pprint/cl-format nil "~s" types))))})
+
+(defn airlines [req]
+  {:status 200
+   :headers {"Content-type" "text/plain"}
+   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+           (.authenticate couch "admin" "password")
+           (let [bucket (.openBucket couch "travel-sample")]
+             (.createN1qlPrimaryIndex (.bucketManager bucket)
+                                      true false)
+             (let [result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
+                                          "SELECT name FROM `travel-sample` WHERE type = \"airline\""))
+                   vals (map (fn [r]
+                               (:name (json/read-json (.toString (.value r)))))
+                             result)]
+               (clojure.pprint/cl-format nil "~s" vals))))})
+
+(defn hotels [req]
+  {:status 200
+   :headers {"Content-type" "text/plain"}
+   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+           (.authenticate couch "admin" "password")
+           (let [bucket (.openBucket couch "travel-sample")]
+             (.createN1qlPrimaryIndex (.bucketManager bucket)
+                                      true false)
+             (let [result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
+                                          "SELECT name FROM `travel-sample` WHERE type = \"hotel\""))
+                   vals (map (fn [r]
+                               (:name (json/read-json (.toString (.value r)))))
+                             result)]
+               (clojure.pprint/cl-format nil "~s" vals))))})
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
@@ -106,7 +141,9 @@
   (GET "/" [] landing-page)
   (GET "/hello" [] hello-name)
   (GET "/couch" [] couch-page)
-  (GET "/travel" [] travel-page)
+  (GET "/travel-types" [] travel-entity-types)
+  (GET "/airlines" [] airlines)
+  (GET "/hotels" [] hotels)
   ;; default route
   (route/not-found "Error, page not found!"))
 
