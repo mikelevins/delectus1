@@ -56,12 +56,13 @@
            (let [bucket (.openBucket couch "travel-sample")]
              (.createN1qlPrimaryIndex (.bucketManager bucket)
                                       true false)
-             (let [limit (or (:limit (:params req))
-                             10)
-                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
-                                          (pp/cl-format nil
-                                                        "SELECT * FROM `travel-sample` WHERE type = \"airline\" LIMIT ~A"
-                                                        limit)))
+             (let [limit (or (:limit (:params req)) 10)
+                   offset (or (:offset (:params req)) 0)
+                   select-expr (pp/cl-format
+                                nil
+                                "SELECT * FROM `travel-sample` WHERE type = \"airline\" LIMIT ~A OFFSET ~A"
+                                limit offset)
+                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
                    vals (map (fn [r](:travel-sample (json/read-json (.toString (.value r)))))
                              result)]
                (json/write-str vals))))})
@@ -74,12 +75,13 @@
            (let [bucket (.openBucket couch "travel-sample")]
              (.createN1qlPrimaryIndex (.bucketManager bucket)
                                       true false)
-             (let [limit (or (:limit (:params req))
-                             10)
-                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
-                                          (pp/cl-format nil
-                                                        "SELECT * FROM `travel-sample` WHERE type = \"airport\" LIMIT ~A"
-                                                        limit)))
+             (let [limit (or (:limit (:params req)) 10)
+                   offset (or (:offset (:params req)) 0)
+                   select-expr (pp/cl-format
+                                nil
+                                "SELECT * FROM `travel-sample` WHERE type = \"airport\" LIMIT ~A OFFSET ~A"
+                                limit offset)
+                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
                    vals (map (fn [r](:travel-sample (json/read-json (.toString (.value r)))))
                              result)]
                (json/write-str vals))))})
@@ -92,12 +94,13 @@
            (let [bucket (.openBucket couch "travel-sample")]
              (.createN1qlPrimaryIndex (.bucketManager bucket)
                                       true false)
-             (let [limit (or (:limit (:params req))
-                             10)
-                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
-                                          (pp/cl-format nil
-                                                        "SELECT * FROM `travel-sample` WHERE type = \"hotel\" LIMIT ~A"
-                                                        limit)))
+             (let [limit (or (:limit (:params req)) 10)
+                   offset (or (:offset (:params req)) 0)
+                   select-expr (pp/cl-format
+                                nil
+                                "SELECT * FROM `travel-sample` WHERE type = \"hotel\" LIMIT ~A OFFSET ~A"
+                                limit offset)
+                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
                    vals (map (fn [r](:travel-sample (json/read-json (.toString (.value r)))))
                              result)]
                (json/write-str vals))))})
