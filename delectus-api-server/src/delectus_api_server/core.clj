@@ -57,7 +57,7 @@
              (.createN1qlPrimaryIndex (.bucketManager bucket)
                                       true false)
              (let [limit (or (:limit (:params req))
-                             50)
+                             10)
                    result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
                                           (pp/cl-format nil
                                                         "SELECT * FROM `travel-sample` WHERE type = \"airline\" LIMIT ~A"
@@ -75,7 +75,7 @@
              (.createN1qlPrimaryIndex (.bucketManager bucket)
                                       true false)
              (let [limit (or (:limit (:params req))
-                             50)
+                             10)
                    result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
                                           (pp/cl-format nil
                                                         "SELECT * FROM `travel-sample` WHERE type = \"airport\" LIMIT ~A"
@@ -93,7 +93,7 @@
              (.createN1qlPrimaryIndex (.bucketManager bucket)
                                       true false)
              (let [limit (or (:limit (:params req))
-                             50)
+                             10)
                    result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
                                           (pp/cl-format nil
                                                         "SELECT * FROM `travel-sample` WHERE type = \"hotel\" LIMIT ~A"
