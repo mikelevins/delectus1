@@ -5,13 +5,31 @@
             [ring.middleware.defaults :refer :all]
             [clojure.pprint :as pp]
             [clojure.string :as str]
-            [clojure.data.json :as json]
-            )
+            [clojure.data.json :as json])
   (:gen-class))
+
+;;; ---------------------------------------------------------------------
+;;; couchbase connection
+;;; ---------------------------------------------------------------------
+
+(defonce +couchbase-cluster-name+ "mars.local")
+(defonce +couchbase-cluster+ (atom nil))
+
+(defn couchbase-cluster []
+  @+couchbase-cluster+)
+
+(defn init-couchbase-cluster []
+  (when (nil? @+couchbase-cluster+)
+    (swap! +couchbase-cluster+
+           (fn [old-val]
+             (com.couchbase.client.java.CouchbaseCluster/create [+couchbase-cluster-name+]))))
+  @+couchbase-cluster+)
 
 ;;; ---------------------------------------------------------------------
 ;;; test handlers
 ;;; ---------------------------------------------------------------------
+
+;;; generic handlers
 
 (defn landing-page [req]
   {:status  200
@@ -25,10 +43,12 @@
           (pp/pprint req)
           (str "Hello, " (:name (:params req))))})
 
+;;; handlers that use the Couchbase API
+
 (defn status [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+   :body (let [couch (init-couchbase-cluster)]
            (.authenticate couch "admin" "password")
            (let [mgr (.clusterManager couch)
                  info (.raw (.info mgr))]
@@ -38,7 +58,7 @@
 (defn travel-types [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+   :body (let [couch (init-couchbase-cluster)]
            (.authenticate couch "admin" "password")
            (let [bucket (.openBucket couch "travel-sample")]
              (.createN1qlPrimaryIndex (.bucketManager bucket) true false)
@@ -51,7 +71,7 @@
 (defn airlines [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+   :body (let [couch (init-couchbase-cluster)]
            (.authenticate couch "admin" "password")
            (let [bucket (.openBucket couch "travel-sample")]
              (.createN1qlPrimaryIndex (.bucketManager bucket)
@@ -70,7 +90,7 @@
 (defn airports [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+   :body (let [couch (init-couchbase-cluster)]
            (.authenticate couch "admin" "password")
            (let [bucket (.openBucket couch "travel-sample")]
              (.createN1qlPrimaryIndex (.bucketManager bucket)
@@ -89,7 +109,7 @@
 (defn hotels [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (com.couchbase.client.java.CouchbaseCluster/create ["mars.local"])]
+   :body (let [couch (init-couchbase-cluster)]
            (.authenticate couch "admin" "password")
            (let [bucket (.openBucket couch "travel-sample")]
              (.createN1qlPrimaryIndex (.bucketManager bucket)
@@ -120,7 +140,7 @@
   (GET "/airports" [] airports)
   (GET "/hotels" [] hotels)
   ;; Delectus API routes
-  ;; default route
+  ;; default ("Page not found") route
   (route/not-found "Error, page not found!"))
 
 ;;; ---------------------------------------------------------------------
