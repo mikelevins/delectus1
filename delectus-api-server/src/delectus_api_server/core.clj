@@ -30,20 +30,27 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; generic handlers
+;;; ----------------
 
 (defn landing-page [req]
   {:status  200
    :headers {"Content-Type" "text/html"}
-   :body    "Delectus 2 API Server, v 0.1"})
+   :body    "<h1>Delectus 2 API Server, v 0.1</h1>"})
 
 (defn hello-name [req]
   {:status 200
    :headers {"Content-type" "text/html"}
-   :body (->
-          (pp/pprint req)
-          (str "Hello, " (:name (:params req))))})
+   :body (let [nm (:name (:params req))]
+            (if nm
+              (str "Hello, " nm "!")
+              (str "Hello!")))})
 
 ;;; handlers that use the Couchbase API
+;;; -----------------------------------
+
+(defn ensure-primary-index [bucket]
+  ;; create a N1QL primary index, unless it already exists
+  (.createN1qlPrimaryIndex (.bucketManager bucket) true false))
 
 (defn status [req]
   {:status 200
@@ -55,75 +62,60 @@
              (.toString info)))})
 
 ;;; returns: ("airline" "airport" "hotel" "landmark" "route")
-(defn travel-types [req]
+(defn document-types [req bucket-name]
   {:status 200
    :headers {"Content-type" "application/json"}
    :body (let [couch (init-couchbase-cluster)]
            (.authenticate couch "admin" "password")
-           (let [bucket (.openBucket couch "travel-sample")]
-             (.createN1qlPrimaryIndex (.bucketManager bucket) true false)
-             (let [result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple
-                                          "SELECT type FROM `travel-sample` WHERE type IS NOT MISSING"))
+           (let [bucket (.openBucket couch bucket-name)]
+             (ensure-primary-index bucket)
+             (let [select-expression (pp/cl-format nil
+                                                   "SELECT type FROM `~A` WHERE type IS NOT MISSING"
+                                                   bucket-name)
+                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expression))
                    vals (distinct (map (fn [r] (.value r)) result))
                    objs (map (fn [v](:type (json/read-json (.toString v)))) vals)]
                (json/write-str objs))))})
 
+(defn objects-of-type [req bucket-name type-name]
+  (let [couch (init-couchbase-cluster)]
+    (.authenticate couch "admin" "password")
+    (let [bucket (.openBucket couch bucket-name)]
+      (ensure-primary-index bucket)
+      (let [limit (or (:limit (:params req)) 10)
+            offset (or (:offset (:params req)) 0)
+            select-expr (pp/cl-format nil
+                                      "SELECT * FROM `~A` WHERE type = \"~A\" LIMIT ~A OFFSET ~A"
+                                      bucket-name type-name limit offset)
+            result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
+            vals (map (fn [r](get (json/read-json (.toString (.value r))) (keyword bucket-name)))
+                      result)]
+        (json/write-str vals)))))
+
 (defn airlines [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (init-couchbase-cluster)]
-           (.authenticate couch "admin" "password")
-           (let [bucket (.openBucket couch "travel-sample")]
-             (.createN1qlPrimaryIndex (.bucketManager bucket)
-                                      true false)
-             (let [limit (or (:limit (:params req)) 10)
-                   offset (or (:offset (:params req)) 0)
-                   select-expr (pp/cl-format
-                                nil
-                                "SELECT * FROM `travel-sample` WHERE type = \"airline\" LIMIT ~A OFFSET ~A"
-                                limit offset)
-                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
-                   vals (map (fn [r](:travel-sample (json/read-json (.toString (.value r)))))
-                             result)]
-               (json/write-str vals))))})
+   :body (objects-of-type req "travel-sample" "airline")})
 
 (defn airports [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (init-couchbase-cluster)]
-           (.authenticate couch "admin" "password")
-           (let [bucket (.openBucket couch "travel-sample")]
-             (.createN1qlPrimaryIndex (.bucketManager bucket)
-                                      true false)
-             (let [limit (or (:limit (:params req)) 10)
-                   offset (or (:offset (:params req)) 0)
-                   select-expr (pp/cl-format
-                                nil
-                                "SELECT * FROM `travel-sample` WHERE type = \"airport\" LIMIT ~A OFFSET ~A"
-                                limit offset)
-                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
-                   vals (map (fn [r](:travel-sample (json/read-json (.toString (.value r)))))
-                             result)]
-               (json/write-str vals))))})
+   :body (objects-of-type req "travel-sample" "airport")})
 
 (defn hotels [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (init-couchbase-cluster)]
-           (.authenticate couch "admin" "password")
-           (let [bucket (.openBucket couch "travel-sample")]
-             (.createN1qlPrimaryIndex (.bucketManager bucket)
-                                      true false)
-             (let [limit (or (:limit (:params req)) 10)
-                   offset (or (:offset (:params req)) 0)
-                   select-expr (pp/cl-format
-                                nil
-                                "SELECT * FROM `travel-sample` WHERE type = \"hotel\" LIMIT ~A OFFSET ~A"
-                                limit offset)
-                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
-                   vals (map (fn [r](:travel-sample (json/read-json (.toString (.value r)))))
-                             result)]
-               (json/write-str vals))))})
+   :body (objects-of-type req "travel-sample" "hotel")})
+
+(defn landmarks [req]
+  {:status 200
+   :headers {"Content-type" "application/json"}
+   :body (objects-of-type req "travel-sample" "landmark")})
+
+(defn travel-routes [req]
+  {:status 200
+   :headers {"Content-type" "application/json"}
+   :body (objects-of-type req "travel-sample" "route")})
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
@@ -135,10 +127,12 @@
   ;; testing routes
   (GET "/hello" [] hello-name)
   (GET "/status" [] status)
-  (GET "/travel-types" [] travel-types)
+  (GET "/document-types" [] (fn [req] (document-types req "travel-sample")))
   (GET "/airlines" [] airlines)
   (GET "/airports" [] airports)
   (GET "/hotels" [] hotels)
+  (GET "/landmarks" [] landmarks)
+  (GET "/routes" [] travel-routes)
   ;; Delectus API routes
   ;; default ("Page not found") route
   (route/not-found "Error, page not found!"))
