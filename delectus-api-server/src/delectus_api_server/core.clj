@@ -123,8 +123,10 @@
 
 (defroutes app-routes
   ;; landing page
+  ;; ------------
   (GET "/" [] landing-page)
   ;; testing routes
+  ;; --------------
   (GET "/hello" [] hello-name)
   (GET "/status" [] status)
   (GET "/document-types" [] (fn [req] (document-types req "travel-sample")))
@@ -134,7 +136,10 @@
   (GET "/landmarks" [] landmarks)
   (GET "/routes" [] travel-routes)
   ;; Delectus API routes
+  ;; -------------------
+  
   ;; default ("Page not found") route
+  ;; --------------------------------
   (route/not-found "Error, page not found!"))
 
 ;;; ---------------------------------------------------------------------
