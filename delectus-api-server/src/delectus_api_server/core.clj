@@ -5,24 +5,25 @@
             [ring.middleware.defaults :refer :all]
             [clojure.pprint :as pp]
             [clojure.string :as str]
-            [clojure.data.json :as json])
+            [clojure.data.json :as json]
+            [aero.core :as aero])
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
 ;;; read the credential store
 ;;; ---------------------------------------------------------------------
 
-(defonce +delectus-credentials+ (atom nil))
+(defonce +delectus-configuration+ (atom nil))
 
-(defn delectus-credentials []
-  (if (not @+delectus-credentials+)
-    (swap! +delectus-credentials+
+(defn delectus-configuration []
+  (if (not @+delectus-configuration+)
+    (swap! +delectus-configuration+
            (fn [ignored]
-             (json/read-str (slurp "/Users/mikel/.delectus/env.json") :key-fn keyword))))
-  @+delectus-credentials+)
+             (aero/read-config "/Users/mikel/.config/delectus/config.edn"))))
+  @+delectus-configuration+)
 
-(defn reset-delectus-credentials []
-  (swap! +delectus-credentials+
+(defn reset-delectus-configuration []
+  (swap! +delectus-configuration+
          (constantly nil)))
 
 ;;; ---------------------------------------------------------------------
@@ -73,10 +74,10 @@
   {:status 200
    :headers {"Content-type" "application/json"}
    :body (let [couch (init-couchbase-cluster)
-               credentials (delectus-credentials)]
+               configuration (delectus-configuration)]
            (.authenticate couch
-                          (:delectus-travel-sample-user credentials)
-                          (:delectus-travel-sample-password credentials))
+                          (:delectus-travel-sample-user configuration)
+                          (:delectus-travel-sample-password configuration))
            (let [mgr (.clusterManager couch)
                  info (.raw (.info mgr))]
              (.toString info)))})
@@ -86,10 +87,10 @@
   {:status 200
    :headers {"Content-type" "application/json"}
    :body (let [couch (init-couchbase-cluster)
-               credentials (delectus-credentials)]
+               configuration (delectus-configuration)]
            (.authenticate couch
-                          (:delectus-travel-sample-user credentials)
-                          (:delectus-travel-sample-password credentials))
+                          (:delectus-travel-sample-user configuration)
+                          (:delectus-travel-sample-password configuration))
            (let [bucket (.openBucket couch bucket-name)]
              (ensure-primary-index bucket)
              (let [select-expression (pp/cl-format nil
@@ -102,10 +103,10 @@
 
 (defn objects-of-type [req bucket-name type-name]
   (let [couch (init-couchbase-cluster)
-        credentials (delectus-credentials)]
+        configuration (delectus-configuration)]
     (.authenticate couch
-                   (:delectus-travel-sample-user credentials)
-                   (:delectus-travel-sample-password credentials))
+                   (:delectus-travel-sample-user configuration)
+                   (:delectus-travel-sample-password configuration))
     (let [bucket (.openBucket couch bucket-name)]
       (ensure-primary-index bucket)
       (let [limit (or (:limit (:params req)) 10)

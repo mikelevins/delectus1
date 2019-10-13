@@ -14,7 +14,9 @@
                  ;; Clojure data.JSON library
                  [org.clojure/data.json "0.2.6"]
                  ;; Couchbase Java client
-                 [com.couchbase.client/java-client "2.7.9"]]
+                 [com.couchbase.client/java-client "2.7.9"]
+                 ;; aero config library
+                 [aero "1.1.3"]]
 
   :main ^:skip-aot delectus-api-server.core
   :target-path "target/%s"
