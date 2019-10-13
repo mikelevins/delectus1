@@ -10,7 +10,7 @@
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
-;;; read the credential store
+;;; read server configuration
 ;;; ---------------------------------------------------------------------
 
 (defonce +delectus-configuration+ (atom nil))
