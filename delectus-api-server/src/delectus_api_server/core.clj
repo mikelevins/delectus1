@@ -19,7 +19,7 @@
   (if (not @+delectus-configuration+)
     (swap! +delectus-configuration+
            (fn [ignored]
-             (aero/read-config "/Users/mikel/.config/delectus/config.edn"))))
+             (aero/read-config (str (java.lang.System/getenv "HOME") "/.config/delectus/config.edn")))))
   @+delectus-configuration+)
 
 (defn reset-delectus-configuration []
