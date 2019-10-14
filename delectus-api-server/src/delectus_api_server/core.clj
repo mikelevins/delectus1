@@ -40,7 +40,7 @@
   (when (nil? @+couchbase-cluster+)
     (swap! +couchbase-cluster+
            (fn [old-val]
-             (com.couchbase.client.java.CouchbaseCluster/create [+couchbase-cluster-name+]))))
+             (com.couchbase.client.java.CouchbaseCluster/create [(:delectus-db-server (delectus-configuration))]))))
   @+couchbase-cluster+)
 
 ;;; ---------------------------------------------------------------------
