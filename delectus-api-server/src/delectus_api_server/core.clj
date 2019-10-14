@@ -10,7 +10,7 @@
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
-;;; read server configuration
+;;; server configuration
 ;;; ---------------------------------------------------------------------
 
 (defonce +delectus-configuration+ (atom nil))
@@ -44,11 +44,16 @@
   @+couchbase-cluster+)
 
 ;;; ---------------------------------------------------------------------
-;;; test handlers
+;;; Couchbase support functions
 ;;; ---------------------------------------------------------------------
 
-;;; generic handlers
-;;; ----------------
+(defn uuid
+  ([] (java.util.UUID/randomUUID))
+  ([idstr] (java.util.UUID/fromString idstr)))
+
+;;; ---------------------------------------------------------------------
+;;; generic test handlers
+;;; ---------------------------------------------------------------------
 
 (defn landing-page [req]
   {:status  200
@@ -63,12 +68,9 @@
               (str "Hello, " nm "!")
               (str "Hello!")))})
 
-;;; handlers that use the Couchbase API
-;;; -----------------------------------
-
-(defn ensure-primary-index [bucket]
-  ;; create a N1QL primary index, unless it already exists
-  (.createN1qlPrimaryIndex (.bucketManager bucket) true false))
+;;; ---------------------------------------------------------------------
+;;; common Couchbase functions
+;;; ---------------------------------------------------------------------
 
 (defn status [req]
   {:status 200
@@ -81,6 +83,10 @@
            (let [mgr (.clusterManager couch)
                  info (.raw (.info mgr))]
              (.toString info)))})
+
+;;; ---------------------------------------------------------------------
+;;; travel-sample handlers and support functions
+;;; ---------------------------------------------------------------------
 
 ;;; returns: ("airline" "airport" "hotel" "landmark" "route")
 (defn document-types [req bucket-name]
@@ -143,6 +149,20 @@
   {:status 200
    :headers {"Content-type" "application/json"}
    :body (objects-of-type req "travel-sample" "route")})
+
+;;; ---------------------------------------------------------------------
+;;; collection-test handlers and support functions
+;;; ---------------------------------------------------------------------
+
+;;; (def $couch (init-couchbase-cluster))
+;;; (def $conf (delectus-configuration))
+;;; (.authenticate $couch (:delectus-admin-user $conf)(:delectus-admin-password $conf))
+;;; (def $bucket (.openBucket $couch "collection-test"))
+;;; (def $listid "test_list_1")
+;;; (def $flavor-list (new com.couchbase.client.java.datastructures.collections.CouchbaseArrayList $listid $bucket))
+;;; (.size $flavor-list)
+;;; (.add $flavor-list "Apple")
+;;; (.add $flavor-list "Banana")
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
