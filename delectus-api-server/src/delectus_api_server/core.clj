@@ -9,6 +9,15 @@
             [aero.core :as aero])
   (:gen-class))
 
+
+;;; ---------------------------------------------------------------------
+;;; general utility functions
+;;; ---------------------------------------------------------------------
+
+(defn uuid
+  ([] (java.util.UUID/randomUUID))
+  ([idstr] (java.util.UUID/fromString idstr)))
+
 ;;; ---------------------------------------------------------------------
 ;;; server configuration
 ;;; ---------------------------------------------------------------------
@@ -34,9 +43,6 @@
 (defonce +couchbase-cluster+ (atom nil))
 
 (defn couchbase-cluster []
-  @+couchbase-cluster+)
-
-(defn init-couchbase-cluster []
   (when (nil? @+couchbase-cluster+)
     (swap! +couchbase-cluster+
            (fn [old-val]
@@ -47,9 +53,9 @@
 ;;; Couchbase support functions
 ;;; ---------------------------------------------------------------------
 
-(defn uuid
-  ([] (java.util.UUID/randomUUID))
-  ([idstr] (java.util.UUID/fromString idstr)))
+(defn ensure-primary-index [bucket]
+  ;; create a N1QL primary index, unless it already exists
+  (.createN1qlPrimaryIndex (.bucketManager bucket) true false))
 
 ;;; ---------------------------------------------------------------------
 ;;; generic test handlers
@@ -75,7 +81,7 @@
 (defn status [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (init-couchbase-cluster)
+   :body (let [couch (couchbase-cluster)
                configuration (delectus-configuration)]
            (.authenticate couch
                           (:delectus-travel-sample-user configuration)
@@ -92,7 +98,7 @@
 (defn document-types [req bucket-name]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (init-couchbase-cluster)
+   :body (let [couch (couchbase-cluster)
                configuration (delectus-configuration)]
            (.authenticate couch
                           (:delectus-travel-sample-user configuration)
@@ -108,7 +114,7 @@
                (json/write-str objs))))})
 
 (defn objects-of-type [req bucket-name type-name]
-  (let [couch (init-couchbase-cluster)
+  (let [couch (couchbase-cluster)
         configuration (delectus-configuration)]
     (.authenticate couch
                    (:delectus-travel-sample-user configuration)
@@ -154,7 +160,7 @@
 ;;; collection-test handlers and support functions
 ;;; ---------------------------------------------------------------------
 
-;;; (def $couch (init-couchbase-cluster))
+;;; (def $couch (couchbase-cluster))
 ;;; (def $conf (delectus-configuration))
 ;;; (.authenticate $couch (:delectus-admin-user $conf)(:delectus-admin-password $conf))
 ;;; (def $bucket (.openBucket $couch "collection-test"))
