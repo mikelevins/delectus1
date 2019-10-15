@@ -211,10 +211,12 @@
   ;; landing page
   ;; ------------
   (GET "/" [] landing-page)
-  ;; testing routes
-  ;; --------------
+  ;; general test routes
+  ;; -------------------
   (GET "/hello" [] hello-name)
   (GET "/status" [] status)
+  ;; travel-sample test routes
+  ;; -------------------
   (GET "/document-types" [] (fn [req] (document-types req (:travel-sample-bucket-name (delectus-configuration)))))
   (GET "/airlines" [] airlines)
   (GET "/airports" [] airports)
