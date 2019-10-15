@@ -193,6 +193,15 @@
 ;;; (def $flavor-map (new com.couchbase.client.java.datastructures.collections.CouchbaseMap $mapid $bucket))
 ;;; (.size $flavor-map)
 
+;;; ---------------------------------------------------------------------
+;;; delectus handlers and support functions
+;;; ---------------------------------------------------------------------
+
+;;; (def $couch (couchbase-cluster))
+;;; (def $conf (delectus-configuration))
+;;; (.authenticate $couch (:delectus-admin-user $conf)(:delectus-admin-password $conf))
+;;; (def $bucket (.openBucket $couch (:delectus-main-bucket-name (delectus-configuration))))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
