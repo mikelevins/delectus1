@@ -49,6 +49,9 @@
   (swap! +delectus-configuration+
          (constantly nil)))
 
+;;; (reset-delectus-configuration)
+;;; (delectus-configuration)
+
 ;;; ---------------------------------------------------------------------
 ;;; couchbase connection
 ;;; ---------------------------------------------------------------------
@@ -202,6 +205,23 @@
 ;;; (.authenticate $couch (:delectus-admin-user $conf)(:delectus-admin-password $conf))
 ;;; (def $bucket (.openBucket $couch (:delectus-main-bucket-name (delectus-configuration))))
 
+(defn create-delectus-users []
+  (let [couch (couchbase-cluster)
+        configuration (delectus-configuration)]
+    (.authenticate couch
+                   (:travel-sample-user configuration)
+                   (:travel-sample-password configuration))
+    (let [bucket-name (:delectus-main-bucket-name (delectus-configuration))
+          bucket (.openBucket couch bucket-name)]
+      (let [users-doc-id (:delectus-users-document-name (delectus-configuration))
+            users-doc (.get bucket users-doc-id)]
+        (or users-doc
+            (let [docmap {}
+                  new-users-doc (new com.couchbase.client.java.datastructures.collections.CouchbaseMap
+                                     users-doc-id bucket docmap)]
+              new-users-doc))))))
+
+;;; (def $users (create-delectus-users))
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
