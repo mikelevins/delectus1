@@ -98,8 +98,8 @@
    :body (let [couch (couchbase-cluster)
                configuration (delectus-configuration)]
            (.authenticate couch
-                          (:delectus-travel-sample-user configuration)
-                          (:delectus-travel-sample-password configuration))
+                          (:travel-sample-user configuration)
+                          (:travel-sample-password configuration))
            (let [mgr (.clusterManager couch)
                  info (.raw (.info mgr))]
              (.toString info)))})
@@ -115,8 +115,8 @@
    :body (let [couch (couchbase-cluster)
                configuration (delectus-configuration)]
            (.authenticate couch
-                          (:delectus-travel-sample-user configuration)
-                          (:delectus-travel-sample-password configuration))
+                          (:travel-sample-user configuration)
+                          (:travel-sample-password configuration))
            (let [bucket (.openBucket couch bucket-name)]
              (ensure-primary-index bucket)
              (let [select-expression (pp/cl-format nil
@@ -131,8 +131,8 @@
   (let [couch (couchbase-cluster)
         configuration (delectus-configuration)]
     (.authenticate couch
-                   (:delectus-travel-sample-user configuration)
-                   (:delectus-travel-sample-password configuration))
+                   (:travel-sample-user configuration)
+                   (:travel-sample-password configuration))
     (let [bucket (.openBucket couch bucket-name)]
       (ensure-primary-index bucket)
       (let [limit (or (:limit (:params req)) 10)
@@ -148,27 +148,27 @@
 (defn airlines [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req "travel-sample" "airline")})
+   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "airline")})
 
 (defn airports [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req "travel-sample" "airport")})
+   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "airport")})
 
 (defn hotels [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req "travel-sample" "hotel")})
+   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "hotel")})
 
 (defn landmarks [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req "travel-sample" "landmark")})
+   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "landmark")})
 
 (defn travel-routes [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req "travel-sample" "route")})
+   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "route")})
 
 ;;; ---------------------------------------------------------------------
 ;;; collection-test handlers and support functions
@@ -206,7 +206,7 @@
   ;; --------------
   (GET "/hello" [] hello-name)
   (GET "/status" [] status)
-  (GET "/document-types" [] (fn [req] (document-types req "travel-sample")))
+  (GET "/document-types" [] (fn [req] (document-types req (:travel-sample-bucket-name (delectus-configuration)))))
   (GET "/airlines" [] airlines)
   (GET "/airports" [] airports)
   (GET "/hotels" [] hotels)
