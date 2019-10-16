@@ -12,59 +12,10 @@
             [delectus-api-server.route-handlers :as handlers]
             [delectus-api-server.couchbase.utilities :as couch-utils]
             [delectus-api-server.couchbase.route-handlers :as couch-handlers]
-            [delectus-api-server.couchbase.travel-sample.route-handlers :as travel-handlers])
+            [delectus-api-server.couchbase.travel-sample.route-handlers :as travel-handlers]
+            [delectus-api-server.couchbase.delectus.route-handlers :as delectus-handlers])
   (:gen-class))
 
-
-;;; ---------------------------------------------------------------------
-;;; collection-test handlers and support functions
-;;; ---------------------------------------------------------------------
-
-;;; (def $couch (couchbase-cluster))
-;;; (def $conf (delectus-configuration))
-;;; (.authenticate $couch (:delectus-admin-user $conf)(:delectus-admin-password $conf))
-;;; (def $bucket (.openBucket $couch "collection-test"))
-
-;;; List
-;;; (def $listid "test_list_1")
-;;; (def $flavor-list (new com.couchbase.client.java.datastructures.collections.CouchbaseArrayList $listid $bucket))
-;;; (.size $flavor-list)
-;;; (.add $flavor-list "Apple")
-;;; (.add $flavor-list "Banana")
-
-;;; Map
-;;; (def $mapid "test_map_1")
-;;; (def $mapval { "Apple" "red", "Banana" "yellow", "Cherry" "red"})
-;;; (def $flavor-map (new com.couchbase.client.java.datastructures.collections.CouchbaseMap $mapid $bucket $mapval))
-;;; (def $flavor-map (new com.couchbase.client.java.datastructures.collections.CouchbaseMap $mapid $bucket))
-;;; (.size $flavor-map)
-
-;;; ---------------------------------------------------------------------
-;;; delectus handlers and support functions
-;;; ---------------------------------------------------------------------
-
-;;; (def $couch (couchbase-cluster))
-;;; (def $conf (delectus-configuration))
-;;; (.authenticate $couch (:delectus-admin-user $conf)(:delectus-admin-password $conf))
-;;; (def $bucket (.openBucket $couch (:delectus-main-bucket-name (delectus-configuration))))
-
-;;; should be needed exactly once: to create the "delectus-users" document
-(defn create-delectus-users []
-  (let [couch (config/couchbase-cluster)
-        configuration (config/delectus-configuration)]
-    (.authenticate couch
-                   (:travel-sample-user configuration)
-                   (:travel-sample-password configuration))
-    (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
-          bucket (.openBucket couch bucket-name)]
-      (let [users-doc-id (:delectus-users-document-name (config/delectus-configuration))
-            users-doc (.get bucket users-doc-id)]
-        (or users-doc
-            (let [new-users-doc (new com.couchbase.client.java.datastructures.collections.CouchbaseMap
-                                     users-doc-id bucket {})]
-              new-users-doc))))))
-
-;;; (def $users (create-delectus-users))
 
 ;;; ---------------------------------------------------------------------
 ;;; routes

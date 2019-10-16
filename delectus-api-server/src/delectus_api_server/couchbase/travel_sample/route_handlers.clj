@@ -2,8 +2,7 @@
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
             [delectus-api-server.configuration :as config]
-            [delectus-api-server.couchbase.utilities :as couch-utils]
-            ))
+            [delectus-api-server.couchbase.utilities :as couch-utils]))
 
 ;;; ---------------------------------------------------------------------
 ;;; travel-sample handlers and support functions
