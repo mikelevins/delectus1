@@ -21,24 +21,22 @@
 ;;; ---------------------------------------------------------------------
 
 (defroutes app-routes
-  ;; landing page
-  ;; ------------
   (GET "/" [] handlers/landing-page)
+
   ;; general test routes
   ;; -------------------
   (GET "/hello" [] handlers/hello-name)
   (GET "/status" [] couch-handlers/status)
+
   ;; travel-sample test routes
   ;; -------------------
-  (GET "/document-types" [] (fn [req]
-                              (travel-handlers/document-types
-                               req
-                               (:travel-sample-bucket-name (config/delectus-configuration)))))
+  (GET "/document-types" [] travel-handlers/document-types)
   (GET "/airlines" [] travel-handlers/airlines)
   (GET "/airports" [] travel-handlers/airports)
   (GET "/hotels" [] travel-handlers/hotels)
   (GET "/landmarks" [] travel-handlers/landmarks)
   (GET "/routes" [] travel-handlers/travel-routes)
+
   ;; Delectus API routes
   ;; -------------------
   

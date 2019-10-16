@@ -9,23 +9,24 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; returns: ("airline" "airport" "hotel" "landmark" "route")
-(defn document-types [req bucket-name]
-  {:status 200
-   :headers {"Content-type" "application/json"}
-   :body (let [couch (config/couchbase-cluster)
-               configuration (config/delectus-configuration)]
-           (.authenticate couch
-                          (:travel-sample-user configuration)
-                          (:travel-sample-password configuration))
-           (let [bucket (.openBucket couch bucket-name)]
-             (couch-utils/ensure-primary-index bucket)
-             (let [select-expression (pp/cl-format nil
-                                                   "SELECT type FROM `~A` WHERE type IS NOT MISSING"
-                                                   bucket-name)
-                   result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expression))
-                   vals (distinct (map (fn [r] (.value r)) result))
-                   objs (map (fn [v](:type (json/read-json (.toString v)))) vals)]
-               (json/write-str objs))))})
+(defn document-types [req]
+  (let [bucket-name (:travel-sample-bucket-name (config/delectus-configuration))]
+    {:status 200
+     :headers {"Content-type" "application/json"}
+     :body (let [couch (config/couchbase-cluster)
+                 configuration (config/delectus-configuration)]
+             (.authenticate couch
+                            (:travel-sample-user configuration)
+                            (:travel-sample-password configuration))
+             (let [bucket (.openBucket couch bucket-name)]
+               (couch-utils/ensure-primary-index bucket)
+               (let [select-expression (pp/cl-format nil
+                                                     "SELECT type FROM `~A` WHERE type IS NOT MISSING"
+                                                     bucket-name)
+                     result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expression))
+                     vals (distinct (map (fn [r] (.value r)) result))
+                     objs (map (fn [v](:type (json/read-json (.toString v)))) vals)]
+                 (json/write-str objs))))}))
 
 (defn objects-of-type [req bucket-name type-name]
   (let [couch (config/couchbase-cluster)
