@@ -16,7 +16,6 @@
             [delectus-api-server.couchbase.delectus.route-handlers :as delectus-handlers])
   (:gen-class))
 
-
 ;;; ---------------------------------------------------------------------
 ;;; routes
 ;;; ---------------------------------------------------------------------
