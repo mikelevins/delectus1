@@ -8,37 +8,14 @@
             [clojure.data.json :as json]
             [aero.core :as aero]
             [delectus-api-server.configuration :as config]
-            [delectus-api-server.utilities :as utils])
+            [delectus-api-server.utilities :as utils]
+            [delectus-api-server.route-handlers :as handlers]
+            [delectus-api-server.couchbase.utilities :as couch-utils])
   (:gen-class))
 
 
 ;;; ---------------------------------------------------------------------
-;;; Couchbase support functions
-;;; ---------------------------------------------------------------------
-
-(defn ensure-primary-index [bucket]
-  ;; create a N1QL primary index, unless it already exists
-  (.createN1qlPrimaryIndex (.bucketManager bucket) true false))
-
-;;; ---------------------------------------------------------------------
-;;; generic test handlers
-;;; ---------------------------------------------------------------------
-
-(defn landing-page [req]
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body    "<h1>Delectus 2 API Server, v 0.1</h1>"})
-
-(defn hello-name [req]
-  {:status 200
-   :headers {"Content-type" "text/html"}
-   :body (let [nm (:name (:params req))]
-            (if nm
-              (str "Hello, " nm "!")
-              (str "Hello!")))})
-
-;;; ---------------------------------------------------------------------
-;;; common Couchbase functions
+;;; Couchbase handlers
 ;;; ---------------------------------------------------------------------
 
 (defn status [req]
@@ -67,7 +44,7 @@
                           (:travel-sample-user configuration)
                           (:travel-sample-password configuration))
            (let [bucket (.openBucket couch bucket-name)]
-             (ensure-primary-index bucket)
+             (couch-utils/ensure-primary-index bucket)
              (let [select-expression (pp/cl-format nil
                                                    "SELECT type FROM `~A` WHERE type IS NOT MISSING"
                                                    bucket-name)
@@ -83,7 +60,7 @@
                    (:travel-sample-user configuration)
                    (:travel-sample-password configuration))
     (let [bucket (.openBucket couch bucket-name)]
-      (ensure-primary-index bucket)
+      (couch-utils/ensure-primary-index bucket)
       (let [limit (or (:limit (:params req)) 10)
             offset (or (:offset (:params req)) 0)
             select-expr (pp/cl-format nil
@@ -176,10 +153,10 @@
 (defroutes app-routes
   ;; landing page
   ;; ------------
-  (GET "/" [] landing-page)
+  (GET "/" [] handlers/landing-page)
   ;; general test routes
   ;; -------------------
-  (GET "/hello" [] hello-name)
+  (GET "/hello" [] handlers/hello-name)
   (GET "/status" [] status)
   ;; travel-sample test routes
   ;; -------------------
