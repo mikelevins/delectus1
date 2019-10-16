@@ -48,9 +48,7 @@
 ;;; main server program
 ;;; ---------------------------------------------------------------------
 
-(defn -main
-  "This is our main entry point"
-  [& args]
+(defn -main [& args]
   (let [port (Integer/parseInt (or (System/getenv "PORT") "9000"))]
     ;; Run the server with Ring.defaults middleware
     (server/run-server (wrap-defaults #'app-routes site-defaults) {:port port})
