@@ -7,28 +7,10 @@
             [clojure.string :as str]
             [clojure.data.json :as json]
             [aero.core :as aero]
-            [delectus-api-server.configuration :as config])
+            [delectus-api-server.configuration :as config]
+            [delectus-api-server.utilities :as utils])
   (:gen-class))
 
-
-;;; ---------------------------------------------------------------------
-;;; general utility functions
-;;; ---------------------------------------------------------------------
-
-(defn uuid
-  ([] (java.util.UUID/randomUUID))
-  ([idstr] (java.util.UUID/fromString idstr)))
-
-(defn ->base64 [int-vector]
-  (.encodeToString (java.util.Base64/getUrlEncoder)
-                   (byte-array int-vector)))
-
-(defn make-api-key []
-  (let [bytes (byte-array 32)]
-    (.nextBytes @config/+delectus-session-rng+ bytes)
-    (->base64 bytes)))
-
-;;; (make-api-key)
 
 ;;; ---------------------------------------------------------------------
 ;;; Couchbase support functions
