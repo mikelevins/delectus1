@@ -3,6 +3,7 @@
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer :all]
+            [delectus-api-server.configuration :as config]
             [delectus-api-server.route-handlers :as handlers]
             [delectus-api-server.couchbase.route-handlers :as couch-handlers]
             [delectus-api-server.couchbase.travel-sample.route-handlers :as travel-handlers]

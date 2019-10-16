@@ -14,8 +14,8 @@
   (let [couch (config/couchbase-cluster)
         configuration (config/delectus-configuration)]
     (.authenticate couch
-                   (:travel-sample-user configuration)
-                   (:travel-sample-password configuration))
+                   (:delectus-admin-user configuration)
+                   (:delectus-admin-password configuration))
     (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
           bucket (.openBucket couch bucket-name)]
       (let [users-doc-id (:delectus-users-document-name (config/delectus-configuration))
@@ -31,6 +31,34 @@
 ;;; (def $bucket (.openBucket $couch (:delectus-main-bucket-name (config/delectus-configuration))))
 ;;; (def $users (delectus-users))
 
+(defn make-userid [username]
+  (str "user::" username))
+
+(defn make-user-map [username]
+  (couch-utils/->JsonObject
+   {"username" username
+    "collections" []
+    "lists" []}))
+
+;;; (make-user-map "mikel")
+;;; (.get (make-user-map "mikel") "username")
+
+(defn add-delectus-user [usermap]
+  (let [couch (config/couchbase-cluster)
+        configuration (config/delectus-configuration)]
+    (.authenticate couch
+                   (:delectus-admin-user configuration)
+                   (:delectus-admin-password configuration))
+    (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
+          bucket (.openBucket couch bucket-name)
+          users-doc-id (:delectus-users-document-name (config/delectus-configuration))
+          users-couchmap (com.couchbase.client.java.datastructures.collections.CouchbaseMap. users-doc-id bucket)
+          username (.get usermap "username")
+          userid (make-userid username)]
+      (.put users-couchmap userid usermap)
+      userid)))
+
+;;; (add-delectus-user (make-user-map "mikel"))
 
 (defn root [req]
   {:status  200
@@ -46,3 +74,4 @@
                   ;;users (json/read-json (.toString found))
                   ]
               (.toString (.content found)))})
+
