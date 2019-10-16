@@ -1,16 +1,18 @@
 (ns delectus-api-server.utilities
-  (:require [delectus-api-server.configuration :as config]))
+  (:require [delectus-api-server.configuration :as config])
+  (:import
+   (java.util Base64 UUID)))
 
 ;;; ---------------------------------------------------------------------
 ;;; general utility functions
 ;;; ---------------------------------------------------------------------
 
 (defn uuid
-  ([] (java.util.UUID/randomUUID))
-  ([idstr] (java.util.UUID/fromString idstr)))
+  ([] (UUID/randomUUID))
+  ([idstr] (UUID/fromString idstr)))
 
 (defn ->base64 [int-vector]
-  (.encodeToString (java.util.Base64/getUrlEncoder)
+  (.encodeToString (Base64/getUrlEncoder)
                    (byte-array int-vector)))
 
 (defn make-api-key []

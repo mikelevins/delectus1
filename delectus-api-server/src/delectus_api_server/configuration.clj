@@ -1,5 +1,9 @@
 (ns delectus-api-server.configuration
-  (:require [aero.core :as aero]))
+  (:require 
+   [aero.core :as aero])
+  (:import
+   (java.lang System)
+   (com.couchbase.client.java CouchbaseCluster)))
 
 (defonce +delectus-session-rng+ (atom (new java.security.SecureRandom)))
 (defonce +delectus-configuration+ (atom nil))
@@ -12,7 +16,7 @@
   (if (not @+delectus-configuration+)
     (swap! +delectus-configuration+
            (fn [ignored]
-             (aero/read-config (str (java.lang.System/getenv "HOME") "/.config/delectus/config.edn")))))
+             (aero/read-config (str (System/getenv "HOME") "/.config/delectus/config.edn")))))
   @+delectus-configuration+)
 
 (defn reset-delectus-configuration []
@@ -34,7 +38,7 @@
   (when (nil? @+couchbase-cluster+)
     (swap! +couchbase-cluster+
            (fn [old-val]
-             (com.couchbase.client.java.CouchbaseCluster/create [(:delectus-db-server (delectus-configuration))]))))
+             (CouchbaseCluster/create [(:delectus-db-server (delectus-configuration))]))))
   @+couchbase-cluster+)
 
 

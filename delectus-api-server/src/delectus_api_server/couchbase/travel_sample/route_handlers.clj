@@ -2,7 +2,9 @@
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
             [delectus-api-server.configuration :as config]
-            [delectus-api-server.couchbase.utilities :as couch-utils]))
+            [delectus-api-server.couchbase.utilities :as couch-utils])
+  (:import
+   (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
 ;;; travel-sample handlers and support functions
@@ -23,7 +25,7 @@
                (let [select-expression (pp/cl-format nil
                                                      "SELECT type FROM `~A` WHERE type IS NOT MISSING"
                                                      bucket-name)
-                     result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expression))
+                     result (.query bucket (N1qlQuery/simple select-expression))
                      vals (distinct (map (fn [r] (.value r)) result))
                      objs (map (fn [v](:type (json/read-json (.toString v)))) vals)]
                  (json/write-str objs))))}))
@@ -41,7 +43,7 @@
             select-expr (pp/cl-format nil
                                       "SELECT * FROM `~A` WHERE type = \"~A\" LIMIT ~A OFFSET ~A"
                                       bucket-name type-name limit offset)
-            result (.query bucket (com.couchbase.client.java.query.N1qlQuery/simple select-expr))
+            result (.query bucket (N1qlQuery/simple select-expr))
             vals (map (fn [r](get (json/read-json (.toString (.value r))) (keyword bucket-name)))
                       result)]
         (json/write-str vals)))))

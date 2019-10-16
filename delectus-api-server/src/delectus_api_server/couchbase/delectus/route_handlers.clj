@@ -4,7 +4,9 @@
             [clojure.data.json :as json]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.utilities :as couch-utils]
-            [hiccup.core :refer :all]))
+            [hiccup.core :refer :all])
+  (:import
+   (com.couchbase.client.java.datastructures.collections CouchbaseMap)))
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus handlers and support functions
@@ -21,8 +23,7 @@
       (let [users-doc-id (:delectus-users-document-name (config/delectus-configuration))
             users-doc (.get bucket users-doc-id)]
         (or users-doc
-            (let [new-users-doc (new com.couchbase.client.java.datastructures.collections.CouchbaseMap
-                                     users-doc-id bucket {})]
+            (let [new-users-doc (new CouchbaseMap users-doc-id bucket {})]
               new-users-doc))))))
 
 ;;; (def $couch (config/couchbase-cluster))
@@ -37,8 +38,9 @@
 (defn make-user-map [username]
   (couch-utils/->JsonObject
    {"username" username
-    "collections" []
-    "lists" []}))
+    "password_hash" ""
+    "collections" {}
+    "lists" {}}))
 
 ;;; (make-user-map "mikel")
 ;;; (.get (make-user-map "mikel") "username")
@@ -52,7 +54,7 @@
     (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
           bucket (.openBucket couch bucket-name)
           users-doc-id (:delectus-users-document-name (config/delectus-configuration))
-          users-couchmap (com.couchbase.client.java.datastructures.collections.CouchbaseMap. users-doc-id bucket)
+          users-couchmap (new CouchbaseMap users-doc-id bucket)
           username (.get usermap "username")
           userid (make-userid username)]
       (.put users-couchmap userid usermap)
@@ -67,7 +69,7 @@
     (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
           bucket (.openBucket couch bucket-name)
           users-doc-id (:delectus-users-document-name (config/delectus-configuration))
-          users-couchmap (com.couchbase.client.java.datastructures.collections.CouchbaseMap. users-doc-id bucket)
+          users-couchmap (new CouchbaseMap users-doc-id bucket)
           userid (make-userid username)]
       (if (.containsKey users-couchmap userid)
         (.remove users-couchmap userid))
@@ -82,12 +84,9 @@
    :body    (html [:h1 "Delectus 2"]
                   [:p "version 0.1"])})
 
-
 (defn users [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
-   :body    (let [found (delectus-users)
-                  ;;users (json/read-json (.toString found))
-                  ]
+   :body    (let [found (delectus-users)]
               (.toString (.content found)))})
 
