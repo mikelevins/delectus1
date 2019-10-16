@@ -6,16 +6,14 @@
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
-            [aero.core :as aero])
+            [aero.core :as aero]
+            [delectus-api-server.configuration :as config])
   (:gen-class))
 
 
 ;;; ---------------------------------------------------------------------
 ;;; general utility functions
 ;;; ---------------------------------------------------------------------
-
-(defonce +delectus-session-rng+ (atom (new java.security.SecureRandom)))
-;;; @+delectus-session-rng+
 
 (defn uuid
   ([] (java.util.UUID/randomUUID))
@@ -27,44 +25,10 @@
 
 (defn make-api-key []
   (let [bytes (byte-array 32)]
-    (.nextBytes @+delectus-session-rng+ bytes)
+    (.nextBytes @config/+delectus-session-rng+ bytes)
     (->base64 bytes)))
 
 ;;; (make-api-key)
-
-;;; ---------------------------------------------------------------------
-;;; server configuration
-;;; ---------------------------------------------------------------------
-
-(defonce +delectus-configuration+ (atom nil))
-
-(defn delectus-configuration []
-  (if (not @+delectus-configuration+)
-    (swap! +delectus-configuration+
-           (fn [ignored]
-             (aero/read-config (str (java.lang.System/getenv "HOME") "/.config/delectus/config.edn")))))
-  @+delectus-configuration+)
-
-(defn reset-delectus-configuration []
-  (swap! +delectus-configuration+
-         (constantly nil)))
-
-;;; (reset-delectus-configuration)
-;;; (delectus-configuration)
-
-;;; ---------------------------------------------------------------------
-;;; couchbase connection
-;;; ---------------------------------------------------------------------
-
-(defonce +couchbase-cluster-name+ (:delectus-db-server (delectus-configuration)))
-(defonce +couchbase-cluster+ (atom nil))
-
-(defn couchbase-cluster []
-  (when (nil? @+couchbase-cluster+)
-    (swap! +couchbase-cluster+
-           (fn [old-val]
-             (com.couchbase.client.java.CouchbaseCluster/create [(:delectus-db-server (delectus-configuration))]))))
-  @+couchbase-cluster+)
 
 ;;; ---------------------------------------------------------------------
 ;;; Couchbase support functions
@@ -98,8 +62,8 @@
 (defn status [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (couchbase-cluster)
-               configuration (delectus-configuration)]
+   :body (let [couch (config/couchbase-cluster)
+               configuration (config/delectus-configuration)]
            (.authenticate couch
                           (:travel-sample-user configuration)
                           (:travel-sample-password configuration))
@@ -115,8 +79,8 @@
 (defn document-types [req bucket-name]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (couchbase-cluster)
-               configuration (delectus-configuration)]
+   :body (let [couch (config/couchbase-cluster)
+               configuration (config/delectus-configuration)]
            (.authenticate couch
                           (:travel-sample-user configuration)
                           (:travel-sample-password configuration))
@@ -131,8 +95,8 @@
                (json/write-str objs))))})
 
 (defn objects-of-type [req bucket-name type-name]
-  (let [couch (couchbase-cluster)
-        configuration (delectus-configuration)]
+  (let [couch (config/couchbase-cluster)
+        configuration (config/delectus-configuration)]
     (.authenticate couch
                    (:travel-sample-user configuration)
                    (:travel-sample-password configuration))
@@ -151,27 +115,27 @@
 (defn airlines [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "airline")})
+   :body (objects-of-type req (:travel-sample-bucket-name (config/delectus-configuration)) "airline")})
 
 (defn airports [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "airport")})
+   :body (objects-of-type req (:travel-sample-bucket-name (config/delectus-configuration)) "airport")})
 
 (defn hotels [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "hotel")})
+   :body (objects-of-type req (:travel-sample-bucket-name (config/delectus-configuration)) "hotel")})
 
 (defn landmarks [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "landmark")})
+   :body (objects-of-type req (:travel-sample-bucket-name (config/delectus-configuration)) "landmark")})
 
 (defn travel-routes [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (objects-of-type req (:travel-sample-bucket-name (delectus-configuration)) "route")})
+   :body (objects-of-type req (:travel-sample-bucket-name (config/delectus-configuration)) "route")})
 
 ;;; ---------------------------------------------------------------------
 ;;; collection-test handlers and support functions
@@ -205,15 +169,16 @@
 ;;; (.authenticate $couch (:delectus-admin-user $conf)(:delectus-admin-password $conf))
 ;;; (def $bucket (.openBucket $couch (:delectus-main-bucket-name (delectus-configuration))))
 
+;;; should be needed exactly once: to create the "delectus-users" document
 (defn create-delectus-users []
-  (let [couch (couchbase-cluster)
-        configuration (delectus-configuration)]
+  (let [couch (config/couchbase-cluster)
+        configuration (config/delectus-configuration)]
     (.authenticate couch
                    (:travel-sample-user configuration)
                    (:travel-sample-password configuration))
-    (let [bucket-name (:delectus-main-bucket-name (delectus-configuration))
+    (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
           bucket (.openBucket couch bucket-name)]
-      (let [users-doc-id (:delectus-users-document-name (delectus-configuration))
+      (let [users-doc-id (:delectus-users-document-name (config/delectus-configuration))
             users-doc (.get bucket users-doc-id)]
         (or users-doc
             (let [new-users-doc (new com.couchbase.client.java.datastructures.collections.CouchbaseMap
@@ -236,7 +201,7 @@
   (GET "/status" [] status)
   ;; travel-sample test routes
   ;; -------------------
-  (GET "/document-types" [] (fn [req] (document-types req (:travel-sample-bucket-name (delectus-configuration)))))
+  (GET "/document-types" [] (fn [req] (document-types req (:travel-sample-bucket-name (config/delectus-configuration)))))
   (GET "/airlines" [] airlines)
   (GET "/airports" [] airports)
   (GET "/hotels" [] hotels)
