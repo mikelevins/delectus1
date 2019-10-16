@@ -16,7 +16,9 @@
                  ;; Couchbase Java client
                  [com.couchbase.client/java-client "2.7.9"]
                  ;; aero config library
-                 [aero "1.1.3"]]
+                 [aero "1.1.3"]
+                 ;; hiccup HTML generator
+                 [hiccup "1.0.5"]]
 
   :main ^:skip-aot delectus-api-server.core
   :target-path "target/%s"

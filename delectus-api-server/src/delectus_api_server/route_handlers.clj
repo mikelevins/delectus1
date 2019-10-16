@@ -7,7 +7,7 @@
 (defn landing-page [req]
   {:status  200
    :headers {"Content-Type" "text/html"}
-   :body    "<h1>Delectus 2 API Server, v 0.1</h1>"})
+   :body    "<h1>Delectus 2 API Server</h1>"})
 
 (defn hello-name [req]
   {:status 200

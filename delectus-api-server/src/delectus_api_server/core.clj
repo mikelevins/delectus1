@@ -32,6 +32,9 @@
 
   ;; Delectus API routes
   ;; -------------------
+
+  (GET "/delectus/" [] delectus-handlers/root) ; root HTML page
+  (GET "/delectus/users" [] delectus-handlers/users)
   
   ;; default ("Page not found") route
   ;; --------------------------------
