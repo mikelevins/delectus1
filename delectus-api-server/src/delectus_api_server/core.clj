@@ -216,9 +216,8 @@
       (let [users-doc-id (:delectus-users-document-name (delectus-configuration))
             users-doc (.get bucket users-doc-id)]
         (or users-doc
-            (let [docmap {}
-                  new-users-doc (new com.couchbase.client.java.datastructures.collections.CouchbaseMap
-                                     users-doc-id bucket docmap)]
+            (let [new-users-doc (new com.couchbase.client.java.datastructures.collections.CouchbaseMap
+                                     users-doc-id bucket {})]
               new-users-doc))))))
 
 ;;; (def $users (create-delectus-users))
