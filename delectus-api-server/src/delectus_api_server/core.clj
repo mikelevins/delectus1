@@ -10,25 +10,9 @@
             [delectus-api-server.configuration :as config]
             [delectus-api-server.utilities :as utils]
             [delectus-api-server.route-handlers :as handlers]
-            [delectus-api-server.couchbase.utilities :as couch-utils])
+            [delectus-api-server.couchbase.utilities :as couch-utils]
+            [delectus-api-server.couchbase.route-handlers :as couch-handlers])
   (:gen-class))
-
-
-;;; ---------------------------------------------------------------------
-;;; Couchbase handlers
-;;; ---------------------------------------------------------------------
-
-(defn status [req]
-  {:status 200
-   :headers {"Content-type" "application/json"}
-   :body (let [couch (config/couchbase-cluster)
-               configuration (config/delectus-configuration)]
-           (.authenticate couch
-                          (:travel-sample-user configuration)
-                          (:travel-sample-password configuration))
-           (let [mgr (.clusterManager couch)
-                 info (.raw (.info mgr))]
-             (.toString info)))})
 
 ;;; ---------------------------------------------------------------------
 ;;; travel-sample handlers and support functions
@@ -157,7 +141,7 @@
   ;; general test routes
   ;; -------------------
   (GET "/hello" [] handlers/hello-name)
-  (GET "/status" [] status)
+  (GET "/status" [] couch-handlers/status)
   ;; travel-sample test routes
   ;; -------------------
   (GET "/document-types" [] (fn [req] (document-types req (:travel-sample-bucket-name (config/delectus-configuration)))))
