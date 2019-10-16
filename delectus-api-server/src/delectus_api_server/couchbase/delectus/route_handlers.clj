@@ -58,7 +58,23 @@
       (.put users-couchmap userid usermap)
       userid)))
 
+(defn remove-delectus-user [username]
+  (let [couch (config/couchbase-cluster)
+        configuration (config/delectus-configuration)]
+    (.authenticate couch
+                   (:delectus-admin-user configuration)
+                   (:delectus-admin-password configuration))
+    (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
+          bucket (.openBucket couch bucket-name)
+          users-doc-id (:delectus-users-document-name (config/delectus-configuration))
+          users-couchmap (com.couchbase.client.java.datastructures.collections.CouchbaseMap. users-doc-id bucket)
+          userid (make-userid username)]
+      (if (.containsKey users-couchmap userid)
+        (.remove users-couchmap userid))
+      userid)))
+
 ;;; (add-delectus-user (make-user-map "mikel"))
+;;; (remove-delectus-user "mikel")
 
 (defn root [req]
   {:status  200
