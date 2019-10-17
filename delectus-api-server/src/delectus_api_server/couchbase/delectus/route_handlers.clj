@@ -9,7 +9,7 @@
    (com.couchbase.client.java.datastructures.collections CouchbaseMap)))
 
 ;;; ---------------------------------------------------------------------
-;;; delectus handlers and support functions
+;;; support functions
 ;;; ---------------------------------------------------------------------
 
 (defn delectus-users []
@@ -62,6 +62,10 @@
 
 ;;; (add-delectus-user (make-user-map "mikel"))
 ;;; (remove-delectus-user "mikel")
+
+;;; ---------------------------------------------------------------------
+;;; delectus handlers
+;;; ---------------------------------------------------------------------
 
 (defn root [req]
   {:status  200

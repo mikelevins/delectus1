@@ -7,7 +7,7 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
-;;; travel-sample handlers and support functions
+;;; support functions
 ;;; ---------------------------------------------------------------------
 
 ;;; returns: ("airline" "airport" "hotel" "landmark" "route")
@@ -35,6 +35,11 @@
         vals (map (fn [r](get (json/read-json (.toString (.value r))) (keyword (.name bucket))))
                   result)]
     (json/write-str vals)))
+
+
+;;; ---------------------------------------------------------------------
+;;; travel-sample handlers
+;;; ---------------------------------------------------------------------
 
 (defn airlines [req]
   {:status 200

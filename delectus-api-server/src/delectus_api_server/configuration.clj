@@ -46,6 +46,12 @@
 ;;; (couchbase-cluster)
 ;;; (reset-couchbase-cluster)
 
+;;; ---------------------------------------------------------------------
+;;; couchbase buckets
+;;; ---------------------------------------------------------------------
+
+;;; delectus
+
 (defonce +delectus-bucket+ (atom nil))
 
 (defn delectus-bucket []
@@ -57,7 +63,6 @@
                (.openBucket (couchbase-cluster) bucketname bucketpass)))))
   @+delectus-bucket+)
 
-
 (defn reset-delectus-bucket []
   (when @+delectus-bucket+
     (.close @+delectus-bucket+))
@@ -66,6 +71,7 @@
 ;;; (delectus-bucket)
 ;;; (reset-delectus-bucket)
 
+;;; travel-sample
 
 (defonce +travel-sample-bucket+ (atom nil))
 
