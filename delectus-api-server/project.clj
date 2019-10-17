@@ -7,15 +7,15 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  ;; Compojure - A basic routing library
                  [compojure "1.6.1"]
-                 ;; Our Http library for client/server
+                 ;; Http library
                  [http-kit "2.3.0"]
                  ;; Ring defaults - for query params etc
                  [ring/ring-defaults "0.3.2"]
-                 ;; Clojure data.JSON library
+                 ;; standard Clojure JSON library
                  [org.clojure/data.json "0.2.6"]
                  ;; Couchbase Java client
                  [com.couchbase.client/java-client "2.7.9"]
-                 ;; aero config library
+                 ;; config library
                  [aero "1.1.3"]
                  ;; hiccup HTML generator
                  [hiccup "1.0.5"]]
