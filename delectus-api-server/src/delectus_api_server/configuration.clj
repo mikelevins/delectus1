@@ -37,8 +37,18 @@
 (defn couchbase-cluster []
   (when (nil? @+couchbase-cluster+)
     (swap! +couchbase-cluster+
-           (fn [old-val]
-             (CouchbaseCluster/create [(:delectus-db-server (delectus-configuration))]))))
+           (fn [old-val](CouchbaseCluster/create [(:delectus-db-server (delectus-configuration))]))))
   @+couchbase-cluster+)
+
+(defonce +delectus-bucket+ (atom nil))
+
+(defn delectus-bucket []
+  (when (nil? @+delectus-bucket+)
+    (swap! +delectus-bucket+
+           (fn [old-val]
+             (let [bucketname (:delectus-main-bucket-name (delectus-configuration))
+                   bucketpass (:delectus-user-password (delectus-configuration))]
+               (.openBucket (couchbase-cluster) bucketname bucketpass)))))
+  @+delectus-bucket+)
 
 
