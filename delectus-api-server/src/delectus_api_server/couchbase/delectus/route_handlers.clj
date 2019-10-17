@@ -42,34 +42,23 @@
 ;;; (.get (make-user-map "mikel") "username")
 
 (defn add-delectus-user [usermap]
-  (let [couch (config/couchbase-cluster)
-        configuration (config/delectus-configuration)]
-    (.authenticate couch
-                   (:delectus-admin-user configuration)
-                   (:delectus-admin-password configuration))
-    (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
-          bucket (.openBucket couch bucket-name)
-          users-doc-id (:delectus-users-document-name (config/delectus-configuration))
-          users-couchmap (new CouchbaseMap users-doc-id bucket)
-          username (.get usermap "username")
-          userid (make-userid username)]
-      (.put users-couchmap userid usermap)
-      userid)))
+  (let [bucket (config/delectus-bucket)
+        users-doc-id (:delectus-users-document-name (config/delectus-configuration))
+        users-couchmap (new CouchbaseMap users-doc-id bucket)
+        username (.get usermap "username")
+        userid (make-userid username)]
+    (.put users-couchmap userid usermap)
+    userid))
 
 (defn remove-delectus-user [username]
-  (let [couch (config/couchbase-cluster)
-        configuration (config/delectus-configuration)]
-    (.authenticate couch
-                   (:delectus-admin-user configuration)
-                   (:delectus-admin-password configuration))
-    (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
-          bucket (.openBucket couch bucket-name)
-          users-doc-id (:delectus-users-document-name (config/delectus-configuration))
-          users-couchmap (new CouchbaseMap users-doc-id bucket)
-          userid (make-userid username)]
-      (if (.containsKey users-couchmap userid)
-        (.remove users-couchmap userid))
-      userid)))
+  (let [bucket (config/delectus-bucket)
+        users-doc-id (:delectus-users-document-name (config/delectus-configuration))
+        users-couchmap (new CouchbaseMap users-doc-id bucket)
+        userid (make-userid username)]
+    (if (.containsKey users-couchmap userid)
+      (do (.remove users-couchmap userid)
+          userid)
+      nil)))
 
 ;;; (add-delectus-user (make-user-map "mikel"))
 ;;; (remove-delectus-user "mikel")
