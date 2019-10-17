@@ -40,6 +40,8 @@
            (fn [old-val](CouchbaseCluster/create [(:delectus-db-server (delectus-configuration))]))))
   @+couchbase-cluster+)
 
+;;; (couchbase-cluster)
+
 (defonce +delectus-bucket+ (atom nil))
 
 (defn delectus-bucket []
@@ -51,4 +53,5 @@
                (.openBucket (couchbase-cluster) bucketname bucketpass)))))
   @+delectus-bucket+)
 
+;;; (delectus-bucket)
 

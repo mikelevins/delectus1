@@ -8,11 +8,8 @@
 (defn status [req]
   {:status 200
    :headers {"Content-type" "application/json"}
-   :body (let [couch (config/couchbase-cluster)
-               configuration (config/delectus-configuration)]
-           (.authenticate couch
-                          (:travel-sample-user configuration)
-                          (:travel-sample-password configuration))
-           (let [mgr (.clusterManager couch)
-                 info (.raw (.info mgr))]
-             (.toString info)))})
+   :body (let [mgr (.clusterManager (config/couchbase-cluster)
+                                    (:delectus-admin-user (config/delectus-configuration))
+                                    (:delectus-admin-password (config/delectus-configuration)))
+               info (.raw (.info mgr))]
+           (.toString info))})

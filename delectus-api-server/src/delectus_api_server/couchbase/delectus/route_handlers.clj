@@ -14,17 +14,13 @@
 
 (defn delectus-users []
   (let [couch (config/couchbase-cluster)
-        configuration (config/delectus-configuration)]
-    (.authenticate couch
-                   (:delectus-admin-user configuration)
-                   (:delectus-admin-password configuration))
-    (let [bucket-name (:delectus-main-bucket-name (config/delectus-configuration))
-          bucket (.openBucket couch bucket-name)]
-      (let [users-doc-id (:delectus-users-document-name (config/delectus-configuration))
-            users-doc (.get bucket users-doc-id)]
-        (or users-doc
-            (let [new-users-doc (new CouchbaseMap users-doc-id bucket {})]
-              new-users-doc))))))
+        configuration (config/delectus-configuration)
+        bucket (config/delectus-bucket)
+        users-doc-id (:delectus-users-document-name (config/delectus-configuration))
+        users-doc (.get bucket users-doc-id)]
+    (or users-doc
+        (let [new-users-doc (new CouchbaseMap users-doc-id bucket {})]
+          new-users-doc))))
 
 ;;; (def $couch (config/couchbase-cluster))
 ;;; (def $conf (config/delectus-configuration))
