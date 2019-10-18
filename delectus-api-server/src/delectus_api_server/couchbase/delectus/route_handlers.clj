@@ -18,11 +18,11 @@
         select-expression "SELECT * from `delectus` WHERE `type` = \"delectus-user\""
         result (.query bucket (N1qlQuery/simple select-expression))
         vals (distinct (map (fn [r] (.value r)) result))
-        objs (map (fn [v](:delectus (json/read-json (.toString v)))) vals)]
+        objs (map (fn [v](get (json/read-json (.toString v) false) "delectus")) vals)]
     objs))
 
 ;;; (def $users (delectus-users))
-;;;
+;;; (time (def $users (delectus-users)))
 
 (defn add-delectus-user [useraccount]
   (let [bucket (config/delectus-bucket)
@@ -30,18 +30,15 @@
         couchmap (new CouchbaseMap userid bucket useraccount)]
     couchmap))
 
-(defn remove-delectus-user [username]
-  (let [bucket (config/delectus-bucket)
-        users-doc-id config/+delectus-users-document-name+
-        users-couchmap (new CouchbaseMap users-doc-id bucket)
-        userid username]
-    (if (.containsKey users-couchmap userid)
-      (do (.remove users-couchmap userid)
+(defn remove-delectus-user [userid]
+  (let [bucket (config/delectus-bucket)]
+    (if (.exists bucket userid)
+      (do (.remove bucket userid)
           userid)
       nil)))
 
 ;;; (add-delectus-user (users/make-user-account "mikelevins"))
-;;; (remove-delectus-user "mikelevins")
+;;; (remove-delectus-user "0ca7fb78-81e3-4904-8350-6ad5801932c7")
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus handlers
