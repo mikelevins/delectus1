@@ -10,4 +10,4 @@
   ;; create a N1QL primary index, unless it already exists
   (.createN1qlPrimaryIndex (.bucketManager bucket) true false))
 
-(defn ->JsonObject [mapdata] (JsonObject/from mapdata))
+(defn map->JsonObject [mapdata] (JsonObject/from mapdata))

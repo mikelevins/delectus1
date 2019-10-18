@@ -11,6 +11,8 @@
   ([] (UUID/randomUUID))
   ([idstr] (UUID/fromString idstr)))
 
+;;; (uuid)
+
 (defn ->base64 [int-vector]
   (.encodeToString (Base64/getUrlEncoder)
                    (byte-array int-vector)))
