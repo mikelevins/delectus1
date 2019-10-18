@@ -51,7 +51,9 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; delectus
+;;; --------
 
+(defonce +delectus-users-document-name+ "delectus-users")
 (defonce +delectus-bucket+ (atom nil))
 
 (defn delectus-bucket []
@@ -71,7 +73,9 @@
 ;;; (delectus-bucket)
 ;;; (reset-delectus-bucket)
 
+
 ;;; travel-sample
+;;; -------------
 
 (defonce +travel-sample-bucket+ (atom nil))
 
