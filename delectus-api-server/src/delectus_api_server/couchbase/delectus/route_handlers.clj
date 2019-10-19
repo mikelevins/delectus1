@@ -4,7 +4,7 @@
             [hiccup.core :refer :all]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.utilities :refer [for-couchbase map->JsonObject]]
-            [delectus-api-server.couchbase.delectus.users :as users])
+            [delectus-api-server.couchbase.delectus.users :refer [->userid make-user-account]])
   (:import
    (com.couchbase.client.java.datastructures.collections CouchbaseMap)
    (com.couchbase.client.java.query N1qlQuery)))
@@ -31,24 +31,26 @@
 ;;; (def $users (delectus-users))
 ;;; (time (def $users (delectus-users)))
 
-(defn find-delectus-username [username]
+(defn get-delectus-user [userid]
   (let [bucket (config/delectus-bucket)
-        select-expression (pp/cl-format false "SELECT * from `delectus` WHERE `type` = \"delectus-user\" AND `username` = ~S" username)
-        result (.query bucket (N1qlQuery/simple select-expression))
-        vals (map #(.value %) result)
-        objs (map #(get (json/read-json (.toString %) false) "delectus") vals)]
-    objs))
+        user-object (.get bucket userid)]
+    (if user-object
+      (json/read-json (.toString (.content user-object))
+                      false)
+      nil)))
 
-;;; (def $u (find-delectus-username "mikelevins"))
-;;; (def $u (find-delectus-username "NOPE!"))
+;;; (get-delectus-user (->userid "mikelevins"))
+;;; (get-delectus-user (->userid "NOPE!"))
 
 (defn add-delectus-user [useraccount]
   (let [bucket (config/delectus-bucket)
-        userid (get useraccount "id")
+        new-userid (get useraccount "id")
+        old-user-object (get-delectus-user new-userid)
         userobject (zipmap (map for-couchbase (keys useraccount))
                            (map for-couchbase (vals useraccount)))
         couchmap (new CouchbaseMap userid bucket userobject)]
-    couchmap))
+    (if old-user-object
+      (throw (ex-info "A user with that ID already exists")))))
 
 (defn remove-delectus-user [userid]
   (let [bucket (config/delectus-bucket)]
@@ -57,8 +59,8 @@
           userid)
       nil)))
 
-;;; (add-delectus-user (users/make-user-account "mikelevins"))
-;;; (remove-delectus-user (get (find-delectus-username "mikelevins") "id"))
+;;; (add-delectus-user (make-user-account "mikelevins"))
+;;; (remove-delectus-user (->userid "mikelevins"))
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus handlers
