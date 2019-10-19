@@ -4,7 +4,7 @@
             [hiccup.core :refer :all]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.utilities :refer [for-couchbase map->JsonObject]]
-            [delectus-api-server.couchbase.delectus.users :refer [->userid make-user-account]])
+            [delectus-api-server.couchbase.delectus.users :refer [make-user]])
   (:import
    (com.couchbase.client.java.datastructures.collections CouchbaseMap)
    (com.couchbase.client.java.query N1qlQuery)))
@@ -48,7 +48,7 @@
         old-user-object (get-delectus-user new-userid)
         userobject (zipmap (map for-couchbase (keys useraccount))
                            (map for-couchbase (vals useraccount)))
-        couchmap (new CouchbaseMap userid bucket userobject)]
+        couchmap (new CouchbaseMap new-userid bucket userobject)]
     (if old-user-object
       (throw (ex-info "A user with that ID already exists")))))
 

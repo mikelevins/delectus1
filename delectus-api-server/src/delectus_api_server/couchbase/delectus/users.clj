@@ -1,26 +1,32 @@
 (ns delectus-api-server.couchbase.delectus.users
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
-            [delectus-api-server.utilities :refer [uuid]]))
+            [delectus-api-server.identifiers :refer [makeid]]
+            [delectus-api-server.utilities :refer [uuid valid-email?]]))
 
+(defrecord user [emails password-hash collections lists])
 
-(defn ->userid [username]
-  (str "user::" username))
+(defn make-user [& {:keys [type id primary-email email-addresses password-hash collections lists]
+                    :or {type nil
+                         id (makeid)
+                         primary-email nil
+                         email-addresses []
+                         password-hash nil
+                         collections {}
+                         lists {}}}]
+  (when (not primary-email)
+    (throw (ex-info ":primary-email parameter missing" {})))
+  (when (not (valid-email? primary-email))
+    (throw (ex-info "invalid :primary-email parameter" {:value primary-email})))
+  {:type "user"
+   :id id
+   :primary-email primary-email
+   :email-addresses [primary-email]
+   :password-hash password-hash
+   :collections collections
+   :lists lists})
 
-(defn make-user-account [username & {:keys [id password-hash collections lists]
-                                     :or {id (->userid username)
-                                          password-hash nil
-                                          collections {}
-                                          lists {}}}]
-  (if username
-    {"type" "user"
-     "username" username
-     "password-hash" password-hash
-     "collections" collections
-     "lists" lists}
-    (throw (ex-info "username missing" {:username username}))))
-
-;;; (uuid)
-;;; (make-user-account)
-;;; (make-user-account "mikel")
-;;; (hash (make-user-account "mikel"))
+;;; (make-user)
+;;; (make-user :primary-email "mikel@evins")
+;;; (def $mikel-id (makeid))
+;;; (make-user :id $mikel-id :primary-email "mikel@evins.net")

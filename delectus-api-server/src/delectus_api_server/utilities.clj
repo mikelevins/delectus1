@@ -23,3 +23,17 @@
     (->base64 bytes)))
 
 ;;; (make-api-key)
+
+;;; ---------------------------------------------------------------------
+;;; string utilities
+;;; ---------------------------------------------------------------------
+
+(defn valid-email? [thing]
+  (if (string? thing)
+    (let [mail-regex "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$"]
+      (.matches thing mail-regex))
+    false))
+
+;;; (valid-email? "mikel@evins.net")
+;;; (valid-email? "evins.mikel@gmail.com")
+;;; (valid-email? "foo@bar")
