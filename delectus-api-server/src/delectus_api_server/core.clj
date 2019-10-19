@@ -7,6 +7,7 @@
             [delectus-api-server.route-handlers :as handlers]
             [delectus-api-server.couchbase.route-handlers :as couch-handlers]
             [delectus-api-server.couchbase.travel-sample.route-handlers :as travel-handlers]
+            [delectus-api-server.couchbase.delectus.users :as delectus-users]
             [delectus-api-server.couchbase.delectus.route-handlers :as delectus-handlers])
   (:gen-class))
 
