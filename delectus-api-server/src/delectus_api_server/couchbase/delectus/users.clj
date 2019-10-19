@@ -2,9 +2,10 @@
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
             [delectus-api-server.identifiers :refer [makeid]]
-            [delectus-api-server.utilities :refer [uuid valid-email?]]))
+            [delectus-api-server.utilities :refer [uuid valid-email?]]
+            [delectus-api-server.couchbase.utilities :refer [for-couchbase map->JsonObject]]))
 
-(defrecord user [emails password-hash collections lists])
+(defrecord User [type id primary-email email-addresses password-hash collections lists])
 
 (defn make-user [& {:keys [type id primary-email email-addresses password-hash collections lists]
                     :or {type nil
@@ -18,15 +19,23 @@
     (throw (ex-info ":primary-email parameter missing" {})))
   (when (not (valid-email? primary-email))
     (throw (ex-info "invalid :primary-email parameter" {:value primary-email})))
-  {:type "user"
-   :id id
-   :primary-email primary-email
-   :email-addresses [primary-email]
-   :password-hash password-hash
-   :collections collections
-   :lists lists})
+  (User. "user"
+         id
+         primary-email
+         [primary-email]
+         password-hash
+         collections
+         lists))
+
+(defmethod for-couchbase delectus_api_server.couchbase.delectus.users.User [u]
+  (let [ks (map for-couchbase (keys u))
+        vs (map for-couchbase (vals u))]
+    (map->JsonObject (zipmap ks vs))))
 
 ;;; (make-user)
 ;;; (make-user :primary-email "mikel@evins")
 ;;; (def $mikel-id (makeid))
-;;; (make-user :id $mikel-id :primary-email "mikel@evins.net")
+;;; (def $mikel (make-user :id $mikel-id :primary-email "mikel@evins.net"))
+;;; (class $mikel)
+;;; (keys $mikel)
+;;; (for-couchbase $mikel)
