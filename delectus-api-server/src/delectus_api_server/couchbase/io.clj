@@ -120,7 +120,7 @@
 ;;; (time (def $routes (find-objects (config/travel-sample-bucket) {"type" "route"})))
 ;;; (time (def $routes (find-objects (config/travel-sample-bucket) {"type" "route"} :limit 10 :offset 20000)))
 ;;; (count $routes)
-;;; (first $routes)
+;;; (:id (first $routes))
 
 (defn count-objects [bucket properties]
   (let [bucket-name (.name bucket)
