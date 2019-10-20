@@ -20,9 +20,8 @@
                                                  "SELECT type FROM `~A` WHERE type IS NOT MISSING"
                                                  (.name bucket))
                  result (.query bucket (N1qlQuery/simple select-expression))
-                 vals (distinct (map (fn [r] (.value r)) result))
-                 objs (map (fn [v](:type (json/read-json (.toString v)))) vals)]
-             (json/write-str objs)))})
+                 vals (distinct (map #(.get (.value %) "type") result))]
+             (json/write-str vals)))})
 
 (defn objects-of-type [req bucket type-name]
   (couch-utils/ensure-primary-index bucket)
