@@ -64,17 +64,42 @@
       (cl-format nil "WHERE ~{~A~^ AND ~}" property-matches))))
 
 ;;; (make-where-clause {})
+;;; (make-where-clause {:type "airport"})
 ;;; (make-where-clause {"type" "airport"})
-;;; (make-where-clause {"id" 10})
+;;; (make-where-clause {:id 10})
 ;;; (make-where-clause {"type" "airport" "id" 10})
+
+(defn make-order-clause [order-by direction]
+  (if order-by
+    (let [dir (if direction
+                (cond (= direction :ascending) "ASC"
+                      (= direction :descending) "DESC"
+                      :else (throw (ex-info "Invalid direction parameter" {:value direction :context "ORDER BY"})))
+                "ASC")]
+      (cl-format nil "ORDER BY `~A` ~A" order-by dir))
+    ""))
+
+;;; (make-order-clause nil nil)
+;;; (make-order-clause "city" nil)
+;;; (make-order-clause "city" :ascending)
+;;; (make-order-clause "city" :descending)
 
 ;;; takes time proportional to the number of documents in the db
 ;;; faster if the properties are indexed
-(defn find-objects [bucket properties]
+
+(defn find-objects [bucket properties
+                    & {:keys [order-by direction limit offset]
+                       :or {order-by nil
+                            direction :ascending
+                            limit nil
+                            offset nil}}]
   (let [bucket-name (.name bucket)
+        order-clause (make-order-clause order-by direction)
         where-clause (make-where-clause properties)
-        select-expression (cl-format nil "SELECT *, meta(doc).id AS docid from `~A` doc ~A"
-                                     bucket-name where-clause)
+        limit-clause (if limit (cl-format nil "LIMIT ~A" limit) "")
+        offset-clause (if offset (cl-format nil "OFFSET ~A" offset) "")
+        select-expression (cl-format nil "SELECT *, meta(doc).id AS docid from `~A` doc ~A ~A ~A ~A"
+                                     bucket-name where-clause order-clause limit-clause offset-clause)
         results (.query bucket (N1qlQuery/simple select-expression))
         result-vals (map #(.value %) results)
         result-strings (map #(.toString %) result-vals)]
@@ -87,9 +112,13 @@
 ;;; (time (def $all (find-objects (config/travel-sample-bucket) {})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline" "id" 10})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline"})))
-;;; (class (first $airlines))
+;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline"} :order-by "callsign")))
+;;; (count $airlines)
+;;; (nth $airlines 25)
+
 ;;; (time (def $routes (find-objects (config/travel-sample-bucket) {"type" "route" "id" 10000})))
 ;;; (time (def $routes (find-objects (config/travel-sample-bucket) {"type" "route"})))
+;;; (time (def $routes (find-objects (config/travel-sample-bucket) {"type" "route"} :limit 10 :offset 20000)))
 ;;; (count $routes)
 ;;; (first $routes)
 
