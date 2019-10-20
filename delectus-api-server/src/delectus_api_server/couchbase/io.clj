@@ -8,7 +8,7 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
-;;; reading and writing data stored in Couchbase
+;;; fetching data stored in Couchbase
 ;;; ---------------------------------------------------------------------
 
 ;;; takes constant time, regardless of the number of objects in the db
@@ -41,20 +41,42 @@
 
 ;;; (document->map (get-document (config/travel-sample-bucket) "airline_10"))
 
+;;; ---------------------------------------------------------------------
+;;; searching for objects stored in Couchbase
+;;; ---------------------------------------------------------------------
+
+(defn make-where-clause [property-map]
+  (if (empty? property-map)
+    ""
+    (let [property-matches (map #(let [val (get property-map %)]
+                                   (cl-format nil "`~A` = ~S"
+                                              (for-couchbase %)
+                                              (for-couchbase val)))
+                                (keys property-map))]
+      (cl-format nil "WHERE ~{~A~^ AND ~}" property-matches))))
+
+;;; (make-where-clause {})
+;;; (make-where-clause {"type" "airport"})
+;;; (make-where-clause {"id" 10})
+;;; (make-where-clause {"type" "airport" "id" 10})
+
 ;;; takes time proportional to the number of documents in the db
 ;;; faster if the properties are indexed
 (defn find-objects [bucket properties]
   (let [bucket-name (.name bucket)
-        property-matches (map #(let [val (get properties %)]
-                                 (cl-format nil "`~A` = ~S"
-                                            (for-couchbase %)(for-couchbase val)))
-                              (keys properties))
-        property-clause (cl-format nil "~{~A~^ AND ~}" property-matches)
-        select-expression (cl-format nil "SELECT * from `~A` WHERE ~A"
-                                     bucket-name property-clause)
-        results (.query bucket (N1qlQuery/simple select-expression))]
-    (map #(object->map (.value %)) results)))
+        where-clause (make-where-clause properties)
+        select-expression (cl-format nil "SELECT *, meta(doc).id AS docid from `~A` doc ~A"
+                                     bucket-name where-clause)
+        results (.query bucket (N1qlQuery/simple select-expression))
+        result-vals (map #(.value %) results)
+        result-strings (map #(.toString %) result-vals)]
+    (map #(let [obj (json/read-json %)
+                doc (:doc obj)
+                docid (:docid obj)]
+            (merge doc {:document-key docid}))
+         result-strings)))
 
+;;; (time (def $all (find-objects (config/travel-sample-bucket) {})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline" "id" 10})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline"})))
 ;;; (class (first $airlines))
@@ -64,25 +86,17 @@
 ;;; (first $routes)
 
 (defn count-objects [bucket properties]
-  (let [bucket-name (.name bucket)]
-    (if (empty? properties)
-      (let [select-expression (cl-format nil "SELECT COUNT(*) AS count from `~A`" bucket-name)
-            results (.query bucket (N1qlQuery/simple select-expression))]
-        (.getLong (.value (first (.allRows results)))
-                  "count"))
-      (let [property-matches (map #(let [val (get properties %)]
-                                     (cl-format nil "`~A` = ~S"
-                                                (for-couchbase %)(for-couchbase val)))
-                                  (keys properties))
-            property-clause (cl-format nil "~{~A~^ AND ~}" property-matches)
-            select-expression (cl-format nil "SELECT COUNT(*) AS count from `~A` WHERE ~A"
-                                         bucket-name property-clause)
-            results (.query bucket (N1qlQuery/simple select-expression))]
-        (.getLong (.value (first (.allRows results)))
-                  "count")))))
+  (let [bucket-name (.name bucket)
+        where-clause (make-where-clause properties)
+        select-expression (cl-format nil "SELECT COUNT(*) AS count from `~A` ~A"
+                                     bucket-name where-clause)
+        results (.query bucket (N1qlQuery/simple select-expression))]
+    (.getLong (.value (first (.allRows results)))
+              "count")))
 
 ;;; (time (count-objects (config/travel-sample-bucket) {}))
 ;;; (time (count-objects (config/travel-sample-bucket) {"type" "route"}))
+;;; (time (count-objects (config/travel-sample-bucket) {"type" "airline"}))
 ;;; not constant-time, but pretty fast
 ;;; counting 188 airlines: 9.7 milliseconds 
 ;;; counting 1968 airports: 21.1 milliseconds 
