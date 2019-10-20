@@ -13,7 +13,7 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
-;;; fetching data stored in Couchbase
+;;; fetching documents and objects
 ;;; ---------------------------------------------------------------------
 
 ;;; takes constant time, regardless of the number of objects in the db
@@ -39,18 +39,24 @@
 ;;; (document-key (get-document (config/travel-sample-bucket) "route_10000"))
 
 (defn object->map [object]
-  (json/read-json (.toString object)
-                  true))
+  (if object
+    (json/read-json (.toString object)
+                    true)
+    nil))
 
 ;;; (object->map (get-object (config/travel-sample-bucket) "airline_10"))
+;;; (object->map (get-object (config/travel-sample-bucket) "NOPE!"))
 
 (defn document->map [document]
-  (object->map (.content document)))
+  (if document
+    (object->map (.content document))
+    nil))
 
 ;;; (document->map (get-document (config/travel-sample-bucket) "airline_10"))
+;;; (document->map (get-document (config/travel-sample-bucket) "NOPE!"))
 
 ;;; ---------------------------------------------------------------------
-;;; searching for objects stored in Couchbase
+;;; searching for objects
 ;;; ---------------------------------------------------------------------
 
 (defn make-where-clause [property-map]
@@ -141,24 +147,40 @@
 ;;; counting 31695 documents: 17.6 milliseconds 
 
 ;;; ---------------------------------------------------------------------
-;;; creating documents in Couchbase
+;;; creating and updating documents
 ;;; ---------------------------------------------------------------------
 
-(defn create-document [bucket document-key document-map]
+(defn create-document! [bucket document-key document-map]
   (let [key (or document-key (makeid))
         json-object (for-couchbase document-map)
         json-doc (JsonDocument/create key json-object)]
     (.insert bucket json-doc)
     key))
 
-;;; (def $docid (create-document (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
+;;; (def $docid (create-document! (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
 ;;; (object->map (get-object (config/delectus-bucket) $docid))
 
-(defn delete-document [bucket document-key]
+(defn delete-document! [bucket document-key]
   (.remove bucket document-key))
 
-;;; (delete-document (config/delectus-bucket) $docid)
+;;; (delete-document! (config/delectus-bucket) $docid)
 ;;; (get-object (config/delectus-bucket) $docid)
+
+(defn update-document! [bucket document-key new-document-map]
+  (let [old-document-map (object->map (get-object bucket document-key))
+        updated-document-map (if old-document-map
+                               (merge old-document-map new-document-map)
+                               new-document-map)
+        json-object (for-couchbase updated-document-map)
+        json-doc (JsonDocument/create document-key json-object)]
+    (.upsert bucket json-doc)
+    document-key))
+
+;;; (def $docid (create-document! (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
+;;; (object->map (get-object (config/delectus-bucket) $docid))
+;;; (delete-document! (config/delectus-bucket) $docid)
+;;; (update-document! (config/delectus-bucket) $docid {:name "Frederick" :age 35})
+
 
 ;;; ---------------------------------------------------------------------
 ;;; reading csv
