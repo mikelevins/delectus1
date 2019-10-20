@@ -13,6 +13,8 @@
                  [ring/ring-defaults "0.3.2"]
                  ;; standard Clojure JSON library
                  [org.clojure/data.json "0.2.6"]
+                 ;; standard Clojure CSV library
+                 [org.clojure/data.csv "0.1.4"]
                  ;; Couchbase Java client
                  [com.couchbase.client/java-client "2.7.9"]
                  ;; config library

@@ -1,5 +1,7 @@
 (ns delectus-api-server.couchbase.io
-  (:require [clojure.data.json :as json]
+  (:require [clojure.java.io :as io]
+            [clojure.data.json :as json]
+            [clojure.data.csv :refer [read-csv]]
             [clojure.pprint :refer [cl-format]]
             [delectus-api-server.identifiers :refer [makeid]]
             [delectus-api-server.configuration :as config]
@@ -128,3 +130,23 @@
 
 ;;; (delete-document (config/delectus-bucket) $docid)
 ;;; (get-object (config/delectus-bucket) $docid)
+
+;;; ---------------------------------------------------------------------
+;;; reading csv
+;;; ---------------------------------------------------------------------
+
+(defn read-csv-file [path]
+  (with-open [reader (io/reader path)]
+    (doall
+     (read-csv reader))))
+
+;;; (def $movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")
+;;; (time (def $movies (read-csv-file $movies-path)))
+;;; (first $movies)
+;;; (second $movies)
+
+;;; (def $zipcodes-path "/Users/mikel/Workshop/src/delectus/test-data/zipcode.csv")
+;;; (time (def $zipcodes (read-csv-file $zipcodes-path)))
+;;; (count $zipcodes)
+;;; (first $zipcodes)
+;;; (nth $zipcodes 10000)
