@@ -43,3 +43,4 @@
 ;;; (for-couchbase {})
 ;;; (for-couchbase {:a 1 :b 2})
 ;;; (for-couchbase {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}})
+;;; (for-couchbase {:name "Fred" :type "cartoon"})

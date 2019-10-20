@@ -1,10 +1,13 @@
 (ns delectus-api-server.couchbase.io
   (:require [clojure.data.json :as json]
             [clojure.pprint :refer [cl-format]]
+            [delectus-api-server.identifiers :refer [makeid]]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.delectus.users :as users]
-            [delectus-api-server.couchbase.utilities :refer [for-couchbase map->JsonObject]])
+            [delectus-api-server.couchbase.utilities :refer [for-couchbase]])
   (:import
+   (com.couchbase.client.java.document JsonDocument)
+   (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
@@ -17,7 +20,10 @@
   (.get bucket id))
 
 (defn get-object [bucket id]
-  (.content (get-document bucket id)))
+  (let [doc (get-document bucket id)]
+    (if doc
+      (.content doc)
+      nil)))
 
 ;;; (time (get-document (config/travel-sample-bucket) "airline_10"))
 ;;; (time (get-object (config/travel-sample-bucket) "airline_10"))
@@ -103,3 +109,22 @@
 ;;; counting 24024 routes: 94.2 milliseconds 
 ;;; counting 31695 documents: 17.6 milliseconds 
 
+;;; ---------------------------------------------------------------------
+;;; creating documents in Couchbase
+;;; ---------------------------------------------------------------------
+
+(defn create-document [bucket document-key document-map]
+  (let [key (or document-key (makeid))
+        json-object (for-couchbase document-map)
+        json-doc (JsonDocument/create key json-object)]
+    (.insert bucket json-doc)
+    key))
+
+;;; (def $docid (create-document (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
+;;; (object->map (get-object (config/delectus-bucket) $docid))
+
+(defn delete-document [bucket document-key]
+  (.remove bucket document-key))
+
+;;; (delete-document (config/delectus-bucket) $docid)
+;;; (get-object (config/delectus-bucket) $docid)
