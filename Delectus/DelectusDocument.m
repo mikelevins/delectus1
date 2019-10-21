@@ -241,7 +241,11 @@
     }    
 }
 
-- (void)printShowingPrintPanel:(BOOL)showPanels {
+- (void)printDocumentWithSettings:(NSDictionary<NSPrintInfoAttributeKey, id> *)printSettings
+                   showPrintPanel:(BOOL)showPrintPanel
+                         delegate:(id)delegate
+                 didPrintSelector:(SEL)didPrintSelector
+                      contextInfo:(void *)contextInfo {
     NSSize paperSize = [[self printInfo] paperSize];
     NSRect boundsRect = NSMakeRect(0,0,(3*paperSize.width/4),1);
     NSView *printView = [[DelectusPrintView alloc] initWithFrame:boundsRect withDataSource:dataSource andDocumentName:[self displayName]];
