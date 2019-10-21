@@ -353,7 +353,7 @@
         return nil;
     } else {
         NSString* label = (NSString*)[aTableColumn identifier];
-        NSString* val = [self valueAtColumn:label andRow:rowIndex];
+        NSString* val = [self valueAtColumn:label andRow:(int)rowIndex];
         return val;
     }
 }

@@ -25,7 +25,7 @@
         [self insertText:documentName replacementRange:[self selectedRange]];
         [self insertText:newline replacementRange:[self selectedRange]];
         NSArray* cols = [dataSource collectColumns];
-        int colcount = [cols count];
+        long colcount = [cols count];
         if(colcount>0){
             int rowcount = [dataSource countRows];
             if(rowcount>0){

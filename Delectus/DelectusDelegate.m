@@ -88,7 +88,7 @@
     
     if(rowIndex>(-1)){
         [deleteRowMenu setEnabled:YES];
-        BOOL isRowDeleted = [[doc dataSource] isRowDeleted:rowIndex];
+        BOOL isRowDeleted = [[doc dataSource] isRowDeleted:(int)rowIndex];
         if(isRowDeleted){
             [deleteRowMenu setTitle:@"Undelete Row"];
         }else{
