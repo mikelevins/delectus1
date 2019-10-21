@@ -277,7 +277,7 @@
                 [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
                 [tableView editColumn:0 row:(rowCount-1) withEvent:nil select:YES];
             }
-            [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+            [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
             [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
             [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
         }else{
@@ -305,7 +305,7 @@
         [self updateChangeCount: NSChangeDone];
         [tableView reloadData];
         [tableView deselectAll: self];
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
         [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
         [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
@@ -358,7 +358,7 @@
     [self setupColumns];
     [tableView reloadData];
     [self updateUIForSelectionChange];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
@@ -377,7 +377,7 @@
         [self setupColumns];
         [tableView reloadData];
         [self updateUIForSelectionChange];
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
         [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
         [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }

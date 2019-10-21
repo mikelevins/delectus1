@@ -22,8 +22,8 @@
         NSString* tab = [NSString stringWithFormat:@"\t"];
         documentName = docName;
         [self setDataSource:aSource];
-        [self insertText:documentName];
-        [self insertText:newline];
+        [self insertText:documentName replacementRange:[self selectedRange]];
+        [self insertText:newline replacementRange:[self selectedRange]];
         NSArray* cols = [dataSource collectColumns];
         int colcount = [cols count];
         if(colcount>0){
@@ -31,34 +31,34 @@
             if(rowcount>0){
                 for(int j=0;j<rowcount;j++){
                     NSString* colhead = [cols objectAtIndex:0];
-                    [self insertText:newline];
-                    [self insertText:newline];
+                    [self insertText:newline replacementRange:[self selectedRange]];
+                    [self insertText:newline replacementRange:[self selectedRange]];
                     NSString* index = [NSString stringWithFormat:@"%d. ",(j+1)];
                     NSString* val = [dataSource valueAtColumn:colhead andRow:j];
-                    [self insertText:index];
-                    [self insertText:val];
+                    [self insertText:index replacementRange:[self selectedRange]];
+                    [self insertText:val replacementRange:[self selectedRange]];
                    if(colcount>1){
                         for(int i=1;i<colcount;i++){
                             colhead = [cols objectAtIndex:i];
                             val = [dataSource valueAtColumn:colhead andRow:j];
                             if((val!=NULL)&&(![val isEqualTo:@""])){
-                                [self insertText:newline];
-                                [self insertText:tab];
-                                [self insertText:colhead];
-                                [self insertText:@": "];
-                                [self insertText:val];
+                                [self insertText:newline replacementRange:[self selectedRange]];
+                                [self insertText:tab replacementRange:[self selectedRange]];
+                                [self insertText:colhead replacementRange:[self selectedRange]];
+                                [self insertText:@": " replacementRange:[self selectedRange]];
+                                [self insertText:val replacementRange:[self selectedRange]];
                             }
                         }
                     }
                 }
             }else{
                 NSString* col = [cols objectAtIndex:0];
-                [self insertText:col];
+                [self insertText:col replacementRange:[self selectedRange]];
                 if(colcount>1){
                     for(int i=1;i<colcount;i++){
-                        [self insertText:@", "];
+                        [self insertText:@", " replacementRange:[self selectedRange]];
                         NSString* col = [cols objectAtIndex:i];
-                        [self insertText:col];
+                        [self insertText:col replacementRange:[self selectedRange]];
                     }
                 }
             }
