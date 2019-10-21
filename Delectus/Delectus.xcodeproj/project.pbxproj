@@ -415,6 +415,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Debug;
 		};
@@ -452,6 +453,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
