@@ -317,6 +317,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1.1d1;
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -324,16 +325,20 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include/,
+					/usr/local/Gambit/include,
+				);
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					/usr/local/gambit/MacOSX/current/lib,
-					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
+					/usr/local/Gambit/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
 			};
@@ -344,21 +349,26 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				CURRENT_PROJECT_VERSION = 1.1d1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 3RPC7DCRF2;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Delectus_Prefix.pch;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include/,
+					/usr/local/Gambit/include,
+				);
 				INFOPLIST_FILE = "Delectus-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../engine\"",
-					/usr/local/gambit/MacOSX/current/lib,
-					"$(LOCAL_LIBRARY_DIR)/Gambit/v4.8.9/lib",
+					/usr/local/Gambit/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
 			};
