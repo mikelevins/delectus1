@@ -158,7 +158,8 @@
     }
         
     NSFont* headerFont = [NSFont systemFontOfSize:13.0];
-    NSFont* contentFont = [[NSApp delegate] contentFont];
+    DelectusDelegate* delegate = [NSApp delegate];
+    NSFont* contentFont = [delegate contentFont];
     int labelcount = [columnLabels count];
     for(int i = 0;i<labelcount;i++){
         NSString* label = (NSString*)[columnLabels objectAtIndex:i];
@@ -204,7 +205,8 @@
     }else{
         [delRowButton setEnabled: NO];
     }
-    [[NSApp delegate] updateUIForDocument:self withSelectedColumn: [tableView selectedColumn] andRow:[tableView selectedRow]];
+    DelectusDelegate* delegate = [NSApp delegate];
+    [delegate updateUIForDocument:self withSelectedColumn: [tableView selectedColumn] andRow:[tableView selectedRow]];
 }
 
 
@@ -213,7 +215,8 @@
     [self closePristineDocuments:self];
     [super windowControllerDidLoadNib:aController];
     if (dataSource==nil){
-        dataSource=[[[NSApp delegate] newDelectus] retain];
+        DelectusDelegate* delegate = [NSApp delegate];
+        dataSource=[[delegate newDelectus] retain];
     }
     [tableView setDataSource: dataSource];
     [tableView setDelegate: self];
@@ -226,7 +229,7 @@
     [showDeletedButton setTarget: self];
     [self setupColumns];
     [self updateUIForSelectionChange];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     // make sure this doc ends up in front
@@ -282,11 +285,17 @@
             [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
         }else{
             NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
-            NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
+            NSAlert* alert = [[NSAlert alloc] init];
+            [alert setMessageText:@"Alert"];
+            [alert setInformativeText:msg];
+            [alert addButtonWithTitle:@"Okay"];
         }
     }else{
         NSString* msg = [NSString stringWithFormat: @"Can't add a row with no columns!"];
-        NSRunAlertPanel(@"Adding a Row",msg,@"Okay", nil, nil);
+        NSAlert* alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"Alert"];
+        [alert setInformativeText:msg];
+        [alert addButtonWithTitle:@"Okay"];
     }
 }
 
