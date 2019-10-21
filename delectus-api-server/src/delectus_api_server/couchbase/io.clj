@@ -5,12 +5,14 @@
             [clojure.pprint :refer [cl-format]]
             [delectus-api-server.identifiers :refer [makeid]]
             [delectus-api-server.configuration :as config]
+            [delectus-api-server.couchbase.io :as couchbase-io]
             [delectus-api-server.couchbase.delectus.users :as users]
             [delectus-api-server.couchbase.utilities :refer [for-couchbase]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonObject)
-   (com.couchbase.client.java.query N1qlQuery)))
+   (com.couchbase.client.java.query N1qlQuery)
+   (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 ;;; ---------------------------------------------------------------------
 ;;; fetching documents and objects
@@ -183,21 +185,86 @@
 
 
 ;;; ---------------------------------------------------------------------
-;;; reading csv
+;;; importing csv
 ;;; ---------------------------------------------------------------------
 
 (defn read-csv-file [path]
   (with-open [reader (io/reader path)]
-    (doall
-     (read-csv reader))))
+    (into []
+          (doall ; forces read of all records, so the stream doesn't have to stay open in order to get them
+           (read-csv reader)))))
 
 ;;; (def $movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")
 ;;; (time (def $movies (read-csv-file $movies-path)))
-;;; (first $movies)
+;;; (class (first $movies))
 ;;; (second $movies)
+;;; (class $movies)
+;;; (class (into [] (rest $movies)))
+
+(defn csv-file->JsonDocument [name id type path]
+  (let [csv-data (read-csv-file path)
+        id (or id (makeid))
+        column-labels (first csv-data)
+        rows-data (into [] (rest csv-data))
+        object (for-couchbase {:name name
+                               :id id
+                               :type type
+                               :columns column-labels
+                               :rows rows-data})]
+    (JsonDocument/create id object)))
+
+;;; (def $movies-doc (csv-file->JsonDocument "Mom's Movies" nil "delectus_list" $movies-path ))
+
+(defn import-csv-file [path owner list-name id]
+  (let [csv-data (read-csv-file path)
+        id (or id (makeid))
+        column-labels (first csv-data)
+        rows-data (into [] (rest csv-data))
+        docmap {:name list-name
+                :id id
+                :type "delectus_list"
+                :columns column-labels
+                :rows rows-data}
+        bucket (config/delectus-bucket)]
+    (couchbase-io/create-document! bucket id docmap)
+    id))
+
+;;; (def $movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")
+;;; (def $movies-doc (import-csv-file $movies-path nil "Mom's Movies" (makeid)))
+;;; (time (def $found-obj (get-object (config/delectus-bucket) $movies-doc)))
+;;; (.size $found-obj)
+;;; (keys (object->map $found-obj))
+;;; (def $obj-str (.toString $found-obj))
+;;; (count $obj-str)
+
 
 ;;; (def $zipcodes-path "/Users/mikel/Workshop/src/delectus/test-data/zipcode.csv")
-;;; (time (def $zipcodes (read-csv-file $zipcodes-path)))
-;;; (count $zipcodes)
-;;; (first $zipcodes)
-;;; (nth $zipcodes 10000)
+;;; (time (def $zipcodes-doc (import-csv-file $zipcodes-path nil "Zipcodes" (makeid))))
+;;; (time (def $found-obj (get-object (config/delectus-bucket) $zipcodes-doc)))
+;;; (.size $found-obj)
+;;; (keys (object->map $found-obj))
+;;; (:columns (object->map $found-obj))
+
+;;; (.execute (.get (.lookupIn (config/delectus-bucket) $zipcodes-doc) "$document" (.xattr (SubdocOptionsBuilder. ) true)))
+
+(defn lookup-in [bucket id]
+  (.lookupIn bucket id))
+
+(defn get-xattrs [bucket id]
+  (let [found-doc (lookup-in bucket id)]
+    (object->map
+     (.content (.execute (.get found-doc "$document"
+                               (.xattr (new SubdocOptionsBuilder)
+                                       true)))
+               0))))
+
+;;; (get-xattrs (config/delectus-bucket) $movies-doc)
+;;; (keys (get-xattrs (config/delectus-bucket) $movies-doc))
+;;; (get-xattrs (config/delectus-bucket) $zipcodes-doc)
+
+(defn size-in-bytes [bucket id]
+  (:value_bytes (get-xattrs bucket id)))
+
+;;; (size-in-bytes (config/delectus-bucket) $movies-doc)
+;;; (size-in-bytes (config/delectus-bucket) $zipcodes-doc)
+
