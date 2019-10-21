@@ -323,11 +323,9 @@
 }
 
 - (IBAction)addColumn:(id)sender{
-    [NSApp beginSheet: addColumnSheet 
-       modalForWindow: documentWindow 
-        modalDelegate: self 
-       didEndSelector: @selector(sheetDidEnd:returnCode:contextInfo:) 
-          contextInfo: @"AddColumn"];
+    [documentWindow beginSheet:addColumnSheet completionHandler:^(NSModalResponse returnCode) {
+        [self sheetDidEnd:addColumnSheet returnCode:returnCode contextInfo:@"AddColumn"];
+    }];
 }
 
 - (IBAction)toggleColumnDeleted:(id)sender{
@@ -395,12 +393,11 @@
 }
 
 - (IBAction)renameColumn:(id)sender{
-    [NSApp beginSheet: addColumnSheet 
-       modalForWindow: documentWindow 
-        modalDelegate: self 
-       didEndSelector: @selector(sheetDidEnd:returnCode:contextInfo:) 
-          contextInfo: @"RenameColumn"];
+    [documentWindow beginSheet:addColumnSheet completionHandler:^(NSModalResponse returnCode) {
+        [self sheetDidEnd:addColumnSheet returnCode:returnCode contextInfo:@"RenameColumn"];
+    }];
 }
+
 
 - (IBAction)setFilter:(id)sender{
     NSString* sortColumn = [dataSource sortColumn];
