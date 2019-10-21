@@ -80,8 +80,8 @@
 }
 
 - (NSString*)version{
-    char* v= version();
-    NSString* result = [self convertToNSString:v];
+    const char* v = version();
+    NSString* result = [self convertToNSString:(char *)v];
     return result;
 }
 
@@ -115,11 +115,11 @@
 }
 
 - (NSString*)sortColumn{
-    char* lbl = sort_column(documentID);
+    const char* lbl = sort_column(documentID);
     if (lbl==NULL){
         return nil;
     }else{
-        NSString* result = [self convertToNSString:lbl];
+        NSString* result = [self convertToNSString:(char *)lbl];
         return result;
     }
 }
@@ -135,11 +135,11 @@
 }
 
 - (NSString*)filterText{
-    char* tx = filter_text(documentID);
+    const char* tx = filter_text(documentID);
     if (tx==NULL){
         return nil;
     }else{
-        NSString* result = [self convertToNSString:tx];
+        NSString* result = [self convertToNSString:(char *)tx];
         return result;
     }
 }
@@ -167,8 +167,8 @@
         return nil;
     }else{
         char* colname = (char*)[label cStringUsingEncoding:NSASCIIStringEncoding];    
-        char* val=value_at(documentID,colname,index);
-        NSString* result = [self convertToNSString:val];
+        const char* val=value_at(documentID,colname,index);
+        NSString* result = [self convertToNSString:(char *)val];
         return result;
     }
 }
@@ -318,11 +318,11 @@
             if(colcount==0){
                 return (NSArray*)[cols retain];
             }else{
-                char* lbl;
+                const char* lbl;
                 for(int i=0;i<colcount;i++){
                     lbl = column_at_index(documentID,i);
                     if(lbl!=NULL){
-                        NSString* label = [self convertToNSString: lbl];
+                        NSString* label = [self convertToNSString: (char*)lbl];
                         [cols addObject:label];
                     }
                 }

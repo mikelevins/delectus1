@@ -286,16 +286,18 @@
         }else{
             NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
             NSAlert* alert = [[NSAlert alloc] init];
-            [alert setMessageText:@"Alert"];
+            [alert setMessageText:@"Adding a row"];
             [alert setInformativeText:msg];
             [alert addButtonWithTitle:@"Okay"];
+            [alert runModal];
         }
     }else{
         NSString* msg = [NSString stringWithFormat: @"Can't add a row with no columns!"];
         NSAlert* alert = [[NSAlert alloc] init];
-        [alert setMessageText:@"Alert"];
+        [alert setMessageText:@"Adding a row"];
         [alert setInformativeText:msg];
         [alert addButtonWithTitle:@"Okay"];
+        [alert runModal];
     }
 }
 
@@ -407,7 +409,7 @@
     NSString* filterText = [filterField stringValue];
     [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:sortColumn andSortOrder:sortOrder andFilterText:filterText];
     [tableView reloadData];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
@@ -442,7 +444,7 @@
     }
     [dataSource getViewIncludingDeleted:includeDeleted withSortColumn:nextLabel andSortOrder:sortOrder andFilterText:[filterField stringValue]];
     [tableView reloadData];
-    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
 }
@@ -470,7 +472,8 @@
 // --------------------------------------------------------------------------------
 
 - (void)setFont:(NSFont*)newFont{
-    [[NSApp delegate] setContentFont: newFont];
+    DelectusDelegate* delegate = [NSApp delegate];
+    [delegate setContentFont: newFont];
     NSArray* cols = [tableView tableColumns];
     int colcount = [cols count];
     for(int i = 0;i<colcount;i++){
@@ -482,8 +485,9 @@
 }
 
 - (void)changeFont:(id)sender
-{    
-    NSFont *oldFont = [[NSApp delegate] contentFont];
+{
+    DelectusDelegate* delegate = [NSApp delegate];
+    NSFont *oldFont = [delegate contentFont];
     NSFont *newFont = [sender convertFont:oldFont];
     [self setFont:newFont];
     return;
@@ -501,7 +505,8 @@
     if ([typeName isEqualToString: @"csv"]) {
         errStr=@"CSVFormatError";
         errMsg=@"Couldn't read CSV data from the file";
-        DelectusDataSource* src=[[NSApp delegate] readCSVFile:absoluteURL];
+        DelectusDelegate* delegate = [NSApp delegate];
+        DelectusDataSource* src=[delegate readCSVFile:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
@@ -514,7 +519,8 @@
     } else if ([typeName isEqualToString: @"delectus"]) {
         errStr=@"DelectusFormatError";
         errMsg=@"Couldn't read Delectus data from the file";
-        DelectusDataSource* src=[[NSApp delegate] readDelectusFile:absoluteURL];
+        DelectusDelegate* delegate = [NSApp delegate];
+        DelectusDataSource* src=[delegate readDelectusFile:absoluteURL];
         if (src==nil){
             errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
             *outError = [[NSError errorWithDomain:errStr code:2 userInfo:errDict] autorelease];
@@ -618,7 +624,11 @@
         BOOL isDup = [dataSource isDuplicateLabel: lbl];
         if (isDup){
             NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",lbl];
-            NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
+            NSAlert* alert = [[NSAlert alloc] init];
+            [alert setMessageText:@"Adding a Column"];
+            [alert setInformativeText:msg];
+            [alert addButtonWithTitle:@"Okay"];
+            [alert runModal];
         } else {
             int err = [dataSource addColumn:lbl];
             if (err == ERR_NO_ERROR){
@@ -631,12 +641,17 @@
                     [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];
                     [tableView scrollColumnToVisible:(colCount-1)];
                 }
-                [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+                [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
                 [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
                 [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
             }else{
                 NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
-                NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
+                NSAlert* alert = [[NSAlert alloc] init];
+                [alert setMessageText:@"Adding a column"];
+                [alert setInformativeText:msg];
+                [alert addButtonWithTitle:@"Okay"];
+                [alert runModal];
+
             }
         }
     } else if([commandStr isEqualTo: @"RenameColumn"]){
@@ -648,7 +663,11 @@
             BOOL isDup = [dataSource isDuplicateLabel: newlbl];
             if(isDup && (![newlbl isEqualTo: oldlbl])){
                 NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",newlbl];
-                NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+                NSAlert* alert = [[NSAlert alloc] init];
+                [alert setMessageText:@"Renaming a column"];
+                [alert setInformativeText:msg];
+                [alert addButtonWithTitle:@"Okay"];
+                [alert runModal];
             }else{
                 int err = [dataSource renameColumn:oldlbl to:newlbl];
                 if (err == ERR_NO_ERROR){
@@ -656,17 +675,27 @@
                     [self setupColumns];
                     [tableView reloadData];
                     [self recordColumnInfo];
-                    [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+                    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",[tableView numberOfRows]]];
                     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
                     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
                 }else{
                     NSString* msg = [NSString stringWithFormat: @"There was an error changing the column name to '%@'",newlbl];
-                    NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+                    NSAlert* alert = [[NSAlert alloc] init];
+                    [alert setMessageText:@"Renaming a column"];
+                    [alert setInformativeText:msg];
+                    [alert addButtonWithTitle:@"Okay"];
+                    [alert runModal];
+
                 }
             }
         }else{
             NSString* msg = [NSString stringWithFormat: @"Error: no column selected"];
-            NSRunAlertPanel(@"Renaming a Column",msg,@"Okay", nil, nil);
+            NSAlert* alert = [[NSAlert alloc] init];
+            [alert setMessageText:@"Renaming a Column"];
+            [alert setInformativeText:msg];
+            [alert addButtonWithTitle:@"Okay"];
+            [alert runModal];
+
         }
     }
 }
