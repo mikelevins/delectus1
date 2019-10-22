@@ -3,7 +3,7 @@
             [clojure.data.json :as json]
             [hiccup.core :refer :all]
             [delectus-api-server.configuration :as config]
-            [delectus-api-server.couchbase.utilities :refer [for-couchbase map->JsonObject]]
+            [delectus-api-server.couchbase.marshal :as marshal]
             [delectus-api-server.couchbase.delectus.users :refer [make-user]])
   (:import
    (com.couchbase.client.java.datastructures.collections CouchbaseMap)
@@ -46,8 +46,7 @@
   (let [bucket (config/delectus-bucket)
         new-userid (get useraccount "id")
         old-user-object (get-delectus-user new-userid)
-        userobject (zipmap (map for-couchbase (keys useraccount))
-                           (map for-couchbase (vals useraccount)))
+        userobject (marshal/to-json-object useraccount)
         couchmap (new CouchbaseMap new-userid bucket userobject)]
     (if old-user-object
       (throw (ex-info "A user with that ID already exists")))))

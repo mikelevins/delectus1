@@ -6,6 +6,7 @@
             [delectus-api-server.identifiers :refer [makeid]]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.io :as couchbase-io]
+            [delectus-api-server.couchbase.marshal :as marshal]
             [delectus-api-server.couchbase.delectus.users :as users]
             [delectus-api-server.couchbase.utilities :as couch-utils])
   (:import
@@ -49,8 +50,8 @@
     ""
     (let [property-matches (map #(let [val (get property-map %)]
                                    (cl-format nil "`~A` = ~S"
-                                              (couch-utils/for-couchbase %)
-                                              (couch-utils/for-couchbase val)))
+                                              (marshal/make-couchable %)
+                                              (marshal/make-couchable val)))
                                 (keys property-map))]
       (cl-format nil "WHERE ~{~A~^ AND ~}" property-matches))))
 
@@ -137,7 +138,7 @@
 
 (defn create-document! [bucket document-key document-map]
   (let [key (or document-key (makeid))
-        json-doc (couch-utils/map->JsonDocument document-key document-map)]
+        json-doc (marshal/to-json-document document-map document-key)]
     (.insert bucket json-doc)
     key))
 
@@ -151,12 +152,11 @@
 ;;; (get-object (config/delectus-bucket) $docid)
 
 (defn update-document! [bucket document-key new-document-map]
-  (let [old-document-map (couch-utils/JsonObject->map (get-object bucket document-key))
+  (let [old-document-map (marshal/to-map (get-object bucket document-key))
         updated-document-map (if old-document-map
                                (merge old-document-map new-document-map)
                                new-document-map)
-        json-object (couch-utils/for-couchbase updated-document-map)
-        json-doc (JsonDocument/create document-key json-object)]
+        json-doc (marshal/to-json-document updated-document-map document-key)]
     (.upsert bucket json-doc)
     document-key))
 
@@ -187,13 +187,13 @@
   (let [csv-data (read-csv-file path)
         id (or id (makeid))
         column-labels (first csv-data)
-        rows-data (into [] (rest csv-data))
-        object (couch-utils/for-couchbase {:name name
-                                           :id id
-                                           :type type
-                                           :columns column-labels
-                                           :rows rows-data})]
-    (JsonDocument/create id object)))
+        rows-data (into [] (rest csv-data))]
+    (marshal/to-json-document {:name name
+                               :id id
+                               :type type
+                               :columns column-labels
+                               :rows rows-data}
+                              id)))
 
 ;;; (def $movies-doc (csv-file->JsonDocument "Mom's Movies" nil "delectus_list" $movies-path ))
 
@@ -233,7 +233,7 @@
 
 (defn get-xattrs [bucket id]
   (let [found-doc (lookup-in bucket id)]
-    (couch-utils/JsonObject->map
+    (marshal/to-map
      (.content (.execute (.get found-doc "$document"
                                (.xattr (new SubdocOptionsBuilder)
                                        true)))

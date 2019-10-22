@@ -2,8 +2,7 @@
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
             [delectus-api-server.identifiers :refer [makeid]]
-            [delectus-api-server.utilities :refer [uuid valid-email?]]
-            [delectus-api-server.couchbase.utilities :refer [for-couchbase map->JsonObject]]))
+            [delectus-api-server.utilities :refer [uuid valid-email?]]))
 
 (defn make-user [& {:keys [type id primary-email email-addresses password-hash collections lists]
                     :or {type nil
@@ -27,4 +26,3 @@
 
 ;;; (def $mikel-id (makeid))
 ;;; (def $mikel (make-user :id $mikel-id :primary-email "mikel@evins.net"))
-;;; (map->JsonObject (for-couchbase $mikel))

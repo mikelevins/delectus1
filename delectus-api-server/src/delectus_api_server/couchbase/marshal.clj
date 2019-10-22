@@ -1,5 +1,6 @@
 (ns delectus-api-server.couchbase.marshal
-  (:require [clojure.data.json :as json])
+  (:require [clojure.data.json :as json]
+            [delectus-api-server.identifiers :refer [makeid]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)))
@@ -97,7 +98,6 @@
 ;;; ---------------------------------------------------------------------
 
 (defprotocol JsonObjectable
-  "Allows a type to be converted to and from CouchBase representations"
   (to-json-object [data]))
 
 
@@ -105,7 +105,20 @@
   JsonObjectable
   (to-json-object [data] (JsonObject/from (make-couchable data))))
 
-;;; (to-json-object (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}))
+;;; (to-json-object {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}})
+
+;;; ---------------------------------------------------------------------
+;;; convert maps to JsonDocument 
+;;; ---------------------------------------------------------------------
+
+(defprotocol JsonDocumentable
+  (to-json-document [data id]))
+
+(extend-type java.util.Map
+  JsonDocumentable
+  (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
+
+;;; (to-json-document (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}) (makeid))
 
 ;;; ---------------------------------------------------------------------
 ;;; convert values to maps 
@@ -114,10 +127,16 @@
 (defprotocol Mappable
   (to-map [data]))
 
-
 (extend-type com.couchbase.client.java.document.json.JsonObject
   Mappable
   (to-map [data](into {} (.toMap data))))
 
-;;; (to-map (to-json-object (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}})))
+(extend-type com.couchbase.client.java.document.JsonDocument
+  Mappable
+  (to-map [data]
+    (let [content-map (to-map (.content data))]
+      (merge content-map
+             {:document-id (.id data)}))))
+
+;;; (to-map (to-json-document (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}) (makeid)))
 
