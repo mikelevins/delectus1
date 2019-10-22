@@ -18,7 +18,7 @@
 (defmethod for-couchbase clojure.lang.Symbol [s] (name s))
 
 (defmethod for-couchbase clojure.lang.PersistentVector [v]
-  (map for-couchbase v))
+  (into [] (map for-couchbase v)))
 
 (defmethod for-couchbase clojure.lang.PersistentArrayMap [m]
   (let [ks (map for-couchbase (keys m))

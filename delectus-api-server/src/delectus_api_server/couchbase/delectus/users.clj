@@ -27,5 +27,4 @@
 
 ;;; (def $mikel-id (makeid))
 ;;; (def $mikel (make-user :id $mikel-id :primary-email "mikel@evins.net"))
-;;; (class $mikel)
-;;; (for-couchbase $mikel)
+;;; (map->JsonObject (for-couchbase $mikel))
