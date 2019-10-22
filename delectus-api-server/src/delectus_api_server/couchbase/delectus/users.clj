@@ -1,6 +1,7 @@
 (ns delectus-api-server.couchbase.delectus.users
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
+            [clojure.pprint :refer [cl-format]]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.identifiers :refer [makeid]]
             [delectus-api-server.utilities :refer [uuid valid-email?]]
@@ -10,11 +11,14 @@
                      make-couchable to-json-document to-json-object to-map]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
-   (com.couchbase.client.java.document.json JsonArray JsonObject)))
+   (com.couchbase.client.java.document.json JsonArray JsonObject)
+   (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
 ;;; User
 ;;; ---------------------------------------------------------------------
+
+(defn the-user-document-type [] "delectus_user")
 
 (defrecord User [id type primary-email email-addresses password-hash collections lists]
   Couchable
@@ -39,7 +43,7 @@
   (when (not (valid-email? primary-email))
     (throw (ex-info "invalid :primary-email parameter" {:value primary-email})))
   (map->User {:id id
-              :type "delectus_user"
+              :type (the-user-document-type)
               :primary-email primary-email
               :email-addresses [primary-email]
               :password-hash password-hash
@@ -53,29 +57,19 @@
 ;;; (to-json-document $mikel $mikel-id)
 
 ;;; ---------------------------------------------------------------------
-;;; the user index
+;;; creating user records
 ;;; ---------------------------------------------------------------------
 ;;; the Couchbase document that maps user email addresses to User ids
 
-(defn the-user-index-document-id [] "the_user_index")
+(defn list-delectus-users []
+  (let [bucket (config/delectus-bucket)
+        bucket-name (.name bucket)
+        select-expression (cl-format nil "SELECT `primary-email`,`id` from `delectus` WHERE type = \"delectus_user\"")
+        results (.query bucket (N1qlQuery/simple select-expression))
+        result-vals (map #(.value %) results)]
+    (map to-map result-vals)))
 
-;;; (couch-io/get-document (config/delectus-bucket) (the-user-index-document-id))
-
-(defn get-user-index [bucket]
-  (couch-io/get-document bucket (the-user-index-document-id)))
-
-;;; (get-user-index (config/delectus-bucket))
-
-(defn initialize-user-index [bucket & {:keys [replace]}]
-  (let [index (get-user-index bucket)]
-    (when (and index (not replace))
-      (throw (ex-info "The user-index document already exists" {:bucket (.name bucket)})))
-    (when index
-      (couch-io/delete-document! bucket (the-user-index-document-id)))
-    (couch-io/create-document! bucket (the-user-index-document-id) {})
-    (the-user-index-document-id)))
-
-;;; (initialize-user-index (config/delectus-bucket))
+;;; (time (list-delectus-users))
 
 (defn add-delectus-user! [bucket email-address & {:keys [id email-addresses password-hash collections lists]
                                                   :or {id (makeid)
@@ -86,22 +80,12 @@
   (let [already-user-document (couch-io/get-document bucket id)]
     (if already-user-document
       (throw (ex-info "A user with the supplied ID already exists" {:id id}))
-      (let [index-document (get-user-index bucket)]
-        (when (not index-document)
-          (initialize-user-index bucket))
-        (let [index-document (get-user-index bucket)]
-          (when (not index-document)
-            (throw (ex-info "There was a problem initializing the user-account index" {:bucket (.name bucket)})))
-          (let [index-map (to-map index-document)
-                email-addresses [email-address]
-                new-user-map (make-user :id id :primary-email email-address
-                                        :email-addresses email-addresses :password-hash password-hash
-                                        :collections collections :lists lists)
-                new-index-map (merge index-map {email-address id})
-                new-index-document (to-json-document new-index-map (.id index-document))
-                new-user-document (to-json-document new-user-map id)]
-            (.insert bucket new-user-document)
-            (.upsert bucket new-index-document)))))))
+      (let [email-addresses [email-address]
+            new-user-map (make-user :id id :primary-email email-address
+                                    :email-addresses email-addresses :password-hash password-hash
+                                    :collections collections :lists lists)
+            new-user-document (to-json-document new-user-map id)]
+        (.insert bucket new-user-document)))))
 
 ;;; (add-delectus-user! (config/delectus-bucket) "mikel@evins.net")
 ;;; (add-delectus-user! (config/delectus-bucket) "greer@evins.net")
