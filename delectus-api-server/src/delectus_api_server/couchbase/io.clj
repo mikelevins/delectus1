@@ -49,8 +49,8 @@
     ""
     (let [property-matches (map #(let [val (get property-map %)]
                                    (cl-format nil "`~A` = ~S"
-                                              (for-couchbase %)
-                                              (for-couchbase val)))
+                                              (couch-utils/for-couchbase %)
+                                              (couch-utils/for-couchbase val)))
                                 (keys property-map))]
       (cl-format nil "WHERE ~{~A~^ AND ~}" property-matches))))
 
@@ -155,7 +155,7 @@
         updated-document-map (if old-document-map
                                (merge old-document-map new-document-map)
                                new-document-map)
-        json-object (for-couchbase updated-document-map)
+        json-object (couch-utils/for-couchbase updated-document-map)
         json-doc (JsonDocument/create document-key json-object)]
     (.upsert bucket json-doc)
     document-key))
@@ -188,11 +188,11 @@
         id (or id (makeid))
         column-labels (first csv-data)
         rows-data (into [] (rest csv-data))
-        object (for-couchbase {:name name
-                               :id id
-                               :type type
-                               :columns column-labels
-                               :rows rows-data})]
+        object (couch-utils/for-couchbase {:name name
+                                           :id id
+                                           :type type
+                                           :columns column-labels
+                                           :rows rows-data})]
     (JsonDocument/create id object)))
 
 ;;; (def $movies-doc (csv-file->JsonDocument "Mom's Movies" nil "delectus_list" $movies-path ))

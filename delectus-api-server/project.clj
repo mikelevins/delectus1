@@ -22,6 +22,8 @@
                  ;; hiccup HTML generator
                  [hiccup "1.0.5"]]
 
-  :main ^:skip-aot delectus-api-server.core
+  ;; for skipping AOT in Pedestal apps
+  ;; :main ^:skip-aot delectus-api-server.core
+  :main delectus-api-server.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
