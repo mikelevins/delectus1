@@ -138,5 +138,5 @@
       (merge content-map
              {:document-id (.id data)}))))
 
-;;; (to-map (to-json-document (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}) (makeid)))
+;;; (class (to-map (to-json-document (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}) (makeid))))
 

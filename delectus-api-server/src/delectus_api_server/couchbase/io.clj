@@ -249,3 +249,4 @@
 ;;; (size-in-bytes (config/delectus-bucket) $movies-doc)
 ;;; (size-in-bytes (config/delectus-bucket) $zipcodes-doc)
 
+
