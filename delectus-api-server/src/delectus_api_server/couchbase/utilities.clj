@@ -1,5 +1,6 @@
 (ns delectus-api-server.couchbase.utilities
-  (:require [clojure.data.json :as json])
+  (:require [clojure.data.json :as json]
+            [delectus-api-server.couchbase.delectus.users :as delectus-users])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)))
