@@ -7,7 +7,7 @@
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.io :as couchbase-io]
             [delectus-api-server.couchbase.delectus.users :as users]
-            [delectus-api-server.couchbase.utilities :refer [for-couchbase]])
+            [delectus-api-server.couchbase.utilities :as couch-utils])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonObject)
@@ -39,23 +39,6 @@
 
 ;;; (document-key (get-document (config/travel-sample-bucket) "airline_10"))
 ;;; (document-key (get-document (config/travel-sample-bucket) "route_10000"))
-
-(defn object->map [object]
-  (if object
-    (json/read-json (.toString object)
-                    true)
-    nil))
-
-;;; (object->map (get-object (config/travel-sample-bucket) "airline_10"))
-;;; (object->map (get-object (config/travel-sample-bucket) "NOPE!"))
-
-(defn document->map [document]
-  (if document
-    (object->map (.content document))
-    nil))
-
-;;; (document->map (get-document (config/travel-sample-bucket) "airline_10"))
-;;; (document->map (get-document (config/travel-sample-bucket) "NOPE!"))
 
 ;;; ---------------------------------------------------------------------
 ;;; searching for objects
@@ -154,13 +137,12 @@
 
 (defn create-document! [bucket document-key document-map]
   (let [key (or document-key (makeid))
-        json-object (for-couchbase document-map)
-        json-doc (JsonDocument/create key json-object)]
+        json-doc (couch-utils/map->JsonDocument document-key document-map)]
     (.insert bucket json-doc)
     key))
 
 ;;; (def $docid (create-document! (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
-;;; (object->map (get-object (config/delectus-bucket) $docid))
+;;; (couch-utils/JsonObject->map (get-object (config/delectus-bucket) $docid))
 
 (defn delete-document! [bucket document-key]
   (.remove bucket document-key))
@@ -169,7 +151,7 @@
 ;;; (get-object (config/delectus-bucket) $docid)
 
 (defn update-document! [bucket document-key new-document-map]
-  (let [old-document-map (object->map (get-object bucket document-key))
+  (let [old-document-map (couch-utils/JsonObject->map (get-object bucket document-key))
         updated-document-map (if old-document-map
                                (merge old-document-map new-document-map)
                                new-document-map)
@@ -179,7 +161,7 @@
     document-key))
 
 ;;; (def $docid (create-document! (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
-;;; (object->map (get-object (config/delectus-bucket) $docid))
+;;; (couch-utils/JsonObject->map (get-object (config/delectus-bucket) $docid))
 ;;; (delete-document! (config/delectus-bucket) $docid)
 ;;; (update-document! (config/delectus-bucket) $docid {:name "Frederick" :age 35})
 
@@ -233,26 +215,25 @@
 ;;; (def $movies-doc (import-csv-file $movies-path nil "Mom's Movies" (makeid)))
 ;;; (time (def $found-obj (get-object (config/delectus-bucket) $movies-doc)))
 ;;; (.size $found-obj)
-;;; (keys (object->map $found-obj))
+;;; (keys (couch-utils/JsonObject->map $found-obj))
 ;;; (def $obj-str (.toString $found-obj))
 ;;; (count $obj-str)
-
+;;; (delete-document! (config/delectus-bucket) $movies-doc)
 
 ;;; (def $zipcodes-path "/Users/mikel/Workshop/src/delectus/test-data/zipcode.csv")
 ;;; (time (def $zipcodes-doc (import-csv-file $zipcodes-path nil "Zipcodes" (makeid))))
 ;;; (time (def $found-obj (get-object (config/delectus-bucket) $zipcodes-doc)))
 ;;; (.size $found-obj)
-;;; (keys (object->map $found-obj))
-;;; (:columns (object->map $found-obj))
-
-;;; (.execute (.get (.lookupIn (config/delectus-bucket) $zipcodes-doc) "$document" (.xattr (SubdocOptionsBuilder. ) true)))
+;;; (keys (couch-utils/JsonObject->map $found-obj))
+;;; (:columns (couch-utils/JsonObject->map $found-obj))
+;;; (delete-document! (config/delectus-bucket) $zipcodes-doc)
 
 (defn lookup-in [bucket id]
   (.lookupIn bucket id))
 
 (defn get-xattrs [bucket id]
   (let [found-doc (lookup-in bucket id)]
-    (object->map
+    (couch-utils/JsonObject->map
      (.content (.execute (.get found-doc "$document"
                                (.xattr (new SubdocOptionsBuilder)
                                        true)))
