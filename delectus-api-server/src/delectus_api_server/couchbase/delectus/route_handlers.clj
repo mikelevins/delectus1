@@ -1,6 +1,7 @@
 (ns delectus-api-server.couchbase.delectus.route-handlers
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
+            [hiccup.core :refer :all]
             [delectus-api-server.couchbase.delectus.users :refer [list-delectus-users]]))
 
 ;;; ---------------------------------------------------------------------

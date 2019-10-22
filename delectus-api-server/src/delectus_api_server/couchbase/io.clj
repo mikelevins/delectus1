@@ -7,7 +7,6 @@
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.io :as couchbase-io]
             [delectus-api-server.couchbase.marshal :as marshal]
-            [delectus-api-server.couchbase.delectus.users :as users]
             [delectus-api-server.couchbase.utilities :as couch-utils])
   (:import
    (com.couchbase.client.java.document JsonDocument)
@@ -142,14 +141,8 @@
     (.insert bucket json-doc)
     key))
 
-;;; (def $docid (create-document! (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
-;;; (couch-utils/JsonObject->map (get-object (config/delectus-bucket) $docid))
-
 (defn delete-document! [bucket document-key]
   (.remove bucket document-key))
-
-;;; (delete-document! (config/delectus-bucket) $docid)
-;;; (get-object (config/delectus-bucket) $docid)
 
 (defn update-document! [bucket document-key new-document-map]
   (let [old-document-map (marshal/to-map (get-object bucket document-key))
@@ -159,12 +152,6 @@
         json-doc (marshal/to-json-document updated-document-map document-key)]
     (.upsert bucket json-doc)
     document-key))
-
-;;; (def $docid (create-document! (config/delectus-bucket) (makeid) {:name "Fred" :type "cartoon"}))
-;;; (couch-utils/JsonObject->map (get-object (config/delectus-bucket) $docid))
-;;; (delete-document! (config/delectus-bucket) $docid)
-;;; (update-document! (config/delectus-bucket) $docid {:name "Frederick" :age 35})
-
 
 ;;; ---------------------------------------------------------------------
 ;;; importing csv
@@ -207,26 +194,9 @@
                 :type "delectus_list"
                 :columns column-labels
                 :rows rows-data}
-        bucket (config/delectus-bucket)]
+        bucket (config/delectus-content-bucket)]
     (couchbase-io/create-document! bucket id docmap)
     id))
-
-;;; (def $movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")
-;;; (def $movies-doc (import-csv-file $movies-path nil "Mom's Movies" (makeid)))
-;;; (time (def $found-obj (get-object (config/delectus-bucket) $movies-doc)))
-;;; (.size $found-obj)
-;;; (keys (couch-utils/JsonObject->map $found-obj))
-;;; (def $obj-str (.toString $found-obj))
-;;; (count $obj-str)
-;;; (delete-document! (config/delectus-bucket) $movies-doc)
-
-;;; (def $zipcodes-path "/Users/mikel/Workshop/src/delectus/test-data/zipcode.csv")
-;;; (time (def $zipcodes-doc (import-csv-file $zipcodes-path nil "Zipcodes" (makeid))))
-;;; (time (def $found-obj (get-object (config/delectus-bucket) $zipcodes-doc)))
-;;; (.size $found-obj)
-;;; (keys (couch-utils/JsonObject->map $found-obj))
-;;; (:columns (couch-utils/JsonObject->map $found-obj))
-;;; (delete-document! (config/delectus-bucket) $zipcodes-doc)
 
 (defn lookup-in [bucket id]
   (.lookupIn bucket id))
@@ -239,14 +209,7 @@
                                        true)))
                0))))
 
-;;; (get-xattrs (config/delectus-bucket) $movies-doc)
-;;; (keys (get-xattrs (config/delectus-bucket) $movies-doc))
-;;; (get-xattrs (config/delectus-bucket) $zipcodes-doc)
-
 (defn size-in-bytes [bucket id]
   (:value_bytes (get-xattrs bucket id)))
-
-;;; (size-in-bytes (config/delectus-bucket) $movies-doc)
-;;; (size-in-bytes (config/delectus-bucket) $zipcodes-doc)
 
 

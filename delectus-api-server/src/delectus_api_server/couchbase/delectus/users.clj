@@ -62,24 +62,26 @@
 ;;; the Couchbase document that maps user email addresses to User ids
 
 (defn list-delectus-users []
-  (let [bucket (config/delectus-bucket)
+  (let [bucket (config/delectus-users-bucket)
         bucket-name (.name bucket)
-        select-expression (cl-format nil "SELECT `primary-email`,`id` from `delectus` WHERE type = \"delectus_user\"")
+        select-expression (cl-format nil "SELECT `primary-email`,`id` from `~A` WHERE type = \"delectus_user\""
+                                     bucket-name)
         results (.query bucket (N1qlQuery/simple select-expression))
         result-vals (map #(.value %) results)]
     (map to-map result-vals)))
 
 ;;; (time (list-delectus-users))
 
-(defn add-delectus-user! [bucket email-address & {:keys [id email-addresses password-hash collections lists]
-                                                  :or {id (makeid)
-                                                       email-addresses []
-                                                       password-hash nil
-                                                       collections {}
-                                                       lists {}}}]
-  (let [already-user-document (couch-io/get-document bucket id)]
+(defn add-delectus-user! [email-address & {:keys [id email-addresses password-hash collections lists]
+                                           :or {id (makeid)
+                                                email-addresses []
+                                                password-hash nil
+                                                collections {}
+                                                lists {}}}]
+  (let [bucket (config/delectus-users-bucket)
+        already-user-document (couch-io/get-document bucket id)]
     (if already-user-document
-      (throw (ex-info "A user with the supplied ID already exists" {:id id}))
+      (throw (ex-info "A user with the supplied ID already exists" {:id id :bucket (.name bucket)}))
       (let [email-addresses [email-address]
             new-user-map (make-user :id id :primary-email email-address
                                     :email-addresses email-addresses :password-hash password-hash
@@ -87,5 +89,5 @@
             new-user-document (to-json-document new-user-map id)]
         (.insert bucket new-user-document)))))
 
-;;; (add-delectus-user! (config/delectus-bucket) "mikel@evins.net")
-;;; (add-delectus-user! (config/delectus-bucket) "greer@evins.net")
+;;; (add-delectus-user! (config/delectus-users-bucket) "mikel@evins.net")
+;;; (add-delectus-user! (config/delectus-users-bucket) "greer@evins.net")

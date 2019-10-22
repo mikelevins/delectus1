@@ -1,6 +1,7 @@
 (ns delectus-api-server.configuration
   (:require 
-   [aero.core :as aero])
+   [aero.core :as aero]
+   [delectus-api-server.constants :as constants])
   (:import
    (java.lang System)
    (com.couchbase.client.java CouchbaseCluster)))
@@ -53,25 +54,43 @@
 ;;; delectus
 ;;; --------
 
-(defonce +delectus-users-document-name+ "delectus-users")
-(defonce +delectus-bucket+ (atom nil))
+(defonce +delectus-users-bucket+ (atom nil))
 
-(defn delectus-bucket []
-  (when (nil? @+delectus-bucket+)
-    (swap! +delectus-bucket+
+(defn delectus-users-bucket []
+  (when (nil? @+delectus-users-bucket+)
+    (swap! +delectus-users-bucket+
            (fn [old-val]
-             (let [bucketname (:delectus-main-bucket-name (delectus-configuration))
+             (let [bucketname constants/+delectus-users-bucket-name+
                    bucketpass (:delectus-user-password (delectus-configuration))]
                (.openBucket (couchbase-cluster) bucketname bucketpass)))))
-  @+delectus-bucket+)
+  @+delectus-users-bucket+)
 
-(defn reset-delectus-bucket []
-  (when @+delectus-bucket+
-    (.close @+delectus-bucket+))
-  (swap! +delectus-bucket+ (constantly nil)))
+(defn reset-delectus-users-bucket []
+  (when @+delectus-users-bucket+
+    (.close @+delectus-users-bucket+))
+  (swap! +delectus-users-bucket+ (constantly nil)))
 
-;;; (delectus-bucket)
-;;; (reset-delectus-bucket)
+;;; (delectus-users-bucket)
+;;; (reset-delectus-users-bucket)
+
+(defonce +delectus-content-bucket+ (atom nil))
+
+(defn delectus-content-bucket []
+  (when (nil? @+delectus-content-bucket+)
+    (swap! +delectus-content-bucket+
+           (fn [old-val]
+             (let [bucketname constants/+delectus-content-bucket-name+
+                   bucketpass (:delectus-user-password (delectus-configuration))]
+               (.openBucket (couchbase-cluster) bucketname bucketpass)))))
+  @+delectus-content-bucket+)
+
+(defn reset-delectus-content-bucket []
+  (when @+delectus-content-bucket+
+    (.close @+delectus-content-bucket+))
+  (swap! +delectus-content-bucket+ (constantly nil)))
+
+;;; (delectus-content-bucket)
+;;; (reset-delectus-content-bucket)
 
 
 ;;; travel-sample
