@@ -17,7 +17,5 @@
 (defn users [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
-   :body    (let [found (list-delectus-users)
-                  emails (map #(get % "primary-email") found)]
-              (json/write-str emails))})
+   :body    (json/write-str (list-delectus-users))})
 

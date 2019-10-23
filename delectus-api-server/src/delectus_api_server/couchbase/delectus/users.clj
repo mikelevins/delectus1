@@ -66,7 +66,7 @@
                                      bucket-name)
         results (.query bucket (N1qlQuery/simple select-expression))
         result-vals (map #(.value %) results)]
-    (map to-map result-vals)))
+    (sort (map #(.getString % "primary-email") result-vals))))
 
 ;;; (time (list-delectus-users))
 
