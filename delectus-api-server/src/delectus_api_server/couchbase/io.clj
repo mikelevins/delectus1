@@ -140,6 +140,17 @@
 ;;; (count $route-ids)
 ;;; (nth $route-ids 0)
 
+(defn ids-of-type [bucket type-name]
+  (let [bucket-name (.name bucket)
+        select-expression (cl-format nil "SELECT meta(doc).id AS docid from `~A` doc WHERE `type` = \"~A\""
+                                     bucket-name type-name)
+        results (.query bucket (N1qlQuery/simple select-expression))
+        result-vals (map #(.value %) results)]
+    (map #(.getString % "docid") result-vals)))
+
+;;; (time (def $route-ids (ids-of-type (config/travel-sample-bucket) "route")))
+;;; (nth $route-ids 0)
+
 (defn count-objects [bucket properties]
   (let [bucket-name (.name bucket)
         where-clause (make-where-clause properties)
