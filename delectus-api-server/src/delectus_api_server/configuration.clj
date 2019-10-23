@@ -61,7 +61,7 @@
     (swap! +delectus-users-bucket+
            (fn [old-val]
              (let [bucketname constants/+delectus-users-bucket-name+
-                   bucketpass (:delectus-user-password (delectus-configuration))]
+                   bucketpass (:delectus-users-password (delectus-configuration))]
                (.openBucket (couchbase-cluster) bucketname bucketpass)))))
   @+delectus-users-bucket+)
 
@@ -80,7 +80,7 @@
     (swap! +delectus-content-bucket+
            (fn [old-val]
              (let [bucketname constants/+delectus-content-bucket-name+
-                   bucketpass (:delectus-user-password (delectus-configuration))]
+                   bucketpass (:delectus-content-password (delectus-configuration))]
                (.openBucket (couchbase-cluster) bucketname bucketpass)))))
   @+delectus-content-bucket+)
 

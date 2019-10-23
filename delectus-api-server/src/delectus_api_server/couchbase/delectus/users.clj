@@ -83,11 +83,12 @@
     (if already-user-document
       (throw (ex-info "A user with the supplied ID already exists" {:id id :bucket (.name bucket)}))
       (let [email-addresses [email-address]
-            new-user-map (make-user :id id :primary-email email-address
+            new-user-map (make-user :id id
+                                    :primary-email email-address
                                     :email-addresses email-addresses :password-hash password-hash
                                     :collections collections :lists lists)
             new-user-document (to-json-document new-user-map id)]
         (.insert bucket new-user-document)))))
 
-;;; (add-delectus-user! (config/delectus-users-bucket) "mikel@evins.net")
-;;; (add-delectus-user! (config/delectus-users-bucket) "greer@evins.net")
+;;; (add-delectus-user! "mikel@evins.net")
+;;; (add-delectus-user! "greer@evins.net")
