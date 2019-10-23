@@ -5,7 +5,8 @@
             [delectus-api-server.identifiers :refer [makeid]]
             [delectus-api-server.couchbase.marshal
              :refer [Couchable JsonDocumentable JsonObjectable
-                     make-couchable to-json-document to-json-object to-map]])
+                     make-couchable to-json-document to-json-object to-map]]
+            [delectus-api-server.couchbase.delectus.users :as delectus-users])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -48,7 +49,8 @@
                     :lists lists}))
 
 ;;; (def $things-id (makeid))
-;;; (def $things (make-collection :id $things-id :name "Things"))
-;;; (make-couchable $mikel)
-;;; (to-json-object $mikel)
-;;; (to-json-document $mikel $mikel-id)
+;;; (def $mikel-id (delectus-users/delectus-user-email->id "mikel@evins.net"))
+;;; (def $things (make-collection :id $things-id :name "Things" :owner-id $mikel-id))
+;;; (make-couchable $things)
+;;; (to-json-object $things)
+;;; (to-json-document $things $things-id)
