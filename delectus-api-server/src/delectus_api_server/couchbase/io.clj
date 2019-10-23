@@ -100,6 +100,7 @@
             (merge doc {:document-key docid}))
          result-strings)))
 
+
 ;;; (time (def $all (find-objects (config/travel-sample-bucket) {})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline" "id" 10})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline"})))
@@ -112,6 +113,32 @@
 ;;; (time (def $routes (find-objects (config/travel-sample-bucket) {"type" "route"} :limit 10 :offset 20000)))
 ;;; (count $routes)
 ;;; (:id (first $routes))
+;;; (:document-key (first $routes))
+
+(defn find-object-ids [bucket properties
+                       & {:keys [order-by direction limit offset]
+                          :or {order-by nil
+                               direction :ascending
+                               limit nil
+                               offset nil}}]
+  (let [bucket-name (.name bucket)
+        order-clause (make-order-clause order-by direction)
+        where-clause (make-where-clause properties)
+        limit-clause (if limit (cl-format nil "LIMIT ~A" limit) "")
+        offset-clause (if offset (cl-format nil "OFFSET ~A" offset) "")
+        select-expression (cl-format nil "SELECT meta(doc).id AS docid from `~A` doc ~A ~A ~A ~A"
+                                     bucket-name where-clause order-clause limit-clause offset-clause)
+        results (.query bucket (N1qlQuery/simple select-expression))
+        result-vals (map #(.value %) results)]
+    (map #(.getString % "docid") result-vals)))
+
+;;; (time (def $airline-ids (find-object-ids (config/travel-sample-bucket) {"type" "airline"})))
+;;; (count $airline-ids)
+;;; (nth $airline-ids 25)
+
+;;; (time (def $route-ids (find-object-ids (config/travel-sample-bucket) {"type" "route"})))
+;;; (count $route-ids)
+;;; (nth $route-ids 0)
 
 (defn count-objects [bucket properties]
   (let [bucket-name (.name bucket)

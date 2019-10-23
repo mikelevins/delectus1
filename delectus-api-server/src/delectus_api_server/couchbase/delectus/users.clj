@@ -1,10 +1,8 @@
 (ns delectus-api-server.couchbase.delectus.users
-  (:require [clojure.pprint :as pp]
-            [clojure.data.json :as json]
-            [clojure.pprint :refer [cl-format]]
+  (:require [clojure.pprint :refer [cl-format]]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.identifiers :refer [makeid]]
-            [delectus-api-server.utilities :refer [uuid valid-email?]]
+            [delectus-api-server.utilities :refer [valid-email?]]
             [delectus-api-server.couchbase.io :as couch-io]
             [delectus-api-server.couchbase.marshal
              :refer [Couchable JsonDocumentable JsonObjectable
