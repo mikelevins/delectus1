@@ -17,38 +17,38 @@
 
 ;; (defn user-roles [] ["user"])
 
-;; (defn the-user-document-type [] "delectus_user")
+(defn the-collection-document-type [] "delectus_collection")
 
-;; (defrecord User [id type primary-email email-addresses password-hash roles]
-;;   Couchable
-;;   (make-couchable [data]
-;;     (let [ks (map make-couchable (keys data))
-;;           vs (map make-couchable (vals data))]
-;;       (java.util.HashMap. (zipmap ks vs))))
-;;   JsonObjectable
-;;   (to-json-object [data] (JsonObject/from (make-couchable data)))
-;;   JsonDocumentable
-;;   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
+(defrecord Collection [id type name owner-id access lists]
+  Couchable
+  (make-couchable [data]
+    (let [ks (map make-couchable (keys data))
+          vs (map make-couchable (vals data))]
+      (java.util.HashMap. (zipmap ks vs))))
+  JsonObjectable
+  (to-json-object [data] (JsonObject/from (make-couchable data)))
+  JsonDocumentable
+  (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-;; (defn make-user [& {:keys [id primary-email email-addresses password-hash roles]
-;;                     :or {id (makeid)
-;;                          primary-email nil
-;;                          email-addresses []
-;;                          password-hash nil
-;;                          roles ["user"]}}]
-;;   (when (not primary-email)
-;;     (throw (ex-info ":primary-email parameter missing" {})))
-;;   (when (not (valid-email? primary-email))
-;;     (throw (ex-info "invalid :primary-email parameter" {:value primary-email})))
-;;   (map->User {:id id
-;;               :type (the-user-document-type)
-;;               :primary-email primary-email
-;;               :email-addresses [primary-email]
-;;               :password-hash password-hash
-;;               :roles roles}))
+(defn make-collection [& {:keys [id name owner-id access lists]
+                          :or {id (makeid)
+                               name nil
+                               owner-id nil
+                               access {}
+                               lists {}}}]
+  (when (not name)
+    (throw (ex-info ":name parameter missing" {})))
+  (when (not owner-id)
+    (throw (ex-info ":owner-id parameter missing" {})))
+  (map->Collection {:id id
+                    :type (the-collection-document-type)
+                    :name name
+                    :owner-id owner-id
+                    :access access
+                    :lists lists}))
 
-;;; (def $mikel-id (makeid))
-;;; (def $mikel (make-user :id $mikel-id :primary-email "mikel@evins.net"))
+;;; (def $things-id (makeid))
+;;; (def $things (make-collection :id $things-id :name "Things"))
 ;;; (make-couchable $mikel)
 ;;; (to-json-object $mikel)
 ;;; (to-json-document $mikel $mikel-id)

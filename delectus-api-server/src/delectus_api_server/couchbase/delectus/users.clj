@@ -59,16 +59,33 @@
 ;;; ---------------------------------------------------------------------
 ;;; the Couchbase document that maps user email addresses to User ids
 
-(defn list-delectus-users []
+(defn delectus-users []
   (let [bucket (config/delectus-users-bucket)
         bucket-name (.name bucket)
         select-expression (cl-format nil "SELECT `primary-email`,`id` from `~A` WHERE type = \"delectus_user\""
                                      bucket-name)
-        results (.query bucket (N1qlQuery/simple select-expression))
-        result-vals (map #(.value %) results)]
-    (sort (map #(.getString % "primary-email") result-vals))))
+        results (.query bucket (N1qlQuery/simple select-expression))]
+    (map #(.value %) results)))
 
-;;; (time (list-delectus-users))
+(defn delectus-user-ids []
+  (couch-io/find-object-ids (config/delectus-users-bucket)
+                            {:type (the-user-document-type)}))
+
+;;; (time (delectus-user-ids))
+
+(defn delectus-user-email->id [email]
+  (let [found (couch-io/find-objects (config/delectus-users-bucket) {"primary-email" "mikel@evins.net"})]
+    (if found
+      (:document-key (first found))
+      nil)))
+
+;;; (time (delectus-user-email->id "mikel@evins.net"))
+
+(defn delectus-user-emails []
+  (sort (map #(.getString % "primary-email")
+               (delectus-users))))
+
+;;; (time (delectus-user-emails))
 
 (defn add-delectus-user! [email-address & {:keys [id email-addresses password-hash collections lists]
                                            :or {id (makeid)

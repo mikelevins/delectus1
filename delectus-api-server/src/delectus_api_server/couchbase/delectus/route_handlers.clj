@@ -2,7 +2,7 @@
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
             [hiccup.core :refer :all]
-            [delectus-api-server.couchbase.delectus.users :refer [list-delectus-users]]))
+            [delectus-api-server.couchbase.delectus.users :refer [delectus-user-emails]]))
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus handlers
@@ -17,5 +17,5 @@
 (defn users [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
-   :body    (json/write-str (list-delectus-users))})
+   :body    (json/write-str (delectus-user-emails))})
 
