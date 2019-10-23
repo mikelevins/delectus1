@@ -18,9 +18,11 @@
 ;;; User
 ;;; ---------------------------------------------------------------------
 
+(defn user-roles [] ["user"])
+
 (defn the-user-document-type [] "delectus_user")
 
-(defrecord User [id type primary-email email-addresses password-hash collections lists]
+(defrecord User [id type primary-email email-addresses password-hash roles]
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
@@ -31,13 +33,12 @@
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-user [& {:keys [id primary-email email-addresses password-hash collections lists]
+(defn make-user [& {:keys [id primary-email email-addresses password-hash roles]
                     :or {id (makeid)
                          primary-email nil
                          email-addresses []
                          password-hash nil
-                         collections {}
-                         lists {}}}]
+                         roles ["user"]}}]
   (when (not primary-email)
     (throw (ex-info ":primary-email parameter missing" {})))
   (when (not (valid-email? primary-email))
@@ -47,8 +48,7 @@
               :primary-email primary-email
               :email-addresses [primary-email]
               :password-hash password-hash
-              :collections collections
-              :lists lists}))
+              :roles roles}))
 
 ;;; (def $mikel-id (makeid))
 ;;; (def $mikel (make-user :id $mikel-id :primary-email "mikel@evins.net"))
