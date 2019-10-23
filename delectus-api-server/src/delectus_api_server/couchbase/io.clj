@@ -100,6 +100,8 @@
             (merge doc {:document-key docid}))
          result-strings)))
 
+;;; (time (def $all (find-objects (config/delectus-users-bucket) {})))
+
 
 ;;; (time (def $all (find-objects (config/travel-sample-bucket) {})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline" "id" 10})))
@@ -136,9 +138,9 @@
 ;;; (count $airline-ids)
 ;;; (nth $airline-ids 25)
 
-;;; (time (def $route-ids (find-object-ids (config/travel-sample-bucket) {"type" "route"})))
-;;; (count $route-ids)
-;;; (nth $route-ids 0)
+;;; (time (def $user-ids (find-object-ids (config/delectus-users-bucket) {"type" "delectus_user"})))
+;;; (count $user-ids)
+;;; (nth $user-ids 1)
 
 (defn ids-of-type [bucket type-name]
   (let [bucket-name (.name bucket)
