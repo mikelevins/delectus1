@@ -7,6 +7,8 @@
             [delectus-api-server.couchbase.marshal
              :refer [Couchable JsonDocumentable JsonObjectable
                      make-couchable to-json-document to-json-object to-map]]
+            [delectus-api-server.couchbase.delectus.authenticatable
+             :refer [Authenticatable get-login-name get-password-hash update-password-hash]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
             [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]])
@@ -32,6 +34,12 @@
   (get-name [data] (:name data))
   (rename [data new-name] (map->User (merge data {:name new-name})))
 
+  Authenticatable
+  (get-login-name [data] (:email data))
+  (get-password-hash [data] (:password-hash data))
+  (update-password-hash [data new-password-hash]
+    (map->User (merge data {:password-hash new-password-hash})))
+  
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
@@ -62,8 +70,13 @@
 ;;; (def $mikel-id (makeid))
 ;;; (def $mikel (make-user :id $mikel-id :email "mikel@evins.net"))
 ;;; (satisfies? Identifiable $mikel)
+;;; (satisfies? Authenticatable $mikel)
 ;;; (get-id $mikel)
 ;;; (get-type $mikel)
+;;; (get-login-name $mikel)
+;;; (get-password-hash $mikel)
+;;; (def $mikel2 (update-password-hash $mikel "foo"))
+;;; (get-password-hash $mikel2)
 ;;; (make-couchable $mikel)
 ;;; (def $mikel2 (rename $mikel "mikel evins"))
 ;;; (make-couchable $mikel2)
