@@ -16,11 +16,9 @@
 ;;; User
 ;;; ---------------------------------------------------------------------
 
-(defn user-roles [] ["user"])
-
 (defn the-user-document-type [] "delectus_user")
 
-(defrecord User [id type primary-email email-addresses password-hash roles]
+(defrecord User [id type primary-email email-addresses password-hash]
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
@@ -31,12 +29,12 @@
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-user [& {:keys [id primary-email email-addresses password-hash roles]
+(defn make-user [& {:keys [id primary-email username email-addresses password-hash]
                     :or {id (makeid)
                          primary-email nil
+                         username nil
                          email-addresses []
-                         password-hash nil
-                         roles ["user"]}}]
+                         password-hash nil}}]
   (when (not primary-email)
     (throw (ex-info ":primary-email parameter missing" {})))
   (when (not (valid-email? primary-email))
@@ -44,9 +42,9 @@
   (map->User {:id id
               :type (the-user-document-type)
               :primary-email primary-email
+              :username username
               :email-addresses [primary-email]
-              :password-hash password-hash
-              :roles roles}))
+              :password-hash password-hash}))
 
 ;;; (def $mikel-id (makeid))
 ;;; (def $mikel (make-user :id $mikel-id :primary-email "mikel@evins.net"))
@@ -87,12 +85,10 @@
 
 ;;; (time (delectus-user-emails))
 
-(defn add-delectus-user! [email-address & {:keys [id email-addresses password-hash collections lists]
+(defn add-delectus-user! [email-address & {:keys [id email-addresses password-hash]
                                            :or {id (makeid)
                                                 email-addresses []
-                                                password-hash nil
-                                                collections {}
-                                                lists {}}}]
+                                                password-hash nil}}]
   (let [bucket (config/delectus-users-bucket)
         already-user-document (couch-io/get-document bucket id)]
     (if already-user-document
@@ -100,8 +96,7 @@
       (let [email-addresses [email-address]
             new-user-map (make-user :id id
                                     :primary-email email-address
-                                    :email-addresses email-addresses :password-hash password-hash
-                                    :collections collections :lists lists)
+                                    :email-addresses email-addresses :password-hash password-hash)
             new-user-document (to-json-document new-user-map id)]
         (.insert bucket new-user-document)))))
 

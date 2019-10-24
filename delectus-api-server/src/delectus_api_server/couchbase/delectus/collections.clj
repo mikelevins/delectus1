@@ -20,7 +20,7 @@
 
 (defn the-collection-document-type [] "delectus_collection")
 
-(defrecord Collection [id type name owner-id access lists]
+(defrecord Collection [id type name owner-id]
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
@@ -31,12 +31,10 @@
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-collection [& {:keys [id name owner-id access lists]
+(defn make-collection [& {:keys [id name owner-id]
                           :or {id (makeid)
                                name nil
-                               owner-id nil
-                               access {}
-                               lists {}}}]
+                               owner-id nil}}]
   (when (not name)
     (throw (ex-info ":name parameter missing" {})))
   (when (not owner-id)
@@ -44,12 +42,10 @@
   (map->Collection {:id id
                     :type (the-collection-document-type)
                     :name name
-                    :owner-id owner-id
-                    :access access
-                    :lists lists}))
+                    :owner-id owner-id}))
 
 ;;; (def $things-id (makeid))
-;;; (def $mikel-id (delectus-users/delectus-user-email->id "mikel@evins.net"))
+;;; (def $mikel-id (makeid))
 ;;; (def $things (make-collection :id $things-id :name "Things" :owner-id $mikel-id))
 ;;; (make-couchable $things)
 ;;; (to-json-object $things)
