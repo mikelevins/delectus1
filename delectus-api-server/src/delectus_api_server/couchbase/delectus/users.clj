@@ -8,7 +8,8 @@
              :refer [Couchable JsonDocumentable JsonObjectable
                      make-couchable to-json-document to-json-object to-map]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
-            [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]])
+            [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
+            [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -23,8 +24,13 @@
 (defrecord User [id type email password-hash]
   Identifiable
   (get-id [data] (:id data))
+
   Typable
   (get-type [data] (:type data))
+
+  Nameable
+  (get-name [data] (:name data))
+  (rename [data new-name] (map->User (merge data {:name new-name})))
 
   Couchable
   (make-couchable [data]
@@ -38,10 +44,10 @@
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-user [& {:keys [id email username password-hash]
+(defn make-user [& {:keys [id email name password-hash]
                     :or {id (makeid)
                          email nil
-                         username nil
+                         name nil
                          password-hash nil}}]
   (when (not email)
     (throw (ex-info ":email parameter missing" {})))
@@ -50,7 +56,7 @@
   (map->User {:id id
               :type (the-user-document-type)
               :email email
-              :username username
+              :name name
               :password-hash password-hash}))
 
 ;;; (def $mikel-id (makeid))
@@ -59,6 +65,8 @@
 ;;; (get-id $mikel)
 ;;; (get-type $mikel)
 ;;; (make-couchable $mikel)
+;;; (def $mikel2 (rename $mikel "mikel evins"))
+;;; (make-couchable $mikel2)
 ;;; (to-json-object $mikel)
 ;;; (to-json-document $mikel $mikel-id)
 

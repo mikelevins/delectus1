@@ -7,7 +7,8 @@
              :refer [Couchable JsonDocumentable JsonObjectable
                      make-couchable to-json-document to-json-object to-map]]
             [delectus-api-server.couchbase.delectus.users :as delectus-users]
-            [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]])
+            [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]]
+            [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -24,10 +25,14 @@
 ;;; deleted: a Boolean indicating wherther the row has been marked deleted
 ;;; fields: a map from integer to value
 
-(defrecord Column [deleted label]
+(defrecord Column [deleted name]
   Deletable
   (mark-deleted [data deleted?]
     (map->Column (merge data {:deleted deleted?})))
+
+  Nameable
+  (get-name [data] (:name data))
+  (rename [data new-name] (map->Column (merge data {:name new-name})))
 
   Couchable
   (make-couchable [data]
@@ -35,16 +40,18 @@
           vs (map make-couchable (vals data))]
       (java.util.HashMap. (zipmap ks vs)))))
 
-(defn make-column [& {:keys [deleted label]
+(defn make-column [& {:keys [deleted name]
                       :or {deleted false
-                           label nil}}]
-  (when (not label)
-    (throw (ex-info ":label parameter missing" {})))
+                           name nil}}]
+  (when (not name)
+    (throw (ex-info ":name parameter missing" {})))
   (map->Column {:deleted deleted
-                :label label}))
+                :name name}))
 
-;;; (def $col (make-column :label "Title"))
+;;; (def $col (make-column :name "Title"))
 ;;; (make-couchable $col)
 ;;; (def $col2 (mark-deleted $col true))
 ;;; (make-couchable $col2)
+;;; (def $col3 (rename $col "Name"))
+;;; (make-couchable $col3)
 

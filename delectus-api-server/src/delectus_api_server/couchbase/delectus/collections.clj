@@ -8,7 +8,8 @@
                      make-couchable to-json-document to-json-object to-map]]
             [delectus-api-server.couchbase.delectus.users :as delectus-users]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
-            [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]])
+            [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
+            [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -26,6 +27,10 @@
 
   Typable
   (get-type [data] (:type data))
+
+  Nameable
+  (get-name [data] (:name data))
+  (rename [data new-name] (map->Collection (merge data {:name new-name})))
 
   Couchable
   (make-couchable [data]
@@ -56,5 +61,5 @@
 ;;; (def $mikel-id (makeid))
 ;;; (def $things (make-collection :id $things-id :name "Things" :owner-id $mikel-id))
 ;;; (make-couchable $things)
-;;; (to-json-object $things)
-;;; (to-json-document $things $things-id)
+;;; (def $things2 (rename $things "My Things"))
+;;; (make-couchable $things2)
