@@ -18,6 +18,13 @@
 
 (defn the-list-document-type [] "delectus_list")
 
+;;; id: the list identifier, created with makeid
+;;; type: "delectus_list"
+;;; name: the user-assigned name of the list
+;;; owner-id: the identifier of the list's owner, created with makeid
+;;; columns: a map from integer to Column
+;;; rows: a map from integer to Row
+
 (defrecord List [id type name owner-id columns rows]
   Couchable
   (make-couchable [data]
@@ -44,7 +51,7 @@
               :name name
               :owner-id owner-id
               :columns columns
-              :rows {}}))
+              :rows rows}))
 
 ;;; (def $mikel-id (makeid))
 ;;; (def $stuffid (makeid))

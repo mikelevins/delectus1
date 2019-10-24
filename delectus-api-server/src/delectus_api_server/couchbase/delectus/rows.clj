@@ -18,21 +18,20 @@
 
 (defn the-row-document-type [] "delectus_row")
 
-(defrecord Row [id fields]
+;;; deleted: a Boolean indicating wherther the row has been marked deleted
+;;; fields: a map from integer to value
+
+(defrecord Row [deleted fields]
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
           vs (map make-couchable (vals data))]
-      (java.util.HashMap. (zipmap ks vs))))
-  JsonObjectable
-  (to-json-object [data] (JsonObject/from (make-couchable data)))
-  JsonDocumentable
-  (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
+      (java.util.HashMap. (zipmap ks vs)))))
 
-(defn make-row [& {:keys [id fields]
-                   :or {id (makeid)
+(defn make-row [& {:keys [deleted fields]
+                   :or {deleted false
                         fields {}}}]
-  (map->Row {:id id
+  (map->Row {:deleted deleted
              :fields fields}))
 
 ;;; (def $row (make-row :id 0 :fields {}))

@@ -13,30 +13,30 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
-;;; List
+;;; Column
 ;;; ---------------------------------------------------------------------
 
 (defn the-column-document-type [] "delectus_column")
 
-(defrecord Column [id type label]
+;;; id: an identifier created with makeid
+;;; list: the id of the list that contains the row
+;;; deleted: a Boolean indicating wherther the row has been marked deleted
+;;; fields: a map from integer to value
+
+(defrecord Column [deleted label]
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
           vs (map make-couchable (vals data))]
-      (java.util.HashMap. (zipmap ks vs))))
-  JsonObjectable
-  (to-json-object [data] (JsonObject/from (make-couchable data)))
-  JsonDocumentable
-  (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
+      (java.util.HashMap. (zipmap ks vs)))))
 
-(defn make-column [& {:keys [id label]
-                       :or {id (makeid)
-                            label nil}}]
+(defn make-column [& {:keys [deleted label]
+                      :or {deleted false
+                           label nil}}]
   (when (not label)
     (throw (ex-info ":label parameter missing" {})))
-  (map->Column {:id id
-                :type (the-column-document-type)
-                :label label}))
+  (map->Column {:deleted deleted
+             :label label}))
 
 ;;; (def $col (make-column :label "Title"))
 ;;; (make-couchable $col)
