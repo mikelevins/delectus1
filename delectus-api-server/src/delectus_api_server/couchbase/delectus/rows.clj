@@ -1,4 +1,4 @@
-(ns delectus-api-server.couchbase.delectus.collections
+(ns delectus-api-server.couchbase.delectus.rows
   (:require [clojure.data.json :as json]
             [clojure.pprint :refer [cl-format]]
             [delectus-api-server.configuration :as config]
@@ -13,12 +13,12 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
-;;; Collection
+;;; Row
 ;;; ---------------------------------------------------------------------
 
-(defn the-collection-document-type [] "delectus_collection")
+(defn the-row-document-type [] "delectus_row")
 
-(defrecord Collection [id type name owner-id]
+(defrecord Row [id fields]
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
@@ -29,22 +29,11 @@
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-collection [& {:keys [id name owner-id]
-                          :or {id (makeid)
-                               name nil
-                               owner-id nil}}]
-  (when (not name)
-    (throw (ex-info ":name parameter missing" {})))
-  (when (not owner-id)
-    (throw (ex-info ":owner-id parameter missing" {})))
-  (map->Collection {:id id
-                    :type (the-collection-document-type)
-                    :name name
-                    :owner-id owner-id}))
+(defn make-row [& {:keys [id fields]
+                   :or {id (makeid)
+                        fields {}}}]
+  (map->Row {:id id
+             :fields fields}))
 
-;;; (def $things-id (makeid))
-;;; (def $mikel-id (makeid))
-;;; (def $things (make-collection :id $things-id :name "Things" :owner-id $mikel-id))
-;;; (make-couchable $things)
-;;; (to-json-object $things)
-;;; (to-json-document $things $things-id)
+;;; (def $row (make-row :id 0 :fields {}))
+;;; (make-couchable $row)
