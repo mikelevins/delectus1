@@ -6,7 +6,9 @@
             [delectus-api-server.couchbase.marshal
              :refer [Couchable JsonDocumentable JsonObjectable
                      make-couchable to-json-document to-json-object to-map]]
-            [delectus-api-server.couchbase.delectus.users :as delectus-users])
+            [delectus-api-server.couchbase.delectus.users :as delectus-users]
+            [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
+            [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -19,13 +21,21 @@
 (defn the-collection-document-type [] "delectus_collection")
 
 (defrecord Collection [id type name owner-id]
+  Identifiable
+  (get-id [data] (:id data))
+
+  Typable
+  (get-type [data] (:type data))
+
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
           vs (map make-couchable (vals data))]
       (java.util.HashMap. (zipmap ks vs))))
+
   JsonObjectable
   (to-json-object [data] (JsonObject/from (make-couchable data)))
+
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 

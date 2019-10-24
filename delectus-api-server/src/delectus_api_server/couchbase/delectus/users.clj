@@ -6,7 +6,9 @@
             [delectus-api-server.couchbase.io :as couch-io]
             [delectus-api-server.couchbase.marshal
              :refer [Couchable JsonDocumentable JsonObjectable
-                     make-couchable to-json-document to-json-object to-map]])
+                     make-couchable to-json-document to-json-object to-map]]
+            [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
+            [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -18,36 +20,44 @@
 
 (defn the-user-document-type [] "delectus_user")
 
-(defrecord User [id type primary-email email-addresses password-hash]
+(defrecord User [id type email password-hash]
+  Identifiable
+  (get-id [data] (:id data))
+  Typable
+  (get-type [data] (:type data))
+
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
           vs (map make-couchable (vals data))]
       (java.util.HashMap. (zipmap ks vs))))
+
   JsonObjectable
   (to-json-object [data] (JsonObject/from (make-couchable data)))
+
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-user [& {:keys [id primary-email username email-addresses password-hash]
+(defn make-user [& {:keys [id email username password-hash]
                     :or {id (makeid)
-                         primary-email nil
+                         email nil
                          username nil
-                         email-addresses []
                          password-hash nil}}]
-  (when (not primary-email)
-    (throw (ex-info ":primary-email parameter missing" {})))
-  (when (not (valid-email? primary-email))
-    (throw (ex-info "invalid :primary-email parameter" {:value primary-email})))
+  (when (not email)
+    (throw (ex-info ":email parameter missing" {})))
+  (when (not (valid-email? email))
+    (throw (ex-info "invalid :email parameter" {:value email})))
   (map->User {:id id
               :type (the-user-document-type)
-              :primary-email primary-email
+              :email email
               :username username
-              :email-addresses [primary-email]
               :password-hash password-hash}))
 
 ;;; (def $mikel-id (makeid))
-;;; (def $mikel (make-user :id $mikel-id :primary-email "mikel@evins.net"))
+;;; (def $mikel (make-user :id $mikel-id :email "mikel@evins.net"))
+;;; (satisfies? Identifiable $mikel)
+;;; (get-id $mikel)
+;;; (get-type $mikel)
 ;;; (make-couchable $mikel)
 ;;; (to-json-object $mikel)
 ;;; (to-json-document $mikel $mikel-id)
@@ -60,7 +70,7 @@
 (defn delectus-users []
   (let [bucket (config/delectus-users-bucket)
         bucket-name (.name bucket)
-        select-expression (cl-format nil "SELECT `primary-email`,`id` from `~A` WHERE type = \"delectus_user\""
+        select-expression (cl-format nil "SELECT `email`,`id` from `~A` WHERE type = \"delectus_user\""
                                      bucket-name)
         results (.query bucket (N1qlQuery/simple select-expression))]
     (map #(.value %) results)))
@@ -72,7 +82,7 @@
 ;;; (time (delectus-user-ids))
 
 (defn delectus-user-email->id [email]
-  (let [found (couch-io/find-objects (config/delectus-users-bucket) {"primary-email" "mikel@evins.net"})]
+  (let [found (couch-io/find-objects (config/delectus-users-bucket) {"email" "mikel@evins.net"})]
     (if found
       (:document-key (first found))
       nil)))
@@ -80,23 +90,21 @@
 ;;; (time (delectus-user-email->id "mikel@evins.net"))
 
 (defn delectus-user-emails []
-  (sort (map #(.getString % "primary-email")
+  (sort (map #(.getString % "email")
                (delectus-users))))
 
 ;;; (time (delectus-user-emails))
 
-(defn add-delectus-user! [email-address & {:keys [id email-addresses password-hash]
+(defn add-delectus-user! [email-address & {:keys [id password-hash]
                                            :or {id (makeid)
-                                                email-addresses []
                                                 password-hash nil}}]
   (let [bucket (config/delectus-users-bucket)
         already-user-document (couch-io/get-document bucket id)]
     (if already-user-document
       (throw (ex-info "A user with the supplied ID already exists" {:id id :bucket (.name bucket)}))
-      (let [email-addresses [email-address]
-            new-user-map (make-user :id id
-                                    :primary-email email-address
-                                    :email-addresses email-addresses :password-hash password-hash)
+      (let [new-user-map (make-user :id id
+                                    :email email-address
+                                    :password-hash password-hash)
             new-user-document (to-json-document new-user-map id)]
         (.insert bucket new-user-document)))))
 

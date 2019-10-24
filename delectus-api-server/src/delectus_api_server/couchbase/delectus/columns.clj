@@ -6,7 +6,8 @@
             [delectus-api-server.couchbase.marshal
              :refer [Couchable JsonDocumentable JsonObjectable
                      make-couchable to-json-document to-json-object to-map]]
-            [delectus-api-server.couchbase.delectus.users :as delectus-users])
+            [delectus-api-server.couchbase.delectus.users :as delectus-users]
+            [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -24,6 +25,10 @@
 ;;; fields: a map from integer to value
 
 (defrecord Column [deleted label]
+  Deletable
+  (mark-deleted [data deleted?]
+    (map->Column (merge data {:deleted deleted?})))
+
   Couchable
   (make-couchable [data]
     (let [ks (map make-couchable (keys data))
@@ -36,7 +41,10 @@
   (when (not label)
     (throw (ex-info ":label parameter missing" {})))
   (map->Column {:deleted deleted
-             :label label}))
+                :label label}))
 
 ;;; (def $col (make-column :label "Title"))
 ;;; (make-couchable $col)
+;;; (def $col2 (mark-deleted $col true))
+;;; (make-couchable $col2)
+
