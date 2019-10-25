@@ -44,3 +44,9 @@
 ;;; (make-couchable $item)
 ;;; (def $item2 (mark-deleted $item true))
 ;;; (make-couchable $item2)
+
+(defn values->item [& vals]
+  (make-item :fields (zipmap (take (count vals) (range))
+                             vals)))
+
+;;; (values->item "A" "B" "C" "D")

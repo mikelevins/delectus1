@@ -9,7 +9,8 @@
             [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
             [delectus-api-server.couchbase.delectus.itemizing
-             :refer [Itemizing get-items item-at update-item-at update-items]]
+             :refer [Itemizing add-item get-items item-at max-item-index update-item-at update-items]]
+            [delectus-api-server.couchbase.delectus.items :refer [values->item]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
             [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]]
             [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
@@ -70,9 +71,17 @@
   (get-id [data] (:id data))
 
   Itemizing
+  (add-item [data field-values]
+    (let [max-index (max-item-index data)
+          new-item-index (if max-index (+ 1 max-index) 0)
+          new-item (apply values->item field-values)]
+      (update-items data (merge (get-items data) {new-item-index new-item}))))
   (get-items [data] (:items data))
   (item-at [data index]
     (get (:items data) index))
+  (max-item-index [data]
+    (let [items (get-items data)]
+      (if (empty? items) nil (apply max (keys items)))))
   (update-items [data new-items]
     (map->List (merge data {:items new-items})))
   (upsert-item-at [data index new-item]
@@ -126,3 +135,7 @@
 ;;; (get-columns $stuff2)
 ;;; (find-column-name $stuff2 "Title")
 ;;; (find-column-name $stuff2 "NOPE!")
+;;; (def $stuff3 (add-item $stuff2 ["Thing 1"]))
+;;; (make-couchable $stuff3)
+;;; (def $stuff4 (add-item $stuff3 ["Thing 2"]))
+;;; (make-couchable $stuff4)
