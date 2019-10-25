@@ -145,15 +145,15 @@
 ;;; Couchbase List records
 ;;; ---------------------------------------------------------------------
 
-(defn delectus-lists []
+(defn delectus-lists [user-id]
   (let [bucket (config/delectus-content-bucket)
         bucket-name (.name bucket)
-        select-expression (cl-format nil "SELECT * from `~A` WHERE type = \"delectus_list\""
-                                     bucket-name)
+        select-expression (cl-format nil "SELECT * from `~A` WHERE type = \"delectus_list\" AND `owner-id` =\"~A\""
+                                     bucket-name user-id)
         results (.query bucket (N1qlQuery/simple select-expression))]
     (map #(.value %) results)))
 
-;;; (time (delectus-lists))
+;;; (time (delectus-lists (delectus-users/delectus-user-email->id "mikel@evins.net")))
 
 
 (defn add-delectus-list! [owner-id list-name & {:keys [list-id]
