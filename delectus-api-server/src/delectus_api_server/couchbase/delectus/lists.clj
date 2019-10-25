@@ -2,6 +2,7 @@
   (:require [clojure.data.json :as json]
             [clojure.pprint :refer [cl-format]]
             [delectus-api-server.configuration :as config]
+            [delectus-api-server.couchbase.io :as couch-io]
             [delectus-api-server.couchbase.delectus.columnar
              :refer [Columnar add-column column-at find-column-name
                      get-columns max-column-index update-columns upsert-column-at]]
@@ -145,11 +146,30 @@
 ;;; ---------------------------------------------------------------------
 
 (defn delectus-lists []
-  (let [bucket (config/delectus-users-bucket)
+  (let [bucket (config/delectus-content-bucket)
         bucket-name (.name bucket)
-        select-expression (cl-format nil "SELECT `email`,`id` from `~A` WHERE type = \"delectus_user\""
+        select-expression (cl-format nil "SELECT * from `~A` WHERE type = \"delectus_list\""
                                      bucket-name)
         results (.query bucket (N1qlQuery/simple select-expression))]
     (map #(.value %) results)))
 
 ;;; (time (delectus-lists))
+
+
+(defn add-delectus-list! [owner-id list-name & {:keys [list-id]
+                                                :or {list-id (makeid)}}]
+  (when (not owner-id)
+    (throw (ex-info "Missing owner id" {})))
+  (let [bucket (config/delectus-content-bucket)
+        already-list-document (couch-io/get-document bucket list-id)]
+    (if already-list-document
+      (throw (ex-info "A list with the supplied ID already exists" {:id list-id :bucket (.name bucket)}))
+      (let [new-list-map (make-list :id list-id
+                                    :name list-name
+                                    :owner-id owner-id)
+            new-list-document (to-json-document new-list-map list-id)]
+        (.insert bucket new-list-document)
+        list-id))))
+
+;;; (def $things (add-delectus-list! (delectus-users/delectus-user-email->id "mikel@evins.net") "Things"))
+;;; (add-delectus-user! "greer@evins.net")
