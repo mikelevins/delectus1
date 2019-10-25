@@ -52,6 +52,6 @@
 ;;; (make-couchable $col)
 ;;; (def $col2 (mark-deleted $col true))
 ;;; (make-couchable $col2)
-;;; (def $col3 (rename $col "Name"))
+;;; (def $col3 (rename $col2 "Name"))
 ;;; (make-couchable $col3)
 

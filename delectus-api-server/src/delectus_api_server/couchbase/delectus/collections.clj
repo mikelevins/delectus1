@@ -9,7 +9,8 @@
             [delectus-api-server.couchbase.delectus.users :as delectus-users]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
             [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
-            [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]])
+            [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
+            [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -31,6 +32,10 @@
   Nameable
   (get-name [data] (:name data))
   (rename [data new-name] (map->Collection (merge data {:name new-name})))
+
+  Ownable
+  (get-owner-id [data] (:owner-id data))
+  (update-owner-id [data new-owner-id] (map->Collection (merge data {:owner-id new-owner-id})))
 
   Couchable
   (make-couchable [data]
@@ -59,7 +64,8 @@
 
 ;;; (def $things-id (makeid))
 ;;; (def $mikel-id (makeid))
+;;; (def $greer-id (makeid))
 ;;; (def $things (make-collection :id $things-id :name "Things" :owner-id $mikel-id))
 ;;; (make-couchable $things)
-;;; (def $things2 (rename $things "My Things"))
+;;; (def $things2 (rename (update-owner-id $things $greer-id) "My Things"))
 ;;; (make-couchable $things2)
