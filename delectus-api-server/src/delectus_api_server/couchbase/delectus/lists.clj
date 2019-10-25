@@ -139,3 +139,17 @@
 ;;; (make-couchable $stuff3)
 ;;; (def $stuff4 (add-item $stuff3 ["Thing 2"]))
 ;;; (make-couchable $stuff4)
+
+;;; ---------------------------------------------------------------------
+;;; Couchbase List records
+;;; ---------------------------------------------------------------------
+
+(defn delectus-lists []
+  (let [bucket (config/delectus-users-bucket)
+        bucket-name (.name bucket)
+        select-expression (cl-format nil "SELECT `email`,`id` from `~A` WHERE type = \"delectus_user\""
+                                     bucket-name)
+        results (.query bucket (N1qlQuery/simple select-expression))]
+    (map #(.value %) results)))
+
+;;; (time (delectus-lists))
