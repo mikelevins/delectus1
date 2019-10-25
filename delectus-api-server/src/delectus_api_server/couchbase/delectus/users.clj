@@ -113,6 +113,16 @@
 ;;; (time (delectus-user-email->id "greer@evins.net"))
 ;;; (time (delectus-user-email->id "nobody@nowhere.net"))
 
+(defn delectus-user-id->email [id-string]
+  (let [found (couch-io/get-object (config/delectus-users-bucket) id-string)]
+    (if found
+      (.get found "email")
+      nil)))
+
+;;; (time (delectus-user-id->email (delectus-user-email->id "mikel@evins.net")))
+;;; (time (delectus-user-id->email (delectus-user-email->id "greer@evins.net")))
+;;; (time (delectus-user-id->email "NOPE!"))
+
 (defn delectus-user-emails []
   (sort (map #(.getString % "email")
                (delectus-users))))
