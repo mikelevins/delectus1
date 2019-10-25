@@ -84,9 +84,8 @@
 ;;; (to-json-document $mikel $mikel-id)
 
 ;;; ---------------------------------------------------------------------
-;;; creating user records
+;;; Couchbase User records
 ;;; ---------------------------------------------------------------------
-;;; the Couchbase document that maps user email addresses to User ids
 
 (defn delectus-users []
   (let [bucket (config/delectus-users-bucket)
@@ -95,6 +94,8 @@
                                      bucket-name)
         results (.query bucket (N1qlQuery/simple select-expression))]
     (map #(.value %) results)))
+
+;;; (time (delectus-users))
 
 (defn delectus-user-ids []
   (couch-io/find-object-ids (config/delectus-users-bucket)
@@ -127,7 +128,9 @@
                                     :email email-address
                                     :password-hash password-hash)
             new-user-document (to-json-document new-user-map id)]
-        (.insert bucket new-user-document)))))
+        (.insert bucket new-user-document)
+        id))))
 
 ;;; (add-delectus-user! "mikel@evins.net")
 ;;; (add-delectus-user! "greer@evins.net")
+
