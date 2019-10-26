@@ -1,7 +1,9 @@
 (ns delectus-api-server.couchbase.delectus.api
   (:require 
    [delectus-api-server.identifiers :refer [makeid]]
-   [delectus-api-server.couchbase.delectus.users :as users]))
+   [delectus-api-server.couchbase.delectus.lists :as lists]
+   [delectus-api-server.couchbase.delectus.users :as users]
+   ))
 
 ;;; ---------------------------------------------------------------------
 ;;; Users
@@ -51,7 +53,10 @@
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
-(defn list-lists [user-id])
+(defn list-lists [user-id]
+  (lists/delectus-lists user-id))
+
+;;; (list-lists (email->user-id "mikel@evins.net"))
 
 (defn create-list [user-id name])
 

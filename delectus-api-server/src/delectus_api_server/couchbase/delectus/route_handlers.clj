@@ -26,3 +26,9 @@
    :body    (let [email (:email (:params req))]
               (json/write-str (api/email->user-id email)))})
 
+(defn lists [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [userid (:userid (:params req))]
+              (json/write-str (api/list-lists userid)))})
+
