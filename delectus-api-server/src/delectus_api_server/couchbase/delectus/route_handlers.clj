@@ -2,7 +2,8 @@
   (:require [clojure.pprint :as pp]
             [clojure.data.json :as json]
             [hiccup.core :refer :all]
-            [delectus-api-server.couchbase.delectus.users :refer [delectus-user-emails]]))
+            [delectus-api-server.couchbase.delectus.users :refer [delectus-user-emails]]
+            [delectus-api-server.couchbase.delectus.api :as api]))
 
 ;;; ---------------------------------------------------------------------
 ;;; delectus handlers
@@ -18,4 +19,10 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (json/write-str (delectus-user-emails))})
+
+(defn userid [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))]
+              (json/write-str (api/email->user-id email)))})
 

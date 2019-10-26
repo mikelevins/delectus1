@@ -1,6 +1,7 @@
 (ns delectus-api-server.couchbase.delectus.api
   (:require 
-   [delectus-api-server.identifiers :refer [makeid]]))
+   [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.couchbase.delectus.users :as users]))
 
 ;;; ---------------------------------------------------------------------
 ;;; Users
@@ -12,7 +13,10 @@
 
 (defn logout-user [session-id])
 
-(defn email->user-id [email])
+(defn email->user-id [email]
+  (users/delectus-user-email->id email))
+
+;;; (email->user-id "mikel@evins.net")
 
 (defn session-id->user-id [session-id])
 

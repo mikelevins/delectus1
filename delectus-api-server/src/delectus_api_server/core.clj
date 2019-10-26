@@ -37,6 +37,7 @@
 
   (GET "/delectus/" [] delectus-handlers/root) ; root HTML page
   (GET "/delectus/users" [] delectus-handlers/users)
+  (GET "/delectus/userid" [] delectus-handlers/userid)
   
   ;; default ("Page not found") route
   ;; --------------------------------
