@@ -10,7 +10,7 @@
             [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
             [delectus-api-server.couchbase.delectus.itemizing
-             :refer [Itemizing add-item get-items item-at max-item-index update-item-at update-items]]
+             :refer [Itemizing add-item get-items item-at max-item-index upsert-item-at update-items]]
             [delectus-api-server.couchbase.delectus.items :refer [values->item]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
             [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]]
