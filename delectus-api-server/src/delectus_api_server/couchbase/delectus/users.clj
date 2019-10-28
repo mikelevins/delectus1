@@ -101,7 +101,7 @@
         select-expression (cl-format nil "SELECT `email`,`id` from `~A` WHERE type = \"delectus_user\""
                                      bucket-name)
         results (.query bucket (N1qlQuery/simple select-expression))]
-    (map #(.value %) results)))
+    (map #(map->User (to-map (.value %))) results)))
 
 ;;; (time (delectus-users))
 
@@ -111,10 +111,27 @@
 
 ;;; (time (delectus-user-ids))
 
-(defn delectus-user-email->id [email]
+(defn user-from-id [userid]
+  (let [found (couch-io/get-object (config/delectus-users-bucket) userid)]
+    (if found
+      (map->User (to-map found))
+      nil)))
+
+;;; (def $userid (delectus-user-email->id "mikel@evins.net"))
+;;; (time (user-from-id $userid))
+
+(defn user-from-email [email]
   (let [found (couch-io/find-objects (config/delectus-users-bucket) {"email" email})]
     (if found
-      (:document-key (first found))
+      (first found)
+      nil)))
+
+;;; (time (user-from-email "mikel@evins.net"))
+
+(defn delectus-user-email->id [email]
+  (let [found (user-from-email email)]
+    (if found
+      (:document-key found)
       nil)))
 
 ;;; (time (delectus-user-email->id "mikel@evins.net"))

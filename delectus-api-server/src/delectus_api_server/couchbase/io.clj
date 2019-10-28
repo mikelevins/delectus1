@@ -89,19 +89,14 @@
         where-clause (make-where-clause properties)
         limit-clause (if limit (cl-format nil "LIMIT ~A" limit) "")
         offset-clause (if offset (cl-format nil "OFFSET ~A" offset) "")
-        select-expression (cl-format nil "SELECT *, meta(doc).id AS docid from `~A` doc ~A ~A ~A ~A"
+        select-expression (cl-format nil "SELECT * from `~A` ~A ~A ~A ~A"
                                      bucket-name where-clause order-clause limit-clause offset-clause)
         results (.query bucket (N1qlQuery/simple select-expression))
-        result-vals (map #(.value %) results)
-        result-strings (map #(.toString %) result-vals)]
-    (map #(let [obj (json/read-json %)
-                doc (:doc obj)
-                docid (:docid obj)]
-            (merge doc {:document-key docid}))
-         result-strings)))
+        objs (map #(.get (.value %) bucket-name) results)
+        vals (map #(marshal/unmarshal %) objs)]
+    vals))
 
 ;;; (time (def $all (find-objects (config/delectus-users-bucket) {})))
-
 
 ;;; (time (def $all (find-objects (config/travel-sample-bucket) {})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline" "id" 10})))

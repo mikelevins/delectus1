@@ -140,3 +140,13 @@
 
 ;;; (class (to-map (to-json-document (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}) (makeid))))
 
+;;; ---------------------------------------------------------------------
+;;; convert Couchbase data to Clojure data
+;;; ---------------------------------------------------------------------
+
+(defn unmarshal [data]
+  (cond
+    (instance? JsonDocument data) (to-map data)
+    (instance? JsonObject data) (to-map data)
+    (instance? JsonArray data)(to-list data)
+    :else data))
