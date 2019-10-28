@@ -4,6 +4,8 @@
   (add-column [data column-name])
   (column-at [data index])
   (find-column-name [data column-name])
+  (get-column-indexes [data])
+  (get-column-names [data])
   (get-columns [data])
   (max-column-index [data])
   (update-columns [data new-columns])

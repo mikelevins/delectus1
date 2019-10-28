@@ -5,13 +5,16 @@
             [delectus-api-server.couchbase.io :as couch-io]
             [delectus-api-server.couchbase.delectus.columnar
              :refer [Columnar add-column column-at find-column-name
-                     get-columns max-column-index update-columns upsert-column-at]]
+                     get-column-indexes get-column-names  get-columns
+                     max-column-index update-columns upsert-column-at]]
             [delectus-api-server.couchbase.delectus.columns :refer [make-column]]
             [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
             [delectus-api-server.couchbase.delectus.itemizing
              :refer [Itemizing add-item get-items item-at max-item-index remove-item-at update-items upsert-item-at]]
-            [delectus-api-server.couchbase.delectus.items :refer [values->item]]
+            [delectus-api-server.couchbase.delectus.items
+             :refer [add-field field-at get-fields max-field-index remove-field-at
+                     update-fields upsert-field-at values->item]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
             [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]]
             [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
@@ -46,6 +49,8 @@
       (some #(and (= column-name (get-name (column-at data %)))
                   %)
             (keys cols))))
+  (get-column-indexes [data] (into () (keys (get-columns data))))
+  (get-column-names [data] (map get-name (vals (get-columns data))))
   (get-columns [data] (:columns data))
   (max-column-index [data]
     (let [cols (get-columns data)]
@@ -158,6 +163,8 @@
 ;;; (item-at $stuff5 0)
 ;;; (item-at $stuff4 1)
 ;;; (make-couchable $stuff5)
+;;; (get-column-indexes $stuff5)
+;;; (get-column-names $stuff5)
 
 ;;; ---------------------------------------------------------------------
 ;;; Couchbase List records
@@ -191,4 +198,3 @@
         list-id))))
 
 ;;; (def $things (add-delectus-list! (delectus-users/delectus-user-email->id "mikel@evins.net") "Things"))
-;;; (add-delectus-user! "greer@evins.net")
