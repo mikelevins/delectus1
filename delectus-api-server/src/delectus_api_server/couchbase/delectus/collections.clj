@@ -8,6 +8,8 @@
                      make-couchable to-json-document to-json-object to-map]]
             [delectus-api-server.couchbase.delectus.users :as delectus-users]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
+            [delectus-api-server.couchbase.delectus.itemizing
+             :refer [Itemizing add-item get-items item-at max-item-index remove-item-at update-items upsert-item-at]]
             [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
             [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]])
@@ -22,7 +24,7 @@
 
 (defn the-collection-document-type [] "delectus_collection")
 
-(defrecord Collection [id type name owner-id]
+(defrecord Collection [id type name owner-id items]
   Identifiable
   (get-id [data] (:id data))
 
@@ -43,16 +45,38 @@
           vs (map make-couchable (vals data))]
       (java.util.HashMap. (zipmap ks vs))))
 
+  Itemizing
+  (add-item [data item]
+    (let [max-index (max-item-index data)
+          new-index (if max-index (+ 1 max-index) 0)]
+      (upsert-item-at data new-index item)))
+  (get-items [data](:items data))
+  (item-at [data index] (get (:items data) index))
+  (max-item-index [data]
+    (if (empty? (get-items data))
+      nil
+      (apply max (keys (get-items data)))))
+  (remove-item-at [data index]
+    (update-items data
+                  (dissoc (get-items data)
+                          index)))
+  (update-items [data new-items]
+    (map->Collection (merge data {:items new-items})))
+  (upsert-item-at [data index new-item]
+    (let [old-items (get-items data)
+          new-items (merge old-items {index new-item})]
+      (map->Collection (merge data {:items new-items}))))
   JsonObjectable
   (to-json-object [data] (JsonObject/from (make-couchable data)))
 
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-collection [& {:keys [id name owner-id]
+(defn make-collection [& {:keys [id name owner-id lists]
                           :or {id (makeid)
                                name nil
-                               owner-id nil}}]
+                               owner-id nil
+                               lists {}}}]
   (when (not name)
     (throw (ex-info ":name parameter missing" {})))
   (when (not owner-id)
@@ -60,7 +84,8 @@
   (map->Collection {:id id
                     :type (the-collection-document-type)
                     :name name
-                    :owner-id owner-id}))
+                    :owner-id owner-id
+                    :items lists}))
 
 ;;; (def $things-id (makeid))
 ;;; (def $mikel-id (makeid))
@@ -69,3 +94,10 @@
 ;;; (make-couchable $things)
 ;;; (def $things2 (rename (update-owner-id $things $greer-id) "My Things"))
 ;;; (make-couchable $things2)
+;;; (def $things3 (add-item $things2 {:id "foo" :name "A List Name"}))
+;;; (make-couchable $things3)
+;;; (max-item-index $things3)
+;;; (def $things4 (add-item $things3 {:id "bar" :name "Another List Name"}))
+;;; (make-couchable $things4)
+;;; (def $things5 (remove-item-at $things4 0))
+;;; (make-couchable $things5)

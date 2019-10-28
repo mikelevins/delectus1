@@ -96,7 +96,7 @@
         vals (map #(marshal/unmarshal %) objs)]
     vals))
 
-;;; (time (def $all (find-objects (config/delectus-users-bucket) {})))
+;;; (time (def $all() (find-objects (config/delectus-users-bucket) {})))
 
 ;;; (time (def $all (find-objects (config/travel-sample-bucket) {})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline" "id" 10})))

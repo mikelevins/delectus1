@@ -9,8 +9,6 @@
             [delectus-api-server.couchbase.delectus.columns :refer [make-column]]
             [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
-            [delectus-api-server.couchbase.delectus.itemizing
-             :refer [Itemizing add-item get-items item-at max-item-index upsert-item-at update-items]]
             [delectus-api-server.couchbase.delectus.items :refer [values->item]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
             [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]]
@@ -70,26 +68,6 @@
 
   Identifiable
   (get-id [data] (:id data))
-
-  Itemizing
-  (add-item [data field-values]
-    (let [max-index (max-item-index data)
-          new-item-index (if max-index (+ 1 max-index) 0)
-          new-item (apply values->item field-values)]
-      (update-items data (merge (get-items data) {new-item-index new-item}))))
-  (get-items [data] (:items data))
-  (item-at [data index]
-    (get (:items data) index))
-  (max-item-index [data]
-    (let [items (get-items data)]
-      (if (empty? items) nil (apply max (keys items)))))
-  (update-items [data new-items]
-    (map->List (merge data {:items new-items})))
-  (upsert-item-at [data index new-item]
-    (let [old-items (:items data)]
-      (map->List (merge data
-                        {:items (merge old-items
-                                       {index new-item})}))))
   
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data)))
