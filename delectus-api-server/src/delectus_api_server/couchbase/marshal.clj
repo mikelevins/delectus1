@@ -129,7 +129,7 @@
 
 (extend-type com.couchbase.client.java.document.json.JsonObject
   Mappable
-  (to-map [data](into {} (.toMap data))))
+  (to-map [data] (json/read-json (.toString data))))
 
 (extend-type com.couchbase.client.java.document.JsonDocument
   Mappable
@@ -138,7 +138,8 @@
       (merge content-map
              {:document-id (.id data)}))))
 
-;;; (class (to-map (to-json-document (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}) (makeid))))
+;;; (to-map (to-json-document (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}) (makeid)))
+;;; (to-map (to-json-object {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}))
 
 ;;; ---------------------------------------------------------------------
 ;;; convert Couchbase data to Clojure data
