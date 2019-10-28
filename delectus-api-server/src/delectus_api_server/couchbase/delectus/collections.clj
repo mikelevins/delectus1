@@ -110,3 +110,8 @@
 ;;; (make-couchable $things4)
 ;;; (def $things5 (remove-item-at $things4 0))
 ;;; (make-couchable $things5)
+
+
+;;; ---------------------------------------------------------------------
+;;; Couchbase Collection records
+;;; ---------------------------------------------------------------------

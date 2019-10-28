@@ -181,7 +181,6 @@
 
 ;;; (time (delectus-lists (delectus-users/delectus-user-email->id "mikel@evins.net")))
 
-
 (defn add-delectus-list! [owner-id list-name & {:keys [list-id]
                                                 :or {list-id (makeid)}}]
   (when (not owner-id)
@@ -198,3 +197,9 @@
         list-id))))
 
 ;;; (def $things (add-delectus-list! (delectus-users/delectus-user-email->id "mikel@evins.net") "Things"))
+
+
+;;; ---------------------------------------------------------------------
+;;; Couchbase List records
+;;; ---------------------------------------------------------------------
+
