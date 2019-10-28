@@ -9,6 +9,7 @@
                      make-couchable to-json-document to-json-object to-map]]
             [delectus-api-server.couchbase.delectus.authenticatable
              :refer [Authenticatable get-login-name get-password-hash update-password-hash]]
+            [delectus-api-server.couchbase.delectus.enableable :refer [Enableable enabled? enable disable]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
             [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]])
@@ -23,7 +24,12 @@
 
 (defn the-user-document-type [] "delectus_user")
 
-(defrecord User [id type email password-hash]
+(defrecord User [id type email password-hash enabled]
+  Enableable
+  (enabled? [data] (:enabled data))
+  (enable [data] (map->User (merge data {:enabled true})))
+  (disable [data] (map->User (merge data {:enabled false})))
+
   Identifiable
   (get-id [data] (:id data))
 
@@ -52,11 +58,12 @@
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data))))
 
-(defn make-user [& {:keys [id email name password-hash]
+(defn make-user [& {:keys [id email name password-hash enabled]
                     :or {id (makeid)
                          email nil
                          name nil
-                         password-hash nil}}]
+                         password-hash nil
+                         enabled false}}]
   (when (not email)
     (throw (ex-info ":email parameter missing" {})))
   (when (not (valid-email? email))
@@ -65,7 +72,8 @@
               :type (the-user-document-type)
               :email email
               :name name
-              :password-hash password-hash}))
+              :password-hash password-hash
+              :enabled enabled}))
 
 ;;; (def $mikel-id (makeid))
 ;;; (def $mikel (make-user :id $mikel-id :email "mikel@evins.net"))
@@ -129,6 +137,32 @@
 
 ;;; (time (delectus-user-emails))
 
+(defn enable-delectus-user! [email-address]
+  (let [user (map->User (first (couch-io/find-objects (config/delectus-users-bucket)
+                                                      {"email" email-address})))
+        docid (get-id user)]
+    (if user
+      (.upsert (config/delectus-users-bucket)
+               (to-json-document (enable user)
+                                 docid))
+      (throw (ex-info "No such user" {:email email-address})))))
+
+
+;;; (enable-delectus-user! "mikel@evins.net")
+
+(defn disable-delectus-user! [email-address]
+  (let [user (map->User (first (couch-io/find-objects (config/delectus-users-bucket)
+                                                      {"email" email-address})))
+        docid (get-id user)]
+    (if user
+      (.upsert (config/delectus-users-bucket)
+               (to-json-document (disable user)
+                                 docid))
+      (throw (ex-info "No such user" {:email email-address})))))
+
+
+;;; (disable-delectus-user! "mikel@evins.net")
+
 (defn add-delectus-user! [email-address & {:keys [id password-hash]
                                            :or {id (makeid)
                                                 password-hash nil}}]
@@ -144,5 +178,6 @@
         id))))
 
 ;;; (add-delectus-user! "mikel@evins.net")
+;;; (enable-delectus-user! "mikel@evins.net")
 ;;; (add-delectus-user! "greer@evins.net")
-
+;;; (enable-delectus-user! "greer@evins.net")

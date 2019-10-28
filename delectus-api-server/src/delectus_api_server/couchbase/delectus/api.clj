@@ -11,6 +11,7 @@
 
 (defn register-user [email password])
 
+;;; returns session-id
 (defn login-user [email password])
 
 (defn logout-user [session-id])
