@@ -9,6 +9,8 @@
             [delectus-api-server.couchbase.delectus.columns :refer [make-column]]
             [delectus-api-server.couchbase.delectus.deletable :refer [Deletable mark-deleted]]
             [delectus-api-server.couchbase.delectus.identifiable :refer [Identifiable get-id]]
+            [delectus-api-server.couchbase.delectus.itemizing
+             :refer [Itemizing add-item get-items item-at max-item-index remove-item-at update-items upsert-item-at]]
             [delectus-api-server.couchbase.delectus.items :refer [values->item]]
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
             [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]]
@@ -68,7 +70,29 @@
 
   Identifiable
   (get-id [data] (:id data))
-  
+
+  Itemizing
+  (add-item [data item]
+    (let [max-index (max-item-index data)
+          new-index (if max-index (+ 1 max-index) 0)]
+      (upsert-item-at data new-index item)))
+  (get-items [data](:items data))
+  (item-at [data index] (get (:items data) index))
+  (max-item-index [data]
+    (if (empty? (get-items data))
+      nil
+      (apply max (keys (get-items data)))))
+  (remove-item-at [data index]
+    (update-items data
+                  (dissoc (get-items data)
+                          index)))
+  (update-items [data new-items]
+    (map->List (merge data {:items new-items})))
+  (upsert-item-at [data index new-item]
+    (let [old-items (get-items data)
+          new-items (merge old-items {index new-item})]
+      (map->List (merge data {:items new-items}))))
+
   JsonDocumentable
   (to-json-document [data id] (JsonDocument/create id (to-json-object data)))
 
@@ -86,10 +110,11 @@
   Typable
   (get-type [data] (:type data)))
 
-(defn make-list [& {:keys [id name owner-id columns items]
+(defn make-list [& {:keys [id name owner-id deleted columns items]
                     :or {id (makeid)
                          name nil
                          owner-id nil
+                         deleted false
                          columns {}
                          items {}}}]
   (when (not name)
@@ -100,6 +125,7 @@
               :type (the-list-document-type)
               :name name
               :owner-id owner-id
+              :deleted deleted
               :columns columns
               :items items}))
 
@@ -108,6 +134,7 @@
 ;;; (def $stuff (make-list :id $stuffid :name "Stuff" :owner-id $mikel-id))
 ;;; (make-couchable $stuff)
 ;;; (max-column-index $stuff)
+;;; (max-item-index $stuff)
 ;;; (find-column-name $stuff "Title")
 ;;; (def $stuff2 (add-column $stuff "Title"))
 ;;; (make-couchable $stuff2)
@@ -118,6 +145,19 @@
 ;;; (make-couchable $stuff3)
 ;;; (def $stuff4 (add-item $stuff3 ["Thing 2"]))
 ;;; (make-couchable $stuff4)
+;;; (get-columns $stuff4)
+;;; (get-items $stuff4)
+;;; (column-at $stuff4 0)
+;;; (item-at $stuff4 0)
+;;; (item-at $stuff4 1)
+;;; (max-column-index $stuff4)
+;;; (max-item-index $stuff4)
+;;; (def $stuff5 (add-column $stuff4 "Flavor"))
+;;; (column-at $stuff5 0)
+;;; (column-at $stuff5 1)
+;;; (item-at $stuff5 0)
+;;; (item-at $stuff4 1)
+;;; (make-couchable $stuff5)
 
 ;;; ---------------------------------------------------------------------
 ;;; Couchbase List records
