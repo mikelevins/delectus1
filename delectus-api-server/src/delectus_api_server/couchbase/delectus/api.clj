@@ -1,6 +1,9 @@
 (ns delectus-api-server.couchbase.delectus.api
-  (:require 
+  (:require
+   [buddy.hashers :as hashers]
    [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.configuration :as config]
+   [delectus-api-server.couchbase.io :as couch-io]
    [delectus-api-server.couchbase.delectus.lists :as lists]
    [delectus-api-server.couchbase.delectus.users :as users]
    ))
@@ -22,6 +25,19 @@
 ;;; (email->user-id "mikel@evins.net")
 
 (defn session-id->user-id [session-id])
+
+;;; PRIVATE: do not expose to the public API
+(defn update-user! [userid user-map]
+  (couch-io/update-document! (config/delectus-users-bucket)
+                             userid
+                             user-map))
+
+;;; (def $greer-hash (hashers/derive $greer-pw))
+;;; (hashers/check $greer-pw $greer-hash)
+;;; (def $granny-hash (hashers/derive $granny-pw))
+;;; (hashers/check $granny-pw $granny-hash)
+;;; (def $mikel-hash (hashers/derive $mikel-pw))
+;;; (hashers/check $mikel-pw $mikel-hash)
 
 ;;; ---------------------------------------------------------------------
 ;;; Collections
