@@ -117,7 +117,7 @@
       (map->User (to-map found))
       nil)))
 
-;;; (def $userid (delectus-user-email->id "mikel@evins.net"))
+;;; (def $userid (delectus-user-email->id "granny@evins.net"))
 ;;; (time (user-from-id $userid))
 
 (defn user-from-email [email]
@@ -200,16 +200,21 @@
 ;;; (disable-delectus-user! "mikel@evins.net")
 ;;; (disable-delectus-user! "greer@evins.net")
 
-(defn add-delectus-user! [email-address & {:keys [id password-hash]
+(defn add-delectus-user! [email-address & {:keys [id  email password-hash enabled]
                                            :or {id (makeid)
-                                                password-hash nil}}]
+                                                email nil
+                                                name nil
+                                                password-hash nil
+                                                enabled false}}]
   (let [bucket (config/delectus-users-bucket)
         already-user-document (couch-io/get-document bucket id)]
     (if already-user-document
       (throw (ex-info "A user with the supplied ID already exists" {:id id :bucket (.name bucket)}))
       (let [new-user-map (make-user :id id
                                     :email email-address
-                                    :password-hash password-hash)
+                                    :name name
+                                    :password-hash password-hash
+                                    :enabled enabled)
             new-user-document (to-json-document new-user-map id)]
         (.insert bucket new-user-document)
         id))))
@@ -220,3 +225,15 @@
 ;;; (enable-delectus-user! "greer@evins.net")
 ;;; (add-delectus-user! "granny@evins.net")
 ;;; (enable-delectus-user! "granny@evins.net")
+
+
+;;; (def $granny (user-from-email "granny@evins.net"))
+;;; (def $new-granny (merge $granny {:id (makeid)}))
+;;; (couch-io/create-document! (config/delectus-users-bucket) (:id $new-granny) $new-granny)
+;;; (def $greer (user-from-email "greer@evins.net"))
+;;; (def $new-greer (merge $greer {:id (makeid)}))
+;;; (couch-io/create-document! (config/delectus-users-bucket) (:id $new-greer) $new-greer)
+;;; (def $mikel (user-from-email "mikel@evins.net"))
+;;; (def $new-mikel (merge $mikel {:id (makeid)}))
+;;; (couch-io/create-document! (config/delectus-users-bucket) (:id $new-mikel) $new-mikel)
+
