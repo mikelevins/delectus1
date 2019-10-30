@@ -3,9 +3,10 @@
    [buddy.hashers :as hashers]
    [delectus-api-server.identifiers :refer [makeid]]
    [delectus-api-server.configuration :as config]
-   [delectus-api-server.couchbase.io :as couch-io]
    [delectus-api-server.couchbase.delectus.lists :as lists]
    [delectus-api-server.couchbase.delectus.users :as users]
+   [delectus-api-server.couchbase.io :as couch-io]
+   [delectus-api-server.couchbase.marshal :as marshal]
    ))
 
 ;;; ---------------------------------------------------------------------
@@ -27,17 +28,29 @@
 (defn session-id->user-id [session-id])
 
 ;;; PRIVATE: do not expose to the public API
-(defn update-user! [userid user-map]
-  (couch-io/update-document! (config/delectus-users-bucket)
-                             userid
-                             user-map))
+(defn update-user! [userid new-values-map]
+  (let [old-user-map (marshal/to-map (couch-io/get-object (config/delectus-users-bucket) userid))]
+    (couch-io/update-document! (config/delectus-users-bucket)
+                               userid
+                               (merge old-user-map
+                                      new-values-map))
+    userid))
 
-;;; (def $greer-hash (hashers/derive $greer-pw))
-;;; (hashers/check $greer-pw $greer-hash)
+;;; (def $granny-pw nil)
+;;; (def $greer-pw nil)
+;;; (def $mikel-pw nil)
 ;;; (def $granny-hash (hashers/derive $granny-pw))
 ;;; (hashers/check $granny-pw $granny-hash)
+;;; (def $greer-hash (hashers/derive $greer-pw))
+;;; (hashers/check $greer-pw $greer-hash)
 ;;; (def $mikel-hash (hashers/derive $mikel-pw))
 ;;; (hashers/check $mikel-pw $mikel-hash)
+;;; (def $greerid (users/delectus-user-email->id "greer@evins.net"))
+;;; (update-user! $greerid {:name "Greer Evins" :password-hash $greer-hash})
+;;; (def $grannyid (users/delectus-user-email->id "granny@evins.net"))
+;;; (update-user! $grannyid {:name "Sally Schuster" :password-hash $granny-hash})
+;;; (def $mikelid (users/delectus-user-email->id "mikel@evins.net"))
+;;; (update-user! $mikelid {:name "mikel evins" :password-hash $mikel-hash})
 
 ;;; ---------------------------------------------------------------------
 ;;; Collections

@@ -96,7 +96,7 @@
         vals (map #(marshal/unmarshal %) objs)]
     vals))
 
-;;; (time (def $all() (find-objects (config/delectus-users-bucket) {})))
+;;; (time (def $all (find-objects (config/delectus-users-bucket) {:type "delectus_user"})))
 
 ;;; (time (def $all (find-objects (config/travel-sample-bucket) {})))
 ;;; (time (def $airlines (find-objects (config/travel-sample-bucket) {"type" "airline" "id" 10})))
@@ -110,7 +110,6 @@
 ;;; (time (def $routes (find-objects (config/travel-sample-bucket) {"type" "route"} :limit 10 :offset 20000)))
 ;;; (count $routes)
 ;;; (:id (first $routes))
-;;; (:document-key (first $routes))
 
 (defn find-object-ids [bucket properties
                        & {:keys [order-by direction limit offset]

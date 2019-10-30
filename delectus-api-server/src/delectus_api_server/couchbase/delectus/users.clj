@@ -126,12 +126,14 @@
       (first found)
       nil)))
 
+;;; (time (user-from-email "granny@evins.net"))
+;;; (time (user-from-email "greer@evins.net"))
 ;;; (time (user-from-email "mikel@evins.net"))
 
 (defn delectus-user-email->id [email]
   (let [found (user-from-email email)]
     (if found
-      (:document-key found)
+      (:id found)
       nil)))
 
 ;;; (time (delectus-user-email->id "mikel@evins.net"))
