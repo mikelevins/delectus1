@@ -11,6 +11,8 @@
                  [http-kit "2.3.0"]
                  ;; Ring defaults - for query params etc
                  [ring/ring-defaults "0.3.2"]
+                 ;; Ring cors - to enable cross-origin requests
+                 [ring-cors "0.1.13"]
                  ;; standard Clojure JSON library
                  [org.clojure/data.json "0.2.6"]
                  ;; standard Clojure CSV library
