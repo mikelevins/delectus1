@@ -15,17 +15,30 @@
 
 (defn register-user [email password])
 
-;;; returns session-id
-(defn login-user [email password])
+;;; temporary implementation
+(defn make-auth-token [user-map]
+  (makeid))
 
-(defn logout-user [session-id])
+;;; returns authentication token
+(defn login-user [email password]
+  (let [found-user (users/user-from-email email)]
+    (if found-user
+      (if (hashers/check password (:password-hash found-user))
+        (make-auth-token found-user)
+        nil)
+      nil)))
+
+;;; (time (login-user "greer@evins.net" delectus-api-server.core/$greerpw))
+;;; (time (login-user "greer@evins.net" "wrong-password"))
+
+(defn logout-user [auth-token])
 
 (defn email->user-id [email]
   (users/delectus-user-email->id email))
 
 ;;; (email->user-id "mikel@evins.net")
 
-(defn session-id->user-id [session-id])
+(defn auth-token->user-id [auth-token])
 
 ;;; PRIVATE: do not expose to the public API
 (defn update-user! [userid new-values-map]

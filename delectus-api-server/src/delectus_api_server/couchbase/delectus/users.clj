@@ -129,6 +129,7 @@
 ;;; (time (user-from-email "granny@evins.net"))
 ;;; (time (user-from-email "greer@evins.net"))
 ;;; (time (user-from-email "mikel@evins.net"))
+;;; (time (user-from-email "nobody@nowhere.net"))
 
 (defn delectus-user-email->id [email]
   (let [found (user-from-email email)]
