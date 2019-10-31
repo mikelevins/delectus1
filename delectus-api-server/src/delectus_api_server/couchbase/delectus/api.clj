@@ -15,7 +15,9 @@
 
 (defn register-user [email password])
 
-;;; temporary implementation
+;;; TODO: temporary implementation; what we want is something that we
+;;; can use to identify and authorize an API user, and that attackers
+;;; cannot misuse simply by getting hold of the token
 (defn make-auth-token [user-map]
   (makeid))
 

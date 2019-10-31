@@ -49,15 +49,28 @@
 ;;; main server program
 ;;; ---------------------------------------------------------------------
 
+;;; hold a reference to a function that stops the running server
+(defonce server (atom nil))
+
 (defn -main [& args]
   (let [port (Integer/parseInt (or (System/getenv "PORT") "9000"))]
     ;; Run the server with Ring.defaults middleware
-    (server/run-server
-     (wrap-cors
-      (wrap-defaults #'app-routes site-defaults)
-      :access-control-allow-origin [#"http://localhost:5000"]
-      :access-control-allow-methods [:get :put :post :delete])
-     {:port port})
+    (reset! server
+            (server/run-server
+             (wrap-defaults (wrap-cors #'app-routes
+                                       :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
+                                       :access-control-allow-methods [:get :put :post :delete])
+                            site-defaults)
+             {:port port}))
     ;; Run the server without ring defaults
     ;;(server/run-server #'app-routes {:port port})
     (println (str "Running webserver at http:/127.0.0.1:" port "/"))))
+
+(defn stop-server []
+  (when-not (nil? @server)
+    ;; graceful shutdown: wait 100ms for existing requests to be finished
+    ;; :timeout is optional, when no timeout, stop immediately
+    (@server :timeout 100)
+    (reset! server nil)))
+
+;;; (stop-server)

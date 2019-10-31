@@ -1,7 +1,7 @@
 <script>
  let users = [];
  function getUsers() {
-     fetch('http://localhost:9000/delectus/users').then((resp) => resp.json()).then((data) => users=data);
+     fetch('http://mars.local:9000/delectus/users').then((resp) => resp.json()).then((data) => users=data);
  }
 </script>
 
