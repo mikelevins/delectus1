@@ -64,6 +64,10 @@
 
 ;;; (class (make-couchable {:a 1 :b 2 :c [3 "three" 3.0] :d {:val 4.0}}))
 
+(extend-type org.httpkit.server.AsyncChannel
+  Couchable
+  (make-couchable [data]
+    (.toString data)))
 
 ;;; ---------------------------------------------------------------------
 ;;; convert lists to JsonArray 

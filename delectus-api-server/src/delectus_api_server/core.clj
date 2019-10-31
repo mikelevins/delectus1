@@ -21,6 +21,7 @@
 
   ;; general test routes
   ;; -------------------
+  (GET "/echo" [] handlers/echo)
   (GET "/hello" [] handlers/hello-name)
   (GET "/status" [] couch-handlers/status)
 
