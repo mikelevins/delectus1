@@ -1,15 +1,17 @@
 (ns delectus-api-server.core
-  (:require [org.httpkit.server :as server]
+  (:require [buddy.auth.backends :as backends]
+            [buddy.auth.middleware :refer (wrap-authentication)]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer :all]
-            [ring.middleware.cors :refer [wrap-cors]]
+            [org.httpkit.server :as server]
             [delectus-api-server.configuration :as config]
-            [delectus-api-server.route-handlers :as handlers]
+            [delectus-api-server.couchbase.delectus.route-handlers :as delectus-handlers]
+            [delectus-api-server.couchbase.delectus.users :as delectus-users]
             [delectus-api-server.couchbase.route-handlers :as couch-handlers]
             [delectus-api-server.couchbase.travel-sample.route-handlers :as travel-handlers]
-            [delectus-api-server.couchbase.delectus.users :as delectus-users]
-            [delectus-api-server.couchbase.delectus.route-handlers :as delectus-handlers])
+            [delectus-api-server.route-handlers :as handlers]
+            [ring.middleware.defaults :refer :all]
+            [ring.middleware.cors :refer [wrap-cors]])
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
@@ -58,10 +60,13 @@
     ;; Run the server with Ring.defaults middleware
     (reset! server
             (server/run-server
-             (wrap-defaults (wrap-cors #'app-routes
-                                       :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
-                                       :access-control-allow-methods [:get :put :post :delete])
-                            site-defaults)
+             (wrap-authentication
+              (wrap-defaults
+               (wrap-cors #'app-routes
+                          :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
+                          :access-control-allow-methods [:get :put :post :delete])
+               site-defaults)
+              (backends/jws {:secret (config/delectus-users-signing-secret)}))
              {:port port}))
     ;; Run the server without ring defaults
     ;;(server/run-server #'app-routes {:port port})
