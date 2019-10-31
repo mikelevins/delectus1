@@ -27,6 +27,15 @@
 ;;; (delectus-configuration)
 
 ;;; ---------------------------------------------------------------------
+;;; respose-signing
+;;; ---------------------------------------------------------------------
+
+(defn delectus-users-signing-secret []
+  (:delectus-users-signing-secret (delectus-configuration)))
+
+;;; (delectus-users-signing-secret)
+
+;;; ---------------------------------------------------------------------
 ;;; couchbase connection
 ;;; ---------------------------------------------------------------------
 

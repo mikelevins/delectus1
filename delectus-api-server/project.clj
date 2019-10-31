@@ -23,8 +23,12 @@
                  [aero "1.1.3"]
                  ;; hiccup HTML generator
                  [hiccup "1.0.5"]
+                 ;; auth library
+                 [buddy/buddy-auth "2.2.0"]
                  ;; password-hashing library
-                 [buddy/buddy-hashers "1.4.0"]]
+                 [buddy/buddy-hashers "1.4.0"]
+                 ;; response-signing library
+                 [buddy/buddy-sign "3.1.0"]]
 
   ;; for skipping AOT in Pedestal apps
   ;; :main ^:skip-aot delectus-api-server.core

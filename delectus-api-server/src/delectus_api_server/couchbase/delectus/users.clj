@@ -157,6 +157,17 @@
 
 ;;; (time (delectus-user-emails))
 
+
+(defn delectus-user-email->password-hash [email]
+  (let [found (user-from-email email)]
+    (if found
+      (:password-hash found)
+      nil)))
+
+;;; (time (delectus-user-email->password-hash "mikel@evins.net"))
+;;; (time (delectus-user-email->password-hash "greer@evins.net"))
+;;; (time (delectus-user-email->password-hash "nobody@nowhere.net"))
+
 (defn delectus-user-enabled? [email-address]
   (let [found (couch-io/find-objects (config/delectus-users-bucket)
                                      {"email" email-address})]

@@ -15,21 +15,6 @@
 
 (defn register-user [email password])
 
-;;; TODO: temporary implementation; what we want is something that we
-;;; can use to identify and authorize an API user, and that attackers
-;;; cannot misuse simply by getting hold of the token
-(defn make-auth-token [user-map]
-  (makeid))
-
-;;; returns authentication token
-(defn login-user [email password]
-  (let [found-user (users/user-from-email email)]
-    (if found-user
-      (if (hashers/check password (:password-hash found-user))
-        (make-auth-token found-user)
-        nil)
-      nil)))
-
 ;;; (time (login-user "greer@evins.net" delectus-api-server.core/$greerpw))
 ;;; (time (login-user "greer@evins.net" "wrong-password"))
 
@@ -60,6 +45,7 @@
 ;;; (hashers/check $greer-pw $greer-hash)
 ;;; (def $mikel-hash (hashers/derive $mikel-pw))
 ;;; (hashers/check $mikel-pw $mikel-hash)
+;;; (hashers/check $mikel-pw nil)
 ;;; (def $greerid (users/delectus-user-email->id "greer@evins.net"))
 ;;; (update-user! $greerid {:name "Greer Evins" :password-hash $greer-hash})
 ;;; (def $grannyid (users/delectus-user-email->id "granny@evins.net"))
