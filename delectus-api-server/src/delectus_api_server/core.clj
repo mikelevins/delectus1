@@ -1,18 +1,27 @@
 (ns delectus-api-server.core
-  (:require [buddy.auth.backends :as backends]
-            [buddy.auth.middleware :refer (wrap-authentication)]
-            [compojure.core :refer :all]
-            [compojure.route :as route]
-            [org.httpkit.server :as server]
-            [delectus-api-server.configuration :as config]
-            [delectus-api-server.couchbase.delectus.route-handlers :as delectus-handlers]
-            [delectus-api-server.couchbase.delectus.users :as delectus-users]
-            [delectus-api-server.couchbase.route-handlers :as couch-handlers]
-            [delectus-api-server.couchbase.travel-sample.route-handlers :as travel-handlers]
-            [delectus-api-server.route-handlers :as handlers]
-            [ring.middleware.defaults :refer :all]
-            [ring.middleware.cors :refer [wrap-cors]])
+  (:require
+   [buddy.auth :refer [authenticated? throw-unauthorized]]
+   [buddy.auth.backends :as backends]
+   [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
+   [buddy.sign.jwt :as jwt]
+   [clojure.java.io :as io]
+   [compojure.core :refer :all]
+   [compojure.response :refer [render]]
+   [compojure.route :as route]
+   [delectus-api-server.configuration :as config]
+   [delectus-api-server.couchbase.delectus.route-handlers :as delectus-handlers]
+   [delectus-api-server.couchbase.delectus.users :as delectus-users]
+   [delectus-api-server.couchbase.route-handlers :as couch-handlers]
+   [delectus-api-server.couchbase.travel-sample.route-handlers :as travel-handlers]
+   [delectus-api-server.route-handlers :as handlers]
+   [org.httpkit.server :as server]
+   [ring.middleware.cors :refer [wrap-cors]]
+   [ring.middleware.defaults :refer :all]
+   [ring.middleware.params :refer [wrap-params]]
+   [ring.middleware.session :refer [wrap-session]]
+   [ring.util.response :refer [response redirect content-type]])
   (:gen-class))
+          
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
@@ -24,7 +33,6 @@
   ;; general test routes
   ;; -------------------
   (GET "/echo" [] handlers/echo)
-  (GET "/hello" [] handlers/hello-name)
   (GET "/status" [] couch-handlers/status)
 
   ;; travel-sample test routes
@@ -60,13 +68,17 @@
     ;; Run the server with Ring.defaults middleware
     (reset! server
             (server/run-server
-             (wrap-authentication
-              (wrap-defaults
-               (wrap-cors #'app-routes
-                          :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
-                          :access-control-allow-methods [:get :put :post :delete])
-               site-defaults)
-              (backends/jws {:secret (config/delectus-users-signing-secret)}))
+             (wrap-authorization
+              (wrap-authentication
+               (wrap-defaults
+                (wrap-cors #'app-routes
+                           :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
+                           :access-control-allow-methods [:get :put :post :delete])
+                site-defaults)
+               (backends/jws {:secret (config/delectus-users-signing-secret)
+                              :options {:alg :hs512}}))
+              (backends/jws {:secret (config/delectus-users-signing-secret)
+                             :options {:alg :hs512}}))
              {:port port}))
     ;; Run the server without ring defaults
     ;;(server/run-server #'app-routes {:port port})
