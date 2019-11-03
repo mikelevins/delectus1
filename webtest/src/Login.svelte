@@ -1,5 +1,5 @@
 <script>
- export let auth_token = null;
+ import { auth_token } from "./Auth.js";
 
  function handleSubmit(event) {
      let uri = "http://mars.local:9000/delectus/login"
@@ -8,13 +8,12 @@
      let query_string = "?email=" + email_input + "&password=" + password_input
      fetch(uri+query_string)
          .then(response => response.json())
-         .then(data => auth_token = data.token);
+         .then(data => auth_token.set(data.token));
  }
 </script>
 <form on:submit|preventDefault={handleSubmit}>
     <input type="text" id="email" name="email" placeholder="email address" required /><br/>
     <input type="password" id="password" name="password" placeholder="password" required /><br/>
-    <button type="submit">Search</button>
+    <button type="submit">Log In</button>
 </form>
 
-<slot {auth_token} />
