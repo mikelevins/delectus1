@@ -1,5 +1,5 @@
 <script>
- import { auth_token } from "./Auth.js";
+ import { auth_token } from "./auth.js";
 
  function handleSubmit(event) {
      let uri = "http://mars.local:9000/delectus/login"
