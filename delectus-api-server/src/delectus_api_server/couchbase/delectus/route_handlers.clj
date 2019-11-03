@@ -32,11 +32,7 @@
   {:status  200
    :headers {"Content-Type" "text/html"}
    :body    (html [:h1 "Delectus 2"]
-                  [:p "version 0.1"]
-                  [:form {:action "/delectus/login" :method "GET"}
-                   [:p "email: " [:input {:type "text" :name "email"}]]
-                   [:p "password: " [:input {:type "password" :name "password"}]]
-                   [:p [:input {:type "submit" :value "login"}]]])})
+                  [:p "version 0.1"])})
 
 (defn login [req]
   (let [params (:params req)
@@ -57,12 +53,6 @@
                       [:p "Login failed"])})))
 
 
-(defn userid [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))]
-              (json/write-str (api/email->user-id email)))})
-
 (defn userid [request]
   (if-not (authenticated? request)
     (throw-unauthorized)
@@ -73,8 +63,18 @@
                 (json/write-str {:message (str "Logged in " email)}))}))
 
 (defn lists [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [userid (:userid (:params req))]
-              (json/write-str (api/list-lists userid)))})
+  (if-not (authenticated? req)
+    (throw-unauthorized)
+    {:status  200
+     :headers {"Content-Type" "application/json"}
+     :body    (let [userid (:userid (:params req))]
+                (json/write-str (api/list-lists userid)))}))
+
+(defn collections [req]
+  (if-not (authenticated? req)
+    (throw-unauthorized)
+    {:status  200
+     :headers {"Content-Type" "application/json"}
+     :body    (let [userid (:userid (:params req))]
+                (json/write-str (api/list-collections userid)))}))
 

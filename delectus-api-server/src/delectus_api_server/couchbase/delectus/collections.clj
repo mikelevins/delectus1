@@ -115,3 +115,12 @@
 ;;; ---------------------------------------------------------------------
 ;;; Couchbase Collection records
 ;;; ---------------------------------------------------------------------
+
+(defn delectus-collections [user-id]
+  (let [bucket (config/delectus-content-bucket)
+        bucket-name (.name bucket)
+        select-expression (cl-format nil "SELECT id,name from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\""
+                                     bucket-name user-id)
+        results (.query bucket (N1qlQuery/simple select-expression))]
+    (map #(to-map (.value %))
+         results)))

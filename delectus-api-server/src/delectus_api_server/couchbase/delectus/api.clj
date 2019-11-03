@@ -3,6 +3,7 @@
    [buddy.hashers :as hashers]
    [delectus-api-server.identifiers :refer [makeid]]
    [delectus-api-server.configuration :as config]
+   [delectus-api-server.couchbase.delectus.collections :as collections]
    [delectus-api-server.couchbase.delectus.lists :as lists]
    [delectus-api-server.couchbase.delectus.users :as users]
    [delectus-api-server.couchbase.io :as couch-io]
@@ -57,7 +58,8 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
-(defn list-collections [user-id])
+(defn list-collections [user-id]
+  (collections/delectus-collections user-id))
 
 (defn create-collection [& {:keys [id name owner-id]
                             :or {id (makeid)
