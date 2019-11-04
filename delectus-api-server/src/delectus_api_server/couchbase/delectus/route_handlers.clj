@@ -61,19 +61,19 @@
      :body    (let [email (:email (:params request))]
                 (json/write-str (api/email->user-id email)))}))
 
-(defn lists [req]
-  (if-not (authenticated? req)
-    (throw-unauthorized)
-    {:status  200
-     :headers {"Content-Type" "application/json"}
-     :body    (let [userid (:userid (:params req))]
-                (json/write-str (api/list-lists userid)))}))
-
 (defn collections [req]
   (if-not (authenticated? req)
     (throw-unauthorized)
     {:status  200
      :headers {"Content-Type" "application/json"}
-     :body    (let [userid (:userid (:params req))]
-                (json/write-str (api/list-collections userid)))}))
+     :body    (let [email (:email (:params req))]
+                (json/write-str (api/list-collections (api/email->user-id email))))}))
+
+(defn lists [req]
+  (if-not (authenticated? req)
+    (throw-unauthorized)
+    {:status  200
+     :headers {"Content-Type" "application/json"}
+     :body    (let [email (:email (:params req))]
+                (json/write-str (api/list-lists (api/email->user-id email))))}))
 

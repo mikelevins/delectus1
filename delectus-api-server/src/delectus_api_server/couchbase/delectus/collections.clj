@@ -13,7 +13,8 @@
             [delectus-api-server.couchbase.delectus.nameable :refer [Nameable get-name rename]]
             [delectus-api-server.couchbase.delectus.ownable :refer [Ownable get-owner-id update-owner-id]]
             [delectus-api-server.couchbase.delectus.typable :refer [Typable get-type]]
-            [delectus-api-server.couchbase.delectus.users :as delectus-users])
+            [delectus-api-server.couchbase.delectus.users :as delectus-users]
+            [delectus-api-server.couchbase.io :as couch-io])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -97,19 +98,10 @@
                     :items lists}))
 
 ;;; (def $things-id (makeid))
-;;; (def $mikel-id (makeid))
-;;; (def $greer-id (makeid))
+;;; (def $mikel (delectus-users/user-from-email "mikel@evins.net"))
+;;; (def $mikel-id (:id $mikel))
 ;;; (def $things (make-collection :id $things-id :name "Things" :owner-id $mikel-id))
-;;; (make-couchable $things)
-;;; (def $things2 (rename (update-owner-id $things $greer-id) "My Things"))
-;;; (make-couchable $things2)
-;;; (def $things3 (add-item $things2 {:id "foo" :name "A List Name"}))
-;;; (make-couchable $things3)
-;;; (max-item-index $things3)
-;;; (def $things4 (add-item $things3 {:id "bar" :name "Another List Name"}))
-;;; (make-couchable $things4)
-;;; (def $things5 (remove-item-at $things4 0))
-;;; (make-couchable $things5)
+;;; (couch-io/create-document! (config/delectus-content-bucket) $things-id $things)
 
 
 ;;; ---------------------------------------------------------------------
@@ -124,3 +116,5 @@
         results (.query bucket (N1qlQuery/simple select-expression))]
     (map #(to-map (.value %))
          results)))
+
+;;; (def $collections (delectus-collections $mikel-id))
