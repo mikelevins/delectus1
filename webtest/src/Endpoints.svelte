@@ -1,16 +1,26 @@
 <script>
  import { authorization } from "./auth.js";
 
+ function handleErrorResponse(response) {
+     if (response.ok) {
+         return response;
+     } else {
+         throw Error(response.statusText);
+     }
+ }
+ 
+ function displayResponseData (responseData, displayElementID) {
+     document.getElementById(displayElementID).innerHTML=JSON.stringify(responseData)
+ }
+ 
  function callDelectusAPI (apiName, displayElementID) {
      let uri = "http://mars.local:9000/delectus/"+apiName+"?email="+$authorization["email"];
      let token = $authorization["token"];
      fetch(uri, {method: 'GET',
                 headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById(displayElementID).innerHTML=JSON.stringify(data));
+         .then(handleErrorResponse)
+         .then(response => response.json())
+         .then(data => displayResponseData(data,displayElementID));
  }
  
  function getUserID () {

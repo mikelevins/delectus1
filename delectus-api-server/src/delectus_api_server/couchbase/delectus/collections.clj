@@ -97,11 +97,11 @@
                     :deleted deleted
                     :items lists}))
 
-;;; (def $things-id (makeid))
+;;; (def $default-collection-id (makeid))
 ;;; (def $mikel (delectus-users/user-from-email "mikel@evins.net"))
 ;;; (def $mikel-id (:id $mikel))
-;;; (def $things (make-collection :id $things-id :name "Things" :owner-id $mikel-id))
-;;; (couch-io/create-document! (config/delectus-content-bucket) $things-id $things)
+;;; (def $default-collection (make-collection :id $default-collection-id :name "Default Collection" :owner-id $mikel-id))
+;;; (couch-io/create-document! (config/delectus-content-bucket) $default-collection-id $default-collection)
 
 
 ;;; ---------------------------------------------------------------------
