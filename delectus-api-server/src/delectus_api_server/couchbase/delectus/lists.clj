@@ -209,7 +209,7 @@
         bucket-name (.name bucket)
         select-expression
         (cl-format nil
-                   "SELECT name,items from `~A` WHERE type = \"delectus_list\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
+                   "SELECT name, columns, items from `~A` WHERE type = \"delectus_list\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
                    bucket-name user-id list-name)
         results (.query bucket (N1qlQuery/simple select-expression))
         objects (map #(to-map (.value %))
