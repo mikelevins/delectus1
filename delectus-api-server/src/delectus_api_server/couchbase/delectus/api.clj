@@ -70,7 +70,8 @@
 
 (defn find-collection-by-id [user-id collection-id])
 
-(defn find-collection-by-name [user-id collection-id])
+(defn find-collection-by-name [user-id collection-name]
+  (collections/find-collection-by-name user-id collection-name))
 
 (defn get-collection-name [user-id collection-id])
 

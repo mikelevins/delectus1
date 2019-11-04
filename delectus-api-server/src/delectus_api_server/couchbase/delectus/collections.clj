@@ -118,3 +118,19 @@
          results)))
 
 ;;; (def $collections (delectus-collections $mikel-id))
+
+(defn find-collection-by-name [user-id collection-name]
+  (let [bucket (config/delectus-content-bucket)
+        bucket-name (.name bucket)
+        select-expression (cl-format nil "SELECT id,name from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
+                                     bucket-name user-id collection-name)
+        results (.query bucket (N1qlQuery/simple select-expression))
+        objects (map #(to-map (.value %))
+                     results)]
+    (if (empty? objects)
+      nil
+      (first objects))))
+
+;;; (def $collections (find-collection-by-name $mikel-id "Things"))
+;;; (def $collections (find-collection-by-name $mikel-id "NOPE!"))
+

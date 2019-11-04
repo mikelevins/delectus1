@@ -24,6 +24,20 @@
  function getUserLists () {
      callDelectusAPI("lists","lists_response");
  }
+ 
+ function getCollectionByName () {
+     let collectionName = document.getElementById("collection_name").value;
+     let uri = "http://mars.local:9000/delectus/collection_named";
+     let query = "?email="+$authorization["email"]+"&name="+collectionName;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("collection_named_response").innerHTML=JSON.stringify(data));
+ }
 
 </script>
 
@@ -44,6 +58,15 @@
         <td>GET</td>
         <td><button on:click={getUserCollections}>/delectus/collections</button></td>
         <td id="collections_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td>
+            <button on:click={getCollectionByName}>/delectus/collection_named</button>
+            <input type="text" id="collection_name" placeholder="Collection name">
+        </td>
+        <td id="collection_named_response"></td>
     </tr>
 
     <tr>

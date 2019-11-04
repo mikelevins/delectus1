@@ -199,6 +199,7 @@
 ;;; (def $things (add-delectus-list! (delectus-users/delectus-user-email->id "mikel@evins.net") "Things"))
 
 
+
 ;;; ---------------------------------------------------------------------
 ;;; Couchbase List records
 ;;; ---------------------------------------------------------------------
