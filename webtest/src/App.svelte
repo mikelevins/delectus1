@@ -8,7 +8,7 @@
 <p><em>version 2.0d1</em></p>
 
 {#if $authorization}
-    <p>Logged in as {$authorization.email}</p>
+    <p>Logged in as: <strong>{$authorization.email}</strong></p>
     <Endpoints/>
 {:else}
     <Login/>
