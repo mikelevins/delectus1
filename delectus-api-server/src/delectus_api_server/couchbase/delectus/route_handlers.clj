@@ -59,8 +59,7 @@
     {:status  200
      :headers {"Content-Type" "application/json"}
      :body    (let [email (:email (:params request))]
-                (json/write-str (api/email->user-id email))
-                (json/write-str {:message (str "Logged in " email)}))}))
+                (json/write-str (api/email->user-id email)))}))
 
 (defn lists [req]
   (if-not (authenticated? req)
