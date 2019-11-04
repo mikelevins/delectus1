@@ -68,7 +68,8 @@
 
 (defn mark-collection-deleted [collection-id deleted?])
 
-(defn find-collection-by-id [user-id collection-id])
+(defn find-collection-by-id [user-id collection-id]
+  (collections/find-collection-by-id user-id collection-id))
 
 (defn find-collection-by-name [user-id collection-name]
   (collections/find-collection-by-name user-id collection-name))

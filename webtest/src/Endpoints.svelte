@@ -54,6 +54,20 @@
          .then(data => document.getElementById("collection_named_response").innerHTML=JSON.stringify(data));
  }
  
+ function getCollectionByID () {
+     let collectionID = document.getElementById("collection_id").value;
+     let uri = "http://mars.local:9000/delectus/collection_with_id";
+     let query = "?email="+$authorization["email"]+"&id="+collectionID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("collection_with_id_response").innerHTML=JSON.stringify(data));
+ }
+ 
  function getListByName () {
      let listName = document.getElementById("list_name").value;
      let uri = "http://mars.local:9000/delectus/list_named";
@@ -119,6 +133,13 @@
         <td class="endpoint"><button on:click={getCollectionByName}>/delectus/collection_named</button></td>
         <td><input type="text" id="collection_name" placeholder="Collection name"/></td>
         <td id="collection_named_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={getCollectionByID}>/delectus/collection_with_id</button></td>
+        <td><input type="text" id="collection_id" placeholder="Collection ID"/></td>
+        <td id="collection_with_id_response"></td>
     </tr>
 
     <tr>

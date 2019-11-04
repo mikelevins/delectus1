@@ -77,6 +77,16 @@
      :body    (let [email (:email (:params req))]
                 (json/write-str (api/list-lists (api/email->user-id email))))}))
 
+(defn collection-with-id [req]
+  (if-not (authenticated? req)
+    (throw-unauthorized)
+    {:status  200
+     :headers {"Content-Type" "application/json"}
+     :body    (let [email (:email (:params req))
+                    collection-id (:id (:params req))]
+                (json/write-str (api/find-collection-by-id (api/email->user-id email)
+                                                           collection-id)))}))
+
 (defn collection-named [req]
   (if-not (authenticated? req)
     (throw-unauthorized)

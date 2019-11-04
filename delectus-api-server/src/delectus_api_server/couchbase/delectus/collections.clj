@@ -125,7 +125,7 @@
         bucket-name (.name bucket)
         select-expression
         (cl-format nil
-                   "SELECT name,items from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
+                   "SELECT name,id,items from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
                    bucket-name user-id collection-name)
         results (.query bucket (N1qlQuery/simple select-expression))
         objects (map #(to-map (.value %))
@@ -137,3 +137,19 @@
 ;;; (def $collections (find-collection-by-name $mikel-id "Things"))
 ;;; (def $collections (find-collection-by-name $mikel-id "NOPE!"))
 
+(defn find-collection-by-id [user-id collection-id]
+  (let [bucket (config/delectus-content-bucket)
+        bucket-name (.name bucket)
+        select-expression
+        (cl-format nil
+                   "SELECT name,id,items from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\" AND `id` =\"~A\""
+                   bucket-name user-id collection-id)
+        results (.query bucket (N1qlQuery/simple select-expression))
+        objects (map #(to-map (.value %))
+                     results)]
+    (if (empty? objects)
+      nil
+      (first objects))))
+
+;;; (def $collection (find-collection-by-name $mikel-id "Default Collection"))
+;;; (def $collection2 (find-collection-by-id $mikel-id (:id $collection)))
