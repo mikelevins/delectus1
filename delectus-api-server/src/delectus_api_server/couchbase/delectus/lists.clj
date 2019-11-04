@@ -196,11 +196,28 @@
         (.insert bucket new-list-document)
         list-id))))
 
-;;; (def $things (add-delectus-list! (delectus-users/delectus-user-email->id "mikel@evins.net") "Things"))
-
-
+;;; (def $mikel (delectus-users/user-from-email "mikel@evins.net"))
+;;; (def $mikel-id (:id $mikel))
+;;; (def $things (add-delectus-list! $mikel-id "Things"))
 
 ;;; ---------------------------------------------------------------------
 ;;; Couchbase List records
 ;;; ---------------------------------------------------------------------
 
+(defn find-list-by-name [user-id list-name]
+  (let [bucket (config/delectus-content-bucket)
+        bucket-name (.name bucket)
+        select-expression
+        (cl-format nil
+                   "SELECT name,items from `~A` WHERE type = \"delectus_list\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
+                   bucket-name user-id list-name)
+        results (.query bucket (N1qlQuery/simple select-expression))
+        objects (map #(to-map (.value %))
+                     results)]
+    (if (empty? objects)
+      nil
+      (first objects))))
+
+;;; (def $mikel (delectus-users/user-from-email "mikel@evins.net"))
+;;; (def $mikel-id (:id $mikel))
+;;; (def $list (find-list-by-name $mikel-id "Things"))

@@ -98,7 +98,8 @@
 
 (defn find-list-by-id [user-id list-id])
 
-(defn find-list-by-name [user-id list-name])
+(defn find-list-by-name [user-id list-name]
+  (lists/find-list-by-name user-id list-name))
 
 (defn list-name [user-id list-id])
 
