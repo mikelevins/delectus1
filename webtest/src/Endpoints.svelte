@@ -1,22 +1,28 @@
 <script>
  import { authorization } from "./auth.js";
 
- function getUserID () {
-     let uri = "http://mars.local:9000/delectus/userid?email="+$authorization["email"];
+ function callDelectusAPI (apiName, displayElementID) {
+     let uri = "http://mars.local:9000/delectus/"+apiName+"?email="+$authorization["email"];
      let token = $authorization["token"];
      fetch(uri, {method: 'GET',
                 headers: {"Authorization": " Token "+token}})
-         .then(response => response.json())
-         .then(data => document.getElementById("userid_response").innerHTML=data);
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById(displayElementID).innerHTML=JSON.stringify(data));
  }
-
+ 
+ function getUserID () {
+     callDelectusAPI("userid","userid_response");
+ }
+ 
  function getUserCollections () {
-     let uri = "http://mars.local:9000/delectus/collections?email="+$authorization["email"];
-     let token = $authorization["token"];
-     fetch(uri, {method: 'GET',
-                headers: {"Authorization": " Token "+token}})
-         .then(response => response.json())
-         .then(data => document.getElementById("collections_response").innerHTML=JSON.stringify(data));
+     callDelectusAPI("collections","collections_response");
+ }
+ 
+ function getUserLists () {
+     callDelectusAPI("lists","lists_response");
  }
 
 </script>
@@ -38,5 +44,11 @@
         <td>GET</td>
         <td><button on:click={getUserCollections}>/delectus/collections</button></td>
         <td id="collections_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td><button on:click={getUserLists}>/delectus/lists</button></td>
+        <td id="lists_response"></td>
     </tr>
 </table>
