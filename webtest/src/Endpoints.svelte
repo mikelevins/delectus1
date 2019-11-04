@@ -81,6 +81,20 @@
          })
          .then(data => document.getElementById("list_named_response").innerHTML=JSON.stringify(data));
  }
+ 
+ function getListByID () {
+     let listID = document.getElementById("list_id").value;
+     let uri = "http://mars.local:9000/delectus/list_with_id";
+     let query = "?email="+$authorization["email"]+"&id="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("list_with_id_response").innerHTML=JSON.stringify(data));
+ }
 
 </script>
 
@@ -154,6 +168,13 @@
         <td class="endpoint"><button on:click={getListByName}>/delectus/list_named</button></td>
         <td><input type="text" id="list_name" placeholder="List name"/></td>
         <td id="list_named_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={getListByID}>/delectus/list_with_id</button></td>
+        <td><input type="text" id="list_id" placeholder="List ID"/></td>
+        <td id="list_with_id_response"></td>
     </tr>
 </table>
 

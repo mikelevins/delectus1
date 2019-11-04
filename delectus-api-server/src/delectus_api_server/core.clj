@@ -54,6 +54,7 @@
   (GET "/delectus/collection_named" [] delectus-handlers/collection-named)
   (GET "/delectus/collection_with_id" [] delectus-handlers/collection-with-id)
   (GET "/delectus/list_named" [] delectus-handlers/list-named)
+  (GET "/delectus/list_with_id" [] delectus-handlers/list-with-id)
   
   ;; default ("Page not found") route
   ;; --------------------------------

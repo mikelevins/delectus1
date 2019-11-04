@@ -97,7 +97,8 @@
 
 (defn mark-list-deleted [user-id list-id])
 
-(defn find-list-by-id [user-id list-id])
+(defn find-list-by-id [user-id list-id]
+  (lists/find-list-by-id user-id list-id))
 
 (defn find-list-by-name [user-id list-name]
   (lists/find-list-by-name user-id list-name))
