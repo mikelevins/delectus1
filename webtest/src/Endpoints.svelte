@@ -1,11 +1,16 @@
 <script>
  import { authorization } from "./auth.js";
 
+ function discardAuthorization() {
+     authorization.set(null)
+ }
+
+ 
  function handleErrorResponse(response) {
      if (response.ok) {
          return response;
      } else {
-         throw Error(response.statusText);
+         discardAuthorization();
      }
  }
  
@@ -82,6 +87,11 @@
  } 
 </style>
 
+<p>
+    Logged in as: <strong>{$authorization.email}</strong>&nbsp;
+    <button on:click={discardAuthorization}>discard authorization</button>
+</p>
+
 <table>
     <tr>
         <th>Method</th>
@@ -125,3 +135,5 @@
         <td id="list_named_response"></td>
     </tr>
 </table>
+
+
