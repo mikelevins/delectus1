@@ -41,37 +41,56 @@
 
 </script>
 
+<style>
+ .endpoint { text-align: right; }
+ 
+ table {
+     border-collapse: collapse;
+ }
+
+ table, th, td {
+     border: 1px solid black;
+ }
+ 
+ th, td {
+     padding: 8px;
+     text-align: left;
+ } 
+</style>
+
 <table>
     <tr>
         <th>Method</th>
         <th>Endpoint</th>
+        <th>Parameters</th>
         <th>Response</th>
     </tr>
 
     <tr>
         <td>GET</td>
-        <td><button on:click={getUserID}>/delectus/userid</button></td>
+        <td class="endpoint"><button on:click={getUserID}>/delectus/userid</button></td>
+        <td></td>
         <td id="userid_response"></td>
     </tr>
 
     <tr>
         <td>GET</td>
-        <td><button on:click={getUserCollections}>/delectus/collections</button></td>
+        <td class="endpoint"><button on:click={getUserCollections}>/delectus/collections</button></td>
+        <td></td>
         <td id="collections_response"></td>
     </tr>
 
     <tr>
         <td>GET</td>
-        <td>
-            <button on:click={getCollectionByName}>/delectus/collection_named</button>
-            <input type="text" id="collection_name" placeholder="Collection name">
-        </td>
+        <td class="endpoint"><button on:click={getCollectionByName}>/delectus/collection_named</button></td>
+        <td><input type="text" id="collection_name" placeholder="Collection name"/></td>
         <td id="collection_named_response"></td>
     </tr>
 
     <tr>
         <td>GET</td>
-        <td><button on:click={getUserLists}>/delectus/lists</button></td>
+        <td class="endpoint"><button on:click={getUserLists}>/delectus/lists</button></td>
+        <td></td>
         <td id="lists_response"></td>
     </tr>
 </table>

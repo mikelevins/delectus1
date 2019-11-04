@@ -111,7 +111,8 @@
 (defn delectus-collections [user-id]
   (let [bucket (config/delectus-content-bucket)
         bucket-name (.name bucket)
-        select-expression (cl-format nil "SELECT id,name from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\""
+        select-expression (cl-format nil
+                                     "SELECT id,name from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\""
                                      bucket-name user-id)
         results (.query bucket (N1qlQuery/simple select-expression))]
     (map #(to-map (.value %))
@@ -122,8 +123,10 @@
 (defn find-collection-by-name [user-id collection-name]
   (let [bucket (config/delectus-content-bucket)
         bucket-name (.name bucket)
-        select-expression (cl-format nil "SELECT id,name from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
-                                     bucket-name user-id collection-name)
+        select-expression
+        (cl-format nil
+                   "SELECT name,items from `~A` WHERE type = \"delectus_collection\" AND `owner-id` =\"~A\" AND `name` =\"~A\""
+                   bucket-name user-id collection-name)
         results (.query bucket (N1qlQuery/simple select-expression))
         objects (map #(to-map (.value %))
                      results)]
