@@ -1,19 +1,10 @@
 (ns delectus-api-server.core
   (:require
-   [clojure.java.io :as io]
    [compojure.core :refer :all]
-   [compojure.response :refer [render]]
-   [compojure.route :as route]
-   [delectus-api-server.configuration :as config]
-   [delectus-api-server.couchbase.delectus.users :as delectus-users]
-   [delectus-api-server.handlers :as handlers]
    [delectus-api-server.routes :refer [app-routes]]
    [org.httpkit.server :as server]
    [ring.middleware.cors :refer [wrap-cors]]
-   [ring.middleware.defaults :refer :all]
-   [ring.middleware.params :refer [wrap-params]]
-   [ring.middleware.session :refer [wrap-session]]
-   [ring.util.response :refer [response redirect content-type]])
+   [ring.middleware.defaults :refer :all])
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
