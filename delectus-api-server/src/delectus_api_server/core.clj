@@ -7,6 +7,7 @@
    [delectus-api-server.configuration :as config]
    [delectus-api-server.couchbase.delectus.users :as delectus-users]
    [delectus-api-server.handlers :as handlers]
+   [delectus-api-server.routes :refer [app-routes]]
    [org.httpkit.server :as server]
    [ring.middleware.cors :refer [wrap-cors]]
    [ring.middleware.defaults :refer :all]
@@ -14,33 +15,6 @@
    [ring.middleware.session :refer [wrap-session]]
    [ring.util.response :refer [response redirect content-type]])
   (:gen-class))
-
-;;; ---------------------------------------------------------------------
-;;; routes
-;;; ---------------------------------------------------------------------
-
-(defroutes app-routes
-
-  ;; general test routes
-  ;; -------------------
-  (GET "/echo" [] handlers/echo)
-  (GET "/status" [] handlers/status)
-
-  ;; Delectus API routes
-  ;; -------------------
-
-  (GET "/delectus/login" [] handlers/login) 
-  (GET "/delectus/userid" [] handlers/userid)
-  (GET "/delectus/collections" [] handlers/collections)
-  (GET "/delectus/lists" [] handlers/lists)
-  (GET "/delectus/collection_named" [] handlers/collection-named)
-  (GET "/delectus/collection_with_id" [] handlers/collection-with-id)
-  (GET "/delectus/list_named" [] handlers/list-named)
-  (GET "/delectus/list_with_id" [] handlers/list-with-id)
-  
-  ;; default ("Page not found") route
-  ;; --------------------------------
-  (route/not-found "Error, page not found!"))
 
 ;;; ---------------------------------------------------------------------
 ;;; main server program
