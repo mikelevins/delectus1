@@ -1,34 +1,29 @@
 (ns delectus-api-server.handlers
   (:require
    [buddy.hashers :as hashers]
-   [clj-time.core :as time]
    [clojure.data.json :as json]
-   [clojure.java.io :as io]
-   [compojure.core :refer :all]
-   [compojure.response :refer [render]]
-   [compojure.route :as route]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.couchbase.delectus.api :as api]
-   [delectus-api-server.couchbase.delectus.users :as delectus-users]
-   [delectus-api-server.couchbase.marshal :as marshal]
+   [delectus-api-server.couchbase.delectus.users :as users]
    [hiccup.core :refer :all]
-   [org.httpkit.server :as server]
-   [ring.middleware.cors :refer [wrap-cors]]
-   [ring.middleware.defaults :refer :all]
-   [ring.middleware.params :refer [wrap-params]]
-   [ring.middleware.session :refer [wrap-session]]
-   [ring.util.response :refer [response redirect content-type]]))
+   [org.httpkit.server :as server]))
 
 
 ;;; ---------------------------------------------------------------------
 ;;; generic test handlers
 ;;; ---------------------------------------------------------------------
 
-(defn echo [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (json/write-str (marshal/make-couchable req))})
+(defn ->printable [val]
+  (cond
+    (instance? org.httpkit.server.AsyncChannel val) (.toString val)
+    :else val))
 
+(defn echo [req]
+  (let [req-keys (keys req)
+        req-vals (map ->printable (vals req))]
+    {:status  200
+     :headers {"Content-Type" "application/json"}
+     :body    (json/write-str (zipmap req-keys req-vals))}))
 
 (defn status [req]
   {:status 200
@@ -44,7 +39,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defn login-user [email password]
-  (let [found-user (delectus-users/user-from-email email)]
+  (let [found-user (users/user-from-email email)]
     (if found-user
       (if (hashers/check password (:password-hash found-user))
         found-user
