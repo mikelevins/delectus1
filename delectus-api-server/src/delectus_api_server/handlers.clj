@@ -4,9 +4,10 @@
    [clojure.data.json :as json]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.couchbase.delectus.api :as api]
-   [delectus-api-server.couchbase.delectus.users :as users]
    [hiccup.core :refer :all]
-   [org.httpkit.server :as server]))
+   [org.httpkit.server :as server])
+  (:import
+   (com.couchbase.client.java.query N1qlQuery)))
 
 
 ;;; ---------------------------------------------------------------------
@@ -39,9 +40,16 @@
 ;;; ---------------------------------------------------------------------
 
 (defn login-user [email password]
-  (let [found-user (users/user-from-email email)]
+  (let [bucket (config/delectus-users-bucket)
+        bucket-name (.name bucket)
+        selector (str "SELECT * from `" bucket-name "` "
+                      "WHERE `type` = \"delectus_user\" "
+                      "AND `email` = \"" email "\"")
+        results (.query bucket (N1qlQuery/simple selector))
+        objs (map #(.get (.value %) bucket-name) results)
+        found-user (if (empty? objs) nil (first objs))]
     (if found-user
-      (if (hashers/check password (:password-hash found-user))
+      (if (hashers/check password (.get found-user "password-hash"))
         found-user
         false)
       false)))
