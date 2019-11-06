@@ -4,6 +4,7 @@
    [clojure.edn :as edn]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.couchio :as couchio]
+   [delectus-api-server.errors :as errors]
    [delectus-api-server.identifiers :refer [makeid]])
   (:import
    (com.couchbase.client.java.document.json JsonObject)
@@ -76,7 +77,7 @@
 
 (defn find-collection-by-id [userid collection-id]
   (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id"]
+        found (couchio/find-objects bucket ["name" "id" "items"]
                                     {"type" "delectus_collection"
                                      "id" collection-id})]
     (if (empty? found)
@@ -89,7 +90,7 @@
 
 (defn find-collection-by-name [userid collection-name]
   (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id"]
+        found (couchio/find-objects bucket ["name" "id" "items"]
                                     {"type" "delectus_collection"
                                      "name" collection-name})]
     (if (empty? found)
@@ -111,8 +112,8 @@
         list-doc (get-document bucket list-id)]
 
     ;; make sure the list and collection actually exist
-    (if (nil? collection-doc) (throw (ex-info "No such collection" (ex-info {:id collection-id}))))
-    (if (nil? list-doc) (throw (ex-info "No such list" (ex-info {:id list-id}))))
+    (errors/error-if-nil collection-doc "No such collection" {:id collection-id})
+    (errors/error-if-nil list-doc "No such list" {:id list-id})
 
     (let [found-collection (.content collection-doc)
           collection-ownerid (.get found-collection "owner-id")
@@ -120,10 +121,8 @@
           list-ownerid (.get found-list "owner-id")]
 
       ;; make sure the user owns the list and collection
-      (if-not (= userid collection-ownerid)
-        (throw (ex-info "Cannot update collection" (ex-info {:reason "wrong collection owner"}))))
-      (if-not (= userid list-ownerid)
-        (throw (ex-info "Cannot update list" (ex-info {:reason "wrong list owner"}))))
+      (errors/error-if-not (= userid collection-ownerid) "Cannot update collection" {:reason "wrong collection owner"})
+      (errors/error-if-not (= userid list-ownerid) "Cannot update list" {:reason "wrong list owner"})
 
       ;; prepare to add the list to the collection
       (let [old-collection-map (into {} (.toMap found-collection))
@@ -157,8 +156,8 @@
         list-doc (get-document bucket list-id)]
 
     ;; make sure the list and collection actually exist
-    (if (nil? collection-doc) (throw (ex-info "No such collection" (ex-info {:id collection-id}))))
-    (if (nil? list-doc) (throw (ex-info "No such list" (ex-info {:id list-id}))))
+    (errors/error-if-nil collection-doc "No such collection" {:id collection-id})
+    (errors/error-if-nil list-doc "No such list" {:id list-id})
 
     (let [found-collection (.content collection-doc)
           collection-ownerid (.get found-collection "owner-id")
@@ -166,10 +165,8 @@
           list-ownerid (.get found-list "owner-id")]
 
       ;; make sure the user owns the list and collection
-      (if-not (= userid collection-ownerid)
-        (throw (ex-info "Cannot update collection" (ex-info {:reason "wrong collection owner"}))))
-      (if-not (= userid list-ownerid)
-        (throw (ex-info "Cannot update list" (ex-info {:reason "wrong list owner"}))))
+      (errors/error-if-not (= userid collection-ownerid) "Cannot update collection" {:reason "wrong collection owner"})
+      (errors/error-if-not (= userid list-ownerid) "Cannot update list" {:reason "wrong list owner"})
 
       ;; prepare to remove the list from the collection
       (let [old-collection-map (into {} (.toMap found-collection))
