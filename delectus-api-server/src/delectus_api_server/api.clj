@@ -1,10 +1,26 @@
 (ns delectus-api-server.api
   (:require
    [buddy.hashers :as hashers]
+   [clojure.edn :as edn]
    [delectus-api-server.identifiers :refer [makeid]]
    [delectus-api-server.configuration :as config])
   (:import
+   (com.couchbase.client.java.document.json JsonObject)
+   (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)))
+
+;;; ---------------------------------------------------------------------
+;;; Couchbase helpers
+;;; ---------------------------------------------------------------------
+
+(defn get-document [bucket docid]
+  (.get bucket docid))
+
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (def $docid (.get (find-collection-by-name (userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $doc (get-document $bucket $docid))
+;;; (assoc (into {} (.toMap (.content $doc))) :test "test value")
+;;; (time (get-document $bucket "NOPE!"))
 
 ;;; ---------------------------------------------------------------------
 ;;; Users
@@ -97,9 +113,49 @@
 
 (defn get-collection-lists [userid collection-id])
 
-(defn add-collection-list [userid collection-id list-id])
+(defn collection-add-list [userid collection-id list-id]
+  (let [bucket (config/delectus-content-bucket)
+        collection-doc (get-document bucket collection-id)
+        list-doc (get-document bucket list-id)]
 
-(defn remove-collection-list [userid collection-id list-id])
+    (if (nil? collection-doc) (throw (ex-info "No such collection" (ex-info {:id collection-id}))))
+    (if (nil? list-doc) (throw (ex-info "No such list" (ex-info {:id list-id}))))
+
+    (let [found-collection (.content collection-doc)
+          collection-ownerid (.get found-collection "owner-id")
+          found-list (.content list-doc)
+          list-ownerid (.get found-list "owner-id")]
+      
+      (if-not (= userid collection-ownerid)
+        (throw (ex-info "Cannot update collection" (ex-info {:reason "wrong collection owner"}))))
+      (if-not (= userid list-ownerid)
+        (throw (ex-info "Cannot update list" (ex-info {:reason "wrong list owner"}))))
+
+      (let [old-collection-map (into {} (.toMap found-collection))
+            old-collection-items (into {} (get old-collection-map "items"))
+            old-collection-indexes (map edn/read-string (keys old-collection-items))
+            new-index (if (empty? old-collection-indexes) 0 (+ 1 (apply max old-collection-indexes)))
+            new-list-id (.get found-list "id")]
+
+        (if (some #{new-list-id} (vals old-collection-items))
+          collection-id
+          (do (let [new-collection-items (merge old-collection-items {(str new-index) new-list-id})
+                    new-collection-map (merge old-collection-map {"items" new-collection-items})
+                    new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
+                (.upsert bucket new-collection-doc))
+              collection-id))))))
+
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (def $collid (.get (find-collection-by-name (userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $coll (get-document $bucket $collid))
+;;; (.toMap (.content $coll))
+;;; (def $thingsid (.get (find-list-by-name (userid "mikel@evins.net") "Things") "id"))
+;;; (def $things (get-document $bucket $thingsid))
+;;; (.toMap (.content $things))
+;;; (def $mikelid (userid "mikel@evins.net"))
+;;; (collection-add-list $mikelid $collid $thingsid)
+
+(defn collection-remove-list [userid collection-id list-id])
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists

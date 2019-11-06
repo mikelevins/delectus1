@@ -21,10 +21,12 @@
 
   (GET "/delectus/login" [] handlers/login) 
   (GET "/delectus/userid" [] handlers/userid)
+
   (GET "/delectus/collections" [] handlers/collections)
-  (GET "/delectus/lists" [] handlers/lists)
   (GET "/delectus/collection_named" [] handlers/collection-named)
   (GET "/delectus/collection_with_id" [] handlers/collection-with-id)
+
+  (GET "/delectus/lists" [] handlers/lists)
   (GET "/delectus/list_named" [] handlers/list-named)
   (GET "/delectus/list_with_id" [] handlers/list-with-id)
   
