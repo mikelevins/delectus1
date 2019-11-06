@@ -25,6 +25,8 @@
   (GET "/delectus/collections" [] handlers/collections)
   (GET "/delectus/collection_named" [] handlers/collection-named)
   (GET "/delectus/collection_with_id" [] handlers/collection-with-id)
+  (GET "/delectus/collection_add_list" [] handlers/collection-add-list)
+  (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
 
   (GET "/delectus/lists" [] handlers/lists)
   (GET "/delectus/list_named" [] handlers/list-named)

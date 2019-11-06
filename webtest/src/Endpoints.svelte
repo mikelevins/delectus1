@@ -1,10 +1,12 @@
 <script>
  import { authorization } from "./auth.js";
 
+ // general utilities
+ // -----------------------------------------
+ 
  function discardAuthorization() {
      authorization.set(null)
  }
-
  
  function handleErrorResponse(response) {
      if (response.ok) {
@@ -27,10 +29,17 @@
          .then(response => response.json())
          .then(data => displayResponseData(data,displayElementID));
  }
+
  
+ // user data
+ // -----------------------------------------
+
  function getUserID () {
      callDelectusAPI("userid","userid_response");
  }
+ 
+ // collections
+ // -----------------------------------------
  
  function getUserCollections () {
      callDelectusAPI("collections","collections_response");
@@ -41,7 +50,7 @@
  }
  
  function getCollectionByName () {
-     let collectionName = document.getElementById("collection_name").value;
+     let collectionName = document.getElementById("getCollectionByName_collection_name").value;
      let uri = "http://mars.local:9000/delectus/collection_named";
      let query = "?email="+$authorization["email"]+"&name="+collectionName;
      let token = $authorization["token"];
@@ -51,11 +60,11 @@
              if (!response.ok) { throw Error(response.statusText) }
              return response.json();
          })
-         .then(data => document.getElementById("collection_named_response").innerHTML=JSON.stringify(data));
+         .then(data => document.getElementById("getCollectionByName_response").innerHTML=JSON.stringify(data));
  }
  
  function getCollectionByID () {
-     let collectionID = document.getElementById("collection_id").value;
+     let collectionID = document.getElementById("getCollectionByID_collection_id").value;
      let uri = "http://mars.local:9000/delectus/collection_with_id";
      let query = "?email="+$authorization["email"]+"&id="+collectionID;
      let token = $authorization["token"];
@@ -65,9 +74,43 @@
              if (!response.ok) { throw Error(response.statusText) }
              return response.json();
          })
-         .then(data => document.getElementById("collection_with_id_response").innerHTML=JSON.stringify(data));
+         .then(data => document.getElementById("getCollectionByID_response").innerHTML=JSON.stringify(data));
  }
  
+ function collectionAddList () {
+     let collectionID = document.getElementById("collectionAddList_collection_id").value;
+     let listID = document.getElementById("collectionAddList_list_id").value;
+     let uri = "http://mars.local:9000/delectus/collection_add_list";
+     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&listid="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("collectionAddList_response").innerHTML=JSON.stringify(data));
+ }
+
+ function collectionRemoveList () {
+     let collectionID = document.getElementById("collectionRemoveList_collection_id").value;
+     let listID = document.getElementById("collectionRemoveList_list_id").value;
+     let uri = "http://mars.local:9000/delectus/collection_remove_list";
+     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&listid="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("collectionRemoveList_response").innerHTML=JSON.stringify(data));
+ }
+
+ 
+ // lists
+ // -----------------------------------------
+
  function getListByName () {
      let listName = document.getElementById("list_name").value;
      let uri = "http://mars.local:9000/delectus/list_named";
@@ -145,15 +188,35 @@
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getCollectionByName}>/delectus/collection_named</button></td>
-        <td><input type="text" id="collection_name" placeholder="Collection name"/></td>
-        <td id="collection_named_response"></td>
+        <td><input type="text" id="getCollectionByName_collection_name" placeholder="Collection name"/></td>
+        <td id="getCollectionByName_response"></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getCollectionByID}>/delectus/collection_with_id</button></td>
-        <td><input type="text" id="collection_id" placeholder="Collection ID"/></td>
-        <td id="collection_with_id_response"></td>
+        <td><input type="text" id="getCollectionByID_collection_id" placeholder="Collection ID"/></td>
+        <td id="getCollectionByID_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={collectionAddList}>/delectus/collection_add_list</button></td>
+        <td>
+            <input type="text" id="collectionAddList_collection_id" placeholder="Collection ID"/>
+            <input type="text" id="collectionAddList_list_id" placeholder="List ID"/>
+        </td>
+        <td id="collectionAddList_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={collectionRemoveList}>/delectus/collection_remove_list</button></td>
+        <td>
+            <input type="text" id="collectionRemoveList_collection_id" placeholder="Collection ID"/>
+            <input type="text" id="collectionRemoveList_list_id" placeholder="List ID"/>
+        </td>
+        <td id="collectionRemoveList_response"></td>
     </tr>
 
     <tr>

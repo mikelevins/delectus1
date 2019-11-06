@@ -107,6 +107,26 @@
                 (.toString collection)
                 (json/write-str nil)))})
 
+(defn collection-add-list [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/userid email)
+                  collection-id (:collectionid (:params req))
+                  list-id (:listid (:params req))
+                  result (api/collection-add-list userid collection-id list-id)]
+              (json/write-str result))})
+
+(defn collection-remove-list [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/userid email)
+                  collection-id (:collectionid (:params req))
+                  list-id (:listid (:params req))
+                  result (api/collection-remove-list userid collection-id list-id)]
+              (json/write-str result))})
+
 ;;; ---------------------------------------------------------------------
 ;;; list handlers
 ;;; ---------------------------------------------------------------------
