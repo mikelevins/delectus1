@@ -2,11 +2,7 @@
   (:require
    [buddy.hashers :as hashers]
    [delectus-api-server.identifiers :refer [makeid]]
-   [delectus-api-server.configuration :as config]
-   [delectus-api-server.couchbase.delectus.lists :as lists]
-   [delectus-api-server.couchbase.delectus.users :as users]
-   [delectus-api-server.couchbase.io :as couch-io]
-   [delectus-api-server.couchbase.marshal :as marshal])
+   [delectus-api-server.configuration :as config])
   (:import
    (com.couchbase.client.java.query N1qlQuery)))
 
@@ -110,19 +106,50 @@
 ;;; ---------------------------------------------------------------------
 
 (defn list-lists [userid]
-  (lists/delectus-lists userid))
+  (let [bucket (config/delectus-content-bucket)
+        bucket-name (.name bucket)
+        selector (str (str "SELECT id,name from `" bucket-name "` ")
+                      (str "WHERE type = \"delectus_list\" ")
+                      (str "AND `owner-id` =\"" userid "\"")) 
+        results (.query bucket (N1qlQuery/simple selector))]
+    (map #(.value %) results)))
 
-;;; (list-lists (email->userid "mikel@evins.net"))
+;;; (list-lists (userid "mikel@evins.net"))
 
 (defn create-list [userid name])
 
 (defn mark-list-deleted [userid list-id])
 
 (defn find-list-by-id [userid list-id]
-  (lists/find-list-by-id userid list-id))
+  (let [bucket (config/delectus-content-bucket)
+        bucket-name (.name bucket)
+        select-expression (str (str "SELECT name,id,items from `" bucket-name "` ")
+                               (str "WHERE type = \"delectus_list\" ")
+                               (str "AND `owner-id` = \"" userid "\" ")
+                               (str "AND `id` = \"" list-id "\""))
+        results (.query bucket (N1qlQuery/simple select-expression))
+        objects (map #(.value %) results)]
+    (if (empty? objects)
+      nil
+      (first objects))))
+
+;;; (def $listid (.get (find-list-by-name (userid "mikel@evins.net") "Things") "id"))
+;;; (find-list-by-id (userid "mikel@evins.net") $listid)
 
 (defn find-list-by-name [userid list-name]
-  (lists/find-list-by-name userid list-name))
+  (let [bucket (config/delectus-content-bucket)
+        bucket-name (.name bucket)
+        select-expression (str (str "SELECT name,id,items from `" bucket-name "` ")
+                               (str "WHERE type = \"delectus_list\" ")
+                               (str "AND `owner-id` = \"" userid "\" ")
+                               (str "AND `name` = \"" list-name "\""))
+        results (.query bucket (N1qlQuery/simple select-expression))
+        objects (map #(.value %) results)]
+    (if (empty? objects)
+      nil
+      (first objects))))
+
+;;; (find-list-by-name (userid "mikel@evins.net") "Things")
 
 (defn list-name [userid list-id])
 

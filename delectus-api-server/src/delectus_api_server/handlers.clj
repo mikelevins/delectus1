@@ -116,23 +116,26 @@
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))]
               (json/write-str
-               (api/list-lists (api/userid email))))})
+               (map #(json/read-str (.toString %))
+                    (api/list-lists (api/userid email)))))})
 
 (defn list-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  list-id (:id (:params req))]
-              (json/write-str
-               (api/find-list-by-id (api/userid email)
-                                    list-id)))})
+                  list-id (:id (:params req))
+                  found-list (api/find-list-by-id (api/userid email) list-id)]
+              (if found-list
+                (.toString found-list)
+                (json/write-str nil)))})
 
 (defn list-named [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  list-name (:name (:params req))]
-              (json/write-str
-               (api/find-list-by-name (api/userid email)
-                                      list-name)))})
+                  list-name (:name (:params req))
+                  found-list (api/find-list-by-name (api/userid email) list-name)]
+              (if found-list
+                (.toString found-list)
+                (json/write-str nil)))})
 
