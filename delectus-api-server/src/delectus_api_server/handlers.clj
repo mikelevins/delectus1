@@ -51,7 +51,7 @@
 (defn logout-user [email])
 
 ;;; ---------------------------------------------------------------------
-;;; delectus handlers
+;;; user handlers
 ;;; ---------------------------------------------------------------------
 
 (defn login [req]
@@ -74,19 +74,17 @@
    :body    (let [email (:email (:params request))]
               (json/write-str (api/userid email)))})
 
+
+;;; ---------------------------------------------------------------------
+;;; collections handlers
+;;; ---------------------------------------------------------------------
+
 (defn collections [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))]
               (json/write-str
                (api/list-collections (api/userid email))))})
-
-(defn lists [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))]
-              (json/write-str
-               (api/list-lists (api/userid email))))})
 
 (defn collection-with-id [req]
   {:status  200
@@ -105,6 +103,17 @@
               (json/write-str
                (api/find-collection-by-name (api/userid email)
                                             collection-name)))})
+
+;;; ---------------------------------------------------------------------
+;;; list handlers
+;;; ---------------------------------------------------------------------
+
+(defn lists [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))]
+              (json/write-str
+               (api/list-lists (api/userid email))))})
 
 (defn list-with-id [req]
   {:status  200
