@@ -5,7 +5,8 @@
    [delectus-api-server.configuration :as config]
    [delectus-api-server.couchio :as couchio]
    [delectus-api-server.errors :as errors]
-   [delectus-api-server.identifiers :refer [makeid]])
+   [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.utilities :as utils])
   (:import
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.document JsonDocument)
@@ -125,20 +126,23 @@
       (errors/error-if-not (= userid list-ownerid) "Cannot update list" {:reason "wrong list owner"})
 
       ;; prepare to add the list to the collection
-      (let [old-collection-map (into {} (.toMap found-collection))
-            old-collection-items (into {} (get old-collection-map "items"))
-            old-collection-indexes (map edn/read-string (keys old-collection-items))
-            new-index (if (empty? old-collection-indexes) 0 (+ 1 (apply max old-collection-indexes)))
-            new-list-id (.get found-list "id")]
-
-        ;; don't add the list if it's already in the collection
-        (if (some #{new-list-id} (vals old-collection-items))
+      (let [old-collection-items (.get found-collection "items")
+            found-property (couchio/find-json-object-key-for-value old-collection-items list-id)]
+        (if found-property
+          ;; it's already present; no need to add it
           collection-id
-          (do (let [new-collection-items (merge old-collection-items {(str new-index) new-list-id})
-                    new-collection-map (merge old-collection-map {"items" new-collection-items})
-                    new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
-                (.upsert bucket new-collection-doc))
-              collection-id))))))
+          ;; didn;t find it; better add it
+          (let [old-collection-map (into {} (.toMap found-collection))
+                old-collection-indexes (map edn/read-string (into [] (.getNames old-collection-items)))
+                new-index (if (empty? old-collection-indexes)
+                            (str 0)
+                            (str (+ 1 (apply max old-collection-indexes))))
+                new-list-id (.get found-list "id")
+                new-collection-items (couchio/put-key-if-changed old-collection-items new-index new-list-id)
+                new-collection-map (merge old-collection-map {"items" new-collection-items})
+                new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
+            (.upsert bucket new-collection-doc)
+            collection-id))))))
 
 ;;; (def $bucket (config/delectus-content-bucket))
 ;;; (def $collid (.get (find-collection-by-name (userid "mikel@evins.net") "Default Collection") "id"))
@@ -169,17 +173,19 @@
       (errors/error-if-not (= userid list-ownerid) "Cannot update list" {:reason "wrong list owner"})
 
       ;; prepare to remove the list from the collection
-      (let [old-collection-map (into {} (.toMap found-collection))
-            old-collection-items (into {} (get old-collection-map "items"))]
-
-        ;; don't remove the list if it's not in the collection
-        (if (some #{list-id} (vals old-collection-items))
-          (do (let [new-collection-items (into {} (filter #(not (= list-id (second %))))
-                                               old-collection-items)
-                    new-collection-map (merge old-collection-map {"items" new-collection-items})
-                    new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
-                (.upsert bucket new-collection-doc))
-              collection-id)
+      (let [items (.get found-collection "items") ; a JsonObject
+            items-map (into {} (.toMap items))
+            found-key (utils/find-map-key-for-value items-map list-id)]
+        (if found-key
+          ;; remove the list-id
+          (let [new-items-map (dissoc items-map found-key)
+                new-collection-map (merge (into {} (.toMap found-collection))
+                                          {"items" new-items-map})
+                new-collection-object (JsonObject/from new-collection-map)
+                new-collection-doc (JsonDocument/create collection-id new-collection-object)]
+            (.upsert bucket new-collection-doc)
+            collection-id)
+          ;; the list isn't in the collection
           collection-id)))))
 
 ;;; (def $bucket (config/delectus-content-bucket))

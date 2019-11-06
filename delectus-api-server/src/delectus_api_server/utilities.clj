@@ -41,3 +41,17 @@
 ;;; (valid-email? "mikel@evins.net")
 ;;; (valid-email? "evins.mikel@gmail.com")
 ;;; (valid-email? "foo@bar")
+
+
+;;; ---------------------------------------------------------------------
+;;; map utilities
+;;; ---------------------------------------------------------------------
+
+(defn find-map-key-for-value [map val]
+  (some #(and (= val (second %))
+              (first %))
+        map))
+
+;;; (find-map-key-for-value {:name "Fred" :age 35} 35)
+;;; (find-map-key-for-value {:name "Fred" :age 35} "Fred")
+;;; (find-map-key-for-value {:name "Fred" :age 35} "Red")

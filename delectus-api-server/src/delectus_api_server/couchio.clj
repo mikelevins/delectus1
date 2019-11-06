@@ -6,6 +6,10 @@
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)))
 
+;;; ---------------------------------------------------------------------
+;;; N1QL queries
+;;; ---------------------------------------------------------------------
+
 (defn make-object-matchers [matchers-map]
   (let [ks (keys matchers-map)]
     (map #(str "`" % "` = \"" (get matchers-map %) "\"")
@@ -42,3 +46,30 @@
 
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" "delectus_list"}))
 ;;; (def $objs (find-objects (config/delectus-content-bucket) ["name" "id"] {"type" "delectus_list"}))
+
+;;; ---------------------------------------------------------------------
+;;; JsonDocument helpers
+;;; ---------------------------------------------------------------------
+
+(defn put-key-if-changed [json-obj key new-value]
+  (let [has-key? (.containsKey json-obj key)
+        value-changed? (if has-key?
+                         (not (= new-value (.get json-obj key)))
+                         true)]
+    (if value-changed?
+      (JsonObject/from (merge (into {} (.toMap json-obj))
+                              {key new-value}))
+      json-obj)))
+
+;;; (def $obj1 (JsonObject/from {"name" "Fred"}))
+;;; (def $obj2 (put-key-if-changed $obj1 "name" "Fred"))
+;;; (def $obj3 (put-key-if-changed $obj1 "name" "Barney"))
+
+(defn find-json-object-key-for-value [obj val]
+  (let [props (into [] (.getNames obj))]
+    (some #(and (= val (.get obj %))
+                %)
+          props)))
+
+;;; (def $obj1 (JsonObject/from {"name" "Fred" "age" 35 "color" "orange"}))
+;;; (find-json-object-key-for-value $obj1 "orange")
