@@ -59,7 +59,6 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
-
 (defn list-collections [userid]
   (let [bucket (config/delectus-content-bucket)]
     (couchio/find-objects bucket ["name" "id"]
@@ -77,29 +76,25 @@
 
 (defn find-collection-by-id [userid collection-id]
   (let [bucket (config/delectus-content-bucket)
-        bucket-name (.name bucket)
-        select-expression (str (str "SELECT name,id,items from `" bucket-name "` ")
-                               (str "WHERE type = \"delectus_collection\" ")
-                               (str "AND `owner-id` = \"" userid "\" ")
-                               (str "AND `id` = \"" collection-id "\""))
-        results (.query bucket (N1qlQuery/simple select-expression))
-        objects (map #(.value %) results)]
-    (if (empty? objects)
+        found (couchio/find-objects bucket ["name" "id"]
+                                    {"type" "delectus_collection"
+                                     "id" collection-id})]
+    (if (empty? found)
       nil
-      (first objects))))
+      (first found))))
+
+;;; (def $coll (find-collection-by-name (userid "mikel@evins.net") "Default Collection"))
+;;; (def $collid (.get $coll "id"))
+;;; (find-collection-by-id (userid "mikel@evins.net") $collid)
 
 (defn find-collection-by-name [userid collection-name]
   (let [bucket (config/delectus-content-bucket)
-        bucket-name (.name bucket)
-        select-expression (str (str "SELECT name,id,items from `" bucket-name "` ")
-                               (str "WHERE type = \"delectus_collection\" ")
-                               (str "AND `owner-id` = \"" userid "\" ")
-                               (str "AND `name` = \"" collection-name "\""))
-        results (.query bucket (N1qlQuery/simple select-expression))
-        objects (map #(.value %) results)]
-    (if (empty? objects)
+        found (couchio/find-objects bucket ["name" "id"]
+                                    {"type" "delectus_collection"
+                                     "name" collection-name})]
+    (if (empty? found)
       nil
-      (first objects))))
+      (first found))))
 
 ;;; (find-collection-by-name (userid "mikel@evins.net") "Default Collection")
 ;;; (find-collection-by-name (userid "mikel@evins.net") "NOPE!")
@@ -205,13 +200,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defn list-lists [userid]
-  (let [bucket (config/delectus-content-bucket)
-        bucket-name (.name bucket)
-        selector (str (str "SELECT id,name from `" bucket-name "` ")
-                      (str "WHERE type = \"delectus_list\" ")
-                      (str "AND `owner-id` =\"" userid "\"")) 
-        results (.query bucket (N1qlQuery/simple selector))]
-    (map #(.value %) results)))
+  (let [bucket (config/delectus-content-bucket)]
+    (couchio/find-objects bucket ["name" "id"]
+                          {"type" "delectus_list"
+                           "owner-id" userid})))
 
 ;;; (list-lists (userid "mikel@evins.net"))
 
@@ -221,34 +213,27 @@
 
 (defn find-list-by-id [userid list-id]
   (let [bucket (config/delectus-content-bucket)
-        bucket-name (.name bucket)
-        select-expression (str (str "SELECT name,id,items from `" bucket-name "` ")
-                               (str "WHERE type = \"delectus_list\" ")
-                               (str "AND `owner-id` = \"" userid "\" ")
-                               (str "AND `id` = \"" list-id "\""))
-        results (.query bucket (N1qlQuery/simple select-expression))
-        objects (map #(.value %) results)]
-    (if (empty? objects)
+        found (couchio/find-objects bucket ["name" "id"]
+                                    {"type" "delectus_list"
+                                     "id" list-id})]
+    (if (empty? found)
       nil
-      (first objects))))
+      (first found))))
 
 ;;; (def $listid (.get (find-list-by-name (userid "mikel@evins.net") "Things") "id"))
 ;;; (find-list-by-id (userid "mikel@evins.net") $listid)
 
 (defn find-list-by-name [userid list-name]
   (let [bucket (config/delectus-content-bucket)
-        bucket-name (.name bucket)
-        select-expression (str (str "SELECT name,id,items from `" bucket-name "` ")
-                               (str "WHERE type = \"delectus_list\" ")
-                               (str "AND `owner-id` = \"" userid "\" ")
-                               (str "AND `name` = \"" list-name "\""))
-        results (.query bucket (N1qlQuery/simple select-expression))
-        objects (map #(.value %) results)]
-    (if (empty? objects)
+        found (couchio/find-objects bucket ["name" "id"]
+                                    {"type" "delectus_list"
+                                     "name" list-name})]
+    (if (empty? found)
       nil
-      (first objects))))
+      (first found))))
 
 ;;; (find-list-by-name (userid "mikel@evins.net") "Things")
+;;; (find-list-by-name (userid "mikel@evins.net") "NOPE!")
 
 (defn list-name [userid list-id])
 
