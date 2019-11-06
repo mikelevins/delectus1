@@ -2,8 +2,9 @@
   (:require
    [buddy.hashers :as hashers]
    [clojure.edn :as edn]
-   [delectus-api-server.identifiers :refer [makeid]]
-   [delectus-api-server.configuration :as config])
+   [delectus-api-server.configuration :as config]
+   [delectus-api-server.couchio :as couchio]
+   [delectus-api-server.identifiers :refer [makeid]])
   (:import
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.document JsonDocument)
@@ -33,14 +34,12 @@
 
 (defn user [email]
   (let [bucket (config/delectus-users-bucket)
-        bucket-name (.name bucket)
-        selector (str (str "SELECT * from `" bucket-name "` ")
-                      (str "WHERE `type` = \"delectus_user\" ")
-                      (str "AND `email` = \"" email "\""))
-        results (.query bucket (N1qlQuery/simple selector))
-        objs (map #(.get (.value %) bucket-name) results)
-        found-user (if (empty? objs) nil (first objs))]
-    (or found-user nil)))
+        found (couchio/find-objects bucket []
+                                    {"type" "delectus_user"
+                                     "email" email})]
+    (if (empty? found)
+      nil
+      (first found))))
 
 ;;; (user "mikel@evins.net")
 ;;; (user "greer@evins.net")
@@ -60,14 +59,12 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
+
 (defn list-collections [userid]
-  (let [bucket (config/delectus-content-bucket)
-        bucket-name (.name bucket)
-        select-expression (str (str "SELECT id,name from `" bucket-name "` ")
-                               (str "WHERE type = \"delectus_collection\" ")
-                               (str "AND `owner-id` = \"" userid "\""))
-        results (.query bucket (N1qlQuery/simple select-expression))]
-    (map #(.value %) results)))
+  (let [bucket (config/delectus-content-bucket)]
+    (couchio/find-objects bucket ["name" "id"]
+                          {"type" "delectus_collection"
+                           "owner-id" userid})))
 
 ;;; (list-collections (userid "mikel@evins.net"))
 
