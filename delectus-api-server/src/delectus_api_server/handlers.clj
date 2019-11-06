@@ -84,25 +84,28 @@
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))]
               (json/write-str
-               (api/list-collections (api/userid email))))})
+               (map #(json/read-str (.toString %))
+                    (api/list-collections (api/userid email)))))})
 
 (defn collection-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  collection-id (:id (:params req))]
-              (json/write-str
-               (api/find-collection-by-id (api/userid email)
-                                          collection-id)))})
+                  collection-id (:id (:params req))
+                  collection (api/find-collection-by-id (api/userid email) collection-id)]
+              (if collection
+                (.toString collection)
+                (json/write-str nil)))})
 
 (defn collection-named [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  collection-name (:name (:params req))]
-              (json/write-str
-               (api/find-collection-by-name (api/userid email)
-                                            collection-name)))})
+                  collection-name (:name (:params req))
+                  collection (api/find-collection-by-name (api/userid email) collection-name)]
+              (if collection
+                (.toString collection)
+                (json/write-str nil)))})
 
 ;;; ---------------------------------------------------------------------
 ;;; list handlers
