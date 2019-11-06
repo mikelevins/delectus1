@@ -6,8 +6,7 @@
             [delectus-api-server.identifiers :refer [makeid]]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.couchbase.io :as couchbase-io]
-            [delectus-api-server.couchbase.marshal :as marshal]
-            [delectus-api-server.couchbase.utilities :as couch-utils])
+            [delectus-api-server.couchbase.marshal :as marshal])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonObject)
