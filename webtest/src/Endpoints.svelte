@@ -1,4 +1,7 @@
 <script>
+ // script
+ // -----------------------------------------
+
  import { authorization } from "./auth.js";
 
  // general utilities
@@ -35,18 +38,18 @@
  // -----------------------------------------
 
  function getUserID () {
-     callDelectusAPI("userid","userid_response");
+     callDelectusAPI("userid","getUserID_response");
  }
  
  // collections
  // -----------------------------------------
  
  function getUserCollections () {
-     callDelectusAPI("collections","collections_response");
+     callDelectusAPI("collections","getUserCollections_response");
  }
  
  function getUserLists () {
-     callDelectusAPI("lists","lists_response");
+     callDelectusAPI("lists","getUserLists_response");
  }
  
  function getCollectionByName () {
@@ -112,7 +115,7 @@
  // -----------------------------------------
 
  function getListByName () {
-     let listName = document.getElementById("list_name").value;
+     let listName = document.getElementById("getListByName_list_name").value;
      let uri = "http://mars.local:9000/delectus/list_named";
      let query = "?email="+$authorization["email"]+"&name="+listName;
      let token = $authorization["token"];
@@ -122,11 +125,11 @@
              if (!response.ok) { throw Error(response.statusText) }
              return response.json();
          })
-         .then(data => document.getElementById("list_named_response").innerHTML=JSON.stringify(data));
+         .then(data => document.getElementById("getListByName_response").innerHTML=JSON.stringify(data));
  }
  
  function getListByID () {
-     let listID = document.getElementById("list_id").value;
+     let listID = document.getElementById("getListByID_list_id").value;
      let uri = "http://mars.local:9000/delectus/list_with_id";
      let query = "?email="+$authorization["email"]+"&id="+listID;
      let token = $authorization["token"];
@@ -136,10 +139,11 @@
              if (!response.ok) { throw Error(response.statusText) }
              return response.json();
          })
-         .then(data => document.getElementById("list_with_id_response").innerHTML=JSON.stringify(data));
+         .then(data => document.getElementById("getListByID_response").innerHTML=JSON.stringify(data));
  }
-
 </script>
+
+<!------------ style definitions ------------>
 
 <style>
  .endpoint { text-align: right; }
@@ -158,6 +162,9 @@
  } 
 </style>
 
+
+<!------------ component markup ------------>
+
 <p>
     Logged in as: <strong>{$authorization.email}</strong>&nbsp;
     <button on:click={discardAuthorization}>discard authorization</button>
@@ -175,14 +182,14 @@
         <td>GET</td>
         <td class="endpoint"><button on:click={getUserID}>/delectus/userid</button></td>
         <td></td>
-        <td id="userid_response"></td>
+        <td id="getUserID_response"></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getUserCollections}>/delectus/collections</button></td>
         <td></td>
-        <td id="collections_response"></td>
+        <td id="getUserCollections_response"></td>
     </tr>
 
     <tr>
@@ -223,21 +230,21 @@
         <td>GET</td>
         <td class="endpoint"><button on:click={getUserLists}>/delectus/lists</button></td>
         <td></td>
-        <td id="lists_response"></td>
+        <td id="getUserLists_response"></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getListByName}>/delectus/list_named</button></td>
-        <td><input type="text" id="list_name" placeholder="List name"/></td>
-        <td id="list_named_response"></td>
+        <td><input type="text" id="getListByName_list_name" placeholder="List name"/></td>
+        <td id="getListByName_response"></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getListByID}>/delectus/list_with_id</button></td>
-        <td><input type="text" id="list_id" placeholder="List ID"/></td>
-        <td id="list_with_id_response"></td>
+        <td><input type="text" id="getListByID_list_id" placeholder="List ID"/></td>
+        <td id="getListByID_response"></td>
     </tr>
 </table>
 
