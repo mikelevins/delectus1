@@ -39,14 +39,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defn login-user [email password]
-  (let [bucket (config/delectus-users-bucket)
-        bucket-name (.name bucket)
-        selector (str (fmt "SELECT * from `~A` " bucket-name)
-                      (fmt "WHERE `type` = \"delectus_user\" ")
-                      (fmt "AND `email` = \"~A\"" email))
-        results (.query bucket (N1qlQuery/simple selector))
-        objs (map #(.get (.value %) bucket-name) results)
-        found-user (if (empty? objs) nil (first objs))]
+  (let [found-user (api/user email)]
     (if found-user
       (if (hashers/check password (.get found-user "password-hash"))
         found-user
