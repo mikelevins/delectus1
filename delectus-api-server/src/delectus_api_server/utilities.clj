@@ -1,5 +1,6 @@
 (ns delectus-api-server.utilities
-  (:require [delectus-api-server.configuration :as config])
+  (:require [clojure.pprint :as pp]
+            [delectus-api-server.configuration :as config])
   (:import
    (java.util Base64 UUID)))
 
@@ -27,6 +28,9 @@
 ;;; ---------------------------------------------------------------------
 ;;; string utilities
 ;;; ---------------------------------------------------------------------
+
+(defn fmt [control-str & args]
+  (apply pp/cl-format nil control-str args))
 
 (defn valid-email? [thing]
   (if (string? thing)

@@ -4,6 +4,7 @@
    [clojure.data.json :as json]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.couchbase.delectus.api :as api]
+   [delectus-api-server.utilities :refer [fmt]]
    [hiccup.core :refer :all]
    [org.httpkit.server :as server])
   (:import
@@ -14,14 +15,12 @@
 ;;; generic test handlers
 ;;; ---------------------------------------------------------------------
 
-(defn ->printable [val]
-  (cond
-    (instance? org.httpkit.server.AsyncChannel val) (.toString val)
-    :else val))
-
 (defn echo [req]
   (let [req-keys (keys req)
-        req-vals (map ->printable (vals req))]
+        req-vals (map #(if (instance? org.httpkit.server.AsyncChannel %)
+                         (.toString %)
+                         %)
+                      (vals req))]
     {:status  200
      :headers {"Content-Type" "application/json"}
      :body    (json/write-str (zipmap req-keys req-vals))}))
@@ -42,9 +41,9 @@
 (defn login-user [email password]
   (let [bucket (config/delectus-users-bucket)
         bucket-name (.name bucket)
-        selector (str "SELECT * from `" bucket-name "` "
-                      "WHERE `type` = \"delectus_user\" "
-                      "AND `email` = \"" email "\"")
+        selector (str (fmt "SELECT * from `~A` " bucket-name)
+                      (fmt "WHERE `type` = \"delectus_user\" ")
+                      (fmt "AND `email` = \"~A\"" email))
         results (.query bucket (N1qlQuery/simple selector))
         objs (map #(.get (.value %) bucket-name) results)
         found-user (if (empty? objs) nil (first objs))]
@@ -74,31 +73,30 @@
        :body    (html [:h1 "Delectus 2"]
                       [:p "Login failed"])})))
 
-
 (defn userid [request]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params request))]
-              (json/write-str (api/email->user-id email)))})
+              (json/write-str (api/email->userid email)))})
 
 (defn collections [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))]
-              (json/write-str (api/list-collections (api/email->user-id email))))})
+              (json/write-str (api/list-collections (api/email->userid email))))})
 
 (defn lists [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))]
-              (json/write-str (api/list-lists (api/email->user-id email))))})
+              (json/write-str (api/list-lists (api/email->userid email))))})
 
 (defn collection-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   collection-id (:id (:params req))]
-              (json/write-str (api/find-collection-by-id (api/email->user-id email)
+              (json/write-str (api/find-collection-by-id (api/email->userid email)
                                                          collection-id)))})
 
 (defn collection-named [req]
@@ -106,7 +104,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   collection-name (:name (:params req))]
-              (json/write-str (api/find-collection-by-name (api/email->user-id email)
+              (json/write-str (api/find-collection-by-name (api/email->userid email)
                                                            collection-name)))})
 
 (defn list-with-id [req]
@@ -114,7 +112,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   list-id (:id (:params req))]
-              (json/write-str (api/find-list-by-id (api/email->user-id email)
+              (json/write-str (api/find-list-by-id (api/email->userid email)
                                                    list-id)))})
 
 (defn list-named [req]
@@ -122,6 +120,6 @@
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   list-name (:name (:params req))]
-              (json/write-str (api/find-list-by-name (api/email->user-id email)
+              (json/write-str (api/find-list-by-name (api/email->userid email)
                                                      list-name)))})
 

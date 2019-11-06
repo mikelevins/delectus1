@@ -8,7 +8,9 @@
    [delectus-api-server.couchbase.delectus.users :as users]
    [delectus-api-server.couchbase.io :as couch-io]
    [delectus-api-server.couchbase.marshal :as marshal]
-   ))
+   [delectus-api-server.utilities :refer [fmt]])
+  (:import
+   (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
 ;;; Users
@@ -21,12 +23,12 @@
 
 (defn logout-user [auth-token])
 
-(defn email->user-id [email]
+(defn email->userid [email]
   (users/delectus-user-email->id email))
 
-;;; (email->user-id "mikel@evins.net")
+;;; (email->userid "mikel@evins.net")
 
-(defn auth-token->user-id [auth-token])
+(defn auth-token->userid [auth-token])
 
 ;;; PRIVATE: do not expose to the public API
 (defn update-user! [userid new-values-map]
@@ -55,11 +57,40 @@
 ;;; (update-user! $mikelid {:name "mikel evins" :password-hash $mikel-hash})
 
 ;;; ---------------------------------------------------------------------
+;;; users
+;;; ---------------------------------------------------------------------
+
+(defn user [email]
+  (let [bucket (config/delectus-users-bucket)
+        bucket-name (.name bucket)
+        selector (str (fmt "SELECT * from `~A` " bucket-name)
+                      (fmt "WHERE `type` = \"delectus_user\" ")
+                      (fmt "AND `email` = \"~A\"" email))
+        results (.query bucket (N1qlQuery/simple selector))
+        objs (map #(.get (.value %) bucket-name) results)
+        found-user (if (empty? objs) nil (first objs))]
+    (or found-user nil)))
+
+;;; (user "mikel@evins.net")
+;;; (user "greer@evins.net")
+;;; (user "nobody@nowhere.net")
+
+(defn userid [email]
+  (let [found-user (user email)]
+    (if found-user
+      (.get found-user "id")
+      nil)))
+
+;;; (userid "mikel@evins.net")
+;;; (userid "greer@evins.net")
+;;; (userid "nobody@nowhere.net")
+
+;;; ---------------------------------------------------------------------
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
-(defn list-collections [user-id]
-  (collections/delectus-collections user-id))
+(defn list-collections [userid]
+  (collections/delectus-collections userid))
 
 (defn create-collection [& {:keys [id name owner-id]
                             :or {id (makeid)
@@ -68,67 +99,67 @@
 
 (defn mark-collection-deleted [collection-id deleted?])
 
-(defn find-collection-by-id [user-id collection-id]
-  (collections/find-collection-by-id user-id collection-id))
+(defn find-collection-by-id [userid collection-id]
+  (collections/find-collection-by-id userid collection-id))
 
-(defn find-collection-by-name [user-id collection-name]
-  (collections/find-collection-by-name user-id collection-name))
+(defn find-collection-by-name [userid collection-name]
+  (collections/find-collection-by-name userid collection-name))
 
-(defn get-collection-name [user-id collection-id])
+(defn get-collection-name [userid collection-id])
 
-(defn update-collection-name [user-id collection-id new-name])
+(defn update-collection-name [userid collection-id new-name])
 
-(defn get-collection-lists [user-id collection-id])
+(defn get-collection-lists [userid collection-id])
 
-(defn add-collection-list [user-id collection-id list-id])
+(defn add-collection-list [userid collection-id list-id])
 
-(defn remove-collection-list [user-id collection-id list-id])
+(defn remove-collection-list [userid collection-id list-id])
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
-(defn list-lists [user-id]
-  (lists/delectus-lists user-id))
+(defn list-lists [userid]
+  (lists/delectus-lists userid))
 
-;;; (list-lists (email->user-id "mikel@evins.net"))
+;;; (list-lists (email->userid "mikel@evins.net"))
 
-(defn create-list [user-id name])
+(defn create-list [userid name])
 
-(defn mark-list-deleted [user-id list-id])
+(defn mark-list-deleted [userid list-id])
 
-(defn find-list-by-id [user-id list-id]
-  (lists/find-list-by-id user-id list-id))
+(defn find-list-by-id [userid list-id]
+  (lists/find-list-by-id userid list-id))
 
-(defn find-list-by-name [user-id list-name]
-  (lists/find-list-by-name user-id list-name))
+(defn find-list-by-name [userid list-name]
+  (lists/find-list-by-name userid list-name))
 
-(defn list-name [user-id list-id])
+(defn list-name [userid list-id])
 
-(defn update-list-name [user-id list-id new-name])
+(defn update-list-name [userid list-id new-name])
 
-(defn list-columns [user-id list-id])
+(defn list-columns [userid list-id])
 
-(defn find-column-by-id [user-id list-id column-id])
+(defn find-column-by-id [userid list-id column-id])
 
-(defn find-column-by-name [user-id list-id column-name])
+(defn find-column-by-name [userid list-id column-name])
 
-(defn list-add-column [user-id list-id column-name])
+(defn list-add-column [userid list-id column-name])
 
-(defn mark-column-deleted [user-id list-id column-id])
+(defn mark-column-deleted [userid list-id column-id])
 
-(defn column-name [user-id list-id column-id])
+(defn column-name [userid list-id column-id])
 
-(defn update-column-name [user-id list-id column-id new-name])
+(defn update-column-name [userid list-id column-id new-name])
 
-(defn list-items [user-id list-id])
+(defn list-items [userid list-id])
 
-(defn find-item-by-id [user-id list-id item-id])
+(defn find-item-by-id [userid list-id item-id])
 
-(defn list-add-item [user-id list-id])
+(defn list-add-item [userid list-id])
 
-(defn mark-item-deleted [user-id list-id deleted?])
+(defn mark-item-deleted [userid list-id deleted?])
 
-(defn item-column-value [user-id list-id column-id])
+(defn item-column-value [userid list-id column-id])
 
-(defn update-item-column-value [user-id list-id column-id new-value])
+(defn update-item-column-value [userid list-id column-id new-value])
