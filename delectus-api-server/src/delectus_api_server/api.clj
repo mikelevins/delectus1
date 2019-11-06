@@ -1,4 +1,4 @@
-(ns delectus-api-server.couchbase.delectus.api
+(ns delectus-api-server.api
   (:require
    [buddy.hashers :as hashers]
    [delectus-api-server.identifiers :refer [makeid]]

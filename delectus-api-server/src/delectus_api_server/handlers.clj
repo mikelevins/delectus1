@@ -3,7 +3,7 @@
    [buddy.hashers :as hashers]
    [clojure.data.json :as json]
    [delectus-api-server.configuration :as config]
-   [delectus-api-server.couchbase.delectus.api :as api]
+   [delectus-api-server.api :as api]
    [delectus-api-server.utilities :refer [fmt]]
    [hiccup.core :refer :all]
    [org.httpkit.server :as server])
