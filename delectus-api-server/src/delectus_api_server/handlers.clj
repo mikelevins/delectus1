@@ -48,6 +48,8 @@
 
 ;;; (login-user "mikel@evins.net" "")
 
+(defn logout-user [email])
+
 ;;; ---------------------------------------------------------------------
 ;;; delectus handlers
 ;;; ---------------------------------------------------------------------
@@ -70,49 +72,55 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params request))]
-              (json/write-str (api/email->userid email)))})
+              (json/write-str (api/userid email)))})
 
 (defn collections [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))]
-              (json/write-str (api/list-collections (api/email->userid email))))})
+              (json/write-str
+               (api/list-collections (api/userid email))))})
 
 (defn lists [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))]
-              (json/write-str (api/list-lists (api/email->userid email))))})
+              (json/write-str
+               (api/list-lists (api/userid email))))})
 
 (defn collection-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   collection-id (:id (:params req))]
-              (json/write-str (api/find-collection-by-id (api/email->userid email)
-                                                         collection-id)))})
+              (json/write-str
+               (api/find-collection-by-id (api/userid email)
+                                          collection-id)))})
 
 (defn collection-named [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   collection-name (:name (:params req))]
-              (json/write-str (api/find-collection-by-name (api/email->userid email)
-                                                           collection-name)))})
+              (json/write-str
+               (api/find-collection-by-name (api/userid email)
+                                            collection-name)))})
 
 (defn list-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   list-id (:id (:params req))]
-              (json/write-str (api/find-list-by-id (api/email->userid email)
-                                                   list-id)))})
+              (json/write-str
+               (api/find-list-by-id (api/userid email)
+                                    list-id)))})
 
 (defn list-named [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   list-name (:name (:params req))]
-              (json/write-str (api/find-list-by-name (api/email->userid email)
-                                                     list-name)))})
+              (json/write-str
+               (api/find-list-by-name (api/userid email)
+                                      list-name)))})
 
