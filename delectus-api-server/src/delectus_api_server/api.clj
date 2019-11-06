@@ -159,7 +159,49 @@
 ;;; (def $mikelid (userid "mikel@evins.net"))
 ;;; (collection-add-list $mikelid $collid $thingsid)
 
-(defn collection-remove-list [userid collection-id list-id])
+(defn collection-remove-list [userid collection-id list-id]
+  (let [bucket (config/delectus-content-bucket)
+        collection-doc (get-document bucket collection-id)
+        list-doc (get-document bucket list-id)]
+
+    ;; make sure the list and collection actually exist
+    (if (nil? collection-doc) (throw (ex-info "No such collection" (ex-info {:id collection-id}))))
+    (if (nil? list-doc) (throw (ex-info "No such list" (ex-info {:id list-id}))))
+
+    (let [found-collection (.content collection-doc)
+          collection-ownerid (.get found-collection "owner-id")
+          found-list (.content list-doc)
+          list-ownerid (.get found-list "owner-id")]
+
+      ;; make sure the user owns the list and collection
+      (if-not (= userid collection-ownerid)
+        (throw (ex-info "Cannot update collection" (ex-info {:reason "wrong collection owner"}))))
+      (if-not (= userid list-ownerid)
+        (throw (ex-info "Cannot update list" (ex-info {:reason "wrong list owner"}))))
+
+      ;; prepare to remove the list from the collection
+      (let [old-collection-map (into {} (.toMap found-collection))
+            old-collection-items (into {} (get old-collection-map "items"))]
+
+        ;; don't remove the list if it's not in the collection
+        (if (some #{list-id} (vals old-collection-items))
+          (do (let [new-collection-items (into {} (filter #(not (= list-id (second %))))
+                                               old-collection-items)
+                    new-collection-map (merge old-collection-map {"items" new-collection-items})
+                    new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
+                (.upsert bucket new-collection-doc))
+              collection-id)
+          collection-id)))))
+
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (def $collid (.get (find-collection-by-name (userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $coll (get-document $bucket $collid))
+;;; (.toMap (.content $coll))
+;;; (def $thingsid (.get (find-list-by-name (userid "mikel@evins.net") "Things") "id"))
+;;; (def $things (get-document $bucket $thingsid))
+;;; (.toMap (.content $things))
+;;; (def $mikelid (userid "mikel@evins.net"))
+;;; (collection-remove-list $mikelid $collid $thingsid)
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists
