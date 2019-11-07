@@ -9,6 +9,21 @@
 
 
 ;;; ---------------------------------------------------------------------
+;;; document and object helpers
+;;; ---------------------------------------------------------------------
+
+(defn json-object-type? [obj type-string]
+  (and (instance? JsonObject obj)
+       (= (.get obj "type")
+          type-string)))
+
+
+(defn json-object-owner? [obj ownerid]
+  (and (instance? JsonObject obj)
+       (= (.get obj "owner-id")
+          ownerid)))
+
+;;; ---------------------------------------------------------------------
 ;;; simple fetch and store by id
 ;;; ---------------------------------------------------------------------
 
@@ -16,10 +31,57 @@
   (.get bucket docid))
 
 ;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $docid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))
+;;; (def $docid (.get (delectus-api-server.api/find-collection-by-name $mikelid  "Default Collection") "id"))
 ;;; (def $doc (get-document $bucket $docid))
-;;; (assoc (into {} (.toMap (.content $doc))) :test "test value")
-;;; (time (get-document $bucket "NOPE!"))
+
+(defn get-user [userid]
+  (or (and userid
+           (let [candidate (get-document (config/delectus-users-bucket) userid)]
+             (and candidate
+                  (let [obj (.content candidate)]
+                    (json-object-type? obj constants/+delectus-user-document-type+)
+                    obj))))
+      nil))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user $mikelid)
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (get-user $defaultid)
+;;; (def $nopeid nil)
+;;; (get-user $nopeid)
+
+(defn get-collection [collectionid]
+  (or (and collectionid
+           (let [candidate (get-document (config/delectus-content-bucket) collectionid)]
+             (and candidate
+                  (let [obj (.content candidate)]
+                    (json-object-type? obj constants/+delectus-collection-document-type+)
+                    obj))))
+      nil))
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (get-collection $defaultid)
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-collection $mikelid)
+;;; (def $nopeid nil)
+;;; (get-collection $nopeid)
+
+(defn get-list [listid]
+  (or (and listid
+           (let [candidate (get-document (config/delectus-content-bucket) listid)]
+             (and candidate
+                  (let [obj (.content candidate)]
+                    (json-object-type? obj constants/+delectus-list-document-type+)
+                    obj))))
+      nil))
+
+;;; (def $thingsid "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
+;;; (get-list $thingsid)
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-list $mikelid)
+;;; (def $nopeid nil)
+;;; (get-list $nopeid)
 
 ;;; ---------------------------------------------------------------------
 ;;; N1QL queries

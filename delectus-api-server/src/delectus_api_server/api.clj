@@ -22,13 +22,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defn id->user [userid]
-  (let [candidate-doc (couchio/get-document (config/delectus-users-bucket) userid)]
-    (if (nil? candidate-doc)
-      nil
-      (let [obj (.content candidate-doc)]
-        (if (= constants/+delectus-user-document-type+ (.get obj "type"))
-          obj
-          nil)))))
+  (couchio/get-user userid))
 
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (def $mikel (id->user $mikelid))
@@ -38,13 +32,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defn id->collection [collection-id]
-  (let [candidate-doc (couchio/get-document (config/delectus-users-bucket) collection-id)]
-    (if (nil? candidate-doc)
-      nil
-      (let [obj (.content candidate-doc)]
-        (if (= constants/+delectus-collection-document-type+ (.get obj "type"))
-          obj
-          nil)))))
+  (couchio/get-collection collection-id))
 
 (defn name->collection [name]
   (let [bucket (config/delectus-content-bucket)
@@ -135,23 +123,24 @@
 (defn mark-collection-deleted [collection-id deleted?])
 
 (defn find-collection-by-id [userid collection-id]
-  (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id" "items"]
-                                    {"type" constants/+delectus-collection-document-type+
-                                     "id" collection-id})]
-    (if (empty? found)
-      nil
-      (first found))))
+  (let [found (couchio/get-collection collection-id)]
+    (or (and found
+             (couchio/json-object-owner? found userid)
+             found)
+        nil)))
 
-;;; (def $coll (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection"))
-;;; (def $collid (.get $coll "id"))
-;;; (find-collection-by-id (email->userid "mikel@evins.net") $collid)
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (find-collection-by-id $mikelid $defaultid)
+;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
+;;; (find-collection-by-id $greerid $defaultid)
 
 (defn find-collection-by-name [userid collection-name]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id" "items"]
                                     {"type" constants/+delectus-collection-document-type+
-                                     "name" collection-name})]
+                                     "name" collection-name
+                                     "owner-id" userid})]
     (if (empty? found)
       nil
       (first found))))
