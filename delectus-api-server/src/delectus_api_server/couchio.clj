@@ -35,6 +35,11 @@
 ;;; (class $fred)
 ;;; (def $fred2 (CouchbaseMap. $fredid $bucket))
 
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $default-map (CouchbaseMap. $defaultid $bucket))
+
+
 
 ;;; ---------------------------------------------------------------------
 ;;; document and object helpers
