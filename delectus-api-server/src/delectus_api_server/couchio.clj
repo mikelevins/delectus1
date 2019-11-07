@@ -13,19 +13,28 @@
 ;;; document and object helpers
 ;;; ---------------------------------------------------------------------
 
+;;; accessors
+;;; ---------------
+
 (defn json-object-type [obj]
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
   (.get obj constants/+json-object-type-attribute+))
-
-(defn json-object-type? [obj type-string]
-  (= type-string (json-object-type obj)))
 
 (defn json-object-owner-id [obj]
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
   (.get obj constants/+json-object-owner-id-attribute+))
 
+;;; predicates
+;;; ---------------
+
+(defn json-object-type? [obj type-string]
+  (= type-string (json-object-type obj)))
+
 (defn json-object-owner? [obj ownerid]
   (= ownerid (json-object-owner-id obj)))
+
+;;; constructors
+;;; ---------------
 
 (defn make-json-object [object-map]
   (JsonObject/from object-map))

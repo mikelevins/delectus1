@@ -92,23 +92,22 @@
 
 (defn list-collections [userid]
   (let [bucket (config/delectus-content-bucket)]
-    (couchio/find-objects
-     bucket ["name" "id"]
-     {"type" constants/+delectus-collection-document-type+
-      "owner-id" userid})))
+    (couchio/find-objects bucket ["name" "id"]
+                          {"type" constants/+delectus-collection-document-type+
+                           "owner-id" userid})))
 
 ;;; (list-collections (email->userid "mikel@evins.net"))
 
 (defn create-collection [& {:keys [id name owner-id]
-                            :or {id (makeid)
-                                 name nil
-                                 owner-id nil}}]
+                            :or {id (makeid) name nil owner-id nil}}]
   (couchio/error-if-collection-id-exists id)
   (errors/error-if-nil name "Missing :name parameter" {:context 'create-collection})
   (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'create-collection})
-  (errors/error-if-nil (id->user owner-id) "No such user"
-                       {:parameter :owner-id :value owner-id :context 'create-collection})
-  (errors/error-if (name->collection name) "Collection name exists" {:parameter :name :value name})
+  (errors/error-if-nil (id->user owner-id) "No such user" {:parameter :owner-id
+                                                           :value owner-id
+                                                           :context 'create-collection})
+  (errors/error-if (name->collection name) "Collection name exists" {:parameter :name
+                                                                     :value name})
 
   (let [collection-doc (couchio/make-collection-document id name owner-id)]
     (.upsert (config/delectus-content-bucket) collection-doc)
@@ -118,7 +117,7 @@
 ;;; (create-collection :id (makeid) :name "Stuff" :owner-id (email->userid "nobody@evins.net"))
 
 ;;; TODO
-(defn mark-collection-deleted [collection-id deleted?])
+(defn mark-collection-deleted [userid collection-id deleted?])
 
 (defn find-collection-by-id [userid collection-id]
   (let [found (couchio/get-collection collection-id)]
