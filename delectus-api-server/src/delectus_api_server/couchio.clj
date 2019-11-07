@@ -150,3 +150,15 @@
 
 ;;; (def $obj1 (JsonObject/from {"name" "Fred" "age" 35 "color" "orange"}))
 ;;; (find-json-object-key-for-value $obj1 "orange")
+
+;;; ---------------------------------------------------------------------
+;;; couchio errors
+;;; ---------------------------------------------------------------------
+
+(defn error-if-collection-id-exists [id]
+  (let [found (get-document (config/delectus-content-bucket) id)]
+    (if found
+      (throw (ex-info "An object with this ID already exists"
+                      {:id id
+                       :bucket "delectus-content-bucket"
+                       :error-signaled-by 'error-if-collection-id-exists})))))

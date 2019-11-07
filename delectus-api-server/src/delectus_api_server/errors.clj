@@ -1,5 +1,9 @@
 (ns delectus-api-server.errors)
 
+;;; ---------------------------------------------------------------------
+;;; general errors
+;;; ---------------------------------------------------------------------
+
 (defn error [message context]
   (throw (ex-info message (merge context {:error-signaled-by 'error}))))
 
@@ -18,4 +22,6 @@
 (defn error-if-not [test-val message context]
   (if-not test-val
     (throw (ex-info message (merge context {:error-signaled-by 'error-if-not})))))
+
+
 

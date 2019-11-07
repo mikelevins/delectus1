@@ -100,9 +100,7 @@
                             :or {id (makeid)
                                  name nil
                                  owner-id nil}}]
-  (let [found (couchio/get-document (config/delectus-content-bucket) id)]
-    (if found
-      (errors/error "Document exists" {:id id :type (.get (.content found) "type")})))
+  (couchio/error-if-collection-id-exists id)
   (errors/error-if-nil name "name parameter is required" {:missing :name})
   (errors/error-if-nil owner-id "owner-id parameter is required" {:missing :owner-id})
   (errors/error-if-nil (id->user owner-id) "No such user" {:id owner-id})
