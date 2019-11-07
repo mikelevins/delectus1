@@ -12,30 +12,16 @@
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)))
 
-;;; ---------------------------------------------------------------------
-;;; Couchbase helpers
-;;; ---------------------------------------------------------------------
-
-(defn get-document [bucket docid]
-  (.get bucket docid))
-
-;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $docid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
-;;; (def $doc (get-document $bucket $docid))
-;;; (assoc (into {} (.toMap (.content $doc))) :test "test value")
-;;; (time (get-document $bucket "NOPE!"))
+;;; =====================================================================
+;;; support functions
+;;; =====================================================================
 
 ;;; ---------------------------------------------------------------------
-;;; Users
+;;; users
 ;;; ---------------------------------------------------------------------
-
-(defn register-user [email password])
-
-;;; PRIVATE: do not expose to the public API
-(defn update-user! [userid new-values-map])
 
 (defn id->user [userid]
-  (let [candidate-doc (get-document (config/delectus-users-bucket) userid)]
+  (let [candidate-doc (couchio/get-document (config/delectus-users-bucket) userid)]
     (if (nil? candidate-doc)
       nil
       (let [obj (.content candidate-doc)]
@@ -45,6 +31,46 @@
 
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (def $mikel (id->user $mikelid))
+
+;;; ---------------------------------------------------------------------
+;;; collections
+;;; ---------------------------------------------------------------------
+
+(defn id->collection [collection-id]
+  (let [candidate-doc (couchio/get-document (config/delectus-users-bucket) collection-id)]
+    (if (nil? candidate-doc)
+      nil
+      (let [obj (.content candidate-doc)]
+        (if (= "delectus_collection" (.get obj "type"))
+          obj
+          nil)))))
+
+(defn name->collection [name]
+  (let [bucket (config/delectus-content-bucket)
+        found (couchio/find-objects bucket []
+                                    {"type" "delectus_collection"
+                                     "name" name})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+
+;;; =====================================================================
+;;; API-endpoint functions
+;;; =====================================================================
+
+;;; ---------------------------------------------------------------------
+;;; admin
+;;; ---------------------------------------------------------------------
+
+;;; private admin endpoints
+
+(defn register-user [email password])
+(defn update-user! [userid new-values-map])
+
+;;; ---------------------------------------------------------------------
+;;; users & sessions
+;;; ---------------------------------------------------------------------
 
 (defn email->user [email]
   (let [bucket (config/delectus-users-bucket)
@@ -73,24 +99,6 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
-(defn id->collection [collection-id]
-  (let [candidate-doc (get-document (config/delectus-users-bucket) collection-id)]
-    (if (nil? candidate-doc)
-      nil
-      (let [obj (.content candidate-doc)]
-        (if (= "delectus_collection" (.get obj "type"))
-          obj
-          nil)))))
-
-(defn name->collection [name]
-  (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket []
-                                    {"type" "delectus_collection"
-                                     "name" name})]
-    (if (empty? found)
-      nil
-      (first found))))
-
 (defn list-collections [userid]
   (let [bucket (config/delectus-content-bucket)]
     (couchio/find-objects bucket ["name" "id"]
@@ -103,7 +111,7 @@
                             :or {id (makeid)
                                  name nil
                                  owner-id nil}}]
-  (let [found (get-document (config/delectus-content-bucket) id)]
+  (let [found (couchio/get-document (config/delectus-content-bucket) id)]
     (if found
       (errors/error "Document exists" {:id id :type (.get (.content found) "type")})))
   (errors/error-if-nil name "name parameter is required" {:missing :name})
@@ -158,8 +166,8 @@
 
 (defn collection-add-list [userid collection-id list-id]
   (let [bucket (config/delectus-content-bucket)
-        collection-doc (get-document bucket collection-id)
-        list-doc (get-document bucket list-id)]
+        collection-doc (couchio/get-document bucket collection-id)
+        list-doc (couchio/get-document bucket list-id)]
 
     ;; make sure the list and collection actually exist
     (errors/error-if-nil collection-doc "No such collection" {:id collection-id})
@@ -195,18 +203,18 @@
 
 ;;; (def $bucket (config/delectus-content-bucket))
 ;;; (def $collid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
-;;; (def $coll (get-document $bucket $collid))
+;;; (def $coll (couchio/get-document $bucket $collid))
 ;;; (.toMap (.content $coll))
 ;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
-;;; (def $things (get-document $bucket $thingsid))
+;;; (def $things (couchio/get-document $bucket $thingsid))
 ;;; (.toMap (.content $things))
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (collection-add-list $mikelid $collid $thingsid)
 
 (defn collection-remove-list [userid collection-id list-id]
   (let [bucket (config/delectus-content-bucket)
-        collection-doc (get-document bucket collection-id)
-        list-doc (get-document bucket list-id)]
+        collection-doc (couchio/get-document bucket collection-id)
+        list-doc (couchio/get-document bucket list-id)]
 
     ;; make sure the list and collection actually exist
     (errors/error-if-nil collection-doc "No such collection" {:id collection-id})
@@ -239,10 +247,10 @@
 
 ;;; (def $bucket (config/delectus-content-bucket))
 ;;; (def $collid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
-;;; (def $coll (get-document $bucket $collid))
+;;; (def $coll (couchio/get-document $bucket $collid))
 ;;; (.toMap (.content $coll))
 ;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
-;;; (def $things (get-document $bucket $thingsid))
+;;; (def $things (couchio/get-document $bucket $thingsid))
 ;;; (.toMap (.content $things))
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (collection-remove-list $mikelid $collid $thingsid)

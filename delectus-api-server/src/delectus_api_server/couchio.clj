@@ -6,6 +6,20 @@
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)))
 
+
+;;; ---------------------------------------------------------------------
+;;; simple fetch and store by id
+;;; ---------------------------------------------------------------------
+
+(defn get-document [bucket docid]
+  (.get bucket docid))
+
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (def $docid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $doc (get-document $bucket $docid))
+;;; (assoc (into {} (.toMap (.content $doc))) :test "test value")
+;;; (time (get-document $bucket "NOPE!"))
+
 ;;; ---------------------------------------------------------------------
 ;;; N1QL queries
 ;;; ---------------------------------------------------------------------
