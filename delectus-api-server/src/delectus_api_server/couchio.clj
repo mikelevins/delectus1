@@ -1,6 +1,7 @@
 (ns delectus-api-server.couchio
   (:require
-   [delectus-api-server.configuration :as config])
+   [delectus-api-server.configuration :as config]
+   [delectus-api-server.constants :as constants])
   (:import
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.document JsonDocument)
@@ -47,7 +48,7 @@
 
 ;;; (make-object-selector (config/delectus-users-bucket) [] {})
 ;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" "delectus_list" "id" "FOO!"})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" constants/+delectus-list-document-type+ "id" "FOO!"})
 
 (defn find-objects [bucket keys matching]
   (let [selector (make-object-selector bucket keys matching)
@@ -58,8 +59,8 @@
       (map #(.get (.value %) bucket-name) results)
       (map #(.value %) results))))
 
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" "delectus_list"}))
-;;; (def $objs (find-objects (config/delectus-content-bucket) ["name" "id"] {"type" "delectus_list"}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" constants/+delectus-list-document-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" constants/+delectus-list-document-type+}))
 
 ;;; ---------------------------------------------------------------------
 ;;; JsonDocument helpers

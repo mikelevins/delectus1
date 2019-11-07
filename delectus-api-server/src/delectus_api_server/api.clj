@@ -3,6 +3,7 @@
    [buddy.hashers :as hashers]
    [clojure.edn :as edn]
    [delectus-api-server.configuration :as config]
+   [delectus-api-server.constants :as constants]
    [delectus-api-server.couchio :as couchio]
    [delectus-api-server.errors :as errors]
    [delectus-api-server.identifiers :refer [makeid]]
@@ -25,7 +26,7 @@
     (if (nil? candidate-doc)
       nil
       (let [obj (.content candidate-doc)]
-        (if (= "delectus_user" (.get obj "type"))
+        (if (= constants/+delectus-user-document-type+ (.get obj "type"))
           obj
           nil)))))
 
@@ -41,14 +42,14 @@
     (if (nil? candidate-doc)
       nil
       (let [obj (.content candidate-doc)]
-        (if (= "delectus_collection" (.get obj "type"))
+        (if (= constants/+delectus-collection-document-type+ (.get obj "type"))
           obj
           nil)))))
 
 (defn name->collection [name]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket []
-                                    {"type" "delectus_collection"
+                                    {"type" constants/+delectus-collection-document-type+
                                      "name" name})]
     (if (empty? found)
       nil
@@ -75,7 +76,7 @@
 (defn email->user [email]
   (let [bucket (config/delectus-users-bucket)
         found (couchio/find-objects bucket []
-                                    {"type" "delectus_user"
+                                    {"type" constants/+delectus-user-document-type+
                                      "email" email})]
     (if (empty? found)
       nil
@@ -102,7 +103,7 @@
 (defn list-collections [userid]
   (let [bucket (config/delectus-content-bucket)]
     (couchio/find-objects bucket ["name" "id"]
-                          {"type" "delectus_collection"
+                          {"type" constants/+delectus-collection-document-type+
                            "owner-id" userid})))
 
 ;;; (list-collections (email->userid "mikel@evins.net"))
@@ -119,7 +120,7 @@
   (errors/error-if-nil (id->user owner-id) "No such user" {:id owner-id})
   (errors/error-if (name->collection name) "Collection exists" {:name name})
 
-  (let [collection-map {"type" "delectus_collection"
+  (let [collection-map {"type" constants/+delectus-collection-document-type+
                         "id" id
                         "name" name
                         "owner-id" owner-id
@@ -136,7 +137,7 @@
 (defn find-collection-by-id [userid collection-id]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id" "items"]
-                                    {"type" "delectus_collection"
+                                    {"type" constants/+delectus-collection-document-type+
                                      "id" collection-id})]
     (if (empty? found)
       nil
@@ -149,7 +150,7 @@
 (defn find-collection-by-name [userid collection-name]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id" "items"]
-                                    {"type" "delectus_collection"
+                                    {"type" constants/+delectus-collection-document-type+
                                      "name" collection-name})]
     (if (empty? found)
       nil
@@ -262,7 +263,7 @@
 (defn list-lists [userid]
   (let [bucket (config/delectus-content-bucket)]
     (couchio/find-objects bucket ["name" "id"]
-                          {"type" "delectus_list"
+                          {"type" constants/+delectus-list-document-type+
                            "owner-id" userid})))
 
 ;;; (list-lists (email->userid "mikel@evins.net"))
@@ -274,7 +275,7 @@
 (defn find-list-by-id [userid list-id]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id"]
-                                    {"type" "delectus_list"
+                                    {"type" constants/+delectus-list-document-type+
                                      "id" list-id})]
     (if (empty? found)
       nil
@@ -286,7 +287,7 @@
 (defn find-list-by-name [userid list-name]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id"]
-                                    {"type" "delectus_list"
+                                    {"type" constants/+delectus-list-document-type+
                                      "name" list-name})]
     (if (empty? found)
       nil
