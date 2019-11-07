@@ -63,6 +63,9 @@
 ;;; simple fetch and store by id
 ;;; ---------------------------------------------------------------------
 
+;;; generic JsonDocuments
+;;; ----------------------
+
 (defn get-document [bucket docid]
   (.get bucket docid))
 
@@ -70,6 +73,9 @@
 ;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))
 ;;; (def $docid (.get (delectus-api-server.api/find-collection-by-name $mikelid  "Default Collection") "id"))
 ;;; (def $doc (get-document $bucket $docid))
+
+;;; User objects
+;;; ----------------------
 
 (defn get-user [userid]
   (or (and userid
@@ -87,6 +93,9 @@
 ;;; (def $nopeid nil)
 ;;; (get-user $nopeid)
 
+;;; Collection objects
+;;; ----------------------
+
 (defn get-collection [collectionid]
   (or (and collectionid
            (let [candidate (get-document (config/delectus-content-bucket) collectionid)]
@@ -98,10 +107,17 @@
 
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (get-collection $defaultid)
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (.content (.execute (.get (.lookupIn $bucket $defaultid) (into-array ["items"]))) 0)
+;;; (.content (.execute (.get (.lookupIn $bucket $defaultid) (into-array ["NOPE"]))) 0)
+
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (get-collection $mikelid)
 ;;; (def $nopeid nil)
 ;;; (get-collection $nopeid)
+
+;;; List objects
+;;; ----------------------
 
 (defn get-list [listid]
   (or (and listid
@@ -153,7 +169,7 @@
         bucket-name (.name bucket)
         results (.query bucket (N1qlQuery/simple selector))]
     (if (empty? keys)
-      ;; SELECT * returns each result in a map like {bucket-name found-object}
+      ;; SELECT * returns each result wrapped in a map like this: {bucket-name found-object}
       (map #(.get (.value %) bucket-name) results)
       (map #(.value %) results))))
 

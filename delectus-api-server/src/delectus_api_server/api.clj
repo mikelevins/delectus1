@@ -159,11 +159,8 @@
         found-collection (couchio/get-collection collection-id)
         found-list (couchio/get-list list-id)]
 
-    ;; make sure the list and collection actually exist
     (errors/error-if-nil found-collection "No such collection" {:id collection-id})
     (errors/error-if-nil found-list "No such list" {:id list-id})
-
-    ;; make sure the user owns the list and collection
     (errors/error-if-not (couchio/json-object-owner? found-collection userid)
                          "Cannot update collection" {:reason "wrong owner"})
     (errors/error-if-not (couchio/json-object-owner? found-list userid)
@@ -175,7 +172,7 @@
       (if found-key
         ;; it's already present; no need to add it
         collection-id
-        ;; didn;t find it; better add it
+        ;; didn't find it; add it
         (let [old-collection-map (into {} (.toMap found-collection))
               old-collection-indexes (map edn/read-string (into [] (.getNames old-collection-items)))
               new-index (if (empty? old-collection-indexes)
@@ -188,15 +185,10 @@
           (.upsert bucket new-collection-doc)
           collection-id)))))
 
-;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $collid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
-;;; (def $coll (couchio/get-document $bucket $collid))
-;;; (.toMap (.content $coll))
-;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
-;;; (def $things (couchio/get-document $bucket $thingsid))
-;;; (.toMap (.content $things))
-;;; (def $mikelid (email->userid "mikel@evins.net"))
-;;; (collection-add-list $mikelid $collid $thingsid)
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $default (couchio/get-collection  $defaultid))
+;;; (.get $default "items")
 
 (defn collection-remove-list [userid collection-id list-id]
   (let [bucket (config/delectus-content-bucket)
