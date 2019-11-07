@@ -20,7 +20,7 @@
   (.get bucket docid))
 
 ;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $docid (.get (find-collection-by-name (userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $docid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
 ;;; (def $doc (get-document $bucket $docid))
 ;;; (assoc (into {} (.toMap (.content $doc))) :test "test value")
 ;;; (time (get-document $bucket "NOPE!"))
@@ -34,7 +34,7 @@
 ;;; PRIVATE: do not expose to the public API
 (defn update-user! [userid new-values-map])
 
-(defn user [email]
+(defn email->user [email]
   (let [bucket (config/delectus-users-bucket)
         found (couchio/find-objects bucket []
                                     {"type" "delectus_user"
@@ -43,19 +43,19 @@
       nil
       (first found))))
 
-;;; (user "mikel@evins.net")
-;;; (user "greer@evins.net")
-;;; (user "nobody@nowhere.net")
+;;; (email->user "mikel@evins.net")
+;;; (email->user "greer@evins.net")
+;;; (email->user "nobody@nowhere.net")
 
-(defn userid [email]
-  (let [found-user (user email)]
+(defn email->userid [email]
+  (let [found-user (email->user email)]
     (if found-user
       (.get found-user "id")
       nil)))
 
-;;; (userid "mikel@evins.net")
-;;; (userid "greer@evins.net")
-;;; (userid "nobody@nowhere.net")
+;;; (email->userid "mikel@evins.net")
+;;; (email->userid "greer@evins.net")
+;;; (email->userid "nobody@nowhere.net")
 
 ;;; ---------------------------------------------------------------------
 ;;; Collections
@@ -67,12 +67,15 @@
                           {"type" "delectus_collection"
                            "owner-id" userid})))
 
-;;; (list-collections (userid "mikel@evins.net"))
+;;; (list-collections (email->userid "mikel@evins.net"))
 
 (defn create-collection [& {:keys [id name owner-id]
                             :or {id (makeid)
                                  name nil
-                                 owner-id nil}}])
+                                 owner-id nil}}]
+  (errors/error-if-nil name "name parameter is required" {:missing :name})
+  (errors/error-if-nil owner-id "owner-id parameter is required" {:missing :owner-id})
+  )
 
 (defn mark-collection-deleted [collection-id deleted?])
 
@@ -85,9 +88,9 @@
       nil
       (first found))))
 
-;;; (def $coll (find-collection-by-name (userid "mikel@evins.net") "Default Collection"))
+;;; (def $coll (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection"))
 ;;; (def $collid (.get $coll "id"))
-;;; (find-collection-by-id (userid "mikel@evins.net") $collid)
+;;; (find-collection-by-id (email->userid "mikel@evins.net") $collid)
 
 (defn find-collection-by-name [userid collection-name]
   (let [bucket (config/delectus-content-bucket)
@@ -98,8 +101,8 @@
       nil
       (first found))))
 
-;;; (find-collection-by-name (userid "mikel@evins.net") "Default Collection")
-;;; (find-collection-by-name (userid "mikel@evins.net") "NOPE!")
+;;; (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection")
+;;; (find-collection-by-name (email->userid "mikel@evins.net") "NOPE!")
 
 (defn get-collection-name [userid collection-id])
 
@@ -145,13 +148,13 @@
             collection-id))))))
 
 ;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $collid (.get (find-collection-by-name (userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $collid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
 ;;; (def $coll (get-document $bucket $collid))
 ;;; (.toMap (.content $coll))
-;;; (def $thingsid (.get (find-list-by-name (userid "mikel@evins.net") "Things") "id"))
+;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
 ;;; (def $things (get-document $bucket $thingsid))
 ;;; (.toMap (.content $things))
-;;; (def $mikelid (userid "mikel@evins.net"))
+;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (collection-add-list $mikelid $collid $thingsid)
 
 (defn collection-remove-list [userid collection-id list-id]
@@ -189,13 +192,13 @@
           collection-id)))))
 
 ;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $collid (.get (find-collection-by-name (userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $collid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
 ;;; (def $coll (get-document $bucket $collid))
 ;;; (.toMap (.content $coll))
-;;; (def $thingsid (.get (find-list-by-name (userid "mikel@evins.net") "Things") "id"))
+;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
 ;;; (def $things (get-document $bucket $thingsid))
 ;;; (.toMap (.content $things))
-;;; (def $mikelid (userid "mikel@evins.net"))
+;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (collection-remove-list $mikelid $collid $thingsid)
 
 ;;; ---------------------------------------------------------------------
@@ -208,7 +211,7 @@
                           {"type" "delectus_list"
                            "owner-id" userid})))
 
-;;; (list-lists (userid "mikel@evins.net"))
+;;; (list-lists (email->userid "mikel@evins.net"))
 
 (defn create-list [userid name])
 
@@ -223,8 +226,8 @@
       nil
       (first found))))
 
-;;; (def $listid (.get (find-list-by-name (userid "mikel@evins.net") "Things") "id"))
-;;; (find-list-by-id (userid "mikel@evins.net") $listid)
+;;; (def $listid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
+;;; (find-list-by-id (email->userid "mikel@evins.net") $listid)
 
 (defn find-list-by-name [userid list-name]
   (let [bucket (config/delectus-content-bucket)
@@ -235,8 +238,8 @@
       nil
       (first found))))
 
-;;; (find-list-by-name (userid "mikel@evins.net") "Things")
-;;; (find-list-by-name (userid "mikel@evins.net") "NOPE!")
+;;; (find-list-by-name (email->userid "mikel@evins.net") "Things")
+;;; (find-list-by-name (email->userid "mikel@evins.net") "NOPE!")
 
 (defn list-name [userid list-id])
 

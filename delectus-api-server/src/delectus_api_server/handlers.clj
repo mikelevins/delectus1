@@ -39,7 +39,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defn login-user [email password]
-  (let [found-user (api/user email)]
+  (let [found-user (api/email->user email)]
     (if found-user
       (if (hashers/check password (.get found-user "password-hash"))
         found-user
@@ -72,7 +72,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params request))]
-              (json/write-str (api/userid email)))})
+              (json/write-str (api/email->userid email)))})
 
 
 ;;; ---------------------------------------------------------------------
@@ -85,14 +85,14 @@
    :body    (let [email (:email (:params req))]
               (json/write-str
                (map #(json/read-str (.toString %))
-                    (api/list-collections (api/userid email)))))})
+                    (api/list-collections (api/email->userid email)))))})
 
 (defn collection-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   collection-id (:id (:params req))
-                  collection (api/find-collection-by-id (api/userid email) collection-id)]
+                  collection (api/find-collection-by-id (api/email->userid email) collection-id)]
               (if collection
                 (.toString collection)
                 (json/write-str nil)))})
@@ -102,7 +102,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   collection-name (:name (:params req))
-                  collection (api/find-collection-by-name (api/userid email) collection-name)]
+                  collection (api/find-collection-by-name (api/email->userid email) collection-name)]
               (if collection
                 (.toString collection)
                 (json/write-str nil)))})
@@ -111,7 +111,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/userid email)
+                  userid (api/email->userid email)
                   collection-id (:collectionid (:params req))
                   list-id (:listid (:params req))
                   result (api/collection-add-list userid collection-id list-id)]
@@ -121,7 +121,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/userid email)
+                  userid (api/email->userid email)
                   collection-id (:collectionid (:params req))
                   list-id (:listid (:params req))
                   result (api/collection-remove-list userid collection-id list-id)]
@@ -137,14 +137,14 @@
    :body    (let [email (:email (:params req))]
               (json/write-str
                (map #(json/read-str (.toString %))
-                    (api/list-lists (api/userid email)))))})
+                    (api/list-lists (api/email->userid email)))))})
 
 (defn list-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   list-id (:id (:params req))
-                  found-list (api/find-list-by-id (api/userid email) list-id)]
+                  found-list (api/find-list-by-id (api/email->userid email) list-id)]
               (if found-list
                 (.toString found-list)
                 (json/write-str nil)))})
@@ -154,7 +154,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
                   list-name (:name (:params req))
-                  found-list (api/find-list-by-name (api/userid email) list-name)]
+                  found-list (api/find-list-by-name (api/email->userid email) list-name)]
               (if found-list
                 (.toString found-list)
                 (json/write-str nil)))})
