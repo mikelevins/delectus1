@@ -23,6 +23,7 @@
   (GET "/delectus/userid" [] handlers/userid)
 
   (GET "/delectus/collections" [] handlers/collections)
+  (GET "/delectus/new_collection" [] handlers/new-collection)
   (GET "/delectus/collection_named" [] handlers/collection-named)
   (GET "/delectus/collection_with_id" [] handlers/collection-with-id)
   (GET "/delectus/collection_add_list" [] handlers/collection-add-list)

@@ -48,8 +48,18 @@
      callDelectusAPI("collections","getUserCollections_response");
  }
  
- function getUserLists () {
-     callDelectusAPI("lists","getUserLists_response");
+ function newCollection () {
+     let collectionName = document.getElementById("newCollection_collection_name").value;
+     let uri = "http://mars.local:9000/delectus/new_collection";
+     let query = "?email="+$authorization["email"]+"&name="+collectionName;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("newCollection_response").innerHTML=JSON.stringify(data));
  }
  
  function getCollectionByName () {
@@ -113,7 +123,11 @@
  
  // lists
  // -----------------------------------------
-
+ 
+ function getUserLists () {
+     callDelectusAPI("lists","getUserLists_response");
+ }
+ 
  function getListByName () {
      let listName = document.getElementById("getListByName_list_name").value;
      let uri = "http://mars.local:9000/delectus/list_named";
@@ -190,6 +204,13 @@
         <td class="endpoint"><button on:click={getUserCollections}>/delectus/collections</button></td>
         <td></td>
         <td id="getUserCollections_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={newCollection}>/delectus/new_collection</button></td>
+        <td><input type="text" id="newCollection_collection_name" placeholder="Collection name"/></td>
+        <td id="newCollection_response"></td>
     </tr>
 
     <tr>

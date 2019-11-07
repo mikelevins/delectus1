@@ -2,8 +2,9 @@
   (:require
    [buddy.hashers :as hashers]
    [clojure.data.json :as json]
-   [delectus-api-server.configuration :as config]
    [delectus-api-server.api :as api]
+   [delectus-api-server.configuration :as config]
+   [delectus-api-server.identifiers :refer [makeid]]
    [delectus-api-server.utilities :refer [fmt]]
    [hiccup.core :refer :all]
    [org.httpkit.server :as server])
@@ -86,6 +87,16 @@
               (json/write-str
                (map #(json/read-str (.toString %))
                     (api/list-collections (api/email->userid email)))))})
+
+(defn new-collection [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  name (:name (:params req))]
+              (json/write-str
+               (api/create-collection :id (makeid)
+                                      :name name
+                                      :owner-id (api/email->userid email))))})
 
 (defn collection-with-id [req]
   {:status  200

@@ -73,6 +73,24 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
+(defn id->collection [collection-id]
+  (let [candidate-doc (get-document (config/delectus-users-bucket) collection-id)]
+    (if (nil? candidate-doc)
+      nil
+      (let [obj (.content candidate-doc)]
+        (if (= "delectus_collection" (.get obj "type"))
+          obj
+          nil)))))
+
+(defn name->collection [name]
+  (let [bucket (config/delectus-content-bucket)
+        found (couchio/find-objects bucket []
+                                    {"type" "delectus_collection"
+                                     "name" name})]
+    (if (empty? found)
+      nil
+      (first found))))
+
 (defn list-collections [userid]
   (let [bucket (config/delectus-content-bucket)]
     (couchio/find-objects bucket ["name" "id"]
@@ -85,9 +103,25 @@
                             :or {id (makeid)
                                  name nil
                                  owner-id nil}}]
+  (let [found (get-document (config/delectus-content-bucket) id)]
+    (if found
+      (errors/error "Document exists" {:id id :type (.get (.content found) "type")})))
   (errors/error-if-nil name "name parameter is required" {:missing :name})
   (errors/error-if-nil owner-id "owner-id parameter is required" {:missing :owner-id})
-  )
+  (errors/error-if-nil (id->user owner-id) "No such user" {:id owner-id})
+  (errors/error-if (name->collection name) "Collection exists" {:name name})
+
+  (let [collection-map {"type" "delectus_collection"
+                        "id" id
+                        "name" name
+                        "owner-id" owner-id
+                        "items" {}}
+        collection-doc (JsonDocument/create id (JsonObject/from collection-map))]
+    (.upsert (config/delectus-content-bucket)
+             collection-doc)
+    id))
+
+;;; (create-collection :id (makeid) :name "Stuff" :owner-id (email->userid "mikel@evins.net"))
 
 (defn mark-collection-deleted [collection-id deleted?])
 
