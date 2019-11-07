@@ -34,6 +34,18 @@
 ;;; PRIVATE: do not expose to the public API
 (defn update-user! [userid new-values-map])
 
+(defn id->user [userid]
+  (let [candidate-doc (get-document (config/delectus-users-bucket) userid)]
+    (if (nil? candidate-doc)
+      nil
+      (let [obj (.content candidate-doc)]
+        (if (= "delectus_user" (.get obj "type"))
+          obj
+          nil)))))
+
+;;; (def $mikelid (email->userid "mikel@evins.net"))
+;;; (def $mikel (id->user $mikelid))
+
 (defn email->user [email]
   (let [bucket (config/delectus-users-bucket)
         found (couchio/find-objects bucket []
