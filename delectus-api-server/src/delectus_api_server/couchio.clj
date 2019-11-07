@@ -1,5 +1,6 @@
 (ns delectus-api-server.couchio
   (:require
+   [clojure.edn :as edn]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.constants :as constants]
    [delectus-api-server.errors :as errors])
@@ -24,6 +25,33 @@
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
   (.get obj constants/+json-object-owner-id-attribute+))
 
+(defn json-object-items [obj]
+  (errors/error-if-not (itemizing-json-object? obj) "Not an itemizing JSON object" {:object obj})
+  (.get obj constants/+items-attribute+))
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (json-object-items (get-collection $defaultid))
+
+(defn json-object-max-item-index [obj]
+  (errors/error-if-not (itemizing-json-object? obj) "Not an itemizing JSON object" {:object obj})
+  (let [items (json-object-items obj)
+        indexes (into [] (.getNames items))]
+    (if (empty? indexes) nil
+        (str (apply max (map edn/read-string (into [] indexes)))))))
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (json-object-max-item-index (get-collection $defaultid))
+
+(defn json-object-next-item-index [obj]
+  (errors/error-if-not (itemizing-json-object? obj) "Not an itemizing JSON object" {:object obj})
+  (let [items (json-object-items obj)
+        indexes (into [] (.getNames items))]
+    (if (empty? indexes) "0"
+        (str (+ 1 (apply max (map edn/read-string (into [] indexes))))))))
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (json-object-next-item-index (get-collection $defaultid))
+
 ;;; predicates
 ;;; ---------------
 
@@ -32,6 +60,16 @@
 
 (defn json-object-owner? [obj ownerid]
   (= ownerid (json-object-owner-id obj)))
+
+(defn itemizing-json-object? [obj]
+  (and (instance? JsonObject obj)
+       (or (json-object-type? obj constants/+delectus-collection-document-type+)
+           (json-object-type? obj constants/+delectus-list-document-type+))))
+
+;;; (def $fred (make-json-object {"name" "Fred" "age" 35}))
+;;; (itemizing-json-object? $fred)
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (itemizing-json-object? (get-collection $defaultid))
 
 ;;; constructors
 ;;; ---------------

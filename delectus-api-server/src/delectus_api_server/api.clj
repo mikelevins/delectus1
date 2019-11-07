@@ -173,14 +173,12 @@
         ;; it's already present; no need to add it
         collection-id
         ;; didn't find it; add it
-        (let [old-collection-map (into {} (.toMap found-collection))
-              old-collection-indexes (map edn/read-string (into [] (.getNames old-collection-items)))
-              new-index (if (empty? old-collection-indexes)
-                          (str 0)
-                          (str (+ 1 (apply max old-collection-indexes))))
+        (let [new-index (couchio/json-object-next-item-index found-collection)
               new-list-id (.get found-list "id")
-              new-collection-items (couchio/put-key-if-changed old-collection-items new-index new-list-id)
-              new-collection-map (merge old-collection-map {"items" new-collection-items})
+              new-collection-items (JsonObject/from (merge (into {} (.toMap old-collection-items))
+                                                           {new-index new-list-id}))
+              new-collection-map (merge (into {} (.toMap found-collection))
+                                        {"items" new-collection-items})
               new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
           (.upsert bucket new-collection-doc)
           collection-id)))))
@@ -188,7 +186,8 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (def $default (couchio/get-collection  $defaultid))
-;;; (.get $default "items")
+;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
+;;; (collection-add-list $mikelid $defaultid $thingsid)
 
 (defn collection-remove-list [userid collection-id list-id]
   (let [bucket (config/delectus-content-bucket)
