@@ -14,3 +14,13 @@
 (def +delectus-collection-document-type+ "delectus_collection")
 (def +delectus-list-document-type+ "delectus_list")
 (def +delectus-user-document-type+ "delectus_user")
+
+;;; ---------------------------------------------------------------------
+;;; JSON object attributes
+;;; ---------------------------------------------------------------------
+
+(def +type-attribute+ "type")
+(def +id-attribute+ "id")
+(def +name-attribute+ "name")
+(def +owner-id-attribute+ "owner-id")
+(def +items-attribute+ "items")

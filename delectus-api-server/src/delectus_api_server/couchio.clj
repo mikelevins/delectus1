@@ -1,7 +1,8 @@
 (ns delectus-api-server.couchio
   (:require
    [delectus-api-server.configuration :as config]
-   [delectus-api-server.constants :as constants])
+   [delectus-api-server.constants :as constants]
+   [delectus-api-server.errors :as errors])
   (:import
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.document JsonDocument)
@@ -12,16 +13,42 @@
 ;;; document and object helpers
 ;;; ---------------------------------------------------------------------
 
-(defn json-object-type? [obj type-string]
-  (and (instance? JsonObject obj)
-       (= (.get obj "type")
-          type-string)))
+(defn json-object-type [obj]
+  (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
+  (.get obj constants/+json-object-type-attribute+))
 
+(defn json-object-type? [obj type-string]
+  (= type-string (json-object-type obj)))
+
+(defn json-object-owner-id [obj]
+  (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
+  (.get obj constants/+json-object-owner-id-attribute+))
 
 (defn json-object-owner? [obj ownerid]
-  (and (instance? JsonObject obj)
-       (= (.get obj "owner-id")
-          ownerid)))
+  (= ownerid (json-object-owner-id obj)))
+
+(defn make-json-object [object-map]
+  (JsonObject/from object-map))
+
+;;; (make-json-object {"name" "Fred" "age" 35})
+;;; (make-json-object {"name" "Fred" "age" 35 "things" {}})
+
+(defn make-json-document [id object-map]
+  (JsonDocument/create id (JsonObject/from object-map)))
+
+;;; (make-json-document "foo_document" {"name" "Fred" "age" 35})
+;;; (make-json-document "bar_document" {"name" "Fred" "age" 35 "things" {}})
+
+(defn make-collection-document [id name ownerid]
+  (let [obj-map {constants/+type-attribute+ constants/+delectus-collection-document-type+
+                 constants/+id-attribute+ id
+                 constants/+name-attribute+ name
+                 constants/+owner-id-attribute+ ownerid
+                 constants/+items-attribute+ {}}]
+    (make-json-document id obj-map)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (make-collection-document "foo_collection" "Random stuff" $mikelid)q
 
 ;;; ---------------------------------------------------------------------
 ;;; simple fetch and store by id

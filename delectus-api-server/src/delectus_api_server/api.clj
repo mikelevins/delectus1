@@ -36,13 +36,13 @@
 
 (defn name->collection [name]
   (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket []
-                                    {"type" constants/+delectus-collection-document-type+
-                                     "name" name})]
+        found (couchio/find-objects
+               bucket []
+               {"type" constants/+delectus-collection-document-type+
+                "name" name})]
     (if (empty? found)
       nil
       (first found))))
-
 
 ;;; =====================================================================
 ;;; API-endpoint functions
@@ -54,6 +54,7 @@
 
 ;;; private admin endpoints
 
+;;; TODO
 (defn register-user [email password])
 (defn update-user! [userid new-values-map])
 
@@ -63,9 +64,10 @@
 
 (defn email->user [email]
   (let [bucket (config/delectus-users-bucket)
-        found (couchio/find-objects bucket []
-                                    {"type" constants/+delectus-user-document-type+
-                                     "email" email})]
+        found (couchio/find-objects
+               bucket []
+               {"type" constants/+delectus-user-document-type+
+                "email" email})]
     (if (empty? found)
       nil
       (first found))))
@@ -90,9 +92,10 @@
 
 (defn list-collections [userid]
   (let [bucket (config/delectus-content-bucket)]
-    (couchio/find-objects bucket ["name" "id"]
-                          {"type" constants/+delectus-collection-document-type+
-                           "owner-id" userid})))
+    (couchio/find-objects
+     bucket ["name" "id"]
+     {"type" constants/+delectus-collection-document-type+
+      "owner-id" userid})))
 
 ;;; (list-collections (email->userid "mikel@evins.net"))
 
@@ -101,23 +104,20 @@
                                  name nil
                                  owner-id nil}}]
   (couchio/error-if-collection-id-exists id)
-  (errors/error-if-nil name "name parameter is required" {:missing :name})
-  (errors/error-if-nil owner-id "owner-id parameter is required" {:missing :owner-id})
-  (errors/error-if-nil (id->user owner-id) "No such user" {:id owner-id})
-  (errors/error-if (name->collection name) "Collection exists" {:name name})
+  (errors/error-if-nil name "Missing :name parameter" {:context 'create-collection})
+  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'create-collection})
+  (errors/error-if-nil (id->user owner-id) "No such user"
+                       {:parameter :owner-id :value owner-id :context 'create-collection})
+  (errors/error-if (name->collection name) "Collection name exists" {:parameter :name :value name})
 
-  (let [collection-map {"type" constants/+delectus-collection-document-type+
-                        "id" id
-                        "name" name
-                        "owner-id" owner-id
-                        "items" {}}
-        collection-doc (JsonDocument/create id (JsonObject/from collection-map))]
-    (.upsert (config/delectus-content-bucket)
-             collection-doc)
+  (let [collection-doc (couchio/make-collection-document id name owner-id)]
+    (.upsert (config/delectus-content-bucket) collection-doc)
     id))
 
 ;;; (create-collection :id (makeid) :name "Stuff" :owner-id (email->userid "mikel@evins.net"))
+;;; (create-collection :id (makeid) :name "Stuff" :owner-id (email->userid "nobody@evins.net"))
 
+;;; TODO
 (defn mark-collection-deleted [collection-id deleted?])
 
 (defn find-collection-by-id [userid collection-id]
@@ -146,48 +146,48 @@
 ;;; (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection")
 ;;; (find-collection-by-name (email->userid "mikel@evins.net") "NOPE!")
 
+;;; TODO
 (defn get-collection-name [userid collection-id])
 
+;;; TODO
 (defn update-collection-name [userid collection-id new-name])
 
+;;; TODO
 (defn get-collection-lists [userid collection-id])
 
 (defn collection-add-list [userid collection-id list-id]
   (let [bucket (config/delectus-content-bucket)
-        collection-doc (couchio/get-document bucket collection-id)
-        list-doc (couchio/get-document bucket list-id)]
+        found-collection (couchio/get-collection collection-id)
+        found-list (couchio/get-list list-id)]
 
     ;; make sure the list and collection actually exist
-    (errors/error-if-nil collection-doc "No such collection" {:id collection-id})
-    (errors/error-if-nil list-doc "No such list" {:id list-id})
+    (errors/error-if-nil found-collection "No such collection" {:id collection-id})
+    (errors/error-if-nil found-list "No such list" {:id list-id})
 
-    (let [found-collection (.content collection-doc)
-          collection-ownerid (.get found-collection "owner-id")
-          found-list (.content list-doc)
-          list-ownerid (.get found-list "owner-id")]
+    ;; make sure the user owns the list and collection
+    (errors/error-if-not (couchio/json-object-owner? found-collection userid)
+                         "Cannot update collection" {:reason "wrong owner"})
+    (errors/error-if-not (couchio/json-object-owner? found-list userid)
+                         "Cannot update list" {:reason "wrong owner"})
 
-      ;; make sure the user owns the list and collection
-      (errors/error-if-not (= userid collection-ownerid) "Cannot update collection" {:reason "wrong collection owner"})
-      (errors/error-if-not (= userid list-ownerid) "Cannot update list" {:reason "wrong list owner"})
-
-      ;; prepare to add the list to the collection
-      (let [old-collection-items (.get found-collection "items")
-            found-property (couchio/find-json-object-key-for-value old-collection-items list-id)]
-        (if found-property
-          ;; it's already present; no need to add it
-          collection-id
-          ;; didn;t find it; better add it
-          (let [old-collection-map (into {} (.toMap found-collection))
-                old-collection-indexes (map edn/read-string (into [] (.getNames old-collection-items)))
-                new-index (if (empty? old-collection-indexes)
-                            (str 0)
-                            (str (+ 1 (apply max old-collection-indexes))))
-                new-list-id (.get found-list "id")
-                new-collection-items (couchio/put-key-if-changed old-collection-items new-index new-list-id)
-                new-collection-map (merge old-collection-map {"items" new-collection-items})
-                new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
-            (.upsert bucket new-collection-doc)
-            collection-id))))))
+    ;; prepare to add the list to the collection
+    (let [old-collection-items (.get found-collection "items")
+          found-key (couchio/find-json-object-key-for-value old-collection-items list-id)]
+      (if found-key
+        ;; it's already present; no need to add it
+        collection-id
+        ;; didn;t find it; better add it
+        (let [old-collection-map (into {} (.toMap found-collection))
+              old-collection-indexes (map edn/read-string (into [] (.getNames old-collection-items)))
+              new-index (if (empty? old-collection-indexes)
+                          (str 0)
+                          (str (+ 1 (apply max old-collection-indexes))))
+              new-list-id (.get found-list "id")
+              new-collection-items (couchio/put-key-if-changed old-collection-items new-index new-list-id)
+              new-collection-map (merge old-collection-map {"items" new-collection-items})
+              new-collection-doc (JsonDocument/create collection-id (JsonObject/from new-collection-map))]
+          (.upsert bucket new-collection-doc)
+          collection-id)))))
 
 ;;; (def $bucket (config/delectus-content-bucket))
 ;;; (def $collid (.get (find-collection-by-name (email->userid "mikel@evins.net") "Default Collection") "id"))
@@ -255,8 +255,10 @@
 
 ;;; (list-lists (email->userid "mikel@evins.net"))
 
+;;; TODO
 (defn create-list [userid name])
 
+;;; TODO
 (defn mark-list-deleted [userid list-id])
 
 (defn find-list-by-id [userid list-id]
@@ -283,32 +285,47 @@
 ;;; (find-list-by-name (email->userid "mikel@evins.net") "Things")
 ;;; (find-list-by-name (email->userid "mikel@evins.net") "NOPE!")
 
+;;; TODO
 (defn list-name [userid list-id])
 
+;;; TODO
 (defn update-list-name [userid list-id new-name])
 
+;;; TODO
 (defn list-columns [userid list-id])
 
+;;; TODO
 (defn find-column-by-id [userid list-id column-id])
 
+;;; TODO
 (defn find-column-by-name [userid list-id column-name])
 
+;;; TODO
 (defn list-add-column [userid list-id column-name])
 
+;;; TODO
 (defn mark-column-deleted [userid list-id column-id])
 
+;;; TODO
 (defn column-name [userid list-id column-id])
 
+;;; TODO
 (defn update-column-name [userid list-id column-id new-name])
 
+;;; TODO
 (defn list-items [userid list-id])
 
+;;; TODO
 (defn find-item-by-id [userid list-id item-id])
 
+;;; TODO
 (defn list-add-item [userid list-id])
 
+;;; TODO
 (defn mark-item-deleted [userid list-id deleted?])
 
+;;; TODO
 (defn item-column-value [userid list-id column-id])
 
+;;; TODO
 (defn update-item-column-value [userid list-id column-id new-value])
