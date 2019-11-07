@@ -5,9 +5,35 @@
    [delectus-api-server.constants :as constants]
    [delectus-api-server.errors :as errors])
   (:import
-   (com.couchbase.client.java.document.json JsonObject)
+   (com.couchbase.client.java.document.json JsonArray JsonObject)
    (com.couchbase.client.java.document JsonDocument)
-   (com.couchbase.client.java.query N1qlQuery)))
+   (com.couchbase.client.java.query N1qlQuery)
+   (com.couchbase.client.java.datastructures.collections CouchbaseArrayList CouchbaseMap)
+   (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
+
+
+;;; ---------------------------------------------------------------------
+;;; experiments
+;;; ---------------------------------------------------------------------
+
+;;; (def $bucket (config/scratch-bucket))
+
+;;; (def $fruitsid "fruit_list")
+;;; (def $fruits (CouchbaseArrayList. $fruitsid $bucket ["Apple" "Banana" "Cherry" "Date" "Eggplant"]))
+;;; (class $fruits)
+;;; (time (.get $fruits 3))
+;;; (time (.set $fruits 3 "Durian"))
+;;; (def $fruits2 (CouchbaseArrayList. $fruitsid $bucket))
+
+;;; (def $lookupin (.lookupIn $bucket $fruitsid))
+;;; (def $optionsbuilder (SubdocOptionsBuilder.))
+;;; (.get $lookupin "$document.id" $optionsbuilder)
+;;; (.execute (.get $lookupin "$document.id" $optionsbuilder))
+
+;;; (def $fredid "fred_map")
+;;; (def $fred (CouchbaseMap. $fredid $bucket {"name" "Fred" "age" 35 "friends" (JsonArray/from ["Barney" "Betty"])}))
+;;; (class $fred)
+;;; (def $fred2 (CouchbaseMap. $fredid $bucket))
 
 
 ;;; ---------------------------------------------------------------------

@@ -60,6 +60,29 @@
 ;;; couchbase buckets
 ;;; ---------------------------------------------------------------------
 
+;;; scratch
+;;; --------
+
+(defonce +scratch-bucket+ (atom nil))
+
+(defn scratch-bucket []
+  (when (nil? @+scratch-bucket+)
+    (swap! +scratch-bucket+
+           (fn [old-val]
+             (let [bucketname constants/+scratch-bucket-name+
+                   bucketpass (:scratch-password (delectus-configuration))]
+               (.openBucket (couchbase-cluster) bucketname bucketpass)))))
+  @+scratch-bucket+)
+
+(defn reset-scratch-bucket []
+  (when @+scratch-bucket+
+    (.close @+scratch-bucket+))
+  (swap! +scratch-bucket+ (constantly nil)))
+
+;;; (scratch-bucket)
+;;; (reset-scratch-bucket)
+
+
 ;;; delectus
 ;;; --------
 

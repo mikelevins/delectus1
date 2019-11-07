@@ -4,6 +4,7 @@
 ;;; bucket names
 ;;; ---------------------------------------------------------------------
 
+(def +scratch-bucket-name+ "scratch")
 (def +delectus-users-bucket-name+ "delectus_users")
 (def +delectus-content-bucket-name+ "delectus_content")
 
