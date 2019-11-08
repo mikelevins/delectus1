@@ -209,7 +209,17 @@
       (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
       (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
       (couchio/error-if-wrong-owner "Can't update list" list-cbmap userid)
-      
+
+      ;;; NOTE: the lists in a collection are represented as the ID strings of the
+      ;;;       list documents. The collection's "lists" field is a set of these
+      ;;;       ID strings. CouchbaseArrayList does not support removing a value
+      ;;;       by value, only by index, which would mean we must fetch the
+      ;;;       lists object and search it for the ID to be removed. Instead,
+      ;;;       we represent the set as a map (that is, as a JSON object). The
+      ;;;       IDs are stored as the keys of the map, which means we can remove them
+      ;;;       using the subdocument API without the extra fetch-and-compare.
+      ;;;       The value stored on each key doesn't matter, so currently it's
+      ;;;       always null.
       (let [mutator (.mutateIn content-bucket collection-id)
             updater (.upsert mutator (str +lists-attribute+ "." list-id) nil)]
         (.execute updater))
