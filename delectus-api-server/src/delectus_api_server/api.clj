@@ -56,13 +56,16 @@
 ;;; private admin endpoints
 
 ;;; TODO
+;;; api/register-user
 (defn register-user [email password])
+;;; api/update-user!
 (defn update-user! [userid new-values-map])
 
 ;;; ---------------------------------------------------------------------
 ;;; users & sessions
 ;;; ---------------------------------------------------------------------
 
+;;; /delectus/login
 (defn email->user [email]
   (let [found (couchio/find-objects
                (config/delectus-users-bucket) []
@@ -76,6 +79,7 @@
 ;;; (email->user "greer@evins.net")
 ;;; (email->user "nobody@nowhere.net")
 
+;;; /delectus/userid
 (defn email->userid [email]
   (let [found-user (email->user email)]
     (if found-user
@@ -90,6 +94,7 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
+;;; /delectus/collections
 (defn list-collections [userid]
   (couchio/find-objects (config/delectus-content-bucket)
                         ["name" "id"]
@@ -98,6 +103,7 @@
 
 ;;; (list-collections (email->userid "mikel@evins.net"))
 
+;;; /delectus/new_collection
 (defn create-collection [& {:keys [id name owner-id]
                             :or {id (makeid)
                                  name nil
@@ -119,8 +125,10 @@
 ;;; (create-collection :id (makeid) :name "Stuff" :owner-id (email->userid "nobody@evins.net"))
 
 ;;; TODO
+;;; /delectus/delete_collection
 (defn mark-collection-deleted [userid collection-id deleted?])
 
+;;; /delectus/collection_with_id
 (defn find-collection-by-id [userid collection-id]
   (let [found (couchio/get-collection collection-id)]
     (if (and found (couchio/json-object-owner? found userid))
@@ -133,6 +141,7 @@
 ;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
 ;;; (find-collection-by-id $greerid $defaultid)
 
+;;; /delectus/collection_named
 (defn find-collection-by-name [userid collection-name]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id" "items"]
@@ -147,14 +156,19 @@
 ;;; (find-collection-by-name (email->userid "mikel@evins.net") "NOPE!")
 
 ;;; TODO
+;;; /delectus/collection_name
 (defn get-collection-name [userid collection-id])
 
 ;;; TODO
+;;; /delectus/rename_collection
 (defn update-collection-name [userid collection-id new-name])
 
 ;;; TODO
+;;; /delectus/collection_lists
 (defn get-collection-lists [userid collection-id])
 
+;;; TODO
+;;; /delectus/collection_add_list
 (defn collection-add-list [userid collection-id list-id]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)]
@@ -179,7 +193,8 @@
 ;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
 ;;; (collection-add-list $mikelid $defaultid $thingsid)
 
-
+;;; TODO
+;;; /delectus/collection_remove_list
 (defn collection-remove-list [userid collection-id list-id]
   )
 
@@ -197,6 +212,8 @@
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
+
+;;; /delectus/lists
 (defn list-lists [userid]
   (let [bucket (config/delectus-content-bucket)]
     (couchio/find-objects bucket ["name" "id"]
@@ -206,11 +223,15 @@
 ;;; (list-lists (email->userid "mikel@evins.net"))
 
 ;;; TODO
+;;; /delectus/new_list
 (defn create-list [userid name])
 
 ;;; TODO
+;;; /delectus/delete_list
+;;; /delectus/undelete_list
 (defn mark-list-deleted [userid list-id])
 
+;;; /delectus/list_with_id
 (defn find-list-by-id [userid list-id]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id"]
@@ -223,6 +244,7 @@
 ;;; (def $listid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
 ;;; (find-list-by-id (email->userid "mikel@evins.net") $listid)
 
+;;; /delectus/list_named
 (defn find-list-by-name [userid list-name]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id"]
@@ -236,46 +258,63 @@
 ;;; (find-list-by-name (email->userid "mikel@evins.net") "NOPE!")
 
 ;;; TODO
+;;; /delectus/list_name
 (defn list-name [userid list-id])
 
 ;;; TODO
+;;; /delectus/rename_list
 (defn update-list-name [userid list-id new-name])
 
 ;;; TODO
+;;; /delectus/list_columns
 (defn list-columns [userid list-id])
 
 ;;; TODO
+;;; /delectus/column_with_id
 (defn find-column-by-id [userid list-id column-id])
 
 ;;; TODO
+;;; /delectus/column_named
 (defn find-column-by-name [userid list-id column-name])
 
 ;;; TODO
+;;; /delectus/new_column
 (defn list-add-column [userid list-id column-name])
 
 ;;; TODO
+;;; /delectus/delete_column
+;;; /delectus/undelete_column
 (defn mark-column-deleted [userid list-id column-id])
 
 ;;; TODO
+;;; /delectus/column_name
 (defn column-name [userid list-id column-id])
 
 ;;; TODO
+;;; /delectus/rename_column
 (defn update-column-name [userid list-id column-id new-name])
 
 ;;; TODO
+;;; /delectus/list_items
 (defn list-items [userid list-id])
 
 ;;; TODO
+;;; /delectus/item_with_id
 (defn find-item-by-id [userid list-id item-id])
 
 ;;; TODO
+;;; /delectus/new_item
 (defn list-add-item [userid list-id])
 
 ;;; TODO
+;;; /delectus/delete_item
+;;; /delectus/undelete_item
 (defn mark-item-deleted [userid list-id deleted?])
 
 ;;; TODO
+;;; /delectus/item_column_value
 (defn item-column-value [userid list-id column-id])
 
 ;;; TODO
+;;; /delectus/set_item_column_value
 (defn update-item-column-value [userid list-id column-id new-value])
