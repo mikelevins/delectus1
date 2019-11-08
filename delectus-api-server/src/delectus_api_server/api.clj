@@ -18,7 +18,6 @@
 ;;; support functions
 ;;; =====================================================================
 
-;;; ---------------------------------------------------------------------
 ;;; users
 ;;; ---------------------------------------------------------------------
 
@@ -52,7 +51,7 @@
 ;;; (email->userid "greer@evins.net")
 ;;; (email->userid "nobody@nowhere.net")
 
-;;; ---------------------------------------------------------------------
+
 ;;; collections
 ;;; ---------------------------------------------------------------------
 
@@ -68,6 +67,7 @@
     (if (empty? found)
       nil
       (first found))))
+
 
 ;;; =====================================================================
 ;;; API-endpoint functions
@@ -123,22 +123,30 @@
   (couchio/error-if-collection-id-exists id)
   (errors/error-if-nil name "Missing :name parameter" {:context 'new-collection})
   (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-collection})
-  (errors/error-if-nil (id->user owner-id) "No such user" {:parameter :owner-id
-                                                           :value owner-id
-                                                           :context 'new-collection})
+  (errors/error-if-nil (id->user owner-id)
+                       "No such user"
+                       {:parameter :owner-id :value owner-id :context 'new-collection})
   (errors/error-if (name->collection owner-id name)
-                   "Collection name exists" {:parameter :name :value name})
+                   "Collection name exists"
+                   {:parameter :name :value name})
 
-  (let [collection-doc (couchio/make-collection-document :id id :name name :owner-id owner-id)]
-    (.upsert (config/delectus-content-bucket) collection-doc)
+  (let [collection-doc (couchio/make-collection-document
+                        :id id
+                        :name name
+                        :owner-id owner-id)]
+
+    (.upsert (config/delectus-content-bucket)
+             collection-doc)
     id))
 
 ;;; (new-collection :id (makeid) :name "Parts" :owner-id (email->userid "mikel@evins.net"))
 ;;; (new-collection :id (makeid) :name "Stuff" :owner-id (email->userid "nobody@evins.net"))
 
+
 ;;; TODO
 ;;; /delectus/delete_collection
 (defn delete-collection [userid collection-id deleted?])
+
 
 ;;; /delectus/collection_with_id
 (defn collection-with-id [userid collection-id]
@@ -152,6 +160,7 @@
 ;;; (collection-with-id $mikelid $defaultid)
 ;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
 ;;; (collection-with-id $greerid $defaultid)
+
 
 ;;; /delectus/collection_named
 (defn collection-named [userid collection-name]
@@ -167,23 +176,27 @@
 ;;; (collection-named (email->userid "mikel@evins.net") "Default Collection")
 ;;; (collection-named (email->userid "mikel@evins.net") "NOPE!")
 
+
 ;;; TODO
 ;;; /delectus/collection_name
 (defn collection-name [userid collection-id])
+
 
 ;;; TODO
 ;;; /delectus/rename_collection
 (defn rename-collection [userid collection-id new-name])
 
+
 ;;; TODO
 ;;; /delectus/collection_lists
 (defn collection-lists [userid collection-id])
 
-;;; TODO
+
 ;;; /delectus/collection_add_list
 (defn collection-add-list [userid collection-id list-id]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)]
+
     (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
     (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
     (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
@@ -197,12 +210,14 @@
       (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
       (couchio/error-if-wrong-owner "Can't update list" list-cbmap userid)
       
-      (.get collection-cbmap "lists"))))
+      (let [mutator (.mutateIn content-bucket collection-id)
+            updater (.arrayAddUnique mutator +lists-attribute+ list-id)]
+        (.execute updater)))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (def $default (couchio/get-collection $defaultid))
-;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
 ;;; (collection-add-list $mikelid $defaultid $thingsid)
 
 ;;; TODO
