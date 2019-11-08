@@ -17,7 +17,7 @@
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; tools for exporting data from Couchbase
+;;; tools for exporting Couchbase Delectus data to files
 
 (defn export-delectus-users [out-file]
   (let [bucket (config/delectus-users-bucket)

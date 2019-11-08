@@ -2,7 +2,7 @@
   (:require
    [clojure.edn :as edn]
    [delectus-api-server.configuration :as config]
-   [delectus-api-server.constants :as constants]
+   [delectus-api-server.constants :refer :all]
    [delectus-api-server.errors :as errors])
   (:import
    (com.couchbase.client.java.document.json JsonArray JsonObject)
@@ -50,38 +50,17 @@
 
 (defn json-object-type [obj]
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
-  (.get obj constants/+json-object-type-attribute+))
+  (.get obj +type-attribute+))
 
 (defn json-object-owner-id [obj]
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
-  (.get obj constants/+json-object-owner-id-attribute+))
+  (.get obj +owner-id-attribute+))
 
 (defn json-object-items [obj]
-  (errors/error-if-not (itemizing-json-object? obj) "Not an itemizing JSON object" {:object obj})
-  (.get obj constants/+items-attribute+))
+  (.get obj +items-attribute+))
 
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (json-object-items (get-collection $defaultid))
-
-(defn json-object-max-item-index [obj]
-  (errors/error-if-not (itemizing-json-object? obj) "Not an itemizing JSON object" {:object obj})
-  (let [items (json-object-items obj)
-        indexes (into [] (.getNames items))]
-    (if (empty? indexes) nil
-        (str (apply max (map edn/read-string (into [] indexes)))))))
-
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (json-object-max-item-index (get-collection $defaultid))
-
-(defn json-object-next-item-index [obj]
-  (errors/error-if-not (itemizing-json-object? obj) "Not an itemizing JSON object" {:object obj})
-  (let [items (json-object-items obj)
-        indexes (into [] (.getNames items))]
-    (if (empty? indexes) "0"
-        (str (+ 1 (apply max (map edn/read-string (into [] indexes))))))))
-
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (json-object-next-item-index (get-collection $defaultid))
 
 ;;; predicates
 ;;; ---------------
@@ -94,8 +73,8 @@
 
 (defn itemizing-json-object? [obj]
   (and (instance? JsonObject obj)
-       (or (json-object-type? obj constants/+delectus-collection-document-type+)
-           (json-object-type? obj constants/+delectus-list-document-type+))))
+       (or (json-object-type? obj +collection-type+)
+           (json-object-type? obj +list-type+))))
 
 ;;; (def $fred (make-json-object {"name" "Fred" "age" 35}))
 ;;; (itemizing-json-object? $fred)
@@ -118,11 +97,11 @@
 ;;; (make-json-document "bar_document" {"name" "Fred" "age" 35 "things" {}})
 
 (defn make-collection-document [id name ownerid]
-  (let [obj-map {constants/+type-attribute+ constants/+delectus-collection-document-type+
-                 constants/+id-attribute+ id
-                 constants/+name-attribute+ name
-                 constants/+owner-id-attribute+ ownerid
-                 constants/+items-attribute+ {}}]
+  (let [obj-map {+type-attribute+ +collection-type+
+                 +id-attribute+ id
+                 +name-attribute+ name
+                 +owner-id-attribute+ ownerid
+                 +lists-attribute+ []}]
     (make-json-document id obj-map)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
@@ -134,6 +113,14 @@
 
 ;;; generic JsonDocuments
 ;;; ----------------------
+
+(defn id-exists? [bucket docid]
+  (.exists bucket docid))
+
+;;; (def $bucket (config/delectus-users-bucket))
+;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))
+;;; (id-exists? $bucket $mikelid)
+;;; (id-exists? $bucket "NOPE!")
 
 (defn get-document [bucket docid]
   (.get bucket docid))
@@ -151,7 +138,7 @@
            (let [candidate (get-document (config/delectus-users-bucket) userid)]
              (and candidate
                   (let [obj (.content candidate)]
-                    (json-object-type? obj constants/+delectus-user-document-type+)
+                    (json-object-type? obj +user-type+)
                     obj))))
       nil))
 
@@ -170,14 +157,14 @@
            (let [candidate (get-document (config/delectus-content-bucket) collectionid)]
              (and candidate
                   (let [obj (.content candidate)]
-                    (json-object-type? obj constants/+delectus-collection-document-type+)
+                    (json-object-type? obj +collection-type+)
                     obj))))
       nil))
 
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (get-collection $defaultid)
 ;;; (def $bucket (config/delectus-content-bucket))
-;;; (.content (.execute (.get (.lookupIn $bucket $defaultid) (into-array ["items"]))) 0)
+;;; (.content (.execute (.get (.lookupIn $bucket $defaultid) (into-array ["lists"]))) 0)
 ;;; (.content (.execute (.get (.lookupIn $bucket $defaultid) (into-array ["NOPE"]))) 0)
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
@@ -193,7 +180,7 @@
            (let [candidate (get-document (config/delectus-content-bucket) listid)]
              (and candidate
                   (let [obj (.content candidate)]
-                    (json-object-type? obj constants/+delectus-list-document-type+)
+                    (json-object-type? obj +list-type+)
                     obj))))
       nil))
 
@@ -231,7 +218,7 @@
 
 ;;; (make-object-selector (config/delectus-users-bucket) [] {})
 ;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" constants/+delectus-list-document-type+ "id" "FOO!"})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" +delectus-list-document-type+ "id" "FOO!"})
 
 (defn find-objects [bucket keys matching]
   (let [selector (make-object-selector bucket keys matching)
@@ -242,8 +229,8 @@
       (map #(.get (.value %) bucket-name) results)
       (map #(.value %) results))))
 
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" constants/+delectus-list-document-type+}))
-;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" constants/+delectus-list-document-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +delectus-list-document-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +delectus-list-document-type+}))
 
 ;;; ---------------------------------------------------------------------
 ;;; JsonDocument helpers
@@ -276,6 +263,29 @@
 ;;; couchio errors
 ;;; ---------------------------------------------------------------------
 
+(defn error-if-no-such-id [message bucket id]
+  (if-not (id-exists? bucket id)
+    (throw (ex-info message
+                    {:id id
+                     :bucket (.name bucket)
+                     :error-signaled-by 'error-if-no-such-id}))))
+
+(defn error-if-wrong-type [message couch-object type-name]
+  (if-not (= type-name (.get couch-object +type-attribute+))
+    (throw (ex-info message
+                    {:object-id (.get couch-object +id-attribute+) 
+                     :expected-type type-name
+                     :found-type (.get couch-object +type-attribute+)
+                     :error-signaled-by 'error-if-wrong-type}))))
+
+(defn error-if-wrong-owner [message couch-object owner-id]
+  (if-not (= owner-id (.get couch-object +owner-id-attribute+))
+    (throw (ex-info message
+                    {:object-id (.get couch-object +id-attribute+) 
+                     :expected-owner owner-id
+                     :found-owner (.get couch-object +owner-id-attribute+)
+                     :error-signaled-by 'error-if-wrong-owner}))))
+
 (defn error-if-collection-id-exists [id]
   (let [found (get-document (config/delectus-content-bucket) id)]
     (if found
@@ -283,3 +293,4 @@
                       {:id id
                        :bucket "delectus-content-bucket"
                        :error-signaled-by 'error-if-collection-id-exists})))))
+
