@@ -28,6 +28,30 @@
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (def $mikel (id->user $mikelid))
 
+(defn email->user [email]
+  (let [found (couchio/find-objects
+               (config/delectus-users-bucket) []
+               {+type-attribute+ +user-type+
+                +email-attribute+ email})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+
+;;; (email->user "mikel@evins.net")
+;;; (email->user "greer@evins.net")
+;;; (email->user "nobody@nowhere.net")
+
+(defn email->userid [email]
+  (let [found-user (email->user email)]
+    (if found-user
+      (.get found-user "id")
+      nil)))
+
+;;; (email->userid "mikel@evins.net")
+;;; (email->userid "greer@evins.net")
+;;; (email->userid "nobody@nowhere.net")
+
 ;;; ---------------------------------------------------------------------
 ;;; collections
 ;;; ---------------------------------------------------------------------
@@ -66,29 +90,19 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; /delectus/login
-(defn email->user [email]
-  (let [found (couchio/find-objects
-               (config/delectus-users-bucket) []
-               {+type-attribute+ +user-type+
-                +email-attribute+ email})]
-    (if (empty? found)
-      nil
-      (first found))))
 
-;;; (email->user "mikel@evins.net")
-;;; (email->user "greer@evins.net")
-;;; (email->user "nobody@nowhere.net")
-
-;;; /delectus/userid
-(defn email->userid [email]
+(defn login [email password]
   (let [found-user (email->user email)]
     (if found-user
-      (.get found-user "id")
-      nil)))
+      (if (hashers/check password (.get found-user "password-hash"))
+        found-user
+        false)
+      false)))
 
-;;; (email->userid "mikel@evins.net")
-;;; (email->userid "greer@evins.net")
-;;; (email->userid "nobody@nowhere.net")
+;;; (login-user "mikel@evins.net" "")
+
+;;; /delectus/userid
+(defn userid [email] (email->userid email))
 
 ;;; ---------------------------------------------------------------------
 ;;; Collections

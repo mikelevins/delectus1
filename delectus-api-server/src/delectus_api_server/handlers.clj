@@ -39,18 +39,6 @@
 ;;; support functions
 ;;; ---------------------------------------------------------------------
 
-(defn login-user [email password]
-  (let [found-user (api/email->user email)]
-    (if found-user
-      (if (hashers/check password (.get found-user "password-hash"))
-        found-user
-        false)
-      false)))
-
-;;; (login-user "mikel@evins.net" "")
-
-(defn logout-user [email])
-
 ;;; ---------------------------------------------------------------------
 ;;; user handlers
 ;;; ---------------------------------------------------------------------
@@ -59,7 +47,7 @@
   (let [params (:params req)
         supplied-email (:email params)
         supplied-password (:password params)
-        found-user (login-user supplied-email supplied-password)]
+        found-user (api/login supplied-email supplied-password)]
     (if found-user
       {:status  200
        :headers {"Content-Type" "application/json"}
@@ -73,7 +61,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params request))]
-              (json/write-str (api/email->userid email)))})
+              (json/write-str (api/userid email)))})
 
 
 ;;; ---------------------------------------------------------------------
