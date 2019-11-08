@@ -68,6 +68,22 @@
       nil
       (first found))))
 
+;;; lists
+;;; ---------------------------------------------------------------------
+
+(defn id->list [list-id]
+  (couchio/get-list list-id))
+
+(defn name->list [userid name]
+  (let [found (couchio/find-objects
+               (config/delectus-content-bucket) []
+               {+type-attribute+ +list-type+
+                +owner-id-attribute+ userid
+                +name-attribute+ name})]
+    (if (empty? found)
+      nil
+      (first found))))
+
 
 ;;; =====================================================================
 ;;; API-endpoint functions
@@ -120,7 +136,7 @@
                          :or {id (makeid)
                               name nil
                               owner-id nil}}]
-  (couchio/error-if-collection-id-exists id)
+  (couchio/error-if-id-exists id)
   (errors/error-if-nil name "Missing :name parameter" {:context 'new-collection})
   (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-collection})
   (errors/error-if-nil (id->user owner-id)
@@ -231,7 +247,6 @@
 ;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
 ;;; (collection-add-list $mikelid $defaultid $thingsid)
 
-;;; TODO
 ;;; /delectus/collection_remove_list
 (defn collection-remove-list [userid collection-id list-id]
   (let [users-bucket (config/delectus-users-bucket)
@@ -280,9 +295,31 @@
 
 ;;; (lists (email->userid "mikel@evins.net"))
 
-;;; TODO
 ;;; /delectus/new_list
-(defn new-list [userid name])
+(defn new-list [& {:keys [id name owner-id]
+                   :or {id (makeid)
+                        name nil
+                        owner-id nil}}]
+  (couchio/error-if-id-exists id)
+  (errors/error-if-nil name "Missing :name parameter" {:context 'new-list})
+  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-list})
+  (errors/error-if-nil (id->user owner-id)
+                       "No such user"
+                       {:parameter :owner-id :value owner-id :context 'new-list})
+  (errors/error-if (name->list owner-id name)
+                   "List name exists"
+                   {:parameter :name :value name})
+
+  (let [list-doc (couchio/make-list-document :id id
+                                             :name name
+                                             :owner-id owner-id)]
+
+    (.upsert (config/delectus-content-bucket)
+             list-doc)
+    id))
+
+;;; (new-list :id (makeid) :name "Stuff" :owner-id (email->userid "mikel@evins.net"))
+
 
 ;;; TODO
 ;;; /delectus/delete_list

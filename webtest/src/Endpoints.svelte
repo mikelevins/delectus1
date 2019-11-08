@@ -127,7 +127,22 @@
  function getUserLists () {
      callDelectusAPI("lists","getUserLists_response");
  }
+
  
+ function newList () {
+     let listName = document.getElementById("newList_list_name").value;
+     let uri = "http://mars.local:9000/delectus/new_list";
+     let query = "?email="+$authorization["email"]+"&name="+listName;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("newList_response").innerHTML=JSON.stringify(data));
+ }
+
  function getListByName () {
      let listName = document.getElementById("getListByName_list_name").value;
      let uri = "http://mars.local:9000/delectus/list_named";
@@ -252,6 +267,13 @@
         <td class="endpoint"><button on:click={getUserLists}>/delectus/lists</button></td>
         <td></td>
         <td id="getUserLists_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={newList}>/delectus/new_list</button></td>
+        <td><input type="text" id="newList_list_name" placeholder="List name"/></td>
+        <td id="newList_response"></td>
     </tr>
 
     <tr>

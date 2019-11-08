@@ -338,7 +338,7 @@
                      :found-owner (.get couch-object +owner-id-attribute+)
                      :error-signaled-by 'error-if-wrong-owner}))))
 
-(defn error-if-collection-id-exists [id]
+(defn error-if-id-exists [id]
   (let [found (get-document (config/delectus-content-bucket) id)]
     (if found
       (throw (ex-info "An object with this ID already exists"

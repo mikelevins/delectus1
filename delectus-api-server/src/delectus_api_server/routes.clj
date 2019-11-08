@@ -53,7 +53,7 @@
   (GET "/delectus/lists" [] handlers/lists)                                  
   (GET "/delectus/list_named" [] handlers/list-named)                        
   (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
-  ;; (GET "/delectus/new_list" [] handlers/new-list)                         
+  (GET "/delectus/new_list" [] handlers/new-list)                         
   ;; (GET "/delectus/delete_list" [] handlers/delete-list)                   
   ;; (GET "/delectus/undelete_list" [] handlers/undelete-list)               
   ;; (GET "/delectus/list_name" [] handlers/list-name                        
