@@ -175,7 +175,7 @@
 
 ;;; (def $bucket (config/delectus-content-bucket))
 ;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))
-;;; (def $docid (.get (delectus-api-server.api/find-collection-by-name $mikelid  "Default Collection") "id"))
+;;; (def $docid (.get (delectus-api-server.api/collection-named $mikelid  "Default Collection") "id"))
 ;;; (def $doc (get-document $bucket $docid))
 
 ;;; User objects
