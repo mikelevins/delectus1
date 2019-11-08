@@ -21,7 +21,7 @@
 
 (defn export-delectus-users [out-file]
   (let [bucket (config/delectus-users-bucket)
-        selector (couchio/make-object-selector bucket [] {+type-attribute+ +delectus-user-document-type+})
+        selector (couchio/make-object-selector bucket [] {+type-attribute+ +user-type+})
         results (.query bucket (N1qlQuery/simple selector))
         objects (map #(get (.toMap (.value %))
                            +delectus-users-bucket-name+)
@@ -36,7 +36,7 @@
 
 (defn export-delectus-collections [out-file]
   (let [bucket (config/delectus-content-bucket)
-        selector (couchio/make-object-selector bucket [] {+type-attribute+ +delectus-collection-document-type+})
+        selector (couchio/make-object-selector bucket [] {+type-attribute+ +collection-type+})
         results (.query bucket (N1qlQuery/simple selector))
         objects (map #(get (.toMap (.value %))
                            +delectus-content-bucket-name+)
@@ -50,7 +50,7 @@
 
 (defn export-delectus-lists [out-file]
   (let [bucket (config/delectus-content-bucket)
-        selector (couchio/make-object-selector bucket [] {+type-attribute+ +delectus-list-document-type+})
+        selector (couchio/make-object-selector bucket [] {+type-attribute+ +list-type+})
         results (.query bucket (N1qlQuery/simple selector))
         objects (map #(get (.toMap (.value %))
                            +delectus-content-bucket-name+)

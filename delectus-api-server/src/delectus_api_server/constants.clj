@@ -20,10 +20,14 @@
 ;;; JSON object attributes
 ;;; ---------------------------------------------------------------------
 
+(def +columns-attribute+ "columns")
+(def +deleted-attribute+ "deleted")
 (def +email-attribute+ "email")
+(def +enabled-attribute+ "enabled")
 (def +id-attribute+ "id")
 (def +items-attribute+ "items")
 (def +lists-attribute+ "lists")
 (def +name-attribute+ "name")
+(def +password-hash-attribute+ "password-hash")
 (def +owner-id-attribute+ "owner-id")
 (def +type-attribute+ "type")

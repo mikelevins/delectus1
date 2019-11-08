@@ -3,7 +3,8 @@
    [clojure.edn :as edn]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.constants :refer :all]
-   [delectus-api-server.errors :as errors])
+   [delectus-api-server.errors :as errors]
+   [delectus-api-server.identifiers :refer [makeid]])
   (:import
    (com.couchbase.client.java.document.json JsonArray JsonObject)
    (com.couchbase.client.java.document JsonDocument)
@@ -13,32 +14,38 @@
 
 
 ;;; ---------------------------------------------------------------------
-;;; experiments
+;;; how to create and access Couchbase data structures
 ;;; ---------------------------------------------------------------------
-
+;;; NOTE: creating a Couchbase data structure creates the object in the
+;;;       store if it does not already exist. It is therefore
+;;;       necessary to check for the existence of an id in the store
+;;;       using id-exists?  before calling the constructors, to avoid
+;;;       littering the bucket with gratuitous objects
+;;;
 ;;; (def $bucket (config/scratch-bucket))
-
+;;;
+;;; CouchbaseArrayList
+;;;
 ;;; (def $fruitsid "fruit_list")
 ;;; (def $fruits (CouchbaseArrayList. $fruitsid $bucket ["Apple" "Banana" "Cherry" "Date" "Eggplant"]))
 ;;; (class $fruits)
 ;;; (time (.get $fruits 3))
 ;;; (time (.set $fruits 3 "Durian"))
 ;;; (def $fruits2 (CouchbaseArrayList. $fruitsid $bucket))
-
-;;; (def $lookupin (.lookupIn $bucket $fruitsid))
-;;; (def $optionsbuilder (SubdocOptionsBuilder.))
-;;; (.get $lookupin "$document.id" $optionsbuilder)
-;;; (.execute (.get $lookupin "$document.id" $optionsbuilder))
-
+;;;
+;;; CouchbaseMap
+;;;
 ;;; (def $fredid "fred_map")
 ;;; (def $fred (CouchbaseMap. $fredid $bucket {"name" "Fred" "age" 35 "friends" (JsonArray/from ["Barney" "Betty"])}))
 ;;; (class $fred)
 ;;; (def $fred2 (CouchbaseMap. $fredid $bucket))
-
-;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (def $default-map (CouchbaseMap. $defaultid $bucket))
-
+;;;
+;;; lookupIn
+;;;
+;;; (def $lookupin (.lookupIn $bucket $fruitsid))
+;;; (def $optionsbuilder (SubdocOptionsBuilder.))
+;;; (.get $lookupin "$document.id" $optionsbuilder)
+;;; (.execute (.get $lookupin "$document.id" $optionsbuilder))
 
 
 ;;; ---------------------------------------------------------------------
@@ -46,7 +53,7 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; accessors
-;;; ---------------
+;;; ---------------------------------------------------------------------
 
 (defn json-object-type [obj]
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
@@ -63,7 +70,7 @@
 ;;; (json-object-items (get-collection $defaultid))
 
 ;;; predicates
-;;; ---------------
+;;; ---------------------------------------------------------------------
 
 (defn json-object-type? [obj type-string]
   (= type-string (json-object-type obj)))
@@ -71,18 +78,13 @@
 (defn json-object-owner? [obj ownerid]
   (= ownerid (json-object-owner-id obj)))
 
-(defn itemizing-json-object? [obj]
-  (and (instance? JsonObject obj)
-       (or (json-object-type? obj +collection-type+)
-           (json-object-type? obj +list-type+))))
-
 ;;; (def $fred (make-json-object {"name" "Fred" "age" 35}))
 ;;; (itemizing-json-object? $fred)
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (itemizing-json-object? (get-collection $defaultid))
 
 ;;; constructors
-;;; ---------------
+;;; ---------------------------------------------------------------------
 
 (defn make-json-object [object-map]
   (JsonObject/from object-map))
@@ -96,23 +98,69 @@
 ;;; (make-json-document "foo_document" {"name" "Fred" "age" 35})
 ;;; (make-json-document "bar_document" {"name" "Fred" "age" 35 "things" {}})
 
-(defn make-collection-document [id name ownerid]
+(defn make-user-document [& {:keys [id email name password-hash enabled]
+                             :or {id (makeid)
+                                  email nil
+                                  name nil
+                                  password-hash nil
+                                  enabled true}}]
+  (errors/error-if-nil email "Missing email parameter" {:context "make-user-document"})
+  (let [obj-map {+type-attribute+ +user-type+
+                 +id-attribute+ id
+                 +email-attribute+ email
+                 +name-attribute+ name
+                 +password-hash-attribute+ password-hash
+                 +enabled-attribute+ enabled}]
+    (make-json-document id obj-map)))
+
+;;; (make-user-document :email "mikel@evis.net")
+
+(defn make-collection-document [& {:keys [id name owner-id lists deleted]
+                                   :or {id (makeid)
+                                        name nil
+                                        owner-id nil
+                                        lists []
+                                        deleted false}}]
+  (errors/error-if-nil name "Missing name parameter" {:context "make-collection-document"})
+  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-collection-document"})
   (let [obj-map {+type-attribute+ +collection-type+
                  +id-attribute+ id
                  +name-attribute+ name
-                 +owner-id-attribute+ ownerid
-                 +lists-attribute+ []}]
+                 +owner-id-attribute+ owner-id
+                 +lists-attribute+ []
+                 +deleted-attribute+ deleted}]
     (make-json-document id obj-map)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (make-collection-document "foo_collection" "Random stuff" $mikelid)q
+;;; (make-collection-document :name "Random stuff" :owner-id $mikelid)
+
+(defn make-list-document [& {:keys [id name owner-id columns items deleted]
+                             :or {id (makeid)
+                                  name nil
+                                  owner-id nil
+                                  columns {}
+                                  items []
+                                  deleted false}}]
+  (errors/error-if-nil name "Missing name parameter" {:context "make-list-document"})
+  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-list-document"})
+  (let [obj-map {+type-attribute+ +list-type+
+                 +id-attribute+ id
+                 +name-attribute+ name
+                 +owner-id-attribute+ owner-id
+                 +columns-attribute+ columns
+                 +items-attribute+ items
+                 +deleted-attribute+ deleted}]
+    (make-json-document id obj-map)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (make-list-document :name "Random stuff" :owner-id $mikelid)
 
 ;;; ---------------------------------------------------------------------
-;;; simple fetch and store by id
+;;; fetch and store by id
 ;;; ---------------------------------------------------------------------
 
 ;;; generic JsonDocuments
-;;; ----------------------
+;;; ---------------------------------------------------------------------
 
 (defn id-exists? [bucket docid]
   (.exists bucket docid))
@@ -131,7 +179,7 @@
 ;;; (def $doc (get-document $bucket $docid))
 
 ;;; User objects
-;;; ----------------------
+;;; ---------------------------------------------------------------------
 
 (defn get-user [userid]
   (or (and userid
@@ -150,7 +198,7 @@
 ;;; (get-user $nopeid)
 
 ;;; Collection objects
-;;; ----------------------
+;;; ---------------------------------------------------------------------
 
 (defn get-collection [collectionid]
   (or (and collectionid
@@ -173,7 +221,7 @@
 ;;; (get-collection $nopeid)
 
 ;;; List objects
-;;; ----------------------
+;;; ---------------------------------------------------------------------
 
 (defn get-list [listid]
   (or (and listid
@@ -225,6 +273,7 @@
         bucket-name (.name bucket)
         results (.query bucket (N1qlQuery/simple selector))]
     (if (empty? keys)
+      ;; empty keys generate a SELECT *
       ;; SELECT * returns each result wrapped in a map like this: {bucket-name found-object}
       (map #(.get (.value %) bucket-name) results)
       (map #(.value %) results))))
@@ -237,11 +286,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defn put-key-if-changed [json-obj key new-value]
-  (let [has-key? (.containsKey json-obj key)
-        value-changed? (if has-key?
-                         (not (= new-value (.get json-obj key)))
-                         true)]
-    (if value-changed?
+  (let [changed? (if (.containsKey json-obj key)
+                   (not (= new-value (.get json-obj key)))
+                   true)]
+    (if changed?
       (JsonObject/from (merge (into {} (.toMap json-obj))
                               {key new-value}))
       json-obj)))
@@ -251,13 +299,14 @@
 ;;; (def $obj3 (put-key-if-changed $obj1 "name" "Barney"))
 
 (defn find-json-object-key-for-value [obj val]
-  (let [props (into [] (.getNames obj))]
-    (some #(and (= val (.get obj %))
-                %)
-          props)))
+  (let [the-keys (into [] (.getNames obj))]
+    (some (fn [key]
+            (and (= val (.get obj key))
+                 key))
+          the-keys)))
 
 ;;; (def $obj1 (JsonObject/from {"name" "Fred" "age" 35 "color" "orange"}))
-;;; (find-json-object-key-for-value $obj1 "orange")
+;;; (find-json-object-key-for-value $obj1 35)
 
 ;;; ---------------------------------------------------------------------
 ;;; couchio errors

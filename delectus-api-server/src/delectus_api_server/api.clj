@@ -111,11 +111,11 @@
   (errors/error-if (name->collection owner-id name)
                    "Collection name exists" {:parameter :name :value name})
 
-  (let [collection-doc (couchio/make-collection-document id name owner-id)]
+  (let [collection-doc (couchio/make-collection-document :id id :name name :owner-id owner-id)]
     (.upsert (config/delectus-content-bucket) collection-doc)
     id))
 
-;;; (create-collection :id (makeid) :name "Stuff" :owner-id (email->userid "mikel@evins.net"))
+;;; (create-collection :id (makeid) :name "Parts" :owner-id (email->userid "mikel@evins.net"))
 ;;; (create-collection :id (makeid) :name "Stuff" :owner-id (email->userid "nobody@evins.net"))
 
 ;;; TODO
