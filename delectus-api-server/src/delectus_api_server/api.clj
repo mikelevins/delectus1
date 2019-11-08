@@ -211,8 +211,9 @@
       (couchio/error-if-wrong-owner "Can't update list" list-cbmap userid)
       
       (let [mutator (.mutateIn content-bucket collection-id)
-            updater (.arrayAddUnique mutator +lists-attribute+ list-id)]
-        (.execute updater)))))
+            updater (.upsert mutator (str +lists-attribute+ "." list-id) nil)]
+        (.execute updater))
+      collection-id)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")

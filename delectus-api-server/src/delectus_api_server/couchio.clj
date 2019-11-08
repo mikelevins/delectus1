@@ -119,7 +119,10 @@
                                    :or {id (makeid)
                                         name nil
                                         owner-id nil
-                                        lists []
+                                        ;; lists is a set of list-ids
+                                        ;; we represent that as a JSON object
+                                        ;; the keys are the lists, the vals are ignored
+                                        lists {}
                                         deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-collection-document"})
   (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-collection-document"})
@@ -127,7 +130,7 @@
                  +id-attribute+ id
                  +name-attribute+ name
                  +owner-id-attribute+ owner-id
-                 +lists-attribute+ []
+                 +lists-attribute+ lists
                  +deleted-attribute+ deleted}]
     (make-json-document id obj-map)))
 
