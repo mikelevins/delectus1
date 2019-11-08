@@ -234,13 +234,33 @@
 ;;; TODO
 ;;; /delectus/collection_remove_list
 (defn collection-remove-list [userid collection-id list-id]
-  )
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [bucket (config/delectus-content-bucket)
+          collection-cbmap (CouchbaseMap. collection-id bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
+
+      (let [lookup (.lookupIn content-bucket collection-id)
+            list-path (str +lists-attribute+ "." list-id)
+            list-exists-test (.exists lookup (into-array [list-path]))
+            list-exists? (.content (.execute list-exists-test) 0)]
+        (if list-exists?
+          (let [mutator (.mutateIn content-bucket collection-id)
+                updater (.remove mutator list-path)]
+            (.execute updater))))
+      collection-id)))
 
 ;;; (def $bucket (config/delectus-content-bucket))
 ;;; (def $collid (.get (collection-named (email->userid "mikel@evins.net") "Default Collection") "id"))
 ;;; (def $coll (couchio/get-document $bucket $collid))
 ;;; (.toMap (.content $coll))
-;;; (def $thingsid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
+;;; (def $thingsid (.get (list-named (email->userid "mikel@evins.net") "Things") "id"))
 ;;; (def $things (couchio/get-document $bucket $thingsid))
 ;;; (.toMap (.content $things))
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
