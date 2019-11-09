@@ -1,6 +1,8 @@
 <script>
  import { authorization } from "./auth.js";
- import Endpoints from "./Endpoints.svelte";
+ import CollectionEndpoints from "./CollectionEndpoints.svelte";
+ import ListEndpoints from "./ListEndpoints.svelte";
+ import UserEndpoints from "./UserEndpoints.svelte";
  import Login from "./Login.svelte";
 </script>
 
@@ -8,7 +10,9 @@
 <p><em>version 2.0d1</em></p>
 
 {#if $authorization}
-    <Endpoints/>
+    <UserEndpoints/>
+    <CollectionEndpoints/>
+    <ListEndpoints/>
 {:else}
     <Login/>
 {/if}
