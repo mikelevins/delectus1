@@ -384,6 +384,7 @@
 ;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (get-collection-owner-id $default-collection-id)
 
+;;; TODO: replace with accessors that return individual list entries
 (defn get-collection-lists [collection-id]
   (let [bucket (config/delectus-content-bucket)]
     (errors/error-if-not (collection-exists? collection-id) "No such collection"
@@ -435,6 +436,8 @@
 ;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
 ;;; (get-list-owner-id $things-id)
 
+;;; TODO: replace with accessors that return attributes of
+;;; individual columns
 (defn get-list-columns [listid]
   (let [bucket (config/delectus-content-bucket)]
     (errors/error-if-not (list-exists? listid) "No such list"
@@ -444,6 +447,8 @@
 ;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
 ;;; (get-list-columns $things-id)
 
+;;; TODO: replace with accessors that return individual items
+;;;       or their fields
 (defn get-list-items [listid]
   (let [bucket (config/delectus-content-bucket)]
     (errors/error-if-not (list-exists? listid) "No such list"
