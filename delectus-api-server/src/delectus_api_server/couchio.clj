@@ -13,9 +13,9 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; how to create and access Couchbase data structures
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; NOTE: creating a Couchbase data structure creates the object in the
 ;;;       store if it does not already exist. It is therefore
 ;;;       necessary to check for the existence of an id in the store
@@ -48,8 +48,12 @@
 ;;; (.execute (.get $lookupin "$document.id" $optionsbuilder))
 
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; document and object helpers
+;;; =====================================================================
+
+;;; ---------------------------------------------------------------------
+;;; JsonObject
 ;;; ---------------------------------------------------------------------
 
 ;;; accessors
@@ -91,6 +95,36 @@
 
 ;;; (make-json-object {"name" "Fred" "age" 35})
 ;;; (make-json-object {"name" "Fred" "age" 35 "things" {}})
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (make-list-document :name "Random stuff" :owner-id $mikelid)
+
+(defn put-key-if-changed [json-obj key new-value]
+  (let [changed? (if (.containsKey json-obj key)
+                   (not (= new-value (.get json-obj key)))
+                   true)]
+    (if changed?
+      (JsonObject/from (merge (into {} (.toMap json-obj))
+                              {key new-value}))
+      json-obj)))
+
+;;; (def $obj1 (JsonObject/from {"name" "Fred"}))
+;;; (def $obj2 (put-key-if-changed $obj1 "name" "Fred"))
+;;; (def $obj3 (put-key-if-changed $obj1 "name" "Barney"))
+
+(defn find-json-object-key-for-value [obj val]
+  (let [the-keys (into [] (.getNames obj))]
+    (some (fn [key]
+            (and (= val (.get obj key))
+                 key))
+          the-keys)))
+
+;;; (def $obj1 (JsonObject/from {"name" "Fred" "age" 35 "color" "orange"}))
+;;; (find-json-object-key-for-value $obj1 35)
+
+;;; ---------------------------------------------------------------------
+;;; JsonDocument
+;;; ---------------------------------------------------------------------
 
 (defn make-json-document [id object-map]
   (JsonDocument/create id (JsonObject/from object-map)))
@@ -155,9 +189,6 @@
                  +deleted-attribute+ deleted}]
     (make-json-document id obj-map)))
 
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (make-list-document :name "Random stuff" :owner-id $mikelid)
-
 ;;; ---------------------------------------------------------------------
 ;;; fetch and store by id
 ;;; ---------------------------------------------------------------------
@@ -181,7 +212,7 @@
 ;;; (def $docid (.get (delectus-api-server.api/collection-named $mikelid  "Default Collection") "id"))
 ;;; (def $doc (get-document $bucket $docid))
 
-;;; User objects
+;;; Users
 ;;; ---------------------------------------------------------------------
 
 (defn get-user [userid]
@@ -200,7 +231,7 @@
 ;;; (def $nopeid nil)
 ;;; (get-user $nopeid)
 
-;;; Collection objects
+;;; Collections
 ;;; ---------------------------------------------------------------------
 
 (defn get-collection [collectionid]
@@ -223,7 +254,7 @@
 ;;; (def $nopeid nil)
 ;;; (get-collection $nopeid)
 
-;;; List objects
+;;; Lists
 ;;; ---------------------------------------------------------------------
 
 (defn get-list [listid]
@@ -242,12 +273,15 @@
 ;;; (def $nopeid nil)
 ;;; (get-list $nopeid)
 
-;;; ---------------------------------------------------------------------
-;;; subdocument access
-;;; ---------------------------------------------------------------------
-;;; getting and setting properties without fetching whole documents
 
-;;; general accessors
+;;; =====================================================================
+;;; Couchbase subdocument access
+;;; =====================================================================
+;;; Subdocument access enables us to fetch and store ojbject properties
+;;; without fetching whole objects
+
+;;; ---------------------------------------------------------------------
+;;; common general accessors
 ;;; ---------------------------------------------------------------------
 
 (defn object-attribute-exists? [bucket objectid attribute-name]
@@ -294,12 +328,10 @@
 ;;; (get-object-attribute (config/delectus-users-bucket) $mikelid "age")
 ;;; (upsert-object-attribute! (config/delectus-users-bucket) $mikelid "age" 59)
 
-;;; Common accessors
-;;; ---------------------------------------------------------------------
-
 (defn get-object-type [bucket objectid]
   (get-object-attribute bucket objectid +type-attribute+))
 
+;;; ---------------------------------------------------------------------
 ;;; Users
 ;;; ---------------------------------------------------------------------
 
@@ -384,6 +416,7 @@
 ;;; (get-user-enabled $mikelid)
 ;;; (set-user-enabled! $mikelid true)
 
+;;; ---------------------------------------------------------------------
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
@@ -433,6 +466,7 @@
 ;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (get-collection-deleted $default-collection-id)
 
+;;; ---------------------------------------------------------------------
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
@@ -491,9 +525,10 @@
 ;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
 ;;; (get-list-deleted $things-id)
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; N1QL queries
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
+;;; Searching for objects that match patterns
 
 (defn make-object-matchers [matchers-map]
   (let [ks (keys matchers-map)]
@@ -533,37 +568,10 @@
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +delectus-list-document-type+}))
 ;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +delectus-list-document-type+}))
 
-;;; ---------------------------------------------------------------------
-;;; JsonDocument helpers
-;;; ---------------------------------------------------------------------
 
-(defn put-key-if-changed [json-obj key new-value]
-  (let [changed? (if (.containsKey json-obj key)
-                   (not (= new-value (.get json-obj key)))
-                   true)]
-    (if changed?
-      (JsonObject/from (merge (into {} (.toMap json-obj))
-                              {key new-value}))
-      json-obj)))
-
-;;; (def $obj1 (JsonObject/from {"name" "Fred"}))
-;;; (def $obj2 (put-key-if-changed $obj1 "name" "Fred"))
-;;; (def $obj3 (put-key-if-changed $obj1 "name" "Barney"))
-
-(defn find-json-object-key-for-value [obj val]
-  (let [the-keys (into [] (.getNames obj))]
-    (some (fn [key]
-            (and (= val (.get obj key))
-                 key))
-          the-keys)))
-
-;;; (def $obj1 (JsonObject/from {"name" "Fred" "age" 35 "color" "orange"}))
-;;; (find-json-object-key-for-value $obj1 35)
-
-
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; couchio errors
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (defn error-if-no-such-id [message bucket id]
   (if-not (id-exists? bucket id)
