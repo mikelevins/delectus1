@@ -126,6 +126,16 @@
                   result (api/collection-remove-list userid collection-id list-id)]
               (json/write-str result))})
 
+(defn rename-collection [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  collection-id (:collectionid (:params req))
+                  new-name (:newname (:params req))
+                  result (api/rename-collection userid collection-id new-name)]
+              (json/write-str result))})
+
 ;;; ---------------------------------------------------------------------
 ;;; list handlers
 ;;; ---------------------------------------------------------------------

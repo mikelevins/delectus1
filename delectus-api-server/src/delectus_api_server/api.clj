@@ -197,12 +197,6 @@
 ;;; /delectus/collection_name
 (defn collection-name [userid collection-id])
 
-
-;;; TODO
-;;; /delectus/rename_collection
-(defn rename-collection [userid collection-id new-name])
-
-
 ;;; TODO
 ;;; /delectus/collection_lists
 (defn collection-lists [userid collection-id])
@@ -217,9 +211,8 @@
     (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
     (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
 
-    (let [bucket (config/delectus-content-bucket)
-          collection-cbmap (CouchbaseMap. collection-id bucket)
-          list-cbmap (CouchbaseMap. list-id bucket)]
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)
+          list-cbmap (CouchbaseMap. list-id content-bucket)]
 
       (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
       (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
@@ -255,8 +248,7 @@
     (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
     (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
 
-    (let [bucket (config/delectus-content-bucket)
-          collection-cbmap (CouchbaseMap. collection-id bucket)]
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
 
       (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
       (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
@@ -280,6 +272,31 @@
 ;;; (.toMap (.content $things))
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (collection-remove-list $mikelid $collid $thingsid)
+
+;;; /delectus/rename_collection
+(defn rename-collection [userid collection-id new-name]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
+
+      (let [mutator (.mutateIn content-bucket collection-id)
+            updater (.upsert mutator +name-attribute+ new-name)]
+        (.execute updater))
+      collection-id)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collections (email->userid "mikel@evins.net"))
+;;; (def $planets (collection-named $mikelid "Planets"))
+;;; (def $collid (.get $planets "id"))
+;;; (rename-collection $mikelid $collid "My Planets")
+;;; (collection-with-id $mikelid $collid)
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists

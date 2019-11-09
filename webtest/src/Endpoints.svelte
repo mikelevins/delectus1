@@ -90,6 +90,21 @@
          .then(data => document.getElementById("getCollectionByID_response").innerHTML=JSON.stringify(data));
  }
  
+ function renameCollection () {
+     let collectionID = document.getElementById("renameCollection_collection_id").value;
+     let newName = document.getElementById("renameCollection_new_name").value;
+     let uri = "http://mars.local:9000/delectus/rename_collection";
+     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&newname="+newName;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("renameCollection_response").innerHTML=JSON.stringify(data));
+ }
+ 
  function collectionAddList () {
      let collectionID = document.getElementById("collectionAddList_collection_id").value;
      let listID = document.getElementById("collectionAddList_list_id").value;
@@ -240,6 +255,16 @@
         <td class="endpoint"><button on:click={getCollectionByID}>/delectus/collection_with_id</button></td>
         <td><input type="text" id="getCollectionByID_collection_id" placeholder="Collection ID"/></td>
         <td id="getCollectionByID_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={renameCollection}>/delectus/rename_collection</button></td>
+        <td>
+            <input type="text" id="renameCollection_collection_id" placeholder="Collection ID"/>
+            <input type="text" id="renameCollection_new_name" placeholder="New name"/>
+        </td>
+        <td id="renameCollection_response"></td>
     </tr>
 
     <tr>
