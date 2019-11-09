@@ -253,10 +253,13 @@
       ;;;       we represent the set as a map (that is, as a JSON object). The
       ;;;       IDs are stored as the keys of the map, which means we can remove them
       ;;;       using the subdocument API without the extra fetch-and-compare.
-      ;;;       The value stored on each key doesn't matter, so currently it's
-      ;;;       always null.
-      (let [mutator (.mutateIn content-bucket collection-id)
-            updater (.upsert mutator (str +lists-attribute+ "." list-id) nil)]
+      ;;;       The value stored on each key is arbitrary, so we store the name of
+      ;;;       the list, for convenience.
+      (let [lookup (.lookupIn content-bucket list-id)
+            list-path (str +name-attribute+)
+            list-name (.content (.execute (.get lookup (into-array [list-path]))) 0)    
+            mutator (.mutateIn content-bucket collection-id)
+            updater (.upsert mutator (str +lists-attribute+ "." list-id) list-name)]
         (.execute updater))
       collection-id)))
 
