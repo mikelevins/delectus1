@@ -7,6 +7,9 @@
 (defn error [message context]
   (throw (ex-info message (merge context {:error-signaled-by 'error}))))
 
+(defn error-not-implemented [name]
+  (throw (ex-info (str name " is not yet implemented. "))))
+
 (defn error-if-empty [value message context]
   (if (nil? value)
     (throw (ex-info message (merge context {:error-signaled-by 'error-if-empty})))))
