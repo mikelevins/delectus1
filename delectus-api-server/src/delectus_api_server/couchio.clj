@@ -243,6 +243,226 @@
 ;;; (get-list $nopeid)
 
 ;;; ---------------------------------------------------------------------
+;;; subdocument access
+;;; ---------------------------------------------------------------------
+;;; getting and setting properties without fetching whole documents
+
+;;; general accessors
+;;; ---------------------------------------------------------------------
+
+(defn object-attribute-exists? [bucket objectid attribute-name]
+  (let [lookup (.exists (.lookupIn bucket objectid) (into-array [attribute-name]))
+        result (.execute lookup)]
+    (.content result 0)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (object-attribute-exists? (config/delectus-users-bucket) $mikelid "id")
+;;; (object-attribute-exists? (config/delectus-users-bucket) $mikelid "nope")
+
+(defn get-object-attribute [bucket objectid attribute-name]
+  (let [lookup (.get (.lookupIn bucket objectid) (into-array [attribute-name]))
+        result (.execute lookup)]
+    (.content result 0)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-object-attribute (config/delectus-users-bucket) $mikelid "id")
+;;; (get-object-attribute (config/delectus-users-bucket) $mikelid "nope")
+
+;;; set the attribute, but only if it already exists
+(defn update-object-attribute! [bucket objectid attribute-name value]
+  (errors/error-if-not (object-attribute-exists? bucket objectid attribute-name)
+                       "No such attribute"
+                       {:bucket-name (.name bucket)
+                        :object-id objectid
+                        :attribute-name attribute-name})
+  (let [mutator (.upsert (.mutateIn bucket objectid) attribute-name value)]
+    (.execute mutator)
+    value))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-object-attribute (config/delectus-users-bucket) $mikelid "name")
+;;; (update-object-attribute! (config/delectus-users-bucket) $mikelid "name" "mikel evins")
+;;; (update-object-attribute! (config/delectus-users-bucket) $mikelid "NOT-PRESENT" "FAIL")
+
+;;; set the attribute, adding it to the object if it's not present
+(defn upsert-object-attribute! [bucket objectid attribute-name value]
+  (let [mutator (.upsert (.mutateIn bucket objectid) attribute-name value)]
+    (.execute mutator)
+    value))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-object-attribute (config/delectus-users-bucket) $mikelid "age")
+;;; (upsert-object-attribute! (config/delectus-users-bucket) $mikelid "age" 59)
+
+;;; Common accessors
+;;; ---------------------------------------------------------------------
+
+(defn get-object-type [bucket objectid]
+  (get-object-attribute bucket objectid +type-attribute+))
+
+;;; Users
+;;; ---------------------------------------------------------------------
+
+(defn user-exists? [userid]
+  (let [bucket (config/delectus-users-bucket)]
+    (and (id-exists? bucket userid)
+         (= +user-type+ (get-object-type bucket userid)))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (user-exists? $mikelid)
+;;; (user-exists? "NO!")
+;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (user-exists? $default-collection-id)
+
+(defn get-user-email [userid]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user"
+                         {:id userid :context "get-user-email"})
+    (get-object-attribute bucket userid +email-attribute+)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user-email $mikelid)
+;;; (get-user-email "NOPE!")
+
+(defn get-user-name [userid]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user"
+                         {:id userid :context "get-user-name"})
+    (get-object-attribute bucket userid +name-attribute+)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user-name $mikelid)
+
+(defn get-user-password-hash [userid]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user"
+                         {:id userid :context "get-user-password-hash"})
+    (get-object-attribute bucket userid +password-hash-attribute+)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user-password-hash $mikelid)
+
+(defn get-user-enabled [userid]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user"
+                         {:id userid :context "get-user-enabled"})
+    (get-object-attribute bucket userid +enabled-attribute+)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user-enabled $mikelid)
+
+;;; Collections
+;;; ---------------------------------------------------------------------
+
+(defn collection-exists? [collection-id]
+  (let [bucket (config/delectus-content-bucket)]
+    (and (id-exists? bucket collection-id)
+         (= +collection-type+ (get-object-type bucket collection-id)))))
+
+;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (collection-exists? $default-collection-id)
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collection-exists? $mikelid)
+;;; (collection-exists? "NO!")
+
+(defn get-collection-name [collection-id]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (collection-exists? collection-id) "No such collection"
+                         {:id collection-id :context "get-collection-name"})
+    (get-object-attribute bucket collection-id +name-attribute+)))
+
+;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (get-collection-name $default-collection-id)
+;;; (get-collection-name "NOPE!")
+
+(defn get-collection-owner-id [collection-id]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (collection-exists? collection-id) "No such collection"
+                         {:id collection-id :context "get-collection-owner-id"})
+    (get-object-attribute bucket collection-id +owner-id-attribute+)))
+
+;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (get-collection-owner-id $default-collection-id)
+
+(defn get-collection-lists [collection-id]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (collection-exists? collection-id) "No such collection"
+                         {:id collection-id :context "get-collection-lists"})
+    (get-object-attribute bucket collection-id +lists-attribute+)))
+
+;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (get-collection-lists $default-collection-id)
+
+(defn get-collection-deleted [collection-id]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (collection-exists? collection-id) "No such collection"
+                         {:id collection-id :context "get-collection-deleted"})
+    (get-object-attribute bucket collection-id +deleted-attribute+)))
+
+;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (get-collection-deleted $default-collection-id)
+
+;;; Lists
+;;; ---------------------------------------------------------------------
+
+(defn list-exists? [listid]
+  (let [bucket (config/delectus-content-bucket)]
+    (and (id-exists? bucket listid)
+         (= +list-type+ (get-object-type bucket listid)))))
+
+;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
+;;; (list-exists? $things-id)
+;;; (def $default-collection-id "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (list-exists? $default-collection-id)
+;;; (list-exists? "NO!")
+
+(defn get-list-name [listid]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (list-exists? listid) "No such list"
+                         {:id listid :context "get-list-name"})
+    (get-object-attribute bucket listid +name-attribute+)))
+
+;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
+;;; (get-list-name $things-id)
+;;; (get-list-name "NOPE!")
+
+(defn get-list-owner-id [listid]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (list-exists? listid) "No such list"
+                         {:id listid :context "get-list-owner-id"})
+    (get-object-attribute bucket listid +owner-id-attribute+)))
+
+;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
+;;; (get-list-owner-id $things-id)
+
+(defn get-list-columns [listid]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (list-exists? listid) "No such list"
+                         {:id listid :context "get-list-columns"})
+    (get-object-attribute bucket listid +columns-attribute+)))
+
+;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
+;;; (get-list-columns $things-id)
+
+(defn get-list-items [listid]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (list-exists? listid) "No such list"
+                         {:id listid :context "get-list-items"})
+    (get-object-attribute bucket listid +items-attribute+)))
+
+;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
+;;; (get-list-items $things-id)
+
+(defn get-list-deleted [listid]
+  (let [bucket (config/delectus-content-bucket)]
+    (errors/error-if-not (list-exists? listid) "No such list"
+                         {:id listid :context "get-list-deleted"})
+    (get-object-attribute bucket listid +deleted-attribute+)))
+
+;;; (def $things-id "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
+;;; (get-list-deleted $things-id)
+
+;;; ---------------------------------------------------------------------
 ;;; N1QL queries
 ;;; ---------------------------------------------------------------------
 

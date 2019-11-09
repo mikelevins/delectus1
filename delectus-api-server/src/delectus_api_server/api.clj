@@ -254,7 +254,7 @@
       ;;;       IDs are stored as the keys of the map, which means we can remove them
       ;;;       using the subdocument API without the extra fetch-and-compare.
       ;;;       The value stored on each key is arbitrary, so we store the name of
-      ;;;       the list, for convenience.
+      ;;;       the list, for the user's convenience.
       (let [lookup (.lookupIn content-bucket list-id)
             list-path (str +name-attribute+)
             list-name (.content (.execute (.get lookup (into-array [list-path]))) 0)    
