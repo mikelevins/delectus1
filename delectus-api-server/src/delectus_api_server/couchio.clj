@@ -316,40 +316,73 @@
 
 (defn get-user-email [userid]
   (let [bucket (config/delectus-users-bucket)]
-    (errors/error-if-not (user-exists? userid) "No such user"
-                         {:id userid :context "get-user-email"})
+    (errors/error-if-not (user-exists? userid) "No such user" {:context get-user-email})
     (get-object-attribute bucket userid +email-attribute+)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (get-user-email $mikelid)
 ;;; (get-user-email "NOPE!")
 
+(defn set-user-email! [userid new-email]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user" {:context set-user-email!})
+    (upsert-object-attribute! bucket userid +email-attribute+ new-email)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user-email $mikelid)
+;;; (set-user-email! $mikelid "mikel@evins.net")
+
 (defn get-user-name [userid]
   (let [bucket (config/delectus-users-bucket)]
-    (errors/error-if-not (user-exists? userid) "No such user"
-                         {:id userid :context "get-user-name"})
+    (errors/error-if-not (user-exists? userid) "No such user" {:context get-user-name})
     (get-object-attribute bucket userid +name-attribute+)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (get-user-name $mikelid)
 
+(defn set-user-name! [userid new-name]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user" {:context set-user-name!})
+    (upsert-object-attribute! bucket userid +name-attribute+ new-name)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user-name $mikelid)
+;;; (set-user-name! $mikelid "mikel evins")
+
 (defn get-user-password-hash [userid]
   (let [bucket (config/delectus-users-bucket)]
-    (errors/error-if-not (user-exists? userid) "No such user"
-                         {:id userid :context "get-user-password-hash"})
+    (errors/error-if-not (user-exists? userid) "No such user" {:context get-user-password-hash})
     (get-object-attribute bucket userid +password-hash-attribute+)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (get-user-password-hash $mikelid)
 
+(defn set-user-password-hash! [userid new-hash]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user" {:context set-user-password-hash!})
+    (upsert-object-attribute! bucket userid +password-hash-attribute+ new-hash)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $hash (get-user-password-hash $mikelid))
+;;; (set-user-password-hash! $mikelid "NOPE!")
+;;; (set-user-password-hash! $mikelid $hash)
+
 (defn get-user-enabled [userid]
   (let [bucket (config/delectus-users-bucket)]
-    (errors/error-if-not (user-exists? userid) "No such user"
-                         {:id userid :context "get-user-enabled"})
+    (errors/error-if-not (user-exists? userid) "No such user" {:context get-user-enabled})
     (get-object-attribute bucket userid +enabled-attribute+)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (get-user-enabled $mikelid)
+
+(defn set-user-enabled! [userid enabled?]
+  (let [bucket (config/delectus-users-bucket)]
+    (errors/error-if-not (user-exists? userid) "No such user" {:context set-user-enabled!})
+    (upsert-object-attribute! bucket userid +enabled-attribute+ enabled?)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (get-user-enabled $mikelid)
+;;; (set-user-enabled! $mikelid true)
 
 ;;; Collections
 ;;; ---------------------------------------------------------------------
@@ -527,6 +560,7 @@
 ;;; (def $obj1 (JsonObject/from {"name" "Fred" "age" 35 "color" "orange"}))
 ;;; (find-json-object-key-for-value $obj1 35)
 
+
 ;;; ---------------------------------------------------------------------
 ;;; couchio errors
 ;;; ---------------------------------------------------------------------
@@ -561,4 +595,3 @@
                       {:id id
                        :bucket "delectus-content-bucket"
                        :error-signaled-by 'error-if-collection-id-exists})))))
-
