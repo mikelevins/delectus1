@@ -197,6 +197,32 @@
 ;;; /delectus/collection_name
 (defn collection-name [userid collection-id])
 
+
+;;; /delectus/rename_collection
+(defn rename-collection [userid collection-id new-name]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
+
+      (let [mutator (.mutateIn content-bucket collection-id)
+            updater (.upsert mutator +name-attribute+ new-name)]
+        (.execute updater))
+      collection-id)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collections (email->userid "mikel@evins.net"))
+;;; (def $planets (collection-named $mikelid "Planets"))
+;;; (def $collid (.get $planets "id"))
+;;; (rename-collection $mikelid $collid "My Planets")
+;;; (collection-with-id $mikelid $collid)
+
 ;;; TODO
 ;;; /delectus/collection_lists
 (defn collection-lists [userid collection-id])
@@ -272,31 +298,6 @@
 ;;; (.toMap (.content $things))
 ;;; (def $mikelid (email->userid "mikel@evins.net"))
 ;;; (collection-remove-list $mikelid $collid $thingsid)
-
-;;; /delectus/rename_collection
-(defn rename-collection [userid collection-id new-name]
-  (let [users-bucket (config/delectus-users-bucket)
-        content-bucket (config/delectus-content-bucket)]
-
-    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
-    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
-
-    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
-
-      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
-      (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
-
-      (let [mutator (.mutateIn content-bucket collection-id)
-            updater (.upsert mutator +name-attribute+ new-name)]
-        (.execute updater))
-      collection-id)))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (collections (email->userid "mikel@evins.net"))
-;;; (def $planets (collection-named $mikelid "Planets"))
-;;; (def $collid (.get $planets "id"))
-;;; (rename-collection $mikelid $collid "My Planets")
-;;; (collection-with-id $mikelid $collid)
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists
@@ -375,7 +376,29 @@
 
 ;;; TODO
 ;;; /delectus/rename_list
-(defn rename-list [userid list-id new-name])
+(defn rename-list [userid list-id new-name]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't update list" list-cbmap userid)
+
+      (let [mutator (.mutateIn content-bucket list-id)
+            updater (.upsert mutator +name-attribute+ new-name)]
+        (.execute updater))
+      list-id)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (lists (email->userid "mikel@evins.net"))
+;;; (def $stuff (list-named $mikelid "Stuff"))
+;;; (def $listid (.get $stuff "id"))
+;;; (rename-list $mikelid $listid "My Stuff")
+;;; (list-with-id $mikelid $listid)
 
 ;;; TODO
 ;;; /delectus/list_columns

@@ -158,6 +158,16 @@
                 (.toString found-list)
                 (json/write-str nil)))})
 
+(defn rename-list [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  new-name (:newname (:params req))
+                  result (api/rename-list userid list-id new-name)]
+              (json/write-str result))})
+
 (defn list-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}

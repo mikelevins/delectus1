@@ -185,6 +185,22 @@
          })
          .then(data => document.getElementById("getListByID_response").innerHTML=JSON.stringify(data));
  }
+ 
+ function renameList () {
+     let listID = document.getElementById("renameList_list_id").value;
+     let newName = document.getElementById("renameList_new_name").value;
+     let uri = "http://mars.local:9000/delectus/rename_list";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&newname="+newName;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("renameList_response").innerHTML=JSON.stringify(data));
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -314,6 +330,17 @@
         <td><input type="text" id="getListByID_list_id" placeholder="List ID"/></td>
         <td id="getListByID_response"></td>
     </tr>
+    
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={renameList}>/delectus/rename_list</button></td>
+        <td>
+            <input type="text" id="renameList_list_id" placeholder="List ID"/>
+            <input type="text" id="renameList_new_name" placeholder="New name"/>
+        </td>
+        <td id="renameList_response"></td>
+    </tr>
+
 </table>
 
 

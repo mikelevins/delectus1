@@ -38,10 +38,10 @@
   (GET "/delectus/collections" [] handlers/collections)
   (GET "/delectus/new_collection" [] handlers/new-collection)
   (GET "/delectus/collection_named" [] handlers/collection-named)
+  (GET "/delectus/rename_collection" [] handlers/rename-collection)
   (GET "/delectus/collection_with_id" [] handlers/collection-with-id)
   (GET "/delectus/collection_add_list" [] handlers/collection-add-list)
   (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
-  (GET "/delectus/rename_collection" [] handlers/rename-collection)
   ;; (GET "/delectus/delete_collection" [] handlers/delete-collection)        
   ;; (GET "/delectus/undelete_collection" [] handlers/undelete-collection)    
   ;; (GET "/delectus/collection_name" [] handlers/collection-name)
@@ -52,12 +52,12 @@
 
   (GET "/delectus/lists" [] handlers/lists)                                  
   (GET "/delectus/list_named" [] handlers/list-named)                        
+  (GET "/delectus/rename_list" [] handlers/rename-list)
   (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
   (GET "/delectus/new_list" [] handlers/new-list)                         
   ;; (GET "/delectus/delete_list" [] handlers/delete-list)                   
   ;; (GET "/delectus/undelete_list" [] handlers/undelete-list)               
   ;; (GET "/delectus/list_name" [] handlers/list-name                        
-  ;; (GET "/delectus/rename_list" [] handlers/rename-list                    
   ;; (GET "/delectus/list_columns" [] handlers/list-columns                  
   ;; (GET "/delectus/column_named" [] handlers/column-named                  
   ;; (GET "/delectus/column_with_id" [] handlers/column-with-id              
