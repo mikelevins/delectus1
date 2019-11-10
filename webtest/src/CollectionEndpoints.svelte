@@ -173,7 +173,7 @@
 <style>
  .endpoint { text-align: right; }
 
- .parameters-column { width: 33%; }
+ .parameters-column { width: 25%; }
  .response-column { width: 33%; }
 
  table {
@@ -185,7 +185,7 @@
  }
  
  th, td {
-     padding: 8px;
+     padding: 6px;
      text-align: left;
  } 
 </style>
