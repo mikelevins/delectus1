@@ -43,6 +43,7 @@
   (GET "/delectus/collection_add_list" [] handlers/collection-add-list)
   (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
   ;; (GET "/delectus/delete_collection" [] handlers/delete-collection)        
+  ;; (GET "/delectus/collection+deleted" [] handlers/collection-deleted?)        
   ;; (GET "/delectus/undelete_collection" [] handlers/undelete-collection)    
   ;; (GET "/delectus/collection_name" [] handlers/collection-name)
   ;; (GET "/delectus/collection_lists" [] handlers/collection-lists)          
@@ -56,6 +57,7 @@
   (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
   (GET "/delectus/new_list" [] handlers/new-list)                         
   ;; (GET "/delectus/delete_list" [] handlers/delete-list)                   
+  ;; (GET "/delectus/list_deleted" [] handlers/list-deleted?)                   
   ;; (GET "/delectus/undelete_list" [] handlers/undelete-list)               
   ;; (GET "/delectus/list_name" [] handlers/list-name                        
   ;; (GET "/delectus/list_columns" [] handlers/list-columns                  
@@ -63,6 +65,7 @@
   ;; (GET "/delectus/column_with_id" [] handlers/column-with-id              
   ;; (GET "/delectus/new_column" [] handlers/new-column                      
   ;; (GET "/delectus/delete_column" [] handlers/delete-column                
+  ;; (GET "/delectus/column_deleted" [] handlers/column_deleted?                
   ;; (GET "/delectus/undelete_column" [] handlers/undelete-column            
   ;; (GET "/delectus/column_name" [] handlers/column-name                    
   ;; (GET "/delectus/rename_column" [] handlers/rename-column                
@@ -70,6 +73,7 @@
   ;; (GET "/delectus/item_with_id" [] handlers/item-with-id                  
   ;; (GET "/delectus/new_item" [] handlers/new-item                          
   ;; (GET "/delectus/delete_item" [] handlers/delete-item                    
+  ;; (GET "/delectus/item_deleted" [] handlers/item-deleted?                    
   ;; (GET "/delectus/undelete_item" [] handlers/undelete-item                
   ;; (GET "/delectus/item_column_value" [] handlers/item-column-value        
   ;; (GET "/delectus/set_item_column_value" [] handlers/set-item-column-value
