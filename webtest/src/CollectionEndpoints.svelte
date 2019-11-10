@@ -51,6 +51,34 @@
          .then(data => document.getElementById("newCollection_response").innerHTML=JSON.stringify(data));
  }
  
+ function deleteCollection () {
+     let collectionID = document.getElementById("deleteCollection_collection_id").value;
+     let uri = "http://mars.local:9000/delectus/delete_collection";
+     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("deleteCollection_response").innerHTML=JSON.stringify(data));
+ }
+ 
+ function undeleteCollection () {
+     let collectionID = document.getElementById("undeleteCollection_collection_id").value;
+     let uri = "http://mars.local:9000/delectus/undelete_collection";
+     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("undeleteCollection_response").innerHTML=JSON.stringify(data));
+ }
+
  function getCollectionByName () {
      let collectionName = document.getElementById("getCollectionByName_collection_name").value;
      let uri = "http://mars.local:9000/delectus/collection_named";
@@ -170,6 +198,20 @@
         <td class="endpoint"><button on:click={newCollection}>/delectus/new_collection</button></td>
         <td><input type="text" id="newCollection_collection_name" placeholder="Collection name"/></td>
         <td id="newCollection_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={deleteCollection}>/delectus/delete_collection</button></td>
+        <td><input type="text" id="deleteCollection_collection_id" placeholder="Collection ID"/></td>
+        <td id="deleteCollection_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={undeleteCollection}>/delectus/undelete_collection</button></td>
+        <td><input type="text" id="undeleteCollection_collection_id" placeholder="Collection ID"/></td>
+        <td id="undeleteCollection_response"></td>
     </tr>
 
     <tr>

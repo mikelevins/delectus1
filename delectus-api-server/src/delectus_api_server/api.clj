@@ -159,10 +159,30 @@
 ;;; (new-collection :id (makeid) :name "Stuff" :owner-id (email->userid "nobody@evins.net"))
 
 
-;;; TODO
 ;;; /delectus/delete_collection
-(defn delete-collection [userid collection-id deleted?])
+;;; /delectus/undelete_collection
+(defn mark-collection-deleted [userid collection-id deleted?]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)
+        new-deleted-value (if deleted? true false)]
 
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
+
+      (let [mutator (.mutateIn content-bucket collection-id)
+            updater (.upsert mutator +deleted-attribute+ new-deleted-value)]
+        (.execute updater))
+      collection-id)))
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $coll (collection-with-id $mikelid $defaultid))
+;;; (mark-collection-deleted $mikelid $defaultid false)
 
 ;;; /delectus/collection_with_id
 (defn collection-with-id [userid collection-id]

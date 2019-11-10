@@ -86,6 +86,24 @@
                                    :name name
                                    :owner-id (api/userid email))))})
 
+(defn delete-collection [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  collection-id (:collectionid (:params req))
+                  result (api/mark-collection-deleted userid collection-id true)]
+              (json/write-str result))})
+
+(defn undelete-collection [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  collection-id (:collectionid (:params req))
+                  result (api/mark-collection-deleted userid collection-id false)]
+              (json/write-str result))})
+
 (defn collection-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
@@ -106,6 +124,16 @@
                 (.toString collection)
                 (json/write-str nil)))})
 
+(defn rename-collection [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  collection-id (:collectionid (:params req))
+                  new-name (:newname (:params req))
+                  result (api/rename-collection userid collection-id new-name)]
+              (json/write-str result))})
+
 (defn collection-add-list [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
@@ -124,16 +152,6 @@
                   collection-id (:collectionid (:params req))
                   list-id (:listid (:params req))
                   result (api/collection-remove-list userid collection-id list-id)]
-              (json/write-str result))})
-
-(defn rename-collection [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
-                  collection-id (:collectionid (:params req))
-                  new-name (:newname (:params req))
-                  result (api/rename-collection userid collection-id new-name)]
               (json/write-str result))})
 
 ;;; ---------------------------------------------------------------------
