@@ -50,6 +50,50 @@
          .then(data => document.getElementById("newList_response").innerHTML=JSON.stringify(data));
  }
 
+ 
+ function deleteList () {
+     let listID = document.getElementById("deleteList_list_id").value;
+     let uri = "http://mars.local:9000/delectus/delete_list";
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("deleteList_response").innerHTML=JSON.stringify(data));
+ }
+ 
+ function undeleteList () {
+     let listID = document.getElementById("undeleteList_list_id").value;
+     let uri = "http://mars.local:9000/delectus/undelete_list";
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("undeleteList_response").innerHTML=JSON.stringify(data));
+ }
+
+ 
+ function listDeleted () {
+     let listID = document.getElementById("listDeleted_list_id").value;
+     let uri = "http://mars.local:9000/delectus/list_deleted";
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("listDeleted_response").innerHTML=JSON.stringify(data));
+ }
+
  function getListByName () {
      let listName = document.getElementById("getListByName_list_name").value;
      let uri = "http://mars.local:9000/delectus/list_named";
@@ -141,6 +185,27 @@
         <td class="endpoint"><button on:click={newList}>/delectus/new_list</button></td>
         <td><input type="text" id="newList_list_name" placeholder="List name"/></td>
         <td id="newList_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={deleteList}>/delectus/delete_list</button></td>
+        <td><input type="text" id="deleteList_list_id" placeholder="List ID"/></td>
+        <td id="deleteList_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={undeleteList}>/delectus/undelete_list</button></td>
+        <td><input type="text" id="undeleteList_list_id" placeholder="List ID"/></td>
+        <td id="undeleteList_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={listDeleted}>/delectus/list_deleted</button></td>
+        <td><input type="text" id="listDeleted_list_id" placeholder="List ID"/></td>
+        <td id="listDeleted_response"></td>
     </tr>
 
     <tr>

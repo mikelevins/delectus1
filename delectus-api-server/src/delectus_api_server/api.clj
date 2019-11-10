@@ -179,10 +179,32 @@
         (.execute updater))
       collection-id)))
 
+
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $coll (collection-with-id $mikelid $defaultid))
 ;;; (mark-collection-deleted $mikelid $defaultid false)
+
+;;; /delectus/collection_deleted
+(defn collection-deleted? [userid collection-id]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't inspect collection" collection-cbmap userid)
+
+      (.get collection-cbmap +deleted-attribute+))))
+
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $coll (collection-with-id $mikelid $defaultid))
+;;; (collection-deleted? $mikelid $defaultid)
 
 ;;; /delectus/collection_with_id
 (defn collection-with-id [userid collection-id]
@@ -357,16 +379,45 @@
 
 ;;; (new-list :id (makeid) :name "Stuff" :owner-id (email->userid "mikel@evins.net"))
 
-
-;;; TODO
 ;;; /delectus/delete_list
 ;;; /delectus/undelete_list
-(defn delete-list [userid list-id])
+(defn mark-list-deleted [userid list-id deleted?]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)
+        new-deleted-value (if deleted? true false)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't update list" list-cbmap userid)
+
+      (let [mutator (.mutateIn content-bucket list-id)
+            updater (.upsert mutator +deleted-attribute+ new-deleted-value)]
+        (.execute updater))
+      list-id)))
+
+;;; /delectus/list_deleted
+(defn list-deleted? [userid list-id]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't inspect list" list-cbmap userid)
+
+      (.get list-cbmap +deleted-attribute+))))
 
 ;;; /delectus/list_with_id
 (defn list-with-id [userid list-id]
   (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id"]
+        found (couchio/find-objects bucket ["name" "id" "deleted"]
                                     {+type-attribute+ +list-type+
                                      +id-attribute+ list-id})]
     (if (empty? found)

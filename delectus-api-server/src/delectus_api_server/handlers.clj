@@ -104,6 +104,15 @@
                   result (api/mark-collection-deleted userid collection-id false)]
               (json/write-str result))})
 
+(defn collection-deleted? [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  collection-id (:collectionid (:params req))
+                  result (api/collection-deleted? userid collection-id)]
+              (json/write-str result))})
+
 (defn collection-with-id [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
@@ -166,6 +175,43 @@
                (map #(json/read-str (.toString %))
                     (api/lists (api/userid email)))))})
 
+(defn new-list [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  name (:name (:params req))]
+              (json/write-str
+               (api/new-list :id (makeid)
+                             :name name
+                             :owner-id (api/userid email))))})
+
+(defn delete-list [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  result (api/mark-list-deleted userid list-id true)]
+              (json/write-str result))})
+
+(defn undelete-list [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  result (api/mark-list-deleted userid list-id false)]
+              (json/write-str result))})
+
+(defn list-deleted? [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  result (api/list-deleted? userid list-id)]
+              (json/write-str result))})
+
 (defn list-named [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
@@ -195,13 +241,3 @@
               (if found-list
                 (.toString found-list)
                 (json/write-str nil)))})
-
-(defn new-list [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  name (:name (:params req))]
-              (json/write-str
-               (api/new-list :id (makeid)
-                             :name name
-                             :owner-id (api/userid email))))})

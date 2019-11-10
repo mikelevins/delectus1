@@ -78,6 +78,20 @@
          })
          .then(data => document.getElementById("undeleteCollection_response").innerHTML=JSON.stringify(data));
  }
+ 
+ function collectionDeleted () {
+     let collectionID = document.getElementById("collectionDeleted_collection_id").value;
+     let uri = "http://mars.local:9000/delectus/collection_deleted";
+     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("collectionDeleted_response").innerHTML=JSON.stringify(data));
+ }
 
  function getCollectionByName () {
      let collectionName = document.getElementById("getCollectionByName_collection_name").value;
@@ -212,6 +226,13 @@
         <td class="endpoint"><button on:click={undeleteCollection}>/delectus/undelete_collection</button></td>
         <td><input type="text" id="undeleteCollection_collection_id" placeholder="Collection ID"/></td>
         <td id="undeleteCollection_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={collectionDeleted}>/delectus/collection_deleted</button></td>
+        <td><input type="text" id="collectionDeleted_collection_id" placeholder="Collection ID"/></td>
+        <td id="collectionDeleted_response"></td>
     </tr>
 
     <tr>
