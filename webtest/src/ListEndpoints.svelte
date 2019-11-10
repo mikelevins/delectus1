@@ -143,9 +143,13 @@
 
 <style>
  .endpoint { text-align: right; }
+
+ .parameters-column { width: 33%; }
+ .response-column { width: 33%; }
  
  table {
      border-collapse: collapse;
+     table-layout: fixed;
  }
 
  table, th, td {
@@ -166,10 +170,10 @@
 
 <table>
     <tr>
-        <th>Method</th>
-        <th>Endpoint</th>
-        <th>Parameters</th>
-        <th>Response</th>
+        <th class="method-column">Method</th>
+        <th class="endpoint-column">Endpoint</th>
+        <th class="parameters-column">Parameters</th>
+        <th class="response-column">Response</th>
     </tr>
 
 
