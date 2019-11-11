@@ -195,6 +195,45 @@
                (map #(json/read-str (.toString %))
                     (api/lists (api/userid email)))))})
 
+(defn list-with-id [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  list-id (:id (:params req))
+                  found-list (api/list-with-id (api/userid email) list-id)]
+              (if found-list
+                (.toString found-list)
+                (json/write-str nil)))})
+
+(defn list-name [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  result (api/list-name userid list-id)]
+              (json/write-str result))})
+
+(defn list-named [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  list-name (:name (:params req))
+                  found-list (api/list-named (api/userid email) list-name)]
+              (if found-list
+                (.toString found-list)
+                (json/write-str nil)))})
+
+(defn rename-list [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  new-name (:newname (:params req))
+                  result (api/rename-list userid list-id new-name)]
+              (json/write-str result))})
+
 (defn new-list [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
@@ -231,33 +270,3 @@
                   list-id (:listid (:params req))
                   result (api/list-deleted? userid list-id)]
               (json/write-str result))})
-
-(defn list-named [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  list-name (:name (:params req))
-                  found-list (api/list-named (api/userid email) list-name)]
-              (if found-list
-                (.toString found-list)
-                (json/write-str nil)))})
-
-(defn rename-list [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
-                  list-id (:listid (:params req))
-                  new-name (:newname (:params req))
-                  result (api/rename-list userid list-id new-name)]
-              (json/write-str result))})
-
-(defn list-with-id [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  list-id (:id (:params req))
-                  found-list (api/list-with-id (api/userid email) list-id)]
-              (if found-list
-                (.toString found-list)
-                (json/write-str nil)))})

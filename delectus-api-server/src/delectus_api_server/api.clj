@@ -416,6 +416,84 @@
 
 ;;; (lists (email->userid "mikel@evins.net"))
 
+;;; /delectus/list_with_id
+;;; ---------------------------------------------------------------------
+
+(defn list-with-id [userid list-id]
+  (let [bucket (config/delectus-content-bucket)
+        found (couchio/find-objects bucket ["name" "id" "deleted"]
+                                    {+type-attribute+ +list-type+
+                                     +id-attribute+ list-id})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+;;; (def $listid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
+;;; (find-list-by-id (email->userid "mikel@evins.net") $listid)
+
+;;; /delectus/list_name
+;;; ---------------------------------------------------------------------
+
+(defn list-name [userid list-id]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't inspect list" list-cbmap userid)
+
+      (.get list-cbmap +name-attribute+))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (list-name $mikelid $thingsid)
+
+;;; /delectus/list_named
+;;; ---------------------------------------------------------------------
+
+(defn list-named [userid list-name]
+  (let [bucket (config/delectus-content-bucket)
+        found (couchio/find-objects bucket ["name" "id"]
+                                    {+type-attribute+ +list-type+
+                                     +name-attribute+ list-name})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+;;; (find-list-by-name (email->userid "mikel@evins.net") "Things")
+;;; (find-list-by-name (email->userid "mikel@evins.net") "NOPE!")
+
+;;; /delectus/rename_list
+;;; ---------------------------------------------------------------------
+
+(defn rename-list [userid list-id new-name]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't update list" list-cbmap userid)
+
+      (let [mutator (.mutateIn content-bucket list-id)
+            updater (.upsert mutator +name-attribute+ new-name)]
+        (.execute updater))
+      list-id)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (lists (email->userid "mikel@evins.net"))
+;;; (def $stuff (list-named $mikelid "Stuff"))
+;;; (def $listid (.get $stuff "id"))
+;;; (rename-list $mikelid $listid "My Stuff")
+;;; (list-with-id $mikelid $listid)
+
 ;;; /delectus/new_list
 ;;; ---------------------------------------------------------------------
 
@@ -481,69 +559,6 @@
       (couchio/error-if-wrong-owner "Can't inspect list" list-cbmap userid)
 
       (.get list-cbmap +deleted-attribute+))))
-
-;;; /delectus/list_with_id
-;;; ---------------------------------------------------------------------
-
-(defn list-with-id [userid list-id]
-  (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id" "deleted"]
-                                    {+type-attribute+ +list-type+
-                                     +id-attribute+ list-id})]
-    (if (empty? found)
-      nil
-      (first found))))
-
-;;; (def $listid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
-;;; (find-list-by-id (email->userid "mikel@evins.net") $listid)
-
-;;; /delectus/list_named
-;;; ---------------------------------------------------------------------
-
-(defn list-named [userid list-name]
-  (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id"]
-                                    {+type-attribute+ +list-type+
-                                     +name-attribute+ list-name})]
-    (if (empty? found)
-      nil
-      (first found))))
-
-;;; (find-list-by-name (email->userid "mikel@evins.net") "Things")
-;;; (find-list-by-name (email->userid "mikel@evins.net") "NOPE!")
-
-;;; TODO
-;;; /delectus/list_name
-;;; ---------------------------------------------------------------------
-
-(defn list-name [userid list-id])
-
-;;; /delectus/rename_list
-;;; ---------------------------------------------------------------------
-
-(defn rename-list [userid list-id new-name]
-  (let [users-bucket (config/delectus-users-bucket)
-        content-bucket (config/delectus-content-bucket)]
-
-    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
-    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
-
-    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
-
-      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
-      (couchio/error-if-wrong-owner "Can't update list" list-cbmap userid)
-
-      (let [mutator (.mutateIn content-bucket list-id)
-            updater (.upsert mutator +name-attribute+ new-name)]
-        (.execute updater))
-      list-id)))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (lists (email->userid "mikel@evins.net"))
-;;; (def $stuff (list-named $mikelid "Stuff"))
-;;; (def $listid (.get $stuff "id"))
-;;; (rename-list $mikelid $listid "My Stuff")
-;;; (list-with-id $mikelid $listid)
 
 ;;; TODO
 ;;; /delectus/list_columns

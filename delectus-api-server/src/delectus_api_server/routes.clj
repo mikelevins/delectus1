@@ -52,14 +52,14 @@
   ;; -------------------  
 
   (GET "/delectus/lists" [] handlers/lists)                                  
+  (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
+  (GET "/delectus/list_name" [] handlers/list-name)
+  (GET "/delectus/list_named" [] handlers/list-named)                        
+  (GET "/delectus/rename_list" [] handlers/rename-list)
   (GET "/delectus/new_list" [] handlers/new-list)                         
   (GET "/delectus/delete_list" [] handlers/delete-list)                   
   (GET "/delectus/undelete_list" [] handlers/undelete-list)               
   (GET "/delectus/list_deleted" [] handlers/list-deleted?)                   
-  (GET "/delectus/list_named" [] handlers/list-named)                        
-  (GET "/delectus/rename_list" [] handlers/rename-list)
-  (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
-  ;; (GET "/delectus/list_name" [] handlers/list-name                        
   ;; (GET "/delectus/list_columns" [] handlers/list-columns                  
   ;; (GET "/delectus/column_named" [] handlers/column-named                  
   ;; (GET "/delectus/column_with_id" [] handlers/column-with-id              

@@ -26,7 +26,35 @@
  function getUserLists () {
      callDelectusAPI("lists","getUserLists_response");
  }
+  
+ function getListByID () {
+     let listID = document.getElementById("getListByID_list_id").value;
+     let uri = "http://mars.local:9000/delectus/list_with_id";
+     let query = "?email="+$authorization["email"]+"&id="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("getListByID_response").innerHTML=JSON.stringify(data));
+ }
  
+ function listName () {
+     let listID = document.getElementById("listName_list_id").value;
+     let uri = "http://mars.local:9000/delectus/list_name";
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("listName_response").innerHTML=JSON.stringify(data));
+ }
+
  function newList () {
      let listName = document.getElementById("newList_list_name").value;
      let uri = "http://mars.local:9000/delectus/new_list";
@@ -69,7 +97,6 @@
          })
          .then(data => document.getElementById("undeleteList_response").innerHTML=JSON.stringify(data));
  }
-
  
  function listDeleted () {
      let listID = document.getElementById("listDeleted_list_id").value;
@@ -97,20 +124,6 @@
              return response.json();
          })
          .then(data => document.getElementById("getListByName_response").innerHTML=JSON.stringify(data));
- }
- 
- function getListByID () {
-     let listID = document.getElementById("getListByID_list_id").value;
-     let uri = "http://mars.local:9000/delectus/list_with_id";
-     let query = "?email="+$authorization["email"]+"&id="+listID;
-     let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("getListByID_response").innerHTML=JSON.stringify(data));
  }
  
  function renameList () {
@@ -178,6 +191,20 @@
 
     <tr>
         <td>GET</td>
+        <td class="endpoint"><button on:click={getListByID}>/delectus/list_with_id</button></td>
+        <td><input type="text" id="getListByID_list_id" placeholder="List ID"/></td>
+        <td id="getListByID_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={listName}>/delectus/list_name</button></td>
+        <td><input type="text" id="listName_list_id" placeholder="List ID"/></td>
+        <td id="listName_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
         <td class="endpoint"><button on:click={newList}>/delectus/new_list</button></td>
         <td><input type="text" id="newList_list_name" placeholder="List name"/></td>
         <td id="newList_response"></td>
@@ -209,13 +236,6 @@
         <td class="endpoint"><button on:click={getListByName}>/delectus/list_named</button></td>
         <td><input type="text" id="getListByName_list_name" placeholder="List name"/></td>
         <td id="getListByName_response"></td>
-    </tr>
-
-    <tr>
-        <td>GET</td>
-        <td class="endpoint"><button on:click={getListByID}>/delectus/list_with_id</button></td>
-        <td><input type="text" id="getListByID_list_id" placeholder="List ID"/></td>
-        <td id="getListByID_response"></td>
     </tr>
     
     <tr>
