@@ -149,11 +149,26 @@
 ;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
 ;;; (collection-with-id $greerid $defaultid)
 
-;;; TODO
 ;;; /delectus/collection_name
 ;;; ---------------------------------------------------------------------
 
-(defn collection-name [userid collection-id])
+(defn collection-name [userid collection-id]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't inspect collection" collection-cbmap userid)
+
+      (.get collection-cbmap +name-attribute+))))
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collection-name $mikelid $defaultid)
 
 ;;; /delectus/collection_named
 ;;; ---------------------------------------------------------------------
@@ -281,12 +296,35 @@
 ;;; (collection-deleted? $mikelid $defaultid)
 
 
-;;; TODO
 ;;; /delectus/collection_lists
 ;;; ---------------------------------------------------------------------
 
-(defn collection-lists [userid collection-id])
+(defn collection-lists [userid collection-id]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
 
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't inspect collection" collection-cbmap userid)
+
+      (let [lists-set (.get collection-cbmap +lists-attribute+)]
+        (if (nil? lists-set)
+          nil
+          (let [listids (into [] (.getNames lists-set))
+                list-names (map #(if (couchio/object-attribute-exists? content-bucket % +name-attribute+)
+                                   (couchio/get-object-attribute content-bucket % +name-attribute+)
+                                   nil)
+                                listids)]
+            (zipmap list-names listids)))))))
+
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collection-lists $mikelid $defaultid)
 
 ;;; /delectus/collection_add_list
 ;;; ---------------------------------------------------------------------

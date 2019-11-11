@@ -93,6 +93,21 @@
          .then(data => document.getElementById("collectionDeleted_response").innerHTML=JSON.stringify(data));
  }
 
+ 
+ function collectionName () {
+     let collectionID = document.getElementById("collectionName_collection_id").value;
+     let uri = "http://mars.local:9000/delectus/collection_name";
+     let query = "?email="+$authorization["email"]+"&id="+collectionID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("collectionName_response").innerHTML=JSON.stringify(data));
+ }
+
  function getCollectionByName () {
      let collectionName = document.getElementById("getCollectionByName_collection_name").value;
      let uri = "http://mars.local:9000/delectus/collection_named";
@@ -136,6 +151,21 @@
          .then(data => document.getElementById("renameCollection_response").innerHTML=JSON.stringify(data));
  }
  
+ 
+ function collectionLists () {
+     let collectionID = document.getElementById("collectionLists_collection_id").value;
+     let uri = "http://mars.local:9000/delectus/collection_lists";
+     let query = "?email="+$authorization["email"]+"&id="+collectionID;
+     let token = $authorization["token"];
+     fetch(uri+query, {method: 'GET',
+                      headers: {"Authorization": " Token "+token}})
+         .then((response) => {
+             if (!response.ok) { throw Error(response.statusText) }
+             return response.json();
+         })
+         .then(data => document.getElementById("collectionLists_response").innerHTML=JSON.stringify(data));
+ }
+
  function collectionAddList () {
      let collectionID = document.getElementById("collectionAddList_collection_id").value;
      let listID = document.getElementById("collectionAddList_list_id").value;
@@ -220,6 +250,13 @@
 
     <tr>
         <td>GET</td>
+        <td class="endpoint"><button on:click={collectionName}>/delectus/collection_name</button></td>
+        <td><input type="text" id="collectionName_collection_id" placeholder="Collection ID"/></td>
+        <td id="collectionName_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
         <td class="endpoint"><button on:click={getCollectionByName}>/delectus/collection_named</button></td>
         <td><input type="text" id="getCollectionByName_collection_name" placeholder="Collection name"/></td>
         <td id="getCollectionByName_response"></td>
@@ -261,6 +298,13 @@
         <td class="endpoint"><button on:click={collectionDeleted}>/delectus/collection_deleted</button></td>
         <td><input type="text" id="collectionDeleted_collection_id" placeholder="Collection ID"/></td>
         <td id="collectionDeleted_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={collectionLists}>/delectus/collection_lists</button></td>
+        <td><input type="text" id="collectionLists_collection_id" placeholder="Collection ID"/></td>
+        <td id="collectionLists_response"></td>
     </tr>
 
     <tr>

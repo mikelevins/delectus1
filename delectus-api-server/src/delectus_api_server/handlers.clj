@@ -86,6 +86,16 @@
                 (.toString collection)
                 (json/write-str nil)))})
 
+(defn collection-name [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  collection-id (:id (:params req))
+                  name (api/collection-name (api/userid email) collection-id)]
+              (if name
+                (json/write-str name)
+                (json/write-str nil)))})
+
 (defn collection-named [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
@@ -142,6 +152,16 @@
                   collection-id (:collectionid (:params req))
                   result (api/collection-deleted? userid collection-id)]
               (json/write-str result))})
+
+(defn collection-lists [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  collection-id (:id (:params req))
+                  lists (api/collection-lists (api/userid email) collection-id)]
+              (if (nil? lists)
+                (json/write-str nil)
+                (json/write-str lists)))})
 
 (defn collection-add-list [req]
   {:status  200
