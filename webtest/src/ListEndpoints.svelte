@@ -144,8 +144,9 @@
 <style>
  .endpoint { text-align: right; }
 
+ .method-column { width: 5%; }
  .parameters-column { width: 25%; }
- .response-column { width: 33%; }
+ .response-column { width: 40%; }
  
  table {
      border-collapse: collapse;
