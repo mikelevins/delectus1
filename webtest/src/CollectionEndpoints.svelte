@@ -36,13 +36,7 @@
      let uri = "http://mars.local:9000/delectus/undelete_collection";
      let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("undeleteCollection_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "undeleteCollection_response");
  }
  
  function collectionDeleted () {
@@ -50,28 +44,15 @@
      let uri = "http://mars.local:9000/delectus/collection_deleted";
      let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("collectionDeleted_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "collectionDeleted_response");
  }
 
- 
  function collectionName () {
      let collectionID = document.getElementById("collectionName_collection_id").value;
      let uri = "http://mars.local:9000/delectus/collection_name";
      let query = "?email="+$authorization["email"]+"&id="+collectionID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("collectionName_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "collectionName_response");
  }
 
  function getCollectionByName () {
@@ -79,13 +60,7 @@
      let uri = "http://mars.local:9000/delectus/collection_named";
      let query = "?email="+$authorization["email"]+"&name="+collectionName;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("getCollectionByName_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "getCollectionByName_response");
  }
  
  function getCollectionByID () {
@@ -93,13 +68,7 @@
      let uri = "http://mars.local:9000/delectus/collection_with_id";
      let query = "?email="+$authorization["email"]+"&id="+collectionID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("getCollectionByID_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "getCollectionByID_response");
  }
  
  function renameCollection () {
@@ -108,28 +77,15 @@
      let uri = "http://mars.local:9000/delectus/rename_collection";
      let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&newname="+newName;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("renameCollection_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "renameCollection_response");
  }
- 
  
  function collectionLists () {
      let collectionID = document.getElementById("collectionLists_collection_id").value;
      let uri = "http://mars.local:9000/delectus/collection_lists";
      let query = "?email="+$authorization["email"]+"&id="+collectionID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("collectionLists_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "collectionLists_response");
  }
 
  function collectionAddList () {
@@ -138,13 +94,7 @@
      let uri = "http://mars.local:9000/delectus/collection_add_list";
      let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&listid="+listID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("collectionAddList_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "collectionAddList_response");
  }
 
  function collectionRemoveList () {
@@ -153,13 +103,7 @@
      let uri = "http://mars.local:9000/delectus/collection_remove_list";
      let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&listid="+listID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("collectionRemoveList_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "collectionRemoveList_response");
  }
 
 </script>
