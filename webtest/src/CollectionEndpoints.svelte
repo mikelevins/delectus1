@@ -7,14 +7,6 @@
  // general utilities
  // -----------------------------------------
  
- function handleErrorResponse(response) {
-     if (response.ok) {
-         return response;
-     } else {
-         discardAuthorization();
-     }
- }
- 
  function displayResponseData (responseData, displayElementID) {
      document.getElementById(displayElementID).innerHTML=JSON.stringify(responseData)
  }
@@ -24,7 +16,6 @@
      let token = $authorization["token"];
      fetch(uri, {method: 'GET',
                 headers: {"Authorization": " Token "+token}})
-         .then(handleErrorResponse)
          .then(response => response.json())
          .then(data => displayResponseData(data,displayElementID));
  }
