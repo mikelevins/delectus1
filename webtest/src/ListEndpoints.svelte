@@ -3,6 +3,7 @@
  // -----------------------------------------
 
  import { authorization } from "./auth.js";
+ import { getAPI } from "./api.js";
  
  // lists
  // -----------------------------------------
@@ -10,10 +11,7 @@
  function getUserLists () {
      let uri = "http://mars.local:9000/delectus/lists?email="+$authorization["email"];
      let token = $authorization["token"];
-     fetch(uri, {method: 'GET',
-                headers: {"Authorization": " Token "+token}})
-         .then(response => response.json())
-         .then(data => document.getElementById("getUserLists_response").innerHTML=JSON.stringify(data));
+     getAPI(uri, token, "getUserLists_response");
  }
  
  function getListByID () {
@@ -21,13 +19,7 @@
      let uri = "http://mars.local:9000/delectus/list_with_id";
      let query = "?email="+$authorization["email"]+"&id="+listID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("getListByID_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "getListByID_response");
  }
  
  function listName () {
@@ -35,13 +27,7 @@
      let uri = "http://mars.local:9000/delectus/list_name";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("listName_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "listName_response");
  }
 
  function newList () {
@@ -49,28 +35,15 @@
      let uri = "http://mars.local:9000/delectus/new_list";
      let query = "?email="+$authorization["email"]+"&name="+listName;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("newList_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "newList_response");
  }
-
  
  function deleteList () {
      let listID = document.getElementById("deleteList_list_id").value;
      let uri = "http://mars.local:9000/delectus/delete_list";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("deleteList_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "deleteList_response");
  }
  
  function undeleteList () {
@@ -78,13 +51,7 @@
      let uri = "http://mars.local:9000/delectus/undelete_list";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("undeleteList_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "undeleteList_response");
  }
  
  function listDeleted () {
@@ -92,13 +59,7 @@
      let uri = "http://mars.local:9000/delectus/list_deleted";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("listDeleted_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "listDeleted_response");
  }
 
  function getListByName () {
@@ -106,13 +67,7 @@
      let uri = "http://mars.local:9000/delectus/list_named";
      let query = "?email="+$authorization["email"]+"&name="+listName;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("getListByName_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "getListByName_response");
  }
  
  function renameList () {
@@ -121,13 +76,7 @@
      let uri = "http://mars.local:9000/delectus/rename_list";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&newname="+newName;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("renameList_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "renameList_response");
  }
 
 </script>
