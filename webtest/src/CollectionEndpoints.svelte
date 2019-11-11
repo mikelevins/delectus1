@@ -3,6 +3,7 @@
  // -----------------------------------------
 
  import { authorization } from "./auth.js";
+ import { getAPI } from "./api.js";
  
  
  // collections
@@ -11,10 +12,7 @@
  function getUserCollections () {
      let uri = "http://mars.local:9000/delectus/collections?email="+$authorization["email"];
      let token = $authorization["token"];
-     fetch(uri, {method: 'GET',
-                headers: {"Authorization": " Token "+token}})
-         .then(response => response.json())
-         .then(data => document.getElementById("getUserCollections_response").innerHTML=JSON.stringify(data));
+     getAPI(uri, token, "getUserCollections_response");
  }
  
  function newCollection () {
@@ -22,13 +20,7 @@
      let uri = "http://mars.local:9000/delectus/new_collection";
      let query = "?email="+$authorization["email"]+"&name="+collectionName;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("newCollection_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "newCollection_response");
  }
  
  function deleteCollection () {
@@ -36,13 +28,7 @@
      let uri = "http://mars.local:9000/delectus/delete_collection";
      let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
      let token = $authorization["token"];
-     fetch(uri+query, {method: 'GET',
-                      headers: {"Authorization": " Token "+token}})
-         .then((response) => {
-             if (!response.ok) { throw Error(response.statusText) }
-             return response.json();
-         })
-         .then(data => document.getElementById("deleteCollection_response").innerHTML=JSON.stringify(data));
+     getAPI(uri+query, token, "deleteCollection_response");
  }
  
  function undeleteCollection () {
