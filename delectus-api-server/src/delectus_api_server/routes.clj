@@ -36,17 +36,17 @@
   ;; -------------------  
 
   (GET "/delectus/collections" [] handlers/collections)
+  (GET "/delectus/collection_with_id" [] handlers/collection-with-id)
+  ;; (GET "/delectus/collection_name" [] handlers/collection-name)
+  (GET "/delectus/collection_named" [] handlers/collection-named)
+  (GET "/delectus/rename_collection" [] handlers/rename-collection)
   (GET "/delectus/new_collection" [] handlers/new-collection)
   (GET "/delectus/delete_collection" [] handlers/delete-collection)        
   (GET "/delectus/undelete_collection" [] handlers/undelete-collection)    
   (GET "/delectus/collection_deleted" [] handlers/collection-deleted?)        
-  (GET "/delectus/collection_named" [] handlers/collection-named)
-  (GET "/delectus/rename_collection" [] handlers/rename-collection)
-  (GET "/delectus/collection_with_id" [] handlers/collection-with-id)
+  ;; (GET "/delectus/collection_lists" [] handlers/collection-lists)          
   (GET "/delectus/collection_add_list" [] handlers/collection-add-list)
   (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
-  ;; (GET "/delectus/collection_name" [] handlers/collection-name)
-  ;; (GET "/delectus/collection_lists" [] handlers/collection-lists)          
 
   ;; lists
   ;; -------------------  

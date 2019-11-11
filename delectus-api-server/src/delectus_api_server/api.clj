@@ -106,6 +106,7 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; /delectus/login
+;;; ---------------------------------------------------------------------
 
 (defn login [email password]
   (let [found-user (email->user email)]
@@ -123,6 +124,8 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; /delectus/collections
+;;; ---------------------------------------------------------------------
+
 (defn collections [userid]
   (couchio/find-objects (config/delectus-content-bucket)
                         ["name" "id"]
@@ -131,7 +134,74 @@
 
 ;;; (collections (email->userid "mikel@evins.net"))
 
+;;; /delectus/collection_with_id
+;;; ---------------------------------------------------------------------
+
+(defn collection-with-id [userid collection-id]
+  (let [found (couchio/get-collection collection-id)]
+    (if (and found (couchio/json-object-owner? found userid))
+      found
+      nil)))
+
+;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collection-with-id $mikelid $defaultid)
+;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
+;;; (collection-with-id $greerid $defaultid)
+
+;;; TODO
+;;; /delectus/collection_name
+;;; ---------------------------------------------------------------------
+
+(defn collection-name [userid collection-id])
+
+;;; /delectus/collection_named
+;;; ---------------------------------------------------------------------
+
+(defn collection-named [userid collection-name]
+  (let [bucket (config/delectus-content-bucket)
+        found (couchio/find-objects bucket ["name" "id" "items"]
+                                    {+type-attribute+ +collection-type+
+                                     +name-attribute+ collection-name
+                                     +owner-id-attribute+ userid})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+;;; (collection-named (email->userid "mikel@evins.net") "Default Collection")
+;;; (collection-named (email->userid "mikel@evins.net") "NOPE!")
+
+
+;;; /delectus/rename_collection
+;;; ---------------------------------------------------------------------
+
+(defn rename-collection [userid collection-id new-name]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
+
+    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
+      (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
+
+      (let [mutator (.mutateIn content-bucket collection-id)
+            updater (.upsert mutator +name-attribute+ new-name)]
+        (.execute updater))
+      collection-id)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collections (email->userid "mikel@evins.net"))
+;;; (def $planets (collection-named $mikelid "Planets"))
+;;; (def $collid (.get $planets "id"))
+;;; (rename-collection $mikelid $collid "My Planets")
+;;; (collection-with-id $mikelid $collid)
+
 ;;; /delectus/new_collection
+;;; ---------------------------------------------------------------------
+
 (defn new-collection [& {:keys [id name owner-id]
                          :or {id (makeid)
                               name nil
@@ -161,6 +231,8 @@
 
 ;;; /delectus/delete_collection
 ;;; /delectus/undelete_collection
+;;; ---------------------------------------------------------------------
+
 (defn mark-collection-deleted [userid collection-id deleted?]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)
@@ -186,6 +258,8 @@
 ;;; (mark-collection-deleted $mikelid $defaultid false)
 
 ;;; /delectus/collection_deleted
+;;; ---------------------------------------------------------------------
+
 (defn collection-deleted? [userid collection-id]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)]
@@ -206,71 +280,17 @@
 ;;; (def $coll (collection-with-id $mikelid $defaultid))
 ;;; (collection-deleted? $mikelid $defaultid)
 
-;;; /delectus/collection_with_id
-(defn collection-with-id [userid collection-id]
-  (let [found (couchio/get-collection collection-id)]
-    (if (and found (couchio/json-object-owner? found userid))
-      found
-      nil)))
-
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (collection-with-id $mikelid $defaultid)
-;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
-;;; (collection-with-id $greerid $defaultid)
-
-
-;;; /delectus/collection_named
-(defn collection-named [userid collection-name]
-  (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id" "items"]
-                                    {+type-attribute+ +collection-type+
-                                     +name-attribute+ collection-name
-                                     +owner-id-attribute+ userid})]
-    (if (empty? found)
-      nil
-      (first found))))
-
-;;; (collection-named (email->userid "mikel@evins.net") "Default Collection")
-;;; (collection-named (email->userid "mikel@evins.net") "NOPE!")
-
-
-;;; TODO
-;;; /delectus/collection_name
-(defn collection-name [userid collection-id])
-
-
-;;; /delectus/rename_collection
-(defn rename-collection [userid collection-id new-name]
-  (let [users-bucket (config/delectus-users-bucket)
-        content-bucket (config/delectus-content-bucket)]
-
-    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
-    (couchio/error-if-no-such-id "The collection doesn't exist" content-bucket collection-id)
-
-    (let [collection-cbmap (CouchbaseMap. collection-id content-bucket)]
-
-      (couchio/error-if-wrong-type "Not a Delectus Collection" collection-cbmap +collection-type+)
-      (couchio/error-if-wrong-owner "Can't update collection" collection-cbmap userid)
-
-      (let [mutator (.mutateIn content-bucket collection-id)
-            updater (.upsert mutator +name-attribute+ new-name)]
-        (.execute updater))
-      collection-id)))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (collections (email->userid "mikel@evins.net"))
-;;; (def $planets (collection-named $mikelid "Planets"))
-;;; (def $collid (.get $planets "id"))
-;;; (rename-collection $mikelid $collid "My Planets")
-;;; (collection-with-id $mikelid $collid)
 
 ;;; TODO
 ;;; /delectus/collection_lists
+;;; ---------------------------------------------------------------------
+
 (defn collection-lists [userid collection-id])
 
 
 ;;; /delectus/collection_add_list
+;;; ---------------------------------------------------------------------
+
 (defn collection-add-list [userid collection-id list-id]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)]
@@ -308,6 +328,8 @@
 ;;; (collection-add-list $mikelid $defaultid $thingsid)
 
 ;;; /delectus/collection_remove_list
+;;; ---------------------------------------------------------------------
+
 (defn collection-remove-list [userid collection-id list-id]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)]
@@ -346,6 +368,8 @@
 
 
 ;;; /delectus/lists
+;;; ---------------------------------------------------------------------
+
 (defn lists [userid]
   (let [bucket (config/delectus-content-bucket)]
     (couchio/find-objects bucket ["name" "id"]
@@ -355,6 +379,8 @@
 ;;; (lists (email->userid "mikel@evins.net"))
 
 ;;; /delectus/new_list
+;;; ---------------------------------------------------------------------
+
 (defn new-list [& {:keys [id name owner-id]
                    :or {id (makeid)
                         name nil
@@ -381,6 +407,8 @@
 
 ;;; /delectus/delete_list
 ;;; /delectus/undelete_list
+;;; ---------------------------------------------------------------------
+
 (defn mark-list-deleted [userid list-id deleted?]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)
@@ -400,6 +428,8 @@
       list-id)))
 
 ;;; /delectus/list_deleted
+;;; ---------------------------------------------------------------------
+
 (defn list-deleted? [userid list-id]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)]
@@ -415,6 +445,8 @@
       (.get list-cbmap +deleted-attribute+))))
 
 ;;; /delectus/list_with_id
+;;; ---------------------------------------------------------------------
+
 (defn list-with-id [userid list-id]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id" "deleted"]
@@ -428,6 +460,8 @@
 ;;; (find-list-by-id (email->userid "mikel@evins.net") $listid)
 
 ;;; /delectus/list_named
+;;; ---------------------------------------------------------------------
+
 (defn list-named [userid list-name]
   (let [bucket (config/delectus-content-bucket)
         found (couchio/find-objects bucket ["name" "id"]
@@ -442,10 +476,13 @@
 
 ;;; TODO
 ;;; /delectus/list_name
+;;; ---------------------------------------------------------------------
+
 (defn list-name [userid list-id])
 
-;;; TODO
 ;;; /delectus/rename_list
+;;; ---------------------------------------------------------------------
+
 (defn rename-list [userid list-id new-name]
   (let [users-bucket (config/delectus-users-bucket)
         content-bucket (config/delectus-content-bucket)]
@@ -472,54 +509,80 @@
 
 ;;; TODO
 ;;; /delectus/list_columns
+;;; ---------------------------------------------------------------------
+
 (defn list-columns [userid list-id])
 
 ;;; TODO
 ;;; /delectus/column_with_id
+;;; ---------------------------------------------------------------------
+
 (defn column-with-id [userid list-id column-id])
 
 ;;; TODO
 ;;; /delectus/column_named
+;;; ---------------------------------------------------------------------
+
 (defn column-named [userid list-id column-name])
 
 ;;; TODO
 ;;; /delectus/new_column
+;;; ---------------------------------------------------------------------
+
 (defn new-column [userid list-id column-name])
 
 ;;; TODO
 ;;; /delectus/delete_column
 ;;; /delectus/undelete_column
+;;; ---------------------------------------------------------------------
+
 (defn mark-column-deleted [userid list-id column-id])
 
 ;;; TODO
 ;;; /delectus/column_name
+;;; ---------------------------------------------------------------------
+
 (defn column-name [userid list-id column-id])
 
 ;;; TODO
 ;;; /delectus/rename_column
+;;; ---------------------------------------------------------------------
+
 (defn rename-column [userid list-id column-id new-name])
 
 ;;; TODO
 ;;; /delectus/list_items
+;;; ---------------------------------------------------------------------
+
 (defn list-items [userid list-id])
 
 ;;; TODO
 ;;; /delectus/item_with_id
+;;; ---------------------------------------------------------------------
+
 (defn item-with-id [userid list-id item-id])
 
 ;;; TODO
 ;;; /delectus/new_item
+;;; ---------------------------------------------------------------------
+
 (defn new-item [userid list-id])
 
 ;;; TODO
 ;;; /delectus/delete_item
 ;;; /delectus/undelete_item
+;;; ---------------------------------------------------------------------
+
 (defn mark-item-deleted [userid list-id deleted?])
 
 ;;; TODO
 ;;; /delectus/item_column_value
+;;; ---------------------------------------------------------------------
+
 (defn item-column-value [userid list-id column-id])
 
 ;;; TODO
 ;;; /delectus/set_item_column_value
+;;; ---------------------------------------------------------------------
+
 (defn set-item-column-value [userid list-id column-id new-value])

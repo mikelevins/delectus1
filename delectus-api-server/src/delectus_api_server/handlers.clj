@@ -76,6 +76,36 @@
                (map #(json/read-str (.toString %))
                     (api/collections (api/userid email)))))})
 
+(defn collection-with-id [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  collection-id (:id (:params req))
+                  collection (api/collection-with-id (api/userid email) collection-id)]
+              (if collection
+                (.toString collection)
+                (json/write-str nil)))})
+
+(defn collection-named [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  collection-name (:name (:params req))
+                  collection (api/collection-named (api/userid email) collection-name)]
+              (if collection
+                (.toString collection)
+                (json/write-str nil)))})
+
+(defn rename-collection [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  collection-id (:collectionid (:params req))
+                  new-name (:newname (:params req))
+                  result (api/rename-collection userid collection-id new-name)]
+              (json/write-str result))})
+
 (defn new-collection [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
@@ -111,36 +141,6 @@
                   userid (api/email->userid email)
                   collection-id (:collectionid (:params req))
                   result (api/collection-deleted? userid collection-id)]
-              (json/write-str result))})
-
-(defn collection-with-id [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  collection-id (:id (:params req))
-                  collection (api/collection-with-id (api/userid email) collection-id)]
-              (if collection
-                (.toString collection)
-                (json/write-str nil)))})
-
-(defn collection-named [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  collection-name (:name (:params req))
-                  collection (api/collection-named (api/userid email) collection-name)]
-              (if collection
-                (.toString collection)
-                (json/write-str nil)))})
-
-(defn rename-collection [req]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
-                  collection-id (:collectionid (:params req))
-                  new-name (:newname (:params req))
-                  result (api/rename-collection userid collection-id new-name)]
               (json/write-str result))})
 
 (defn collection-add-list [req]

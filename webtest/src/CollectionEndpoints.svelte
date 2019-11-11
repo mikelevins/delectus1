@@ -213,6 +213,30 @@
 
     <tr>
         <td>GET</td>
+        <td class="endpoint"><button on:click={getCollectionByID}>/delectus/collection_with_id</button></td>
+        <td><input type="text" id="getCollectionByID_collection_id" placeholder="Collection ID"/></td>
+        <td id="getCollectionByID_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={getCollectionByName}>/delectus/collection_named</button></td>
+        <td><input type="text" id="getCollectionByName_collection_name" placeholder="Collection name"/></td>
+        <td id="getCollectionByName_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={renameCollection}>/delectus/rename_collection</button></td>
+        <td>
+            <input type="text" id="renameCollection_collection_id" placeholder="Collection ID"/>
+            <input type="text" id="renameCollection_new_name" placeholder="New name"/>
+        </td>
+        <td id="renameCollection_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
         <td class="endpoint"><button on:click={newCollection}>/delectus/new_collection</button></td>
         <td><input type="text" id="newCollection_collection_name" placeholder="Collection name"/></td>
         <td id="newCollection_response"></td>
@@ -237,30 +261,6 @@
         <td class="endpoint"><button on:click={collectionDeleted}>/delectus/collection_deleted</button></td>
         <td><input type="text" id="collectionDeleted_collection_id" placeholder="Collection ID"/></td>
         <td id="collectionDeleted_response"></td>
-    </tr>
-
-    <tr>
-        <td>GET</td>
-        <td class="endpoint"><button on:click={getCollectionByName}>/delectus/collection_named</button></td>
-        <td><input type="text" id="getCollectionByName_collection_name" placeholder="Collection name"/></td>
-        <td id="getCollectionByName_response"></td>
-    </tr>
-
-    <tr>
-        <td>GET</td>
-        <td class="endpoint"><button on:click={getCollectionByID}>/delectus/collection_with_id</button></td>
-        <td><input type="text" id="getCollectionByID_collection_id" placeholder="Collection ID"/></td>
-        <td id="getCollectionByID_response"></td>
-    </tr>
-
-    <tr>
-        <td>GET</td>
-        <td class="endpoint"><button on:click={renameCollection}>/delectus/rename_collection</button></td>
-        <td>
-            <input type="text" id="renameCollection_collection_id" placeholder="Collection ID"/>
-            <input type="text" id="renameCollection_new_name" placeholder="New name"/>
-        </td>
-        <td id="renameCollection_response"></td>
     </tr>
 
     <tr>
