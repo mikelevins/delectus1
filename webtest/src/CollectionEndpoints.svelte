@@ -3,6 +3,7 @@
  // -----------------------------------------
 
  import { authorization } from "./auth.js";
+ 
 
  // general utilities
  // -----------------------------------------
@@ -19,7 +20,6 @@
          .then(response => response.json())
          .then(data => displayResponseData(data,displayElementID));
  }
-
  
  // collections
  // -----------------------------------------
