@@ -4,28 +4,17 @@
 
  import { authorization } from "./auth.js";
  
-
- // general utilities
- // -----------------------------------------
- 
- function displayResponseData (responseData, displayElementID) {
-     document.getElementById(displayElementID).innerHTML=JSON.stringify(responseData)
- }
- 
- function callDelectusAPI (apiName, displayElementID) {
-     let uri = "http://mars.local:9000/delectus/"+apiName+"?email="+$authorization["email"];
-     let token = $authorization["token"];
-     fetch(uri, {method: 'GET',
-                headers: {"Authorization": " Token "+token}})
-         .then(response => response.json())
-         .then(data => displayResponseData(data,displayElementID));
- }
  
  // collections
  // -----------------------------------------
  
  function getUserCollections () {
-     callDelectusAPI("collections","getUserCollections_response");
+     let uri = "http://mars.local:9000/delectus/collections?email="+$authorization["email"];
+     let token = $authorization["token"];
+     fetch(uri, {method: 'GET',
+                headers: {"Authorization": " Token "+token}})
+         .then(response => response.json())
+         .then(data => document.getElementById("getUserCollections_response").innerHTML=JSON.stringify(data));
  }
  
  function newCollection () {
