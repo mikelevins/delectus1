@@ -132,6 +132,10 @@
 ;;; (make-json-document "foo_document" {"name" "Fred" "age" 35})
 ;;; (make-json-document "bar_document" {"name" "Fred" "age" 35 "things" {}})
 
+;;; ---------------------------------------------------------------------
+;;; User, Collection, and List
+;;; ---------------------------------------------------------------------
+
 (defn make-user-document [& {:keys [id email name password-hash enabled]
                              :or {id (makeid)
                                   email nil
@@ -189,8 +193,38 @@
                  +deleted-attribute+ deleted}]
     (make-json-document id obj-map)))
 
+
 ;;; ---------------------------------------------------------------------
-;;; fetch and store by id
+;;; Column and Row
+;;; ---------------------------------------------------------------------
+
+(defn make-column-object [& {:keys [colid name deleted]
+                             :or {colid nil
+                                  name nil
+                                  deleted false}}]
+  (errors/error-if-nil colid "Missing colid parameter" {:context "make-column-object"})
+  (errors/error-if-nil name "Missing name parameter" {:context "make-column-object"})
+  (let [obj-map {+colid-attribute+ colid
+                 +name-attribute+ name
+                 +deleted-attribute+ deleted}]
+    (make-json-object obj-map)))
+
+;;; (make-column-object :colid "A" :name "Title")
+
+(defn make-row-object [& {:keys [rowid fields deleted]
+                          :or {rowid nil
+                               fields {} 
+                               deleted false}}]
+  (errors/error-if-nil rowid "Missing rowid parameter" {:context "make-row-object"})
+  (let [obj-map {+rowid-attribute+ rowid
+                 +fields-attribute+ fields
+                 +deleted-attribute+ deleted}]
+    (make-json-object obj-map)))
+
+;;; (make-row-object :rowid "A")
+
+;;; =====================================================================
+;;; Fetching and storing documents by id
 ;;; ---------------------------------------------------------------------
 
 ;;; generic JsonDocuments
