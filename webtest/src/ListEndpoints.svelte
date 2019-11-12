@@ -29,6 +29,15 @@
      let token = $authorization["token"];
      getAPI(uri+query, token, "listName_response");
  }
+ 
+ function renameList () {
+     let listID = document.getElementById("renameList_list_id").value;
+     let newName = document.getElementById("renameList_new_name").value;
+     let uri = "http://mars.local:9000/delectus/rename_list";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&newname="+newName;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "renameList_response");
+ }
 
  function newList () {
      let listName = document.getElementById("newList_list_name").value;
@@ -70,13 +79,12 @@
      getAPI(uri+query, token, "getListByName_response");
  }
  
- function renameList () {
-     let listID = document.getElementById("renameList_list_id").value;
-     let newName = document.getElementById("renameList_new_name").value;
-     let uri = "http://mars.local:9000/delectus/rename_list";
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&newname="+newName;
+ function listColumns () {
+     let listID = document.getElementById("listColumns_list_id").value;
+     let uri = "http://mars.local:9000/delectus/list_columns";
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
-     getAPI(uri+query, token, "renameList_response");
+     getAPI(uri+query, token, "listColumns_response");
  }
 
 </script>
@@ -147,6 +155,16 @@
         <td><input type="text" id="getListByName_list_name" placeholder="List name"/></td>
         <td id="getListByName_response"></td>
     </tr>
+    
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={renameList}>/delectus/rename_list</button></td>
+        <td>
+            <input type="text" id="renameList_list_id" placeholder="List ID"/>
+            <input type="text" id="renameList_new_name" placeholder="New name"/>
+        </td>
+        <td id="renameList_response"></td>
+    </tr>
 
     <tr>
         <td>GET</td>
@@ -175,15 +193,12 @@
         <td><input type="text" id="listDeleted_list_id" placeholder="List ID"/></td>
         <td id="listDeleted_response"></td>
     </tr>
-    
+
     <tr>
         <td>GET</td>
-        <td class="endpoint"><button on:click={renameList}>/delectus/rename_list</button></td>
-        <td>
-            <input type="text" id="renameList_list_id" placeholder="List ID"/>
-            <input type="text" id="renameList_new_name" placeholder="New name"/>
-        </td>
-        <td id="renameList_response"></td>
+        <td class="endpoint"><button on:click={listColumns}>/delectus/list_columns</button></td>
+        <td><input type="text" id="listColumns_list_id" placeholder="List ID"/></td>
+        <td id="listColumns_response"></td>
     </tr>
     
     

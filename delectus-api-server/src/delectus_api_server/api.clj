@@ -561,11 +561,28 @@
 
       (.get list-cbmap +deleted-attribute+))))
 
-;;; TODO
 ;;; /delectus/list_columns
 ;;; ---------------------------------------------------------------------
 
-(defn list-columns [userid list-id])
+(defn list-columns [userid list-id]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't inspect list" list-cbmap userid)
+
+      (.get list-cbmap +columns-attribute+))))
+
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (list-columns $mikelid $thingsid)
+
 
 ;;; TODO
 ;;; /delectus/column_with_id

@@ -270,3 +270,12 @@
                   list-id (:listid (:params req))
                   result (api/list-deleted? userid list-id)]
               (json/write-str result))})
+
+(defn list-columns [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  result (api/list-columns userid list-id)]
+              (.toString result))})
