@@ -5,6 +5,7 @@
    [delectus-api-server.couchio :as couchio]
    [delectus-api-server.errors :as errors]
    [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.itemid :as itemid]
    [delectus-api-server.couchio :as couchio]))
 
 ;;; =====================================================================
@@ -60,7 +61,7 @@
                                   name nil
                                   owner-id nil
                                   columns {}
-                                  items []
+                                  items {}
                                   deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-list-document"})
   (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-list-document"})
@@ -78,30 +79,29 @@
 ;;; Column and Row
 ;;; ---------------------------------------------------------------------
 
-(defn make-column-object [& {:keys [colid name deleted]
-                             :or {colid nil
+(defn make-column-object [& {:keys [id name order deleted]
+                             :or {id (itemid/first-itemid)
                                   name nil
                                   deleted false}}]
-  (errors/error-if-nil colid "Missing colid parameter" {:context "make-column-object"})
   (errors/error-if-nil name "Missing name parameter" {:context "make-column-object"})
-  (let [obj-map {+colid-attribute+ colid
+  (let [obj-map {+id-attribute+ id
                  +name-attribute+ name
                  +deleted-attribute+ deleted}]
     (couchio/make-json-object obj-map)))
 
-;;; (make-column-object :colid "A" :name "Title")
+;;; (make-column-object :name "Title")
 
-(defn make-row-object [& {:keys [rowid fields deleted]
-                          :or {rowid nil
-                               fields {} 
+(defn make-row-object [& {:keys [id fields deleted]
+                          :or {id (itemid/first-itemid)
+                               fields {}
                                deleted false}}]
-  (errors/error-if-nil rowid "Missing rowid parameter" {:context "make-row-object"})
-  (let [obj-map {+rowid-attribute+ rowid
+  (errors/error-if-nil id "Missing id parameter" {:context "make-row-object"})
+  (let [obj-map {+id-attribute+ id
                  +fields-attribute+ fields
                  +deleted-attribute+ deleted}]
     (couchio/make-json-object obj-map)))
 
-;;; (make-row-object :rowid "A")
+;;; (make-row-object)
 
 ;;; ---------------------------------------------------------------------
 ;;; Users
