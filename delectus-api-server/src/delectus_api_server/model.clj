@@ -79,7 +79,7 @@
 ;;; Column and Row
 ;;; ---------------------------------------------------------------------
 
-(defn make-column-object [& {:keys [id name order deleted]
+(defn make-column-object [& {:keys [id name deleted]
                              :or {id (itemid/first-itemid)
                                   name nil
                                   deleted false}}]

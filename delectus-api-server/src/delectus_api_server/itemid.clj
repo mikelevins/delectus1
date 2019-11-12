@@ -35,9 +35,15 @@
 ;;; (time (reduce itemid-max $strs))
 
 (defn next-itemid [ids]
-  (let [maxid (reduce itemid-max ids)]
-    (inc-itemid maxid)))
+  (let [len (count ids)]
+    (cond
+      (< len 1) (first-itemid)
+      (= len 1) (inc-itemid (first ids))
+      :else (let [maxid (reduce itemid-max ids)]
+              (inc-itemid maxid)))))
 
+;;; (next-itemid [])
+;;; (next-itemid ["100"])
 ;;; (def $rands (random-ints 100000 100))
 ;;; (def $strs (into [] (map str $rands)))
 ;;; (count $strs)

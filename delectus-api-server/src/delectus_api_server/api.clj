@@ -7,6 +7,7 @@
    [delectus-api-server.couchio :as couchio]
    [delectus-api-server.errors :as errors]
    [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.itemid :as itemid]
    [delectus-api-server.model :as model]
    [delectus-api-server.utilities :as utils])
   (:import
@@ -600,7 +601,41 @@
 ;;; /delectus/new_column
 ;;; ---------------------------------------------------------------------
 
-(defn new-column [userid list-id column-name])
+(defn new-column [& {:keys [name list-id owner-id]
+                     :or {name nil
+                          list-id nil
+                          owner-id nil}}]
+
+  (errors/error-if-nil name "Missing :name parameter" {:context 'new-column})
+  (errors/error-if-nil name "Missing :list-id parameter" {:context 'new-column})
+  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-column})
+  (errors/error-if-not (model/user-exists? owner-id)
+                       "No such user"
+                       {:parameter :owner-id :value owner-id :context 'new-column})
+  (errors/error-if-not (model/list-exists? list-id)
+                       "No such list"
+                       {:parameter :list-id :value list-id :context 'new-column})
+  
+  (let [bucket (config/delectus-content-bucket)
+        list-cbmap (CouchbaseMap. list-id bucket)]
+    
+    list-cbmap
+    (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+    (couchio/error-if-wrong-owner "Can't update list" list-cbmap owner-id)
+
+    (let [old-columns (get list-cbmap +columns-attribute+)
+          old-column-ids (into [] (.getNames old-columns))
+          new-column-id (itemid/next-itemid old-column-ids)
+          column-obj (model/make-column-object
+                      :id new-column-id :name name)
+          mutator (.mutateIn bucket list-id)
+          updater (.upsert mutator (str +columns-attribute+ "." new-column-id) column-obj)]
+      (.execute updater))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (new-column :owner-id $mikelid :list-id $thingsid :name "Title")
+;;; (new-column :owner-id $mikelid :list-id $thingsid :name "Star")
 
 ;;; TODO
 ;;; /delectus/delete_column
