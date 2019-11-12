@@ -102,6 +102,7 @@
     (couchio/make-json-object obj-map)))
 
 ;;; (make-row-object)
+;;; (make-row-object :fields {"name" "Fred"})
 
 ;;; ---------------------------------------------------------------------
 ;;; Users

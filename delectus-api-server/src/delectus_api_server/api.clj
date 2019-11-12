@@ -619,7 +619,6 @@
   (let [bucket (config/delectus-content-bucket)
         list-cbmap (CouchbaseMap. list-id bucket)]
     
-    list-cbmap
     (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
     (couchio/error-if-wrong-owner "Can't update list" list-cbmap owner-id)
 
@@ -656,11 +655,27 @@
 
 (defn rename-column [userid list-id column-id new-name])
 
-;;; TODO
 ;;; /delectus/list_items
 ;;; ---------------------------------------------------------------------
 
-(defn list-items [userid list-id])
+(defn list-items [userid list-id]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket userid)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't inspect list" list-cbmap userid)
+
+      (.get list-cbmap +items-attribute+))))
+
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (list-items $mikelid $thingsid)
 
 ;;; TODO
 ;;; /delectus/item_with_id
@@ -668,11 +683,45 @@
 
 (defn item-with-id [userid list-id item-id])
 
-;;; TODO
 ;;; /delectus/new_item
 ;;; ---------------------------------------------------------------------
+;;; TODO: prevent adding an item when there are no columns
 
-(defn new-item [userid list-id])
+(defn new-item [& {:keys [list-id owner-id]
+                   :or {name nil
+                        list-id nil
+                        owner-id nil}}]
+
+  (errors/error-if-nil name "Missing :list-id parameter" {:context 'new-column})
+  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-column})
+  (errors/error-if-not (model/user-exists? owner-id)
+                       "No such user"
+                       {:parameter :owner-id :value owner-id :context 'new-column})
+  (errors/error-if-not (model/list-exists? list-id)
+                       "No such list"
+                       {:parameter :list-id :value list-id :context 'new-column})
+  
+  (let [bucket (config/delectus-content-bucket)
+        list-cbmap (CouchbaseMap. list-id bucket)]
+    
+    (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+    (couchio/error-if-wrong-owner "Can't update list" list-cbmap owner-id)
+
+    (let [columns (get list-cbmap +columns-attribute+)
+          column-ids (into [] (.getNames columns))
+          old-rows (get list-cbmap +items-attribute+)
+          old-row-ids (into [] (.getNames old-rows))
+          new-row-id (itemid/next-itemid old-row-ids)
+          fields-map (zipmap column-ids (repeat nil))
+          row-obj (model/make-row-object :id new-row-id :fields fields-map)
+          mutator (.mutateIn bucket list-id)
+          updater (.upsert mutator (str +items-attribute+ "." new-row-id) row-obj)]
+      (.execute updater))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (new-item :owner-id $mikelid :list-id $thingsid)
+
 
 ;;; TODO
 ;;; /delectus/delete_item
