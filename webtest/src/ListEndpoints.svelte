@@ -143,6 +143,13 @@
 
     <tr>
         <td>GET</td>
+        <td class="endpoint"><button on:click={getListByName}>/delectus/list_named</button></td>
+        <td><input type="text" id="getListByName_list_name" placeholder="List name"/></td>
+        <td id="getListByName_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
         <td class="endpoint"><button on:click={newList}>/delectus/new_list</button></td>
         <td><input type="text" id="newList_list_name" placeholder="List name"/></td>
         <td id="newList_response"></td>
@@ -167,13 +174,6 @@
         <td class="endpoint"><button on:click={listDeleted}>/delectus/list_deleted</button></td>
         <td><input type="text" id="listDeleted_list_id" placeholder="List ID"/></td>
         <td id="listDeleted_response"></td>
-    </tr>
-
-    <tr>
-        <td>GET</td>
-        <td class="endpoint"><button on:click={getListByName}>/delectus/list_named</button></td>
-        <td><input type="text" id="getListByName_list_name" placeholder="List name"/></td>
-        <td id="getListByName_response"></td>
     </tr>
     
     <tr>

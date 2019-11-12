@@ -7,11 +7,12 @@
    [delectus-api-server.couchio :as couchio]
    [delectus-api-server.errors :as errors]
    [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.model :as model]
    [delectus-api-server.utilities :as utils])
   (:import
    (com.couchbase.client.java.datastructures.collections CouchbaseArrayList CouchbaseMap)
-   (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.document JsonDocument)
+   (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; =====================================================================
@@ -231,7 +232,7 @@
                    "Collection name exists"
                    {:parameter :name :value name})
 
-  (let [collection-doc (couchio/make-collection-document
+  (let [collection-doc (model/make-collection-document
                         :id id
                         :name name
                         :owner-id owner-id)]
@@ -511,9 +512,9 @@
                    "List name exists"
                    {:parameter :name :value name})
 
-  (let [list-doc (couchio/make-list-document :id id
-                                             :name name
-                                             :owner-id owner-id)]
+  (let [list-doc (model/make-list-document :id id
+                                           :name name
+                                           :owner-id owner-id)]
 
     (.upsert (config/delectus-content-bucket)
              list-doc)
