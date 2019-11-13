@@ -123,6 +123,15 @@
      getAPI(uri+query, token, "columnNamed_response");
  }
 
+ function columnDeleted () {
+     let listID = document.getElementById("columnDeleted_list_id").value;
+     let columnID = document.getElementById("columnDeleted_column_id").value;
+     let uri = "http://mars.local:9000/delectus/column_deleted";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "columnDeleted_response");
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -275,6 +284,16 @@
             <input type="text" id="columnNamed_column_name" placeholder="Column name"/>
         </td>
         <td id="columnNamed_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={columnDeleted}>/delectus/column_deleted</button></td>
+        <td>
+            <input type="text" id="columnDeleted_list_id" placeholder="List ID"/>
+            <input type="text" id="columnDeleted_column_id" placeholder="Column ID"/>
+        </td>
+        <td id="columnDeleted_response"></td>
     </tr>
     
 </table>

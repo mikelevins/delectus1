@@ -669,6 +669,30 @@
 ;;; (column-named :owner-id $mikelid :list-id $thingsid :column-name "Star")
 ;;; (column-named :owner-id $mikelid :list-id $thingsid :column-name "NOPE!")
 
+;;; /delectus/column_deleted
+;;; ---------------------------------------------------------------------
+
+(defn column-deleted? [& {:keys [list-id owner-id column-id]
+                          :or {list-id nil
+                               owner-id nil
+                               column-id nil}}]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+    
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket owner-id)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+    (errors/error-if-nil column-id "Missing :column-id parameter" {:context 'column-with-id})
+    
+    (let [lookup (.lookupIn content-bucket list-id)
+          column-path (str +columns-attribute+ "." column-id "." +deleted-attribute+)
+          value-getter (.get lookup (into-array [column-path]))]
+      (.content (.execute value-getter) 0))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (column-deleted? :owner-id $mikelid :list-id $thingsid :column-id "0")
+;;; (column-deleted? :owner-id $mikelid :list-id $thingsid :column-id "NOPE!")
+
 
 ;;; TODO
 ;;; /delectus/new_column

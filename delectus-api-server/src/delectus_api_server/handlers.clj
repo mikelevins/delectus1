@@ -325,3 +325,14 @@
               (if result
                 (.toString result)
                 (json/write-str nil)))})
+
+;;; returns true if deleted, false if not deleted, nil if there is no such column
+(defn column-deleted? [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  column-id (:columnid (:params req))
+                  result (api/column-deleted? :owner-id userid :list-id list-id :column-id column-id)]
+              (json/write-str result))})
