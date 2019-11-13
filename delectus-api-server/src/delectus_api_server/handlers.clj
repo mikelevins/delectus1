@@ -336,3 +336,23 @@
                   column-id (:columnid (:params req))
                   result (api/column-deleted? :owner-id userid :list-id list-id :column-id column-id)]
               (json/write-str result))})
+
+(defn delete-column [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  column-id (:columnid (:params req))
+                  result (api/mark-column-deleted userid list-id column-id true)]
+              (json/write-str result))})
+
+(defn undelete-column [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  column-id (:columnid (:params req))
+                  result (api/mark-column-deleted userid list-id column-id false)]
+              (json/write-str result))})

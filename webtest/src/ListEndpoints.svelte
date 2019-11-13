@@ -132,6 +132,24 @@
      getAPI(uri+query, token, "columnDeleted_response");
  }
 
+ function deleteColumn () {
+     let listID = document.getElementById("deleteColumn_list_id").value;
+     let columnID = document.getElementById("deleteColumn_column_id").value;
+     let uri = "http://mars.local:9000/delectus/delete_column";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "deleteColumn_response");
+ }
+
+ function undeleteColumn () {
+     let listID = document.getElementById("undeleteColumn_list_id").value;
+     let columnID = document.getElementById("undeleteColumn_column_id").value;
+     let uri = "http://mars.local:9000/delectus/undelete_column";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "undeleteColumn_response");
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -294,6 +312,26 @@
             <input type="text" id="columnDeleted_column_id" placeholder="Column ID"/>
         </td>
         <td id="columnDeleted_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={deleteColumn}>/delectus/delete_column</button></td>
+        <td>
+            <input type="text" id="deleteColumn_list_id" placeholder="List ID"/>
+            <input type="text" id="deleteColumn_column_id" placeholder="Column ID"/>
+        </td>
+        <td id="deleteColumn_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={undeleteColumn}>/delectus/undelete_column</button></td>
+        <td>
+            <input type="text" id="undeleteColumn_list_id" placeholder="List ID"/>
+            <input type="text" id="undeleteColumn_column_id" placeholder="Column ID"/>
+        </td>
+        <td id="undeleteColumn_response"></td>
     </tr>
     
 </table>
