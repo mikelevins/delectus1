@@ -114,6 +114,15 @@
      getAPI(uri+query, token, "columnName_response");
  }
 
+ function columnNamed () {
+     let listID = document.getElementById("columnNamed_list_id").value;
+     let columnName = document.getElementById("columnNamed_column_name").value;
+     let uri = "http://mars.local:9000/delectus/column_named";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnname="+columnName;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "columnNamed_response");
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -256,6 +265,16 @@
             <input type="text" id="columnName_column_id" placeholder="Column ID"/>
         </td>
         <td id="columnName_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={columnNamed}>/delectus/column_named</button></td>
+        <td>
+            <input type="text" id="columnNamed_list_id" placeholder="List ID"/>
+            <input type="text" id="columnNamed_column_name" placeholder="Column name"/>
+        </td>
+        <td id="columnNamed_response"></td>
     </tr>
     
 </table>

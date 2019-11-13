@@ -313,3 +313,15 @@
               (if result
                 (json/write-str result)
                 (json/write-str nil)))})
+
+(defn column-named [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  column-name (:columnname (:params req))
+                  result (api/column-named :owner-id userid :list-id list-id :column-name column-name)]
+              (if result
+                (.toString result)
+                (json/write-str nil)))})

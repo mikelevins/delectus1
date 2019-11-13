@@ -637,7 +637,38 @@
 ;;; /delectus/column_named
 ;;; ---------------------------------------------------------------------
 
-(defn column-named [userid list-id column-name])
+(defn column-named [& {:keys [list-id owner-id column-name]
+                       :or {list-id nil
+                            owner-id nil
+                            column-name nil}}]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+    
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket owner-id)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+    (errors/error-if-nil column-name "Missing :column-name parameter" {:context 'column-named})
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (errors/error-if-nil list-cbmap "No List found" {:id list-id})
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't inspect list" list-cbmap owner-id)
+      
+      (let [columns (.get list-cbmap "columns")]
+        (errors/error-if-nil columns "Couldn't get list columns" {:id list-id})
+        (let [column-keys (.getNames columns)]
+          (some (fn [key]
+                  (let [col (.get columns key)]
+                    (and (= column-name (.get col +name-attribute+))
+                         col)))
+                column-keys))))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (column-named :owner-id $mikelid :list-id $thingsid :column-name "Title")
+;;; (column-named :owner-id $mikelid :list-id $thingsid :column-name "Star")
+;;; (column-named :owner-id $mikelid :list-id $thingsid :column-name "NOPE!")
+
 
 ;;; TODO
 ;;; /delectus/new_column
