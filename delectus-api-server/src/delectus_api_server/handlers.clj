@@ -301,3 +301,15 @@
               (if result
                 (.toString result)
                 (json/write-str nil)))})
+
+(defn column-name [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  column-id (:columnid (:params req))
+                  result (api/column-name :owner-id userid :list-id list-id :column-id column-id)]
+              (if result
+                (json/write-str result)
+                (json/write-str nil)))})
