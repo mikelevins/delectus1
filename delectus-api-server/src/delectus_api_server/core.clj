@@ -4,7 +4,8 @@
    [delectus-api-server.routes :refer [app-routes]]
    [org.httpkit.server :as server]
    [ring.middleware.cors :refer [wrap-cors]]
-   [ring.middleware.defaults :refer :all])
+   [ring.middleware.defaults :refer :all]
+   [ring.middleware.params :refer :all])
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
@@ -19,15 +20,18 @@
     ;; Run the server with Ring.defaults middleware
     (reset! server
             (server/run-server
-             (wrap-defaults
-              (wrap-cors #'app-routes
-                         :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
-                         :access-control-allow-methods [:get :put :post :delete])
-              site-defaults)
+             (wrap-params
+              (wrap-defaults
+               (wrap-cors #'app-routes
+                          :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
+                          :access-control-allow-methods [:get :put :post :delete])
+               site-defaults))
              {:port port}))
     ;; Run the server without ring defaults
     ;;(server/run-server #'app-routes {:port port})
     (println (str "Running webserver at http:/127.0.0.1:" port "/"))))
+
+;;; (-main)
 
 (defn stop-server []
   (when-not (nil? @server)

@@ -1040,6 +1040,7 @@
 ;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
 
 ;;; (set-item-column-value $mikelid $thingsid "0" "0" "Thing One")
+;;; (set-item-column-value $mikelid $thingsid "0" "0" "Thing #1")
 ;;; (item-column-value $mikelid $thingsid "0" "0")
 ;;; (set-item-column-value $mikelid $thingsid "0" "1" "A helpful thing")
 ;;; (item-column-value $mikelid $thingsid "0" "1")

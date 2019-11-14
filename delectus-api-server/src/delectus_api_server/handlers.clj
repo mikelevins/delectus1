@@ -2,12 +2,14 @@
   (:require
    [buddy.hashers :as hashers]
    [clojure.data.json :as json]
+   [clojure.pprint :as pp]
    [delectus-api-server.api :as api]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.identifiers :refer [makeid]]
    [delectus-api-server.utilities :refer [fmt]]
    [hiccup.core :refer :all]
-   [org.httpkit.server :as server])
+   [org.httpkit.server :as server]
+   [ring.util.codec :refer [url-decode]])
   (:import
    (com.couchbase.client.java.query N1qlQuery)))
 
@@ -439,9 +441,8 @@
                   item-id (:itemid (:params req))
                   column-id (:columnid (:params req))
                   result (api/item-column-value userid list-id item-id column-id)]
-              (if (nil? result)
-                (json/write-str nil)
-                (.toString result)))})
+              (pp/cl-format true "~%result = ~S" result)
+              (json/write-str result))})
 
 (defn set-item-column-value [req]
   {:status  200
@@ -451,8 +452,8 @@
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
                   column-id (:columnid (:params req))
-                  item-value (:itemvalue (:params req))
+                  item-value (:newvalue (:params req))
                   result (api/set-item-column-value userid list-id item-id column-id item-value)]
               (if (nil? result)
                 (json/write-str nil)
-                (.toString result)))})
+                (json/write-str result)))})

@@ -212,6 +212,27 @@
      getAPI(uri+query, token, "itemDeleted_response");
  }
 
+ function itemColumnValue () {
+     let listID = document.getElementById("itemColumnValue_list_id").value;
+     let itemID = document.getElementById("itemColumnValue_item_id").value;
+     let columnID = document.getElementById("itemColumnValue_column_id").value;
+     let uri = "http://mars.local:9000/delectus/item_column_value";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID+"&columnid="+columnID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "itemColumnValue_response");
+ }
+
+ function setItemColumnValue () {
+     let listID = document.getElementById("setItemColumnValue_list_id").value;
+     let itemID = document.getElementById("setItemColumnValue_item_id").value;
+     let columnID = document.getElementById("setItemColumnValue_item_id").value;
+     let newValue = document.getElementById("setItemColumnValue_new_value").value;
+     let uri = "http://mars.local:9000/delectus/set_item_column_value";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID+"&columnid="+columnID+"&newvalue="+newValue;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "setItemColumnValue_response");
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -459,6 +480,29 @@
             <input type="text" id="itemDeleted_item_id" placeholder="Item ID"/>
         </td>
         <td id="itemDeleted_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={itemColumnValue}>/delectus/item_column_value</button></td>
+        <td>
+            <input type="text" id="itemColumnValue_list_id" placeholder="List ID"/>
+            <input type="text" id="itemColumnValue_item_id" placeholder="Item ID"/>
+            <input type="text" id="itemColumnValue_column_id" placeholder="Column ID"/>
+        </td>
+        <td id="itemColumnValue_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={setItemColumnValue}>/delectus/set_item_column_value</button></td>
+        <td>
+            <input type="text" id="setItemColumnValue_list_id" placeholder="List ID"/>
+            <input type="text" id="setItemColumnValue_item_id" placeholder="Item ID"/>
+            <input type="text" id="setItemColumnValue_column_id" placeholder="Column ID"/>
+            <input type="text" id="setItemColumnValue_new_value" placeholder="New value"/>
+        </td>
+        <td id="setItemColumnValue_response"></td>
     </tr>
     
 </table>
