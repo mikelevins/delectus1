@@ -185,6 +185,33 @@
      getAPI(uri+query, token, "newItem_response");
  }
 
+ function deleteItem () {
+     let listID = document.getElementById("deleteItem_list_id").value;
+     let itemID = document.getElementById("deleteItem_item_id").value;
+     let uri = "http://mars.local:9000/delectus/delete_item";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "deleteItem_response");
+ }
+
+ function undeleteItem () {
+     let listID = document.getElementById("undeleteItem_list_id").value;
+     let itemID = document.getElementById("undeleteItem_item_id").value;
+     let uri = "http://mars.local:9000/delectus/undelete_item";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "undeleteItem_response");
+ }
+
+ function itemDeleted () {
+     let listID = document.getElementById("itemDeleted_list_id").value;
+     let itemID = document.getElementById("itemDeleted_item_id").value;
+     let uri = "http://mars.local:9000/delectus/item_deleted";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "itemDeleted_response");
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -402,6 +429,36 @@
         <td class="endpoint"><button on:click={newItem}>/delectus/new_item</button></td>
         <td><input type="text" id="newItem_list_id" placeholder="List ID"/></td>
         <td id="newItem_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={deleteItem}>/delectus/delete_item</button></td>
+        <td>
+            <input type="text" id="deleteItem_list_id" placeholder="List ID"/>
+            <input type="text" id="deleteItem_item_id" placeholder="Item ID"/>
+        </td>
+        <td id="deleteItem_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={undeleteItem}>/delectus/undelete_item</button></td>
+        <td>
+            <input type="text" id="undeleteItem_list_id" placeholder="List ID"/>
+            <input type="text" id="undeleteItem_item_id" placeholder="Item ID"/>
+        </td>
+        <td id="undeleteItem_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={itemDeleted}>/delectus/item_deleted</button></td>
+        <td>
+            <input type="text" id="itemDeleted_list_id" placeholder="List ID"/>
+            <input type="text" id="itemDeleted_item_id" placeholder="Item ID"/>
+        </td>
+        <td id="itemDeleted_response"></td>
     </tr>
     
 </table>

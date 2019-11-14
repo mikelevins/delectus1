@@ -405,7 +405,7 @@
                   userid (api/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
-                  result (api/mark-item-deleted userid list-id true)]
+                  result (api/mark-item-deleted userid list-id item-id true)]
               (.toString result))})
 
 (defn undelete-item [req]
@@ -415,7 +415,7 @@
                   userid (api/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
-                  result (api/mark-item-deleted userid list-id false)]
+                  result (api/mark-item-deleted userid list-id item-id false)]
               (.toString result))})
 
 (defn item-deleted? [req]
