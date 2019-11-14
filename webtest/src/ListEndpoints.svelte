@@ -150,6 +150,16 @@
      getAPI(uri+query, token, "undeleteColumn_response");
  }
 
+ function renameColumn () {
+     let listID = document.getElementById("renameColumn_list_id").value;
+     let columnID = document.getElementById("renameColumn_column_id").value;
+     let columnName = document.getElementById("renameColumn_column_name").value;
+     let uri = "http://mars.local:9000/delectus/rename_column";
+     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID+"&columnname="+columnName;;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "renameColumn_response");
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -332,6 +342,17 @@
             <input type="text" id="undeleteColumn_column_id" placeholder="Column ID"/>
         </td>
         <td id="undeleteColumn_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={renameColumn}>/delectus/rename_column</button></td>
+        <td>
+            <input type="text" id="renameColumn_list_id" placeholder="List ID"/>
+            <input type="text" id="renameColumn_column_id" placeholder="Column ID"/>
+            <input type="text" id="renameColumn_column_name" placeholder="New name"/>
+        </td>
+        <td id="renameColumn_response"></td>
     </tr>
     
 </table>
