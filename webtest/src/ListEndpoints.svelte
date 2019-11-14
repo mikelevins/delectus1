@@ -222,15 +222,22 @@
      getAPI(uri+query, token, "itemColumnValue_response");
  }
 
+
+ // TODO;
+ // encodeURIComponent is needed to ensure that input values are received properly;
+ // browsers won't even send unencoded parameters that contain certain characters
+ // Fix all query-string constructors to properly encode input values before calling getAPI
+
  function setItemColumnValue () {
-     let listID = document.getElementById("setItemColumnValue_list_id").value;
-     let itemID = document.getElementById("setItemColumnValue_item_id").value;
-     let columnID = document.getElementById("setItemColumnValue_item_id").value;
-     let newValue = document.getElementById("setItemColumnValue_new_value").value;
+     let listID = encodeURIComponent(document.getElementById("setItemColumnValue_list_id").value);
+     let itemID = encodeURIComponent(document.getElementById("setItemColumnValue_item_id").value);
+     let columnID = encodeURIComponent(document.getElementById("setItemColumnValue_item_id").value);
+     let newValue = encodeURIComponent(document.getElementById("setItemColumnValue_new_value").value);
      let uri = "http://mars.local:9000/delectus/set_item_column_value";
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID+"&columnid="+columnID+"&newvalue="+newValue;
+     let query1 = "?email="+$authorization["email"]+"&listid="+listID
+     let query2 = "&itemid="+itemID+"&columnid="+columnID+"&newvalue="+newValue;
      let token = $authorization["token"];
-     getAPI(uri+query, token, "setItemColumnValue_response");
+     getAPI(uri+query1+query2, token, "setItemColumnValue_response");
  }
 
 </script>
