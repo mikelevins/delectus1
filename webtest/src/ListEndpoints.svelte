@@ -177,6 +177,14 @@
      getAPI(uri+query, token, "itemWithID_response");
  }
 
+ function newItem () {
+     let listID = document.getElementById("newItem_list_id").value;
+     let uri = "http://mars.local:9000/delectus/new_item";
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "newItem_response");
+ }
+
 </script>
 
 <!------------ style definitions ------------>
@@ -387,6 +395,13 @@
             <input type="text" id="itemWithID_item_id" placeholder="Item ID"/>
         </td>
         <td id="itemWithID_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={newItem}>/delectus/new_item</button></td>
+        <td><input type="text" id="newItem_list_id" placeholder="List ID"/></td>
+        <td id="newItem_response"></td>
     </tr>
     
 </table>

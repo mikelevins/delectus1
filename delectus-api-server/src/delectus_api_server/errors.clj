@@ -11,7 +11,7 @@
   (throw (ex-info (str name " is not yet implemented. "))))
 
 (defn error-if-empty [value message context]
-  (if (nil? value)
+  (if (empty? value)
     (throw (ex-info message (merge context {:error-signaled-by 'error-if-empty})))))
 
 (defn error-if-nil [value message context]

@@ -71,10 +71,10 @@
   (GET "/delectus/rename_column" [] handlers/rename-column)
   (GET "/delectus/list_items" [] handlers/list-items)
   (GET "/delectus/item_with_id" [] handlers/item-with-id)
-  ;; (GET "/delectus/new_item" [] handlers/new-item                          
+  (GET "/delectus/new_item" [] handlers/new-item)
   ;; (GET "/delectus/delete_item" [] handlers/delete-item                    
-  ;; (GET "/delectus/item_deleted" [] handlers/item-deleted?                    
   ;; (GET "/delectus/undelete_item" [] handlers/undelete-item                
+  ;; (GET "/delectus/item_deleted" [] handlers/item-deleted?                    
   ;; (GET "/delectus/item_column_value" [] handlers/item-column-value        
   ;; (GET "/delectus/set_item_column_value" [] handlers/set-item-column-value
   

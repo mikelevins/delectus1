@@ -388,3 +388,12 @@
               (if (nil? result)
                 (json/write-str nil)
                 (.toString result)))})
+
+(defn new-item [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  result (api/new-item :list-id list-id :owner-id userid)]
+              (.toString result))})

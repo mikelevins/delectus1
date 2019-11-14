@@ -633,7 +633,6 @@
 ;;; (column-name :owner-id $mikelid :list-id $thingsid :column-id "0")
 ;;; (column-name :owner-id $mikelid :list-id $thingsid :column-id "NOPE!")
 
-;;; TODO
 ;;; /delectus/column_named
 ;;; ---------------------------------------------------------------------
 
@@ -694,7 +693,6 @@
 ;;; (column-deleted? :owner-id $mikelid :list-id $thingsid :column-id "NOPE!")
 
 
-;;; TODO
 ;;; /delectus/new_column
 ;;; ---------------------------------------------------------------------
 
@@ -733,7 +731,7 @@
 ;;; (new-column :owner-id $mikelid :list-id $thingsid :name "Title")
 ;;; (new-column :owner-id $mikelid :list-id $thingsid :name "Star")
 
-;;; TODO
+
 ;;; /delectus/delete_column
 ;;; /delectus/undelete_column
 ;;; ---------------------------------------------------------------------
@@ -763,7 +761,6 @@
 ;;; (column-deleted? :owner-id $mikelid :list-id $thingsid :column-id "0")
 
 
-;;; TODO
 ;;; /delectus/rename_column
 ;;; ---------------------------------------------------------------------
 
@@ -867,22 +864,26 @@
     
     (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
     (couchio/error-if-wrong-owner "Can't update list" list-cbmap owner-id)
-
     (let [columns (get list-cbmap +columns-attribute+)
-          column-ids (into [] (.getNames columns))
-          old-rows (get list-cbmap +items-attribute+)
-          old-row-ids (into [] (.getNames old-rows))
-          new-row-id (itemid/next-itemid old-row-ids)
-          fields-map (zipmap column-ids (repeat nil))
-          row-obj (model/make-row-object :id new-row-id :fields fields-map)
-          mutator (.mutateIn bucket list-id)
-          updater (.upsert mutator (str +items-attribute+ "." new-row-id) row-obj)]
-      (.execute updater))))
+          column-ids (into [] (.getNames columns))]
+      (errors/error-if-empty column-ids "Can't create items: no columns" {:id list-id})
+      (let [old-rows (get list-cbmap +items-attribute+)
+            old-row-ids (into [] (.getNames old-rows))
+            new-row-id (itemid/next-itemid old-row-ids)
+            fields-map (zipmap column-ids (repeat nil))
+            row-obj (model/make-row-object :id new-row-id :fields fields-map)
+            mutator (.mutateIn bucket list-id)
+            updater (.upsert mutator (str +items-attribute+ "." new-row-id) row-obj)]
+        (.execute updater)))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
 ;;; (new-item :owner-id $mikelid :list-id $thingsid)
-
+;;; (.toMap (list-items $mikelid $thingsid))
+;;; (def $poodlesid "a0208f05-c9fa-48ac-bd3d-0142d533ec8d")
+;;; (list-columns $mikelid $poodlesid)
+;;; (list-items $mikelid $poodlesid)
+;;; (new-item :owner-id $mikelid :list-id $poodlesid)
 
 ;;; TODO
 ;;; /delectus/delete_item
