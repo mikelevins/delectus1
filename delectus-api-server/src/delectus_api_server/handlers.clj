@@ -444,6 +444,12 @@
               (pp/cl-format true "~%result = ~S" result)
               (json/write-str result))})
 
+;;; TODO:
+;;; When the test client passes URL parameters to the API server in a GET,
+;;; if a parameter value contains a '#' character, the value string is truncated
+;;; at the #; the value received by the API server ends at the character before
+;;; the #. Investigate and fix.
+
 (defn set-item-column-value [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
