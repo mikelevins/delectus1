@@ -429,3 +429,30 @@
               (if (nil? result)
                 (json/write-str nil)
                 (.toString result)))})
+
+(defn item-column-value [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  item-id (:itemid (:params req))
+                  column-id (:columnid (:params req))
+                  result (api/item-column-value userid list-id item-id column-id)]
+              (if (nil? result)
+                (json/write-str nil)
+                (.toString result)))})
+
+(defn set-item-column-value [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  item-id (:itemid (:params req))
+                  column-id (:columnid (:params req))
+                  item-value (:itemvalue (:params req))
+                  result (api/set-item-column-value userid list-id item-id column-id item-value)]
+              (if (nil? result)
+                (json/write-str nil)
+                (.toString result)))})

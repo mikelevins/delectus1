@@ -933,15 +933,15 @@
 ;;; ---------------------------------------------------------------------
 
 (defn item-deleted? [owner-id list-id item-id]
-  (errors/error-if-nil name "Missing list-id parameter" {:context 'item-with-id})
-  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context 'item-with-id})
-  (errors/error-if-nil item-id "Missing item-id parameter" {:context 'item-with-id})
+  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context 'item-deleted?})
+  (errors/error-if-nil list-id "Missing list-id parameter" {:context 'item-deleted?})
+  (errors/error-if-nil item-id "Missing item-id parameter" {:context 'item-deleted?})
   (errors/error-if-not (model/user-exists? owner-id)
                        "No such user"
-                       {:parameter :owner-id :value owner-id :context 'item-with-id})
+                       {:parameter :owner-id :value owner-id :context 'item-deleted?})
   (errors/error-if-not (model/list-exists? list-id)
                        "No such list"
-                       {:parameter :list-id :value list-id :context 'item-with-id})
+                       {:parameter :list-id :value list-id :context 'item-deleted?})
   
   (let [bucket (config/delectus-content-bucket)
         list-cbmap (CouchbaseMap. list-id bucket)]
@@ -964,14 +964,88 @@
 ;;; (item-deleted? $mikelid $thingsid "101")
 
 
-;;; TODO
 ;;; /delectus/item_column_value
 ;;; ---------------------------------------------------------------------
+;;; TODO: use errors to handle cases where items and columns within
+;;; items are not found
 
-(defn item-column-value [userid list-id column-id])
+(defn item-column-value [owner-id list-id item-id column-id]
+  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context 'item-column-value})
+  (errors/error-if-nil list-id "Missing list-id parameter" {:context 'item-column-value})
+  (errors/error-if-nil item-id "Missing item-id parameter" {:context 'item-column-value})
+  (errors/error-if-not (model/user-exists? owner-id)
+                       "No such user"
+                       {:parameter :owner-id :value owner-id :context 'item-column-value})
+  (errors/error-if-not (model/list-exists? list-id)
+                       "No such list"
+                       {:parameter :list-id :value list-id :context 'item-column-value})
+  
+  (let [bucket (config/delectus-content-bucket)
+        list-cbmap (CouchbaseMap. list-id bucket)]
+    
+    (errors/error-if-nil list-cbmap "List not found" {:id list-id})
+    (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+    (couchio/error-if-wrong-owner "Can't update list" list-cbmap owner-id)
+    
+    (let [items (get list-cbmap +items-attribute+)]
+      (errors/error-if-nil items "List items not found" {:context 'item-column-value})
+      (let [item (.get items item-id)]
+        (if (nil? item)
+          nil
+          (let [fields (.get item +fields-attribute+)]
+            (if (nil? fields)
+              nil
+              (.get fields column-id))))))))
 
-;;; TODO
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (item-column-value $mikelid $thingsid "0" "0")
+
 ;;; /delectus/set_item_column_value
 ;;; ---------------------------------------------------------------------
 
-(defn set-item-column-value [userid list-id column-id new-value])
+(defn set-item-column-value [owner-id list-id item-id column-id new-value]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+
+    (errors/error-if-nil name "Missing list-id parameter" {:context 'set-item-column-value})
+    (errors/error-if-nil owner-id "Missing owner-id parameter" {:context 'set-item-column-value})
+    (errors/error-if-nil item-id "Missing item-id parameter" {:context 'set-item-column-value})
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket owner-id)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+
+    (let [list-cbmap (CouchbaseMap. list-id content-bucket)]
+
+      (errors/error-if-nil list-cbmap "List not found" {:id list-id})
+      (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+      (couchio/error-if-wrong-owner "Can't update list" list-cbmap owner-id)
+
+      (let [items (get list-cbmap +items-attribute+)]
+
+        (errors/error-if-nil items "List items not found" {:id list-id})
+
+        (let [item (.get items item-id)]
+          (errors/error-if-nil item "List item not found" {:id item-id})
+          
+          (let [fields (.get item +fields-attribute+)]
+            (errors/error-if-nil fields "Item fields not found" {:list-id list-id :item-id item-id})
+            (let [mutator (.mutateIn content-bucket list-id)
+                  updater (.upsert mutator
+                                   (str +items-attribute+ "." item-id "." +fields-attribute+ "." column-id)
+                                   new-value)]
+              (.execute updater)))))
+      list-id)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+
+;;; (set-item-column-value $mikelid $thingsid "0" "0" "Thing One")
+;;; (item-column-value $mikelid $thingsid "0" "0")
+;;; (set-item-column-value $mikelid $thingsid "0" "1" "A helpful thing")
+;;; (item-column-value $mikelid $thingsid "0" "1")
+
+;;; (set-item-column-value $mikelid $thingsid "1" "0" "Thing Two")
+;;; (item-column-value $mikelid $thingsid "1" "0")
+;;; (set-item-column-value $mikelid $thingsid "1" "1" "Another helpful thing")
+;;; (item-column-value $mikelid $thingsid "1" "1")
+
