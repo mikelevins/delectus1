@@ -376,3 +376,15 @@
                   list-id (:listid (:params req))
                   result (api/list-items userid list-id)]
               (.toString result))})
+
+(defn item-with-id [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  item-id (:itemid (:params req))
+                  result (api/item-with-id userid list-id item-id)]
+              (if (nil? result)
+                (json/write-str nil)
+                (.toString result)))})

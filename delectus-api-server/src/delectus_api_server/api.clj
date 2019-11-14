@@ -815,11 +815,34 @@
 ;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
 ;;; (list-items $mikelid $thingsid)
 
-;;; TODO
 ;;; /delectus/item_with_id
 ;;; ---------------------------------------------------------------------
 
-(defn item-with-id [userid list-id item-id])
+(defn item-with-id [owner-id list-id item-id]
+  (errors/error-if-nil name "Missing list-id parameter" {:context 'item-with-id})
+  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context 'item-with-id})
+  (errors/error-if-nil item-id "Missing item-id parameter" {:context 'item-with-id})
+  (errors/error-if-not (model/user-exists? owner-id)
+                       "No such user"
+                       {:parameter :owner-id :value owner-id :context 'item-with-id})
+  (errors/error-if-not (model/list-exists? list-id)
+                       "No such list"
+                       {:parameter :list-id :value list-id :context 'item-with-id})
+  
+  (let [bucket (config/delectus-content-bucket)
+        list-cbmap (CouchbaseMap. list-id bucket)]
+    
+    (errors/error-if-nil list-cbmap "List not found" {:id list-id})
+    (couchio/error-if-wrong-type "Not a Delectus List" list-cbmap +list-type+)
+    (couchio/error-if-wrong-owner "Can't update list" list-cbmap owner-id)
+    
+    (let [items (get list-cbmap +items-attribute+)]
+      (.get items item-id))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (item-with-id $mikelid $thingsid "0")
+;;; (item-with-id $mikelid $thingsid "2")
 
 ;;; /delectus/new_item
 ;;; ---------------------------------------------------------------------
@@ -830,14 +853,14 @@
                         list-id nil
                         owner-id nil}}]
 
-  (errors/error-if-nil name "Missing :list-id parameter" {:context 'new-column})
-  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-column})
+  (errors/error-if-nil name "Missing :list-id parameter" {:context 'new-item})
+  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-item})
   (errors/error-if-not (model/user-exists? owner-id)
                        "No such user"
-                       {:parameter :owner-id :value owner-id :context 'new-column})
+                       {:parameter :owner-id :value owner-id :context 'new-item})
   (errors/error-if-not (model/list-exists? list-id)
                        "No such list"
-                       {:parameter :list-id :value list-id :context 'new-column})
+                       {:parameter :list-id :value list-id :context 'new-item})
   
   (let [bucket (config/delectus-content-bucket)
         list-cbmap (CouchbaseMap. list-id bucket)]
