@@ -397,3 +397,35 @@
                   list-id (:listid (:params req))
                   result (api/new-item :list-id list-id :owner-id userid)]
               (.toString result))})
+
+(defn delete-item [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  item-id (:itemid (:params req))
+                  result (api/mark-item-deleted userid list-id true)]
+              (.toString result))})
+
+(defn undelete-item [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  item-id (:itemid (:params req))
+                  result (api/mark-item-deleted userid list-id false)]
+              (.toString result))})
+
+(defn item-deleted? [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  item-id (:itemid (:params req))
+                  result (api/item-deleted? userid list-id item-id)]
+              (if (nil? result)
+                (json/write-str nil)
+                (.toString result)))})
