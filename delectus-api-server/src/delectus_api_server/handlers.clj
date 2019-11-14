@@ -356,3 +356,14 @@
                   column-id (:columnid (:params req))
                   result (api/mark-column-deleted userid list-id column-id false)]
               (json/write-str result))})
+
+(defn rename-column [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  column-id (:columnid (:params req))
+                  column-name (:columnname (:params req))
+                  result (api/rename-column userid list-id column-id column-name)]
+              (json/write-str result))})

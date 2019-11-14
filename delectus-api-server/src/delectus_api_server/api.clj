@@ -744,7 +744,7 @@
     
     (couchio/error-if-no-such-id "The user doesn't exist" users-bucket owner-id)
     (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
-    (errors/error-if-nil column-id "Missing :column-id parameter" {:context 'column-with-id})
+    (errors/error-if-nil column-id "Non-null column-id parameter required" {:context 'column-with-id})
     
     (let [lookup (.lookupIn content-bucket list-id)
           column-exists-path (str +columns-attribute+ "." column-id)
@@ -767,7 +767,31 @@
 ;;; /delectus/rename_column
 ;;; ---------------------------------------------------------------------
 
-(defn rename-column [userid list-id column-id new-name])
+(defn rename-column [owner-id list-id column-id new-name]
+  (let [users-bucket (config/delectus-users-bucket)
+        content-bucket (config/delectus-content-bucket)]
+    
+    (couchio/error-if-no-such-id "The user doesn't exist" users-bucket owner-id)
+    (couchio/error-if-no-such-id "The list doesn't exist" content-bucket list-id)
+    (errors/error-if-nil column-id "Non-null column-id parameter required" {:context 'column-with-id})
+    (errors/error-if-nil new-name "Non-null new-name parameter required" {:context 'column-with-id})
+    
+    (let [lookup (.lookupIn content-bucket list-id)
+          column-exists-path (str +columns-attribute+ "." column-id)
+          value-getter (.exists lookup (into-array [column-exists-path]))
+          column-exists? (.content (.execute value-getter) 0)]
+      (if column-exists?
+        (let [mutator (.mutateIn content-bucket list-id)
+              column-name-path (str +columns-attribute+ "." column-id "." +name-attribute+)
+              updater (.upsert mutator column-name-path new-name)]
+          (.execute updater)
+          list-id)))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
+;;; (column-name :owner-id $mikelid :list-id $thingsid :column-id "0")
+;;; (rename-column $mikelid $thingsid "0" "Thing name")
+
 
 ;;; /delectus/list_items
 ;;; ---------------------------------------------------------------------
