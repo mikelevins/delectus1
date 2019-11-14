@@ -108,6 +108,29 @@
 ;;; Users
 ;;; ---------------------------------------------------------------------
 
+(defn email->user [email]
+  (let [found (couchio/find-objects
+               (config/delectus-users-bucket) []
+               {+type-attribute+ +user-type+
+                +email-attribute+ email})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+;;; (email->user "mikel@evins.net")
+;;; (email->user "greer@evins.net")
+;;; (email->user "nobody@nowhere.net")
+
+(defn email->userid [email]
+  (let [found-user (email->user email)]
+    (if found-user
+      (.get found-user "id")
+      nil)))
+
+;;; (email->userid "mikel@evins.net")
+;;; (email->userid "greer@evins.net")
+;;; (email->userid "nobody@nowhere.net")
+
 (defn user-exists? [userid]
   (let [bucket (config/delectus-users-bucket)]
     (and (couchio/id-exists? bucket userid)
@@ -193,6 +216,19 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
+(defn id->collection [collection-id]
+  (couchio/get-collection collection-id))
+
+(defn name->collection [userid name]
+  (let [found (couchio/find-objects
+               (config/delectus-content-bucket) []
+               {+type-attribute+ +collection-type+
+                +owner-id-attribute+ userid
+                +name-attribute+ name})]
+    (if (empty? found)
+      nil
+      (first found))))
+
 (defn collection-exists? [collection-id]
   (let [bucket (config/delectus-content-bucket)]
     (and (couchio/id-exists? bucket collection-id)
@@ -242,6 +278,20 @@
 ;;; ---------------------------------------------------------------------
 ;;; Lists
 ;;; ---------------------------------------------------------------------
+
+(defn id->list [list-id]
+  (couchio/get-list list-id))
+
+(defn name->list [userid name]
+  (let [found (couchio/find-objects
+               (config/delectus-content-bucket) []
+               {+type-attribute+ +list-type+
+                +owner-id-attribute+ userid
+                +name-attribute+ name})]
+    (if (empty? found)
+      nil
+      (first found))))
+
 
 (defn list-exists? [listid]
   (let [bucket (config/delectus-content-bucket)]

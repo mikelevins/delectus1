@@ -6,6 +6,7 @@
    [delectus-api-server.api :as api]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.model :as model]
    [delectus-api-server.utilities :refer [fmt]]
    [hiccup.core :refer :all]
    [org.httpkit.server :as server]
@@ -36,10 +37,6 @@
                                     (:delectus-admin-password (config/delectus-configuration)))
                info (.raw (.info mgr))]
            (.toString info))})
-
-;;; ---------------------------------------------------------------------
-;;; support functions
-;;; ---------------------------------------------------------------------
 
 ;;; ---------------------------------------------------------------------
 ;;; user handlers
@@ -112,7 +109,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   collection-id (:collectionid (:params req))
                   new-name (:newname (:params req))
                   result (api/rename-collection userid collection-id new-name)]
@@ -132,7 +129,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   collection-id (:collectionid (:params req))
                   result (api/mark-collection-deleted userid collection-id true)]
               (json/write-str result))})
@@ -141,7 +138,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   collection-id (:collectionid (:params req))
                   result (api/mark-collection-deleted userid collection-id false)]
               (json/write-str result))})
@@ -150,7 +147,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   collection-id (:collectionid (:params req))
                   result (api/collection-deleted? userid collection-id)]
               (json/write-str result))})
@@ -169,7 +166,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   collection-id (:collectionid (:params req))
                   list-id (:listid (:params req))
                   result (api/collection-add-list userid collection-id list-id)]
@@ -179,7 +176,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   collection-id (:collectionid (:params req))
                   list-id (:listid (:params req))
                   result (api/collection-remove-list userid collection-id list-id)]
@@ -211,7 +208,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   result (api/list-name userid list-id)]
               (json/write-str result))})
@@ -230,7 +227,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   new-name (:newname (:params req))
                   result (api/rename-list userid list-id new-name)]
@@ -250,7 +247,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   result (api/mark-list-deleted userid list-id true)]
               (json/write-str result))})
@@ -259,7 +256,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   result (api/mark-list-deleted userid list-id false)]
               (json/write-str result))})
@@ -268,7 +265,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   result (api/list-deleted? userid list-id)]
               (json/write-str result))})
@@ -277,7 +274,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   result (api/list-columns userid list-id)]
               (.toString result))})
@@ -286,7 +283,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-name (:columnname (:params req))
                   result (api/new-column :owner-id userid :list-id list-id :name column-name)]
@@ -296,7 +293,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-id (:columnid (:params req))
                   result (api/column-with-id :owner-id userid :list-id list-id :column-id column-id)]
@@ -308,7 +305,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-id (:columnid (:params req))
                   result (api/column-name :owner-id userid :list-id list-id :column-id column-id)]
@@ -320,7 +317,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-name (:columnname (:params req))
                   result (api/column-named :owner-id userid :list-id list-id :column-name column-name)]
@@ -333,7 +330,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-id (:columnid (:params req))
                   result (api/column-deleted? :owner-id userid :list-id list-id :column-id column-id)]
@@ -343,7 +340,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-id (:columnid (:params req))
                   result (api/mark-column-deleted userid list-id column-id true)]
@@ -353,7 +350,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-id (:columnid (:params req))
                   result (api/mark-column-deleted userid list-id column-id false)]
@@ -363,7 +360,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   column-id (:columnid (:params req))
                   column-name (:columnname (:params req))
@@ -374,7 +371,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   result (api/list-items userid list-id)]
               (.toString result))})
@@ -383,7 +380,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
                   result (api/item-with-id userid list-id item-id)]
@@ -395,7 +392,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   result (api/new-item :list-id list-id :owner-id userid)]
               (.toString result))})
@@ -404,7 +401,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
                   result (api/mark-item-deleted userid list-id item-id true)]
@@ -414,7 +411,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
                   result (api/mark-item-deleted userid list-id item-id false)]
@@ -424,7 +421,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
                   result (api/item-deleted? userid list-id item-id)]
@@ -436,25 +433,18 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
                   column-id (:columnid (:params req))
                   result (api/item-column-value userid list-id item-id column-id)]
-              (pp/cl-format true "~%result = ~S" result)
               (json/write-str result))})
-
-;;; TODO:
-;;; When the test client passes URL parameters to the API server in a GET,
-;;; if a parameter value contains a '#' character, the value string is truncated
-;;; at the #; the value received by the API server ends at the character before
-;;; the #. Investigate and fix.
 
 (defn set-item-column-value [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  userid (api/email->userid email)
+                  userid (model/email->userid email)
                   list-id (:listid (:params req))
                   item-id (:itemid (:params req))
                   column-id (:columnid (:params req))

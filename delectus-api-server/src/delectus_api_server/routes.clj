@@ -16,7 +16,6 @@
   (GET "/echo" [] handlers/echo)
   (GET "/status" [] handlers/status)
 
-  ;; -------------------
   ;; Delectus API routes
   ;; -------------------
 

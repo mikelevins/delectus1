@@ -17,77 +17,6 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; =====================================================================
-;;; support functions
-;;; =====================================================================
-
-;;; users
-;;; ---------------------------------------------------------------------
-
-(defn id->user [userid]
-  (couchio/get-user userid))
-
-;;; (def $mikelid (email->userid "mikel@evins.net"))
-;;; (def $mikel (id->user $mikelid))
-
-(defn email->user [email]
-  (let [found (couchio/find-objects
-               (config/delectus-users-bucket) []
-               {+type-attribute+ +user-type+
-                +email-attribute+ email})]
-    (if (empty? found)
-      nil
-      (first found))))
-
-
-;;; (email->user "mikel@evins.net")
-;;; (email->user "greer@evins.net")
-;;; (email->user "nobody@nowhere.net")
-
-(defn email->userid [email]
-  (let [found-user (email->user email)]
-    (if found-user
-      (.get found-user "id")
-      nil)))
-
-;;; (email->userid "mikel@evins.net")
-;;; (email->userid "greer@evins.net")
-;;; (email->userid "nobody@nowhere.net")
-
-
-;;; collections
-;;; ---------------------------------------------------------------------
-
-(defn id->collection [collection-id]
-  (couchio/get-collection collection-id))
-
-(defn name->collection [userid name]
-  (let [found (couchio/find-objects
-               (config/delectus-content-bucket) []
-               {+type-attribute+ +collection-type+
-                +owner-id-attribute+ userid
-                +name-attribute+ name})]
-    (if (empty? found)
-      nil
-      (first found))))
-
-;;; lists
-;;; ---------------------------------------------------------------------
-
-(defn id->list [list-id]
-  (couchio/get-list list-id))
-
-(defn name->list [userid name]
-  (let [found (couchio/find-objects
-               (config/delectus-content-bucket) []
-               {+type-attribute+ +list-type+
-                +owner-id-attribute+ userid
-                +name-attribute+ name})]
-    (if (empty? found)
-      nil
-      (first found))))
-
-
-;;; =====================================================================
 ;;; API-endpoint functions
 ;;; =====================================================================
 
@@ -111,7 +40,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defn login [email password]
-  (let [found-user (email->user email)]
+  (let [found-user (model/email->user email)]
     (if found-user
       (if (hashers/check password (.get found-user "password-hash"))
         found-user
@@ -119,7 +48,7 @@
       false)))
 
 ;;; /delectus/userid
-(defn userid [email] (email->userid email))
+(defn userid [email] (model/email->userid email))
 
 ;;; ---------------------------------------------------------------------
 ;;; Collections
@@ -134,7 +63,7 @@
                         {+type-attribute+ +collection-type+
                          +owner-id-attribute+ userid}))
 
-;;; (collections (email->userid "mikel@evins.net"))
+;;; (collections (model/email->userid "mikel@evins.net"))
 
 ;;; /delectus/collection_with_id
 ;;; ---------------------------------------------------------------------
@@ -185,8 +114,8 @@
       nil
       (first found))))
 
-;;; (collection-named (email->userid "mikel@evins.net") "Default Collection")
-;;; (collection-named (email->userid "mikel@evins.net") "NOPE!")
+;;; (collection-named (model/email->userid "mikel@evins.net") "Default Collection")
+;;; (collection-named (model/email->userid "mikel@evins.net") "NOPE!")
 
 
 ;;; /delectus/rename_collection
@@ -210,7 +139,7 @@
       collection-id)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (collections (email->userid "mikel@evins.net"))
+;;; (collections (model/email->userid "mikel@evins.net"))
 ;;; (def $planets (collection-named $mikelid "Planets"))
 ;;; (def $collid (.get $planets "id"))
 ;;; (rename-collection $mikelid $collid "My Planets")
@@ -226,10 +155,10 @@
   (couchio/error-if-id-exists id)
   (errors/error-if-nil name "Missing :name parameter" {:context 'new-collection})
   (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-collection})
-  (errors/error-if-nil (id->user owner-id)
+  (errors/error-if-nil (couchio/get-user owner-id)
                        "No such user"
                        {:parameter :owner-id :value owner-id :context 'new-collection})
-  (errors/error-if (name->collection owner-id name)
+  (errors/error-if (model/name->collection owner-id name)
                    "Collection name exists"
                    {:parameter :name :value name})
 
@@ -242,8 +171,8 @@
              collection-doc)
     id))
 
-;;; (new-collection :id (makeid) :name "Parts" :owner-id (email->userid "mikel@evins.net"))
-;;; (new-collection :id (makeid) :name "Stuff" :owner-id (email->userid "nobody@evins.net"))
+;;; (new-collection :id (makeid) :name "Parts" :owner-id (model/email->userid "mikel@evins.net"))
+;;; (new-collection :id (makeid) :name "Stuff" :owner-id (model/email->userid "nobody@evins.net"))
 
 
 ;;; /delectus/delete_collection
@@ -393,13 +322,13 @@
       collection-id)))
 
 ;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $collid (.get (collection-named (email->userid "mikel@evins.net") "Default Collection") "id"))
+;;; (def $collid (.get (collection-named (model/email->userid "mikel@evins.net") "Default Collection") "id"))
 ;;; (def $coll (couchio/get-document $bucket $collid))
 ;;; (.toMap (.content $coll))
-;;; (def $thingsid (.get (list-named (email->userid "mikel@evins.net") "Things") "id"))
+;;; (def $thingsid (.get (list-named (model/email->userid "mikel@evins.net") "Things") "id"))
 ;;; (def $things (couchio/get-document $bucket $thingsid))
 ;;; (.toMap (.content $things))
-;;; (def $mikelid (email->userid "mikel@evins.net"))
+;;; (def $mikelid (model/email->userid "mikel@evins.net"))
 ;;; (collection-remove-list $mikelid $collid $thingsid)
 
 ;;; ---------------------------------------------------------------------
@@ -416,7 +345,7 @@
                           {+type-attribute+ +list-type+
                            +owner-id-attribute+ userid})))
 
-;;; (lists (email->userid "mikel@evins.net"))
+;;; (lists (model/email->userid "mikel@evins.net"))
 
 ;;; /delectus/list_with_id
 ;;; ---------------------------------------------------------------------
@@ -430,8 +359,8 @@
       nil
       (first found))))
 
-;;; (def $listid (.get (find-list-by-name (email->userid "mikel@evins.net") "Things") "id"))
-;;; (find-list-by-id (email->userid "mikel@evins.net") $listid)
+;;; (def $listid (.get (find-list-by-name (model/email->userid "mikel@evins.net") "Things") "id"))
+;;; (find-list-by-id (model/email->userid "mikel@evins.net") $listid)
 
 ;;; /delectus/list_name
 ;;; ---------------------------------------------------------------------
@@ -466,8 +395,8 @@
       nil
       (first found))))
 
-;;; (find-list-by-name (email->userid "mikel@evins.net") "Things")
-;;; (find-list-by-name (email->userid "mikel@evins.net") "NOPE!")
+;;; (find-list-by-name (model/email->userid "mikel@evins.net") "Things")
+;;; (find-list-by-name (model/email->userid "mikel@evins.net") "NOPE!")
 
 ;;; /delectus/rename_list
 ;;; ---------------------------------------------------------------------
@@ -490,7 +419,7 @@
       list-id)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (lists (email->userid "mikel@evins.net"))
+;;; (lists (model/email->userid "mikel@evins.net"))
 ;;; (def $stuff (list-named $mikelid "Stuff"))
 ;;; (def $listid (.get $stuff "id"))
 ;;; (rename-list $mikelid $listid "My Stuff")
@@ -506,10 +435,10 @@
   (couchio/error-if-id-exists id)
   (errors/error-if-nil name "Missing :name parameter" {:context 'new-list})
   (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-list})
-  (errors/error-if-nil (id->user owner-id)
+  (errors/error-if-nil (couchio/get-user owner-id)
                        "No such user"
                        {:parameter :owner-id :value owner-id :context 'new-list})
-  (errors/error-if (name->list owner-id name)
+  (errors/error-if (model/name->list owner-id name)
                    "List name exists"
                    {:parameter :name :value name})
 
@@ -521,7 +450,7 @@
              list-doc)
     id))
 
-;;; (new-list :id (makeid) :name "Stuff" :owner-id (email->userid "mikel@evins.net"))
+;;; (new-list :id (makeid) :name "Stuff" :owner-id (model/email->userid "mikel@evins.net"))
 
 ;;; /delectus/delete_list
 ;;; /delectus/undelete_list
