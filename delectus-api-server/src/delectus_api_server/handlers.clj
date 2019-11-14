@@ -367,3 +367,12 @@
                   column-name (:columnname (:params req))
                   result (api/rename-column userid list-id column-id column-name)]
               (json/write-str result))})
+
+(defn list-items [req]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [email (:email (:params req))
+                  userid (api/email->userid email)
+                  list-id (:listid (:params req))
+                  result (api/list-items userid list-id)]
+              (.toString result))})

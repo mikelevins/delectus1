@@ -159,6 +159,14 @@
      let token = $authorization["token"];
      getAPI(uri+query, token, "renameColumn_response");
  }
+ 
+ function listItems () {
+     let listID = document.getElementById("listItems_list_id").value;
+     let uri = "http://mars.local:9000/delectus/list_items";
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let token = $authorization["token"];
+     getAPI(uri+query, token, "listItems_response");
+ }
 
 </script>
 
@@ -353,6 +361,13 @@
             <input type="text" id="renameColumn_column_name" placeholder="New name"/>
         </td>
         <td id="renameColumn_response"></td>
+    </tr>
+
+    <tr>
+        <td>GET</td>
+        <td class="endpoint"><button on:click={listItems}>/delectus/list_items</button></td>
+        <td><input type="text" id="listItems_list_id" placeholder="List ID"/></td>
+        <td id="listItems_response"></td>
     </tr>
     
 </table>
