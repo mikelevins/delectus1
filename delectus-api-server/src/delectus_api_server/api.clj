@@ -47,6 +47,11 @@
         false)
       false)))
 
+;;; (def $username (:delectus-test-user (config/delectus-configuration)))
+;;; (def $password (:delectus-test-user-password (config/delectus-configuration)))
+;;; (login $username $password)
+;;; (login "foo" "bar")
+
 ;;; /delectus/userid
 (defn userid [email] (model/email->userid email))
 
