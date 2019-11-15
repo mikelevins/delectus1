@@ -178,6 +178,7 @@
 ;;; /delectus/delete_collection
 ;;; /delectus/undelete_collection
 ;;; ---------------------------------------------------------------------
+;;; TODO: make it impossible to delete the default collection
 
 (defn mark-collection-deleted [userid collection-id deleted?]
   (let [users-bucket (config/delectus-users-bucket)

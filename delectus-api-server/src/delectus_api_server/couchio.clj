@@ -13,40 +13,6 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 ;;; =====================================================================
-;;; how to create and access Couchbase data structures
-;;; =====================================================================
-;;; NOTE: creating a Couchbase data structure creates the object in the
-;;;       store if it does not already exist. It is therefore
-;;;       necessary to check for the existence of an id in the store
-;;;       using id-exists?  before calling the constructors, to avoid
-;;;       littering the bucket with gratuitous objects
-;;;
-;;; (def $bucket (config/scratch-bucket))
-;;;
-;;; CouchbaseArrayList
-;;;
-;;; (def $fruitsid "fruit_list")
-;;; (def $fruits (CouchbaseArrayList. $fruitsid $bucket ["Apple" "Banana" "Cherry" "Date" "Eggplant"]))
-;;; (class $fruits)
-;;; (time (.get $fruits 3))
-;;; (time (.set $fruits 3 "Durian"))
-;;; (def $fruits2 (CouchbaseArrayList. $fruitsid $bucket))
-;;;
-;;; CouchbaseMap
-;;;
-;;; (def $fredid "fred_map")
-;;; (def $fred (CouchbaseMap. $fredid $bucket {"name" "Fred" "age" 35 "friends" (JsonArray/from ["Barney" "Betty"])}))
-;;; (class $fred)
-;;; (def $fred2 (CouchbaseMap. $fredid $bucket))
-;;;
-;;; lookupIn
-;;;
-;;; (def $lookupin (.lookupIn $bucket $fruitsid))
-;;; (def $optionsbuilder (SubdocOptionsBuilder.))
-;;; (.get $lookupin "$document.id" $optionsbuilder)
-;;; (.execute (.get $lookupin "$document.id" $optionsbuilder))
-
-;;; =====================================================================
 ;;; document and object helpers
 ;;; =====================================================================
 
@@ -57,16 +23,13 @@
 ;;; accessors
 ;;; ---------------------------------------------------------------------
 
-(defn json-object-type [obj]
+(defn ensure-json-object [obj]
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
-  (.get obj +type-attribute+))
+  obj)
 
-(defn json-object-owner-id [obj]
-  (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
-  (.get obj +owner-id-attribute+))
-
-(defn json-object-items [obj]
-  (.get obj +items-attribute+))
+(defn json-object-attribute [obj attribute-name]
+  (ensure-json-object obj)
+  (.get obj attribute-name))
 
 ;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
 ;;; (json-object-items (get-collection $defaultid))
@@ -75,10 +38,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defn json-object-type? [obj type-string]
-  (= type-string (json-object-type obj)))
+  (= type-string (json-object-attribute obj +type-attribute+)))
 
 (defn json-object-owner? [obj ownerid]
-  (= ownerid (json-object-owner-id obj)))
+  (= ownerid (json-object-attribute obj +owner-id-attribute+)))
 
 ;;; (def $fred (make-json-object {"name" "Fred" "age" 35}))
 ;;; (itemizing-json-object? $fred)
@@ -97,28 +60,6 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (make-list-document :name "Random stuff" :owner-id $mikelid)
 
-(defn put-key-if-changed [json-obj key new-value]
-  (let [changed? (if (.containsKey json-obj key)
-                   (not (= new-value (.get json-obj key)))
-                   true)]
-    (if changed?
-      (JsonObject/from (merge (into {} (.toMap json-obj))
-                              {key new-value}))
-      json-obj)))
-
-;;; (def $obj1 (JsonObject/from {"name" "Fred"}))
-;;; (def $obj2 (put-key-if-changed $obj1 "name" "Fred"))
-;;; (def $obj3 (put-key-if-changed $obj1 "name" "Barney"))
-
-(defn find-json-object-key-for-value [obj val]
-  (let [the-keys (into [] (.getNames obj))]
-    (some (fn [key]
-            (and (= val (.get obj key))
-                 key))
-          the-keys)))
-
-;;; (def $obj1 (JsonObject/from {"name" "Fred" "age" 35 "color" "orange"}))
-;;; (find-json-object-key-for-value $obj1 35)
 
 ;;; ---------------------------------------------------------------------
 ;;; JsonDocument
@@ -129,7 +70,6 @@
 
 ;;; (make-json-document "foo_document" {"name" "Fred" "age" 35})
 ;;; (make-json-document "bar_document" {"name" "Fred" "age" 35 "things" {}})
-
 
 ;;; =====================================================================
 ;;; Fetching and storing documents by id
@@ -235,7 +175,20 @@
 ;;; (object-attribute-exists? (config/delectus-users-bucket) $mikelid "id")
 ;;; (object-attribute-exists? (config/delectus-users-bucket) $mikelid "nope")
 
+(defn ensure-object-attribute-exists [bucket object-id attribute-name]
+  (errors/error-if-not (object-attribute-exists? bucket object-id attribute-name)
+                       "No such attribute"
+                       {:bucket-name (.name bucket)
+                        :object-id object-id
+                        :attribute-name attribute-name})
+  object-id)
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (ensure-object-attribute-exists (config/delectus-users-bucket) $mikelid "id")
+;;; (ensure-object-attribute-exists (config/delectus-users-bucket) $mikelid "nope")
+
 (defn get-object-attribute [bucket objectid attribute-name]
+  (ensure-object-attribute-exists bucket objectid attribute-name)
   (let [lookup (.get (.lookupIn bucket objectid) (into-array [attribute-name]))
         result (.execute lookup)]
     (.content result 0)))
@@ -246,11 +199,7 @@
 
 ;;; set the attribute, but only if it already exists
 (defn update-object-attribute! [bucket objectid attribute-name value]
-  (errors/error-if-not (object-attribute-exists? bucket objectid attribute-name)
-                       "No such attribute"
-                       {:bucket-name (.name bucket)
-                        :object-id objectid
-                        :attribute-name attribute-name})
+  (ensure-object-attribute-exists bucket objectid attribute-name)
   (let [mutator (.upsert (.mutateIn bucket objectid) attribute-name value)]
     (.execute mutator)
     value))
