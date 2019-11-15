@@ -55,6 +55,10 @@
 ;;; /delectus/userid
 (defn userid [email] (model/email->userid email))
 
+;;; (def $email (:delectus-test-user (config/delectus-configuration)))
+;;; (def $userid (userid $email))
+;;; (def $userid (userid "NOPE!"))
+
 ;;; ---------------------------------------------------------------------
 ;;; Collections
 ;;; ---------------------------------------------------------------------
