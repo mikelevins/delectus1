@@ -36,206 +36,228 @@
  
  function renameList () {
      let uri = apiEndpoint("rename_list");
-     let listID = document.getElementById("renameList_list_id").value;
-     let newName = document.getElementById("renameList_new_name").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&newname="+newName;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "renameList_list_id"),
+                "newname": encodedValue(document, "renameList_new_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "renameList_response");
  }
 
  function newList () {
      let uri = apiEndpoint("new_list");
-     let listName = document.getElementById("newList_list_name").value;
-     let query = "?email="+$authorization["email"]+"&name="+listName;
+     let pMap = {"email": $authorization["email"], 
+                "name": encodedValue(document, "newList_list_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "newList_response");
  }
  
  function deleteList () {
      let uri = apiEndpoint("delete_list");
-     let listID = document.getElementById("deleteList_list_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "deleteList_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "deleteList_response");
  }
  
  function undeleteList () {
      let uri = apiEndpoint("undelete_list");
-     let listID = document.getElementById("undeleteList_list_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "undeleteList_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "undeleteList_response");
  }
  
  function listDeleted () {
      let uri = apiEndpoint("list_deleted");
-     let listID = document.getElementById("listDeleted_list_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "listDeleted_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "listDeleted_response");
  }
 
  function getListByName () {
      let uri = apiEndpoint("list_named");
-     let listName = document.getElementById("getListByName_list_name").value;
-     let query = "?email="+$authorization["email"]+"&name="+listName;
+     let pMap = {"email": $authorization["email"], 
+                "name": encodedValue(document, "getListByName_list_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "getListByName_response");
  }
  
  function listColumns () {
      let uri = apiEndpoint("list_columns");
-     let listID = document.getElementById("listColumns_list_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "listColumns_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "listColumns_response");
  }
 
  function newColumn () {
      let uri = apiEndpoint("new_column");
-     let listID = document.getElementById("newColumn_list_id").value;
-     let columnName = document.getElementById("newColumn_column_name").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnname="+columnName;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "newColumn_list_id"),
+                "columnname": "newColumn_column_name"};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "newList_response");
  }
 
  function columnWithID () {
      let uri = apiEndpoint("column_with_id");
-     let listID = document.getElementById("columnWithID_list_id").value;
-     let columnID = document.getElementById("columnWithID_column_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "columnWithID_list_id"),
+                "columnid": encodedValue(document, "columnWithID_column_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnWithID_response");
  }
 
  function columnName () {
      let uri = apiEndpoint("column_name");
-     let listID = document.getElementById("columnName_list_id").value;
-     let columnID = document.getElementById("columnName_column_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "columnName_list_id"),
+                "columnid": encodedValue(document, "columnName_column_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnName_response");
  }
 
  function columnNamed () {
      let uri = apiEndpoint("column_named");
-     let listID = document.getElementById("columnNamed_list_id").value;
-     let columnName = document.getElementById("columnNamed_column_name").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnname="+columnName;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "columnNamed_list_id"),
+                "columnname": encodedValue(document, "columnNamed_column_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnNamed_response");
  }
 
  function columnDeleted () {
      let uri = apiEndpoint("column_deleted");
-     let listID = document.getElementById("columnDeleted_list_id").value;
-     let columnID = document.getElementById("columnDeleted_column_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "columnDeleted_list_id"),
+                "columnid": encodedValue(document, "columnDeleted_column_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnDeleted_response");
  }
 
  function deleteColumn () {
      let uri = apiEndpoint("delete_column");
-     let listID = document.getElementById("deleteColumn_list_id").value;
-     let columnID = document.getElementById("deleteColumn_column_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "deleteColumn_list_id"),
+                "columnid": encodedValue(document, "deleteColumn_column_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "deleteColumn_response");
  }
 
  function undeleteColumn () {
      let uri = apiEndpoint("undelete_column");
-     let listID = document.getElementById("undeleteColumn_list_id").value;
-     let columnID = document.getElementById("undeleteColumn_column_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "undeleteColumn_list_id"),
+                "columnid": encodedValue(document, "undeleteColumn_column_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "undeleteColumn_response");
  }
 
  function renameColumn () {
      let uri = apiEndpoint("rename_column");
-     let listID = document.getElementById("renameColumn_list_id").value;
-     let columnID = document.getElementById("renameColumn_column_id").value;
-     let columnName = document.getElementById("renameColumn_column_name").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID+"&columnname="+columnName;;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "renameColumn_list_id"),
+                "columnid": encodedValue(document, "renameColumn_column_id"),
+                "columnname": encodedValue(document, "renameColumn_column_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "renameColumn_response");
  }
  
  function listItems () {
      let uri = apiEndpoint("list_items");
-     let listID = document.getElementById("listItems_list_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "listItems_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "listItems_response");
  }
  
  function itemWithID () {
      let uri = apiEndpoint("item_with_id");
-     let listID = document.getElementById("itemWithID_list_id").value;
-     let itemID = document.getElementById("itemWithID_item_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "itemWithID_list_id"),
+                "itemid": encodedValue(document, "itemWithID_item_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "itemWithID_response");
  }
 
  function newItem () {
      let uri = apiEndpoint("new_item");
-     let listID = document.getElementById("newItem_list_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "newItem_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "newItem_response");
  }
 
  function deleteItem () {
      let uri = apiEndpoint("delete_item");
-     let listID = document.getElementById("deleteItem_list_id").value;
-     let itemID = document.getElementById("deleteItem_item_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "deleteItem_list_id"),
+                "itemid": encodedValue(document, "deleteItem_item_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "deleteItem_response");
  }
 
  function undeleteItem () {
      let uri = apiEndpoint("undelete_item");
-     let listID = document.getElementById("undeleteItem_list_id").value;
-     let itemID = document.getElementById("undeleteItem_item_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "undeleteItem_list_id"),
+                "itemid": encodedValue(document, "undeleteItem_item_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "undeleteItem_response");
  }
 
  function itemDeleted () {
      let uri = apiEndpoint("item_deleted");
-     let listID = document.getElementById("itemDeleted_list_id").value;
-     let itemID = document.getElementById("itemDeleted_item_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "itemDeleted_list_id"),
+                "itemid": encodedValue(document, "itemDeleted_item_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "itemDeleted_response");
  }
 
  function itemColumnValue () {
      let uri = apiEndpoint("item_column_value");
-     let listID = encodedValue(document,"itemColumnValue_list_id");
-     let itemID = encodedValue(document,"itemColumnValue_item_id");
-     let columnID = document.getElementById("itemColumnValue_column_id").value;
-     let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID+"&columnid="+columnID;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "itemColumnValue_list_id"),
+                "itemid": encodedValue(document, "itemColumnValue_item_id"),
+                "columnid": encodedValue(document, "itemColumnValue_column_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "itemColumnValue_response");
  }
 
  function setItemColumnValue () {
      let uri = apiEndpoint("set_item_column_value");
-     let listID = encodedValue(document,"setItemColumnValue_list_id");
-     let itemID = encodedValue(document,"setItemColumnValue_item_id");
-     let columnID = encodedValue(document,"setItemColumnValue_item_id");
-     let newValue = encodedValue(document,"setItemColumnValue_new_value");
-     let query1 = "?email="+$authorization["email"]+"&listid="+listID
-     let query2 = "&itemid="+itemID+"&columnid="+columnID+"&newvalue="+newValue;
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "setItemColumnValue_list_id"),
+                "itemid": encodedValue(document, "setItemColumnValue_item_id"),
+                "columnid": encodedValue(document, "setItemColumnValue_column_id"),
+                "newvalue": encodedValue(document, "setItemColumnValue_new_value")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
-     getAPI(uri+query1+query2, token, "setItemColumnValue_response");
+     getAPI(uri+query, token, "setItemColumnValue_response");
  }
 
 </script>
