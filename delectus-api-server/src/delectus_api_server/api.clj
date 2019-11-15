@@ -68,11 +68,14 @@
 
 (defn collections [userid]
   (couchio/find-objects (config/delectus-content-bucket)
-                        ["name" "id"]
+                        []
                         {+type-attribute+ +collection-type+
                          +owner-id-attribute+ userid}))
 
-;;; (collections (model/email->userid "mikel@evins.net"))
+;;; (def $colls (collections (model/email->userid "mikel@evins.net")))
+;;; (every? #(couchio/json-object-type? % +collection-type+) $colls)
+;;; (some #(and (not (couchio/json-object-type? % +collection-type+)) %) $colls)
+;;; (collections (model/email->userid "nobody@nowhere.net"))
 
 ;;; /delectus/collection_with_id
 ;;; ---------------------------------------------------------------------
