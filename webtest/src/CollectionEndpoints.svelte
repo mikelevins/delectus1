@@ -3,104 +3,117 @@
  // -----------------------------------------
 
  import { authorization } from "./auth.js";
- import { getAPI } from "./api.js";
-  
+ import { apiEndpoint, encodedValue, getAPI, makeQuery } from "./api.js";
+ 
  // collections
  // -----------------------------------------
  
  function getUserCollections () {
-     let uri = "http://mars.local:9000/delectus/collections?email="+$authorization["email"];
+     let uri = apiEndpoint("collections");
+     let pMap = {"email": $authorization["email"]};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
-     getAPI(uri, token, "getUserCollections_response");
+     getAPI(uri+query, token, "getUserCollections_response");
  }
  
  function newCollection () {
-     let collectionName = document.getElementById("newCollection_collection_name").value;
-     let uri = "http://mars.local:9000/delectus/new_collection";
-     let query = "?email="+$authorization["email"]+"&name="+collectionName;
+     let uri = apiEndpoint("new_collection");
+     let pMap = {"email": $authorization["email"], 
+                "name": encodedValue(document, "newCollection_collection_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "newCollection_response");
  }
  
  function deleteCollection () {
-     let collectionID = document.getElementById("deleteCollection_collection_id").value;
-     let uri = "http://mars.local:9000/delectus/delete_collection";
-     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
+     let uri = apiEndpoint("delete_collection");
+     let pMap = {"email": $authorization["email"], 
+                "collectionid": encodedValue(document, "deleteCollection_collection_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "deleteCollection_response");
  }
  
  function undeleteCollection () {
-     let collectionID = document.getElementById("undeleteCollection_collection_id").value;
-     let uri = "http://mars.local:9000/delectus/undelete_collection";
-     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
+     let uri = apiEndpoint("undelete_collection");
+     let pMap = {"email": $authorization["email"], 
+                "collectionid": encodedValue(document, "undeleteCollection_collection_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "undeleteCollection_response");
  }
  
  function collectionDeleted () {
-     let collectionID = document.getElementById("collectionDeleted_collection_id").value;
-     let uri = "http://mars.local:9000/delectus/collection_deleted";
-     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID;
+     let uri = apiEndpoint("collection_deleted");
+     let pMap = {"email": $authorization["email"], 
+                "collectionid": encodedValue(document, "collectionDeleted_collection_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "collectionDeleted_response");
  }
 
  function collectionName () {
-     let collectionID = document.getElementById("collectionName_collection_id").value;
-     let uri = "http://mars.local:9000/delectus/collection_name";
-     let query = "?email="+$authorization["email"]+"&id="+collectionID;
+     let uri = apiEndpoint("collection_name");
+     let pMap = {"email": $authorization["email"], 
+                "id": encodedValue(document, "collectionName_collection_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "collectionName_response");
  }
 
  function getCollectionByName () {
-     let collectionName = document.getElementById("getCollectionByName_collection_name").value;
-     let uri = "http://mars.local:9000/delectus/collection_named";
-     let query = "?email="+$authorization["email"]+"&name="+collectionName;
+     let uri = apiEndpoint("collection_named");
+     let pMap = {"email": $authorization["email"], 
+                "name": encodedValue(document, "getCollectionByName_collection_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "getCollectionByName_response");
  }
  
  function getCollectionByID () {
-     let collectionID = document.getElementById("getCollectionByID_collection_id").value;
-     let uri = "http://mars.local:9000/delectus/collection_with_id";
-     let query = "?email="+$authorization["email"]+"&id="+collectionID;
+     let uri = apiEndpoint("collection_with_id");
+     let pMap = {"email": $authorization["email"], 
+                "id": encodedValue(document, "getCollectionByID_collection_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "getCollectionByID_response");
  }
  
  function renameCollection () {
-     let collectionID = document.getElementById("renameCollection_collection_id").value;
-     let newName = document.getElementById("renameCollection_new_name").value;
-     let uri = "http://mars.local:9000/delectus/rename_collection";
-     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&newname="+newName;
+     let uri = apiEndpoint("rename_collection");
+     let pMap = {"email": $authorization["email"], 
+                "collectionid": encodedValue(document, "renameCollection_collection_id"),
+                "newname": encodedValue(document, "renameCollection_new_name")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "renameCollection_response");
  }
  
  function collectionLists () {
-     let collectionID = document.getElementById("collectionLists_collection_id").value;
-     let uri = "http://mars.local:9000/delectus/collection_lists";
-     let query = "?email="+$authorization["email"]+"&id="+collectionID;
+     let uri = apiEndpoint("collection_lists");
+     let pMap = {"email": $authorization["email"], 
+                "id": encodedValue(document, "collectionLists_collection_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "collectionLists_response");
  }
 
  function collectionAddList () {
-     let collectionID = document.getElementById("collectionAddList_collection_id").value;
-     let listID = document.getElementById("collectionAddList_list_id").value;
-     let uri = "http://mars.local:9000/delectus/collection_add_list";
-     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&listid="+listID;
+     let uri = apiEndpoint("collection_add_list");
+     let pMap = {"email": $authorization["email"], 
+                "collectionid": encodedValue(document, "collectionAddList_collection_id"),
+                "listid": encodedValue(document, "collectionAddList_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "collectionAddList_response");
  }
 
  function collectionRemoveList () {
-     let collectionID = document.getElementById("collectionRemoveList_collection_id").value;
-     let listID = document.getElementById("collectionRemoveList_list_id").value;
-     let uri = "http://mars.local:9000/delectus/collection_remove_list";
-     let query = "?email="+$authorization["email"]+"&collectionid="+collectionID+"&listid="+listID;
+     let uri = apiEndpoint("collection_remove_list");
+     let pMap = {"email": $authorization["email"], 
+                "collectionid": encodedValue(document, "collectionRemoveList_collection_id"),
+                "listid": encodedValue(document, "collectionRemoveList_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "collectionRemoveList_response");
  }
