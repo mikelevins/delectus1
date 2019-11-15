@@ -4,7 +4,8 @@
             [delectus-api-server.api :refer :all]
             [delectus-api-server.configuration :as config]
             [delectus-api-server.constants :refer :all]
-            [delectus-api-server.couchio :as couchio])
+            [delectus-api-server.couchio :as couchio]
+            [delectus-api-server.model :as model])
   (:import
    (com.couchbase.client.java.document.json JsonArray JsonObject)
    (com.couchbase.client.java.document JsonDocument)
@@ -25,7 +26,6 @@
           found-id (userid email)]
       (is found-id "found-id should be a user ID string"))))
 
-
 (deftest collections-test
   (testing "collections"
     (let [email (:delectus-test-user (config/delectus-configuration))
@@ -43,3 +43,53 @@
   found-collections = ~S"
                         email user-id found-collections)))))
 
+(deftest collection-with-id-test
+  (testing "collection-with-id"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         collection (collection-named (model/email->userid email) "Default Collection")
+         collection-id (.get collection +id-attribute+)
+         found-collection (collection-with-id user-id collection-id)]
+      (is (and (not (nil? found-collection))
+               (instance? JsonObject found-collection)
+               (couchio/json-object-type? found-collection +collection-type+))
+          (pp/cl-format nil
+                        "found-collection should be a collection object.~%~
+  email = ~S~%~
+  user-id = ~S~%~
+  found-collection = ~S"
+                        email user-id found-collection)))))
+
+
+(deftest collection-name-test
+  (testing "collection-name"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         collection (collection-named (model/email->userid email) "Default Collection")
+         found-name (.get collection +name-attribute+)]
+      (is (string? found-name)
+          (pp/cl-format nil
+                        "found-name should be a string.~%~
+  email = ~S~%~
+  user-id = ~S~%~
+  found-name = ~S"
+                        email user-id found-name)))))
+
+
+(deftest collection-named-test
+  (testing "collection-named"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         test-name "Default Collection"
+         user-id (userid email)
+         collection (collection-named (model/email->userid email) test-name)
+         found-name (.get collection +name-attribute+)]
+      (is (= found-name test-name)
+          (pp/cl-format nil
+                        "found-name should be a string equal to ~S.~%~
+  email = ~S~%~
+  user-id = ~S~%~
+  found-name = ~S"
+                        test-name email user-id found-name)))))
