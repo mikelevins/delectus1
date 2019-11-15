@@ -17,7 +17,7 @@
  function getListByID () {
      let listID = document.getElementById("getListByID_list_id").value;
      let uri = "http://mars.local:9000/delectus/list_with_id";
-     let query = "?email="+$authorization["email"]+"&id="+listID;
+     let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "getListByID_response");
  }

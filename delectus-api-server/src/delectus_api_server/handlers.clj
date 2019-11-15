@@ -198,7 +198,7 @@
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params req))
-                  list-id (:id (:params req))
+                  list-id (:listid (:params req))
                   found-list (api/list-with-id (api/userid email) list-id)]
               (if found-list
                 (.toString found-list)
