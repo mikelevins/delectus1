@@ -3,237 +3,235 @@
  // -----------------------------------------
 
  import { authorization } from "./auth.js";
- import { getAPI } from "./api.js";
- 
+ import { apiEndpoint, encodedValue, getAPI, makeQuery } from "./api.js";
+
  // lists
  // -----------------------------------------
  
  function getUserLists () {
-     let uri = "http://mars.local:9000/delectus/lists?email="+$authorization["email"];
+     let uri = apiEndpoint("lists");
+     let pMap = {"email": $authorization["email"]};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
-     getAPI(uri, token, "getUserLists_response");
+     getAPI(uri+query, token, "getUserLists_response");
  }
  
  function getListByID () {
-     let listID = document.getElementById("getListByID_list_id").value;
-     let uri = "http://mars.local:9000/delectus/list_with_id";
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let uri = apiEndpoint("list_with_id");
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "getListByID_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "getListByID_response");
  }
  
  function listName () {
-     let listID = document.getElementById("listName_list_id").value;
-     let uri = "http://mars.local:9000/delectus/list_name";
-     let query = "?email="+$authorization["email"]+"&listid="+listID;
+     let uri = apiEndpoint("list_name");
+     let pMap = {"email": $authorization["email"], 
+                "listid": encodedValue(document, "listName_list_id")};
+     let query = makeQuery(pMap);
      let token = $authorization["token"];
      getAPI(uri+query, token, "listName_response");
  }
  
  function renameList () {
+     let uri = apiEndpoint("rename_list");
      let listID = document.getElementById("renameList_list_id").value;
      let newName = document.getElementById("renameList_new_name").value;
-     let uri = "http://mars.local:9000/delectus/rename_list";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&newname="+newName;
      let token = $authorization["token"];
      getAPI(uri+query, token, "renameList_response");
  }
 
  function newList () {
+     let uri = apiEndpoint("new_list");
      let listName = document.getElementById("newList_list_name").value;
-     let uri = "http://mars.local:9000/delectus/new_list";
      let query = "?email="+$authorization["email"]+"&name="+listName;
      let token = $authorization["token"];
      getAPI(uri+query, token, "newList_response");
  }
  
  function deleteList () {
+     let uri = apiEndpoint("delete_list");
      let listID = document.getElementById("deleteList_list_id").value;
-     let uri = "http://mars.local:9000/delectus/delete_list";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "deleteList_response");
  }
  
  function undeleteList () {
+     let uri = apiEndpoint("undelete_list");
      let listID = document.getElementById("undeleteList_list_id").value;
-     let uri = "http://mars.local:9000/delectus/undelete_list";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "undeleteList_response");
  }
  
  function listDeleted () {
+     let uri = apiEndpoint("list_deleted");
      let listID = document.getElementById("listDeleted_list_id").value;
-     let uri = "http://mars.local:9000/delectus/list_deleted";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "listDeleted_response");
  }
 
  function getListByName () {
+     let uri = apiEndpoint("list_named");
      let listName = document.getElementById("getListByName_list_name").value;
-     let uri = "http://mars.local:9000/delectus/list_named";
      let query = "?email="+$authorization["email"]+"&name="+listName;
      let token = $authorization["token"];
      getAPI(uri+query, token, "getListByName_response");
  }
  
  function listColumns () {
+     let uri = apiEndpoint("list_columns");
      let listID = document.getElementById("listColumns_list_id").value;
-     let uri = "http://mars.local:9000/delectus/list_columns";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "listColumns_response");
  }
 
  function newColumn () {
+     let uri = apiEndpoint("new_column");
      let listID = document.getElementById("newColumn_list_id").value;
      let columnName = document.getElementById("newColumn_column_name").value;
-     let uri = "http://mars.local:9000/delectus/new_column";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnname="+columnName;
      let token = $authorization["token"];
      getAPI(uri+query, token, "newList_response");
  }
 
  function columnWithID () {
+     let uri = apiEndpoint("column_with_id");
      let listID = document.getElementById("columnWithID_list_id").value;
      let columnID = document.getElementById("columnWithID_column_id").value;
-     let uri = "http://mars.local:9000/delectus/column_with_id";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnWithID_response");
  }
 
  function columnName () {
+     let uri = apiEndpoint("column_name");
      let listID = document.getElementById("columnName_list_id").value;
      let columnID = document.getElementById("columnName_column_id").value;
-     let uri = "http://mars.local:9000/delectus/column_name";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnName_response");
  }
 
  function columnNamed () {
+     let uri = apiEndpoint("column_named");
      let listID = document.getElementById("columnNamed_list_id").value;
      let columnName = document.getElementById("columnNamed_column_name").value;
-     let uri = "http://mars.local:9000/delectus/column_named";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnname="+columnName;
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnNamed_response");
  }
 
  function columnDeleted () {
+     let uri = apiEndpoint("column_deleted");
      let listID = document.getElementById("columnDeleted_list_id").value;
      let columnID = document.getElementById("columnDeleted_column_id").value;
-     let uri = "http://mars.local:9000/delectus/column_deleted";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "columnDeleted_response");
  }
 
  function deleteColumn () {
+     let uri = apiEndpoint("delete_column");
      let listID = document.getElementById("deleteColumn_list_id").value;
      let columnID = document.getElementById("deleteColumn_column_id").value;
-     let uri = "http://mars.local:9000/delectus/delete_column";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "deleteColumn_response");
  }
 
  function undeleteColumn () {
+     let uri = apiEndpoint("undelete_column");
      let listID = document.getElementById("undeleteColumn_list_id").value;
      let columnID = document.getElementById("undeleteColumn_column_id").value;
-     let uri = "http://mars.local:9000/delectus/undelete_column";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "undeleteColumn_response");
  }
 
  function renameColumn () {
+     let uri = apiEndpoint("rename_column");
      let listID = document.getElementById("renameColumn_list_id").value;
      let columnID = document.getElementById("renameColumn_column_id").value;
      let columnName = document.getElementById("renameColumn_column_name").value;
-     let uri = "http://mars.local:9000/delectus/rename_column";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&columnid="+columnID+"&columnname="+columnName;;
      let token = $authorization["token"];
      getAPI(uri+query, token, "renameColumn_response");
  }
  
  function listItems () {
+     let uri = apiEndpoint("list_items");
      let listID = document.getElementById("listItems_list_id").value;
-     let uri = "http://mars.local:9000/delectus/list_items";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "listItems_response");
  }
  
  function itemWithID () {
+     let uri = apiEndpoint("item_with_id");
      let listID = document.getElementById("itemWithID_list_id").value;
      let itemID = document.getElementById("itemWithID_item_id").value;
-     let uri = "http://mars.local:9000/delectus/item_with_id";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "itemWithID_response");
  }
 
  function newItem () {
+     let uri = apiEndpoint("new_item");
      let listID = document.getElementById("newItem_list_id").value;
-     let uri = "http://mars.local:9000/delectus/new_item";
      let query = "?email="+$authorization["email"]+"&listid="+listID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "newItem_response");
  }
 
  function deleteItem () {
+     let uri = apiEndpoint("delete_item");
      let listID = document.getElementById("deleteItem_list_id").value;
      let itemID = document.getElementById("deleteItem_item_id").value;
-     let uri = "http://mars.local:9000/delectus/delete_item";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "deleteItem_response");
  }
 
  function undeleteItem () {
+     let uri = apiEndpoint("undelete_item");
      let listID = document.getElementById("undeleteItem_list_id").value;
      let itemID = document.getElementById("undeleteItem_item_id").value;
-     let uri = "http://mars.local:9000/delectus/undelete_item";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "undeleteItem_response");
  }
 
  function itemDeleted () {
+     let uri = apiEndpoint("item_deleted");
      let listID = document.getElementById("itemDeleted_list_id").value;
      let itemID = document.getElementById("itemDeleted_item_id").value;
-     let uri = "http://mars.local:9000/delectus/item_deleted";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "itemDeleted_response");
  }
 
  function itemColumnValue () {
-     let listID = document.getElementById("itemColumnValue_list_id").value;
-     let itemID = document.getElementById("itemColumnValue_item_id").value;
+     let uri = apiEndpoint("item_column_value");
+     let listID = encodedValue(document,"itemColumnValue_list_id");
+     let itemID = encodedValue(document,"itemColumnValue_item_id");
      let columnID = document.getElementById("itemColumnValue_column_id").value;
-     let uri = "http://mars.local:9000/delectus/item_column_value";
      let query = "?email="+$authorization["email"]+"&listid="+listID+"&itemid="+itemID+"&columnid="+columnID;
      let token = $authorization["token"];
      getAPI(uri+query, token, "itemColumnValue_response");
  }
 
-
- // TODO;
- // encodeURIComponent is needed to ensure that input values are received properly;
- // browsers won't even send unencoded parameters that contain certain characters
- // Fix all query-string constructors to properly encode input values before calling getAPI
-
  function setItemColumnValue () {
-     let listID = encodeURIComponent(document.getElementById("setItemColumnValue_list_id").value);
-     let itemID = encodeURIComponent(document.getElementById("setItemColumnValue_item_id").value);
-     let columnID = encodeURIComponent(document.getElementById("setItemColumnValue_item_id").value);
-     let newValue = encodeURIComponent(document.getElementById("setItemColumnValue_new_value").value);
-     let uri = "http://mars.local:9000/delectus/set_item_column_value";
+     let uri = apiEndpoint("set_item_column_value");
+     let listID = encodedValue(document,"setItemColumnValue_list_id");
+     let itemID = encodedValue(document,"setItemColumnValue_item_id");
+     let columnID = encodedValue(document,"setItemColumnValue_item_id");
+     let newValue = encodedValue(document,"setItemColumnValue_new_value");
      let query1 = "?email="+$authorization["email"]+"&listid="+listID
      let query2 = "&itemid="+itemID+"&columnid="+columnID+"&newvalue="+newValue;
      let token = $authorization["token"];
