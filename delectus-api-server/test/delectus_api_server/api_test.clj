@@ -105,26 +105,6 @@
   found-name = ~S"
                         test-name email user-id found-name)))))
 
-
-(deftest new-collection-test
-  (testing "new-collection"
-    (let
-        [email (:delectus-test-user (config/delectus-configuration))
-         user-id (userid email)
-         test-name (str "test-collection-" (makeid))
-         test-id (makeid)
-         collection-id (new-collection :id test-id :name test-name :owner-id user-id)
-         collection (couchio/get-collection collection-id)]
-      (is (and (not (nil? collection))
-               (instance? JsonObject collection)
-               (couchio/json-object-type? collection +collection-type+))
-          (pp/cl-format nil
-                        "collection should be a collection object.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  collection = ~S"
-                        email user-id collection)))))
-
 (deftest rename-collection-test
   (testing "rename-collection"
     (let
@@ -148,6 +128,47 @@
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (collection-with-id $mikelid "1469fbd0-7d7d-41b2-8e5c-6db466129bcc")
+
+
+(deftest new-collection-test
+  (testing "new-collection"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         test-name (str "test-collection-" (makeid))
+         test-id (makeid)
+         collection-id (new-collection :id test-id :name test-name :owner-id user-id)
+         collection (couchio/get-collection collection-id)]
+      (is (and (not (nil? collection))
+               (instance? JsonObject collection)
+               (couchio/json-object-type? collection +collection-type+))
+          (pp/cl-format nil
+                        "collection should be a collection object.~%~
+  email = ~S~%~
+  user-id = ~S~%~
+  collection = ~S"
+                        email user-id collection)))))
+
+(deftest mark-collection-deleted-test
+  (testing "mark-collection-deleted"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         test-id (makeid)
+         test-name (str "test-collection-" test-id)
+         collection-id (new-collection :id test-id :name test-name :owner-id user-id)]
+      (mark-collection-deleted user-id test-id true)
+      (let [collection (couchio/get-collection collection-id)]
+        (is (and (not (nil? collection))
+                 (instance? JsonObject collection)
+                 (model/get-collection-deleted collection-id))
+            "test collection should be deleted, but is not"))
+      (mark-collection-deleted user-id test-id false)
+      (let [collection (couchio/get-collection collection-id)]
+        (is (and (not (nil? collection))
+                 (instance? JsonObject collection)
+                 (not (model/get-collection-deleted collection-id)))
+            "test collection should not be deleted, but is")))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
