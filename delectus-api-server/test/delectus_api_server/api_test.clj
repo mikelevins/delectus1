@@ -125,6 +125,30 @@
   collection = ~S"
                         email user-id collection)))))
 
+(deftest rename-collection-test
+  (testing "rename-collection"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         test-name1 (str "test-collection-1-" (makeid))
+         test-name2 (str "test-collection-2-" (makeid))
+         test-id (makeid)
+         collection-id (new-collection :id test-id :name test-name1 :owner-id user-id)]
+      (rename-collection user-id collection-id test-name2)
+      (let [collection (couchio/get-collection collection-id)
+            found-name (.get collection +name-attribute+)]
+        (is (and (string? found-name)
+                 (= found-name test-name2))
+            (pp/cl-format nil
+                          "found-name should be a string equal to ~S.~%~
+  email = ~S~%~
+  user-id = ~S~%~
+  found-name = ~S"
+                          test-name2 email user-id found-name))))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collection-with-id $mikelid "1469fbd0-7d7d-41b2-8e5c-6db466129bcc")
+
 ;;; ---------------------------------------------------------------------
 ;;; List tests
 ;;; ---------------------------------------------------------------------
