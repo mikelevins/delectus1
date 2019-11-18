@@ -21,6 +21,7 @@
 ;;; ---------------------------------------------------------------------
 
 (def +columns-attribute+ "columns")
+(def +delectus-metadata-attribute+ "deletectus-metadata")
 (def +deleted-attribute+ "deleted")
 (def +email-attribute+ "email")
 (def +enabled-attribute+ "enabled")
@@ -32,5 +33,4 @@
 (def +order-attribute+ "order")
 (def +owner-id-attribute+ "owner-id")
 (def +password-hash-attribute+ "password-hash")
-(def +test-data-attribute+ "delectus-test-data")
 (def +type-attribute+ "type")

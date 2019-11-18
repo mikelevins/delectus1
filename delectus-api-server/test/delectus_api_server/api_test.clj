@@ -18,11 +18,6 @@
 ;;; helper functions
 ;;; ---------------------------------------------------------------------
 
-(defn find-test-data [bucket]
-  (couchio/find-objects bucket [] {+test-data-attribute+ true}))
-
-;;; (find-test-data (config/delectus-content-bucket))
-
 ;;; ---------------------------------------------------------------------
 ;;; User tests
 ;;; ---------------------------------------------------------------------
