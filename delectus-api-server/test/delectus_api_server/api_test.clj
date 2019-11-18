@@ -110,8 +110,8 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-name1 (str "test-collection-1-" (makeid))
-         test-name2 (str "test-collection-2-" (makeid))
+         test-name1 (str "TEST-COLLECTION-1-" (makeid))
+         test-name2 (str "TEST-COLLECTION-2-" (makeid))
          test-id (makeid)
          collection-id (new-collection :id test-id :name test-name1 :owner-id user-id)]
       (rename-collection user-id collection-id test-name2)
@@ -135,7 +135,7 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-name (str "test-collection-" (makeid))
+         test-name (str "TEST-COLLECTION-" (makeid))
          test-id (makeid)
          collection-id (new-collection :id test-id :name test-name :owner-id user-id)
          collection (couchio/get-collection collection-id)]
@@ -150,12 +150,12 @@
                         email user-id collection)))))
 
 (deftest mark-collection-deleted-test
-  (testing "mark-collection-deleted"
+  (testing "mark-collection-deleted and collection-deleted?"
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
          test-id (makeid)
-         test-name (str "test-collection-" test-id)
+         test-name (str "TEST-COLLECTION-" test-id)
          collection-id (new-collection :id test-id :name test-name :owner-id user-id)]
       (mark-collection-deleted user-id test-id true)
       (let [collection (couchio/get-collection collection-id)]
@@ -170,7 +170,57 @@
                  (not (collection-deleted? user-id collection-id)))
             "test collection should not be deleted, but is")))))
 
+(deftest collection-lists-test
+  (testing "collection-lists, collection-add-list, collection-remove-list, new-list"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         test-id (makeid)
+         test-collection-id (makeid)
+         test-list-id (makeid)
+         test-collection-name (str "TEST-COLLECTION-" test-id)
+         test-list-name (str "TEST-LIST-" test-id)
+         found-collection-if (new-collection :id test-collection-id :name test-collection-name :owner-id user-id)
+         found-list-id (new-list :id test-list-id :name test-list-name :owner-id user-id)
+         test-collection (couchio/get-collection test-collection-id)
+         test-list (couchio/get-list test-list-id)]
+      (is (and (not (nil? test-collection))
+               (instance? JsonObject test-collection)
+               (couchio/json-object-type? test-collection +collection-type+))
+          "test collection not found")
+      (is (and (not (nil? test-list))
+               (instance? JsonObject test-list)
+               (couchio/json-object-type? test-list +list-type+))
+          "test list not found")
+      (let [collection-lists (collection-lists user-id test-collection-id)]
+        (is (empty? collection-lists) "test collection's lists should be empty before adding a list"))
+      (collection-add-list user-id test-collection-id test-list-id)
+      (let [collection-lists (collection-lists user-id test-collection-id)]
+        (is (not (empty? collection-lists)) "test collection's lists shouldn't be empty after adding a list"))
+      (collection-remove-list user-id test-collection-id test-list-id)
+      (let [collection-lists (collection-lists user-id test-collection-id)]
+        (is (empty? collection-lists) "test collection's lists should be empty after removing a list")))))
+
 ;;; ---------------------------------------------------------------------
 ;;; List tests
 ;;; ---------------------------------------------------------------------
+
+(deftest new-list-test
+  (testing "new-list"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         test-name (str "TEST-LIST-" (makeid))
+         test-id (makeid)
+         list-id (new-list :id test-id :name test-name :owner-id user-id)
+         the-list (couchio/get-list list-id)]
+      (is (and (not (nil? the-list))
+               (instance? JsonObject the-list)
+               (couchio/json-object-type? the-list +list-type+))
+          (pp/cl-format nil
+                        "collection should be a List object.~%~
+  email = ~S~%~
+  user-id = ~S~%~
+  list = ~S"
+                        email user-id the-list)))))
 
