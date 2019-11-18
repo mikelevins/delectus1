@@ -21,7 +21,6 @@
 ;;; ---------------------------------------------------------------------
 
 (def +columns-attribute+ "columns")
-(def +delectus-metadata-attribute+ "deletectus-metadata")
 (def +deleted-attribute+ "deleted")
 (def +email-attribute+ "email")
 (def +enabled-attribute+ "enabled")
@@ -40,5 +39,3 @@
 ;;; ---------------------------------------------------------------------
 
 (def +standard-default-collection-name+ "Default Collection")
-
-(def +standard-delectus-metadata+ {})

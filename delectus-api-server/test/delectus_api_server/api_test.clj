@@ -15,8 +15,28 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 ;;; ---------------------------------------------------------------------
-;;; helper functions
+;;; testing helpers
 ;;; ---------------------------------------------------------------------
+
+(def +test-data-prefix+ "DELECTUS-TEST-DATA::")
+
+(defn make-test-id []
+  (str +test-data-prefix+ (makeid)))
+
+(defn find-test-data [bucket]
+  (let [bucket-name (.name bucket)
+        selector (str "SELECT * from `" bucket-name "` "
+                      "WHERE id LIKE \"" +test-data-prefix+ "%\"")
+        results (.query bucket (N1qlQuery/simple selector))]
+    (map #(.get (.value %) bucket-name) results)))
+
+;;; (class (find-test-data (config/delectus-content-bucket)))
+
+(defn delete-test-data [bucket]
+  (doall (map #(.remove bucket (.get % +id-attribute+))
+              (find-test-data bucket))))
+
+;;; (delete-test-data (config/delectus-content-bucket))
 
 ;;; ---------------------------------------------------------------------
 ;;; User tests
@@ -62,7 +82,7 @@
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
          test-name (str "TEST-COLLECTION-" (makeid))
-         test-id (makeid)
+         test-id (make-test-id)
          created-id (new-collection :id test-id :name test-name :owner-id user-id)
          found-collection (collection-with-id user-id created-id)]
       (is (and (not (nil? found-collection))
@@ -117,7 +137,7 @@
          user-id (userid email)
          test-name1 (str "TEST-COLLECTION-1-" (makeid))
          test-name2 (str "TEST-COLLECTION-2-" (makeid))
-         test-id (makeid)
+         test-id (make-test-id)
          collection-id (new-collection :id test-id :name test-name1 :owner-id user-id)
          collection (couchio/get-collection collection-id)]
       (rename-collection user-id collection-id test-name2)
@@ -142,7 +162,7 @@
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
          test-name (str "TEST-COLLECTION-" (makeid))
-         test-id (makeid)
+         test-id (make-test-id)
          collection-id (new-collection :id test-id :name test-name :owner-id user-id)
          collection (couchio/get-collection collection-id)]
       (is (and (not (nil? collection))
@@ -160,7 +180,7 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-id (makeid)
+         test-id (make-test-id)
          test-name (str "TEST-COLLECTION-" test-id)
          collection-id (new-collection :id test-id :name test-name :owner-id user-id)
          collection (couchio/get-collection collection-id)]
@@ -180,9 +200,9 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-id (makeid)
-         test-collection-id (makeid)
-         test-list-id (makeid)
+         test-id (make-test-id)
+         test-collection-id (make-test-id)
+         test-list-id (make-test-id)
          test-collection-name (str "TEST-COLLECTION-" test-id)
          test-list-name (str "TEST-LIST-" test-id)
          found-collection-id (new-collection :id test-collection-id :name test-collection-name :owner-id user-id)
@@ -216,7 +236,7 @@
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
          test-name (str "TEST-LIST-" (makeid))
-         test-id (makeid)
+         test-id (make-test-id)
          list-id (new-list :id test-id :name test-name :owner-id user-id)
          the-list (couchio/get-list list-id)]
       (is (and (not (nil? the-list))

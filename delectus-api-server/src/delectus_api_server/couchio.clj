@@ -262,7 +262,7 @@
       (map #(.get (.value %) bucket-name) results)
       (map #(.value %) results))))
 
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +delectus-list-document-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
 ;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +delectus-list-document-type+}))
 
 ;;; =====================================================================

@@ -21,7 +21,7 @@
 ;;; =====================================================================
 
 (defn ensure-default-collection [owner-id collection-id]
-  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-collection})
+  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'ensure-default-collection})
   (errors/error-if-nil (couchio/get-user owner-id)
                        "No such user"
                        {:parameter :owner-id :value owner-id :context 'ensure-default-collection})
