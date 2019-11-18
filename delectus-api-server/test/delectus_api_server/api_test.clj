@@ -17,12 +17,15 @@
 ;;; ---------------------------------------------------------------------
 ;;; testing helpers
 ;;; ---------------------------------------------------------------------
+;;; functions and data for marking and managing test data
+;;; (that is, data created by Delectus unit tests)
 
 (def +test-data-prefix+ "DELECTUS-TEST-DATA::")
 
 (defn make-test-id []
   (str +test-data-prefix+ (makeid)))
 
+;;; finds objects whose IDs are prefixed with the +test-data-prefix+
 (defn find-test-data [bucket]
   (let [bucket-name (.name bucket)
         selector (str "SELECT * from `" bucket-name "` "
@@ -32,6 +35,7 @@
 
 ;;; (class (find-test-data (config/delectus-content-bucket)))
 
+;;; deletes objects whose IDs are prefixed with the +test-data-prefix+
 (defn delete-test-data [bucket]
   (doall (map #(.remove bucket (.get % +id-attribute+))
               (find-test-data bucket))))
