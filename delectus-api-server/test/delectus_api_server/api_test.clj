@@ -15,6 +15,20 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 ;;; ---------------------------------------------------------------------
+;;; helper functions
+;;; ---------------------------------------------------------------------
+
+(def +test-data-attribute+ "delectus-test-data")
+
+(defn as-test-data [json-obj]
+  (.put json-obj +test-data-attribute+ true))
+
+(defn find-test-data [bucket]
+  (couchio/find-objects bucket [] {+test-data-attribute+ true}))
+
+;;; (find-test-data (config/delectus-content-bucket))
+
+;;; ---------------------------------------------------------------------
 ;;; User tests
 ;;; ---------------------------------------------------------------------
 
