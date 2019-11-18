@@ -60,6 +60,22 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (make-collection-document :name "Random stuff" :owner-id $mikelid)
 
+(defn make-default-collection [& {:keys [id owner-id metadata]
+                                  :or {id (makeid)
+                                       owner-id nil
+                                       metadata {}}}]
+  (let [obj-id (makeid)
+        obj-map {+type-attribute+ +collection-type+
+                 +id-attribute+ obj-id
+                 +name-attribute+ +standard-default-collection-name+
+                 +owner-id-attribute+ owner-id
+                 +lists-attribute+ {}
+                 +deleted-attribute+ false
+                 +delectus-metadata-attribute+ (merge +standard-delectus-metadata+
+                                                      {"default_collection" true}
+                                                      metadata)}]
+    (couchio/make-json-document obj-id obj-map)))
+
 (defn make-list-document [& {:keys [id name owner-id columns items deleted metadata]
                              :or {id (makeid)
                                   name nil

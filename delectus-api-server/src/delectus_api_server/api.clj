@@ -17,6 +17,31 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; =====================================================================
+;;; helper functions
+;;; =====================================================================
+
+(defn ensure-default-collection [owner-id collection-id]
+  (errors/error-if-nil owner-id "Missing :owner-id parameter" {:context 'new-collection})
+  (errors/error-if-nil (couchio/get-user owner-id)
+                       "No such user"
+                       {:parameter :owner-id :value owner-id :context 'ensure-default-collection})
+
+  (let [already (model/name->collection owner-id +standard-default-collection-name+)]
+    (if already
+      (.get already +id-attribute+)
+      (let [collection-id (or collection-id (makeid))
+            collection-doc (model/make-default-collection
+                            :id collection-id
+                            :owner-id owner-id)]
+
+        (.upsert (config/delectus-content-bucket)
+                 collection-doc)
+        collection-id))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (ensure-default-collection $mikelid nil)
+
+;;; =====================================================================
 ;;; API-endpoint functions
 ;;; =====================================================================
 
