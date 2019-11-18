@@ -18,11 +18,6 @@
 ;;; helper functions
 ;;; ---------------------------------------------------------------------
 
-(def +test-data-attribute+ "delectus-test-data")
-
-(defn as-test-data [json-obj]
-  (.put json-obj +test-data-attribute+ true))
-
 (defn find-test-data [bucket]
   (couchio/find-objects bucket [] {+test-data-attribute+ true}))
 
@@ -71,9 +66,10 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         collection (collection-named (model/email->userid email) "Default Collection")
-         collection-id (.get collection +id-attribute+)
-         found-collection (collection-with-id user-id collection-id)]
+         test-name (str "TEST-COLLECTION-" (makeid))
+         test-id (makeid)
+         created-id (new-collection :id test-id :name test-name :owner-id user-id)
+         found-collection (collection-with-id user-id created-id)]
       (is (and (not (nil? found-collection))
                (instance? JsonObject found-collection)
                (couchio/json-object-type? found-collection +collection-type+))
@@ -127,7 +123,8 @@
          test-name1 (str "TEST-COLLECTION-1-" (makeid))
          test-name2 (str "TEST-COLLECTION-2-" (makeid))
          test-id (makeid)
-         collection-id (new-collection :id test-id :name test-name1 :owner-id user-id)]
+         collection-id (new-collection :id test-id :name test-name1 :owner-id user-id)
+         collection (couchio/get-collection collection-id)]
       (rename-collection user-id collection-id test-name2)
       (let [collection (couchio/get-collection collection-id)
             found-name (.get collection +name-attribute+)]
@@ -170,19 +167,18 @@
          user-id (userid email)
          test-id (makeid)
          test-name (str "TEST-COLLECTION-" test-id)
-         collection-id (new-collection :id test-id :name test-name :owner-id user-id)]
+         collection-id (new-collection :id test-id :name test-name :owner-id user-id)
+         collection (couchio/get-collection collection-id)]
       (mark-collection-deleted user-id test-id true)
-      (let [collection (couchio/get-collection collection-id)]
-        (is (and (not (nil? collection))
-                 (instance? JsonObject collection)
-                 (collection-deleted? user-id collection-id))
-            "test collection should be deleted, but is not"))
+      (is (and (not (nil? collection))
+               (instance? JsonObject collection)
+               (collection-deleted? user-id collection-id))
+          "test collection should be deleted, but is not")
       (mark-collection-deleted user-id test-id false)
-      (let [collection (couchio/get-collection collection-id)]
-        (is (and (not (nil? collection))
-                 (instance? JsonObject collection)
-                 (not (collection-deleted? user-id collection-id)))
-            "test collection should not be deleted, but is")))))
+      (is (and (not (nil? collection))
+               (instance? JsonObject collection)
+               (not (collection-deleted? user-id collection-id)))
+          "test collection should not be deleted, but is"))))
 
 (deftest collection-lists-test
   (testing "collection-lists, collection-add-list, collection-remove-list, new-list"
@@ -194,7 +190,7 @@
          test-list-id (makeid)
          test-collection-name (str "TEST-COLLECTION-" test-id)
          test-list-name (str "TEST-LIST-" test-id)
-         found-collection-if (new-collection :id test-collection-id :name test-collection-name :owner-id user-id)
+         found-collection-id (new-collection :id test-collection-id :name test-collection-name :owner-id user-id)
          found-list-id (new-list :id test-list-id :name test-list-name :owner-id user-id)
          test-collection (couchio/get-collection test-collection-id)
          test-list (couchio/get-list test-list-id)]

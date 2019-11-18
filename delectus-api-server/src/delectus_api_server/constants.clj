@@ -32,4 +32,5 @@
 (def +order-attribute+ "order")
 (def +owner-id-attribute+ "owner-id")
 (def +password-hash-attribute+ "password-hash")
+(def +test-data-attribute+ "delectus-test-data")
 (def +type-attribute+ "type")
