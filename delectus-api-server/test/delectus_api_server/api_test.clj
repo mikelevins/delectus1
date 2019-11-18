@@ -161,13 +161,13 @@
       (let [collection (couchio/get-collection collection-id)]
         (is (and (not (nil? collection))
                  (instance? JsonObject collection)
-                 (model/get-collection-deleted collection-id))
+                 (collection-deleted? user-id collection-id))
             "test collection should be deleted, but is not"))
       (mark-collection-deleted user-id test-id false)
       (let [collection (couchio/get-collection collection-id)]
         (is (and (not (nil? collection))
                  (instance? JsonObject collection)
-                 (not (model/get-collection-deleted collection-id)))
+                 (not (collection-deleted? user-id collection-id)))
             "test collection should not be deleted, but is")))))
 
 ;;; ---------------------------------------------------------------------
