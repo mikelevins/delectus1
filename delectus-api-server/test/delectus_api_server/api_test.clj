@@ -30,6 +30,7 @@
 
 (def +stable-test-collection-id+ (str +test-data-prefix+ "Collection-0::" "029ef6f7-5170-4671-89b7-386ef1156c2d"))
 (def +stable-test-collection-name+ (str "Collection-0::" "7e1c04c3-4d05-41b3-81d4-a67d64c17092"))
+(def +stable-test-collection-alternate-name+ (str "Collection-0::" "2677e446-3f07-44bc-8be8-785af279c6e1"))
 (def +stable-test-list-id+ (str +test-data-prefix+  "List-0::" "23d4dce0-93f2-4983-a59e-cff092f8a987"))
 (def +stable-test-list-name+ (str  "List-0::" "f8047f56-bbc2-414b-a44b-86aefcc502a4"))
 
@@ -135,10 +136,7 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-name (str "TEST-COLLECTION-" (makeid))
-         test-id (make-test-id)
-         created-id (new-collection :id test-id :name test-name :owner-id user-id)
-         found-collection (collection-with-id user-id created-id)]
+         found-collection (collection-with-id user-id +stable-test-collection-id+)]
       (is (and (not (nil? found-collection))
                (instance? JsonObject found-collection)
                (couchio/json-object-type? found-collection +collection-type+))
@@ -155,15 +153,13 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         collection (collection-named (model/email->userid email) "Default Collection")
-         found-name (.get collection +name-attribute+)]
-      (is (string? found-name)
-          (pp/cl-format nil
-                        "found-name should be a string.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  found-name = ~S"
-                        email user-id found-name)))))
+         found-collection (collection-with-id user-id +stable-test-collection-id+)
+         found-name (.get found-collection +name-attribute+)]
+      (is (and (string? found-name)
+               (= found-name +stable-test-collection-name+))
+          (pp/cl-format nil "found-name should be ~S but found ~S"
+                        +stable-test-collection-name+
+                        found-name)))))
 
 
 (deftest collection-named-test
@@ -171,40 +167,37 @@
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-name "Default Collection"
-         collection (collection-named (model/email->userid email) test-name)
-         found-name (if collection
-                      (.get collection +name-attribute+)
-                      nil)]
-      (is (= found-name test-name)
-          (pp/cl-format nil
-                        "found-name should be a string equal to ~S.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  found-name = ~S"
-                        test-name email user-id found-name)))))
+         found-collection (collection-named user-id +stable-test-collection-name+)
+         found-id (.get found-collection +id-attribute+)]
+      (is (and (string? found-id)
+               (= found-id +stable-test-collection-id+))
+          (pp/cl-format nil "found-id should be ~S" +stable-test-collection-id+)))))
+
 
 (deftest rename-collection-test
   (testing "rename-collection"
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-name1 (str "TEST-COLLECTION-1-" (makeid))
-         test-name2 (str "TEST-COLLECTION-2-" (makeid))
-         test-id (make-test-id)
-         collection-id (new-collection :id test-id :name test-name1 :owner-id user-id)
-         collection (couchio/get-collection collection-id)]
-      (rename-collection user-id collection-id test-name2)
-      (let [collection (couchio/get-collection collection-id)
+         collection (couchio/get-collection +stable-test-collection-id+)]
+      ;; rename the test collection
+      (rename-collection user-id +stable-test-collection-id+ +stable-test-collection-alternate-name+)
+      (let [collection (couchio/get-collection +stable-test-collection-id+)
             found-name (.get collection +name-attribute+)]
         (is (and (string? found-name)
-                 (= found-name test-name2))
-            (pp/cl-format nil
-                          "found-name should be a string equal to ~S.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  found-name = ~S"
-                          test-name2 email user-id found-name))))))
+                 (= found-name +stable-test-collection-alternate-name+))
+            (pp/cl-format nil "found-name should be ~S, but found ~S"
+                          +stable-test-collection-alternate-name+
+                          found-name)))
+      ;; change the name back
+      (rename-collection user-id +stable-test-collection-id+ +stable-test-collection-name+)
+      (let [collection (couchio/get-collection +stable-test-collection-id+)
+            found-name (.get collection +name-attribute+)]
+        (is (and (string? found-name)
+                 (= found-name +stable-test-collection-name+))
+            (pp/cl-format nil "found-name should be ~S, but found ~S"
+                          +stable-test-collection-alternate-name+
+                          found-name))))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (collection-with-id $mikelid "1469fbd0-7d7d-41b2-8e5c-6db466129bcc")
