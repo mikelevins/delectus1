@@ -25,6 +25,14 @@
 (defn make-test-id []
   (str +test-data-prefix+ (makeid)))
 
+(defn make-test-name [name]
+  (str name "::" (makeid)))
+
+(def +stable-test-collection-id+ (str +test-data-prefix+ "Collection-0::" "029ef6f7-5170-4671-89b7-386ef1156c2d"))
+(def +stable-test-collection-name+ (str "Collection-0::" "7e1c04c3-4d05-41b3-81d4-a67d64c17092"))
+(def +stable-test-list-id+ (str +test-data-prefix+  "List-0::" "23d4dce0-93f2-4983-a59e-cff092f8a987"))
+(def +stable-test-list-name+ (str  "List-0::" "f8047f56-bbc2-414b-a44b-86aefcc502a4"))
+
 ;;; finds objects whose IDs are prefixed with the +test-data-prefix+
 (defn find-test-data [bucket]
   (let [bucket-name (.name bucket)
@@ -33,14 +41,56 @@
         results (.query bucket (N1qlQuery/simple selector))]
     (map #(.get (.value %) bucket-name) results)))
 
-;;; (class (find-test-data (config/delectus-content-bucket)))
+;;; (find-test-data (config/delectus-users-bucket))
+;;; (find-test-data (config/delectus-content-bucket))
 
 ;;; deletes objects whose IDs are prefixed with the +test-data-prefix+
 (defn delete-test-data [bucket]
   (doall (map #(.remove bucket (.get % +id-attribute+))
               (find-test-data bucket))))
 
+;;; (delete-test-data (config/delectus-users-bucket))
 ;;; (delete-test-data (config/delectus-content-bucket))
+
+;;; ---------------------------------------------------------------------
+;;; setup and teardown
+;;; ---------------------------------------------------------------------
+
+(defn setup-test-data []
+  (println "setting up test data...")
+  (let [email (:delectus-test-user (config/delectus-configuration))
+        user-id (model/email->userid email)]
+    ;;; stable test data
+    (new-collection :id +stable-test-collection-id+ :name +stable-test-collection-name+ :owner-id user-id)
+    (new-list :id +stable-test-list-id+ :name +stable-test-list-name+ :owner-id user-id)
+    ;;; randomly generated names and ids
+    (new-collection :id (make-test-id) :name (make-test-name "Collection-1") :owner-id user-id)
+    (new-collection :id (make-test-id) :name (make-test-name "Collection-2") :owner-id user-id)
+    (new-list :id (make-test-id) :name (make-test-name "List-1") :owner-id user-id)
+    (new-list :id (make-test-id) :name (make-test-name "List-2") :owner-id user-id)
+    (new-list :id (make-test-id) :name (make-test-name "List-3") :owner-id user-id))
+  ;;; wait after setup to make sure DB's API returns consistent results
+  (Thread/sleep 2000))
+
+;;; (setup-test-data)
+;;; (collections (model/email->userid (:delectus-test-user (config/delectus-configuration))))
+;;; (lists (model/email->userid (:delectus-test-user (config/delectus-configuration))))
+
+(defn teardown-test-data []
+  (println "deleting test data...")
+  ;;; wait before teardown to make sure DB's API returns consistent results
+  (Thread/sleep 2000)
+  (delete-test-data (config/delectus-users-bucket))
+  (delete-test-data (config/delectus-content-bucket))
+  (println "Finished."))
+
+(defn test-fixture [f]
+  (setup-test-data)
+  (f)
+  (teardown-test-data))
+
+;; register as a one-time callback
+(use-fixtures :once test-fixture)
 
 ;;; ---------------------------------------------------------------------
 ;;; User tests

@@ -107,7 +107,9 @@
 
 (defn collection-with-id [userid collection-id]
   (let [found (couchio/get-collection collection-id)]
-    (if (and found (couchio/json-object-owner? found userid))
+    (if (and found
+             (couchio/json-object-owner? found userid)
+             (couchio/json-object-type? found +collection-type+))
       found
       nil)))
 
@@ -389,13 +391,12 @@
 ;;; ---------------------------------------------------------------------
 
 (defn list-with-id [userid list-id]
-  (let [bucket (config/delectus-content-bucket)
-        found (couchio/find-objects bucket ["name" "id" "deleted"]
-                                    {+type-attribute+ +list-type+
-                                     +id-attribute+ list-id})]
-    (if (empty? found)
-      nil
-      (first found))))
+  (let [found (couchio/get-list list-id)]
+    (if (and found
+             (couchio/json-object-owner? found userid)
+             (couchio/json-object-type? found +list-type+))
+      found
+      nil)))
 
 ;;; (def $listid (.get (find-list-by-name (model/email->userid "mikel@evins.net") "Things") "id"))
 ;;; (find-list-by-id (model/email->userid "mikel@evins.net") $listid)
