@@ -133,12 +133,9 @@
                (every? #(and (instance? JsonObject %)
                              (couchio/json-object-type? % +collection-type+))
                        found-collections))
-          (pp/cl-format nil
-                        "found-collections should be a list of collection objects.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  found-collections = ~S"
-                        email user-id found-collections)))))
+          (pp/cl-format nil "found-collections should be a list of collection objects, but found ~S"
+                        found-collections)))))
+
 
 (deftest collection-with-id-test
   (testing "collection-with-id"
@@ -149,12 +146,8 @@
       (is (and (not (nil? found-collection))
                (instance? JsonObject found-collection)
                (couchio/json-object-type? found-collection +collection-type+))
-          (pp/cl-format nil
-                        "found-collection should be a collection object.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  found-collection = ~S"
-                        email user-id found-collection)))))
+          (pp/cl-format nil "found-collection should be a collection object, but found ~S"
+                        found-collection)))))
 
 
 (deftest collection-name-test
@@ -207,9 +200,6 @@
             (pp/cl-format nil "found-name should be ~S, but found ~S"
                           +stable-test-collection-alternate-name+
                           found-name))))))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (collection-with-id $mikelid "1469fbd0-7d7d-41b2-8e5c-6db466129bcc")
 
 (deftest new-collection-test
   (testing "new-collection"
