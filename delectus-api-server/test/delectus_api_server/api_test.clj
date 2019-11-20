@@ -336,6 +336,30 @@
           (pp/cl-format nil "found-id should be ~S but found ~S"
                         +stable-test-list-1-id+ found-id)))))
 
+(deftest rename-list-test
+  (testing "rename-list"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)]
+      ;; rename the test list
+      (rename-list user-id +stable-test-list-1-id+ +stable-test-list-1-alternate-name+)
+      (let [found-list (couchio/get-list +stable-test-list-1-id+)
+            found-name (.get found-list +name-attribute+)]
+        (is (and (string? found-name)
+                 (= found-name +stable-test-list-1-alternate-name+))
+            (pp/cl-format nil "found-name should be ~S, but found ~S"
+                          +stable-test-list-1-alternate-name+
+                          found-name)))
+      ;; change the name back
+      (rename-list user-id +stable-test-list-1-id+ +stable-test-list-1-name+)
+      (let [found-list (couchio/get-list +stable-test-list-1-id+)
+            found-name (.get found-list +name-attribute+)]
+        (is (and (string? found-name)
+                 (= found-name +stable-test-list-1-name+))
+            (pp/cl-format nil "found-name should be ~S, but found ~S"
+                          +stable-test-list-1-name+
+                          found-name))))))
+
 
 (deftest new-list-test
   (testing "new-list"
