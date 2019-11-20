@@ -44,6 +44,7 @@
 (def +stable-test-list-2-id+ (str +test-data-prefix+  "List-2::" "18c1dbdc-191c-4ac3-9994-abaac99d5522"))
 (def +stable-test-list-2-name+ (str  "List-2::" "56cc71c9-ef89-426d-971f-0baed5e511c6"))
 (def +stable-test-column-name-a+ "Column A")
+(def +stable-test-column-name-b+ "Column B")
 
 ;;; finds objects whose IDs are prefixed with the +test-data-prefix+
 (defn find-test-data [bucket]
@@ -398,11 +399,26 @@
 
 
 (deftest list-columns-test
-  (testing "new-column, list-columns, column-with-id, column-name, column-named, rename-column, mark-column-deleted, column-deleted"
+  (testing "list column functions"
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
          found-list (couchio/get-list +stable-test-list-0-id+)]
       (new-column :owner-id user-id :list-id +stable-test-list-0-id+ :name +stable-test-column-name-a+)
+      (new-column :owner-id user-id :list-id +stable-test-list-0-id+ :name +stable-test-column-name-b+)
       (let [found-columns (list-columns user-id +stable-test-list-0-id+)]
-        (is (not (nil? found-columns)) "found-columns is nil")))))
+        (is (not (nil? found-columns)) "found-columns is nil")
+        (is (instance? JsonObject found-list)
+            (pp/cl-format nil "found-columns should be a JsonObject, but found ~S" found-columns))
+        (let [column-keys (into [] (.getNames found-columns))]
+          (is (= 2 (count column-keys))
+              (pp/cl-format nil "found-columns should have 2 members, but found ~S" found-columns)))
+        (let [column0 (column-with-id :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0")
+              found-id (.get column0 +id-attribute+)
+              found-name (.get column0 +name-attribute+)]
+          (is (= found-id "0")
+              (pp/cl-format nil "found-id should be ~S, but found ~S"
+                            "0" found-id))
+          (is (= found-name +stable-test-column-name-a+)
+              (pp/cl-format nil "found-name should be ~S, but found ~S"
+                            +stable-test-column-name-a+ found-name)))))))
