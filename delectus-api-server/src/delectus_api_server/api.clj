@@ -381,7 +381,7 @@
 
 (defn lists [userid]
   (let [bucket (config/delectus-content-bucket)]
-    (couchio/find-objects bucket ["name" "id"]
+    (couchio/find-objects bucket ["name" "id" "type"]
                           {+type-attribute+ +list-type+
                            +owner-id-attribute+ userid})))
 

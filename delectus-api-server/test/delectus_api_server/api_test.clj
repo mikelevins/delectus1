@@ -22,6 +22,11 @@
 
 (def +test-data-prefix+ "DELECTUS-TEST-DATA::")
 
+;;; make-test-id []
+;;; ---------------------------------------------------------------------
+;;; use make-test-id instead of makeid for IDs used in tests; make-test-id
+;;; constructs IDs the we can readily recognize as ephemeral test data
+;;; to be deleted from the database when tests are finished running
 (defn make-test-id []
   (str +test-data-prefix+ (makeid)))
 
@@ -30,11 +35,12 @@
 
 (def +stable-test-collection-id+ (str +test-data-prefix+ "Collection-0::" "029ef6f7-5170-4671-89b7-386ef1156c2d"))
 (def +stable-test-collection-name+ (str "Collection-0::" "7e1c04c3-4d05-41b3-81d4-a67d64c17092"))
-(def +stable-test-collection-alternate-name+ (str "Collection-0::" "2677e446-3f07-44bc-8be8-785af279c6e1"))
+(def +stable-test-collection-alternate-name+ (str "Collection-0::" "Alternate-7e1c04c3-4d05-41b3-81d4-a67d64c17092"))
 (def +stable-test-list-0-id+ (str +test-data-prefix+  "List-0::" "23d4dce0-93f2-4983-a59e-cff092f8a987"))
 (def +stable-test-list-0-name+ (str  "List-0::" "f8047f56-bbc2-414b-a44b-86aefcc502a4"))
 (def +stable-test-list-1-id+ (str +test-data-prefix+  "List-1::" "905c6ab2-06a2-43dc-bf98-6fa9996bd64d"))
 (def +stable-test-list-1-name+ (str  "List-1::" "0e803fce-38be-4138-8456-e78b98366e5d"))
+(def +stable-test-list-1-alternate-name+ (str  "List-1::" "Alternate-0e803fce-38be-4138-8456-e78b98366e5d"))
 (def +stable-test-list-2-id+ (str +test-data-prefix+  "List-2::" "18c1dbdc-191c-4ac3-9994-abaac99d5522"))
 (def +stable-test-list-2-name+ (str  "List-2::" "56cc71c9-ef89-426d-971f-0baed5e511c6"))
 
@@ -287,6 +293,20 @@
 ;;; List tests
 ;;; ---------------------------------------------------------------------
 
+(deftest lists-test
+  (testing "lists"
+    (let [email (:delectus-test-user (config/delectus-configuration))
+          user-id (userid email)
+          found-lists (lists user-id)]
+      (is (and found-lists
+               (not (empty? found-lists))
+               (every? #(and (instance? JsonObject %)
+                             (couchio/json-object-type? % +list-type+))
+                       found-lists))
+          (pp/cl-format nil "found-lists should be a list of List objects, but found ~S"
+                        found-lists)))))
+
+
 (deftest new-list-test
   (testing "new-list"
     (let
@@ -299,10 +319,5 @@
       (is (and (not (nil? the-list))
                (instance? JsonObject the-list)
                (couchio/json-object-type? the-list +list-type+))
-          (pp/cl-format nil
-                        "collection should be a List object.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  list = ~S"
-                        email user-id the-list)))))
+          (pp/cl-format nil "test value should be a List object, but found ~S" the-list)))))
 
