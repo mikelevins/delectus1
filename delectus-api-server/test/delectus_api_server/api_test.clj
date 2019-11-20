@@ -324,6 +324,19 @@
                         found-name)))))
 
 
+(deftest list-named-test
+  (testing "list-named"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         found-list (list-named user-id +stable-test-list-1-name+)
+         found-id (.get found-list +id-attribute+)]
+      (is (and (string? found-id)
+               (= found-id +stable-test-list-1-id+))
+          (pp/cl-format nil "found-id should be ~S but found ~S"
+                        +stable-test-list-1-id+ found-id)))))
+
+
 (deftest new-list-test
   (testing "new-list"
     (let
