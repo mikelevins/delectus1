@@ -43,6 +43,7 @@
 (def +stable-test-list-1-alternate-name+ (str  "List-1::" "Alternate-0e803fce-38be-4138-8456-e78b98366e5d"))
 (def +stable-test-list-2-id+ (str +test-data-prefix+  "List-2::" "18c1dbdc-191c-4ac3-9994-abaac99d5522"))
 (def +stable-test-list-2-name+ (str  "List-2::" "56cc71c9-ef89-426d-971f-0baed5e511c6"))
+(def +stable-test-column-name-a+ "Column A")
 
 ;;; finds objects whose IDs are prefixed with the +test-data-prefix+
 (defn find-test-data [bucket]
@@ -394,3 +395,14 @@
             (pp/cl-format nil "test value should be a List object, but found ~S" found-list))
         (is (not (collection-deleted? user-id +stable-test-collection-id+))
             "test list should not be deleted, but is")))))
+
+
+(deftest list-columns-test
+  (testing "new-column, list-columns, column-with-id, column-name, column-named, rename-column, mark-column-deleted, column-deleted"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         found-list (couchio/get-list +stable-test-list-0-id+)]
+      (new-column :owner-id user-id :list-id +stable-test-list-0-id+ :name +stable-test-column-name-a+)
+      (let [found-columns (list-columns user-id +stable-test-list-0-id+)]
+        (is (not (nil? found-columns)) "found-columns is nil")))))

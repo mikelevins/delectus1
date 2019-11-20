@@ -434,7 +434,7 @@
       nil
       (first found))))
 
-;;; (find-list-by-name (model/email->userid "mikel@evins.net") "Things")
+;;; (list-named (model/email->userid "mikel@evins.net") "Stuff")
 ;;; (find-list-by-name (model/email->userid "mikel@evins.net") "NOPE!")
 
 ;;; /delectus/rename_list
@@ -547,11 +547,12 @@
 
       (.get list-cbmap +columns-attribute+))))
 
-
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
-;;; (list-columns $mikelid $thingsid)
-
+;;; (lists (model/email->userid "mikel@evins.net"))
+;;; (def $stuff (list-named $mikelid "Stuff"))
+;;; (def $stuffid (.get $stuff "id"))
+;;; (list-columns $mikelid $stuffid)
+;;; (new-column :owner-id $mikelid :list-id $stuffid :name "Item")
 
 ;;; /delectus/column_with_id
 ;;; ---------------------------------------------------------------------
