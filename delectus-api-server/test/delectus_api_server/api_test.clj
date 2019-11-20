@@ -297,6 +297,33 @@
                         found-lists)))))
 
 
+(deftest list-with-id-test
+  (testing "list-with-id"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         found-list (list-with-id user-id +stable-test-list-0-id+)]
+      (is (and (not (nil? found-list))
+               (instance? JsonObject found-list)
+               (couchio/json-object-type? found-list +list-type+))
+          (pp/cl-format nil "found-list should be a List object, but found ~S"
+                        found-list)))))
+
+
+(deftest list-name-test
+  (testing "list-name"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)
+         found-list (list-with-id user-id +stable-test-list-0-id+)
+         found-name (.get found-list +name-attribute+)]
+      (is (and (string? found-name)
+               (= found-name +stable-test-list-0-name+))
+          (pp/cl-format nil "found-name should be ~S but found ~S"
+                        +stable-test-list-0-name+
+                        found-name)))))
+
+
 (deftest new-list-test
   (testing "new-list"
     (let
