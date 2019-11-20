@@ -398,12 +398,20 @@
             "test list should not be deleted, but is")))))
 
 
+;;; testing list column functions:
+;;; list-columns
+;;; column-with-id
+;;; column-name
+;;; column-named
+;;; column-deleted?
+;;; mark-column-deleted
+;;; new-column
+;;; rename-column
 (deftest list-columns-test
   (testing "list column functions"
-    (let
-        [email (:delectus-test-user (config/delectus-configuration))
-         user-id (userid email)
-         found-list (couchio/get-list +stable-test-list-0-id+)]
+    (let [email (:delectus-test-user (config/delectus-configuration))
+          user-id (userid email)
+          found-list (couchio/get-list +stable-test-list-0-id+)]
       (new-column :owner-id user-id :list-id +stable-test-list-0-id+ :name +stable-test-column-name-a+)
       (new-column :owner-id user-id :list-id +stable-test-list-0-id+ :name +stable-test-column-name-b+)
       (let [found-columns (list-columns user-id +stable-test-list-0-id+)]
@@ -414,11 +422,36 @@
           (is (= 2 (count column-keys))
               (pp/cl-format nil "found-columns should have 2 members, but found ~S" found-columns)))
         (let [column0 (column-with-id :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0")
+              column-zero (column-named :owner-id user-id :list-id +stable-test-list-0-id+
+                                        :column-name +stable-test-column-name-a+)
               found-id (.get column0 +id-attribute+)
-              found-name (.get column0 +name-attribute+)]
+              found-name (column-name :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0")
+              found-deleted? (.get column0 +deleted-attribute+)]
+          (let [column0-id (.get column0 +id-attribute+)
+                column-zero-id (.get column-zero +id-attribute+)]
+            (is (= column0-id column-zero-id)
+                (pp/cl-format nil "column0-id and column-zero-id differ: column0: ~S; column-zero: ~S"
+                              column0-id column-zero-id)))
           (is (= found-id "0")
               (pp/cl-format nil "found-id should be ~S, but found ~S"
                             "0" found-id))
           (is (= found-name +stable-test-column-name-a+)
               (pp/cl-format nil "found-name should be ~S, but found ~S"
-                            +stable-test-column-name-a+ found-name)))))))
+                            +stable-test-column-name-a+ found-name))
+          (is (= found-deleted? false)
+              (pp/cl-format nil "found-deleted? should be false, but found ~S" found-name)))
+        ;; mark column 0 deleted
+        (mark-column-deleted user-id +stable-test-list-0-id+ "0" true)
+        (is (column-deleted? :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0")
+            (pp/cl-format nil "column0 should be deleted, but it isn't."))
+        ;; mark column 0 undeleted
+        (mark-column-deleted user-id +stable-test-list-0-id+ "0" false)
+        (is (not (column-deleted? :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0"))
+            (pp/cl-format nil "column0 shouldn't be deleted, but it is."))
+        ;; test renaming the column
+        (let [old-name (column-name :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0")
+              new-name "Frob"]
+          (rename-column user-id +stable-test-list-0-id+ "0" new-name)
+          (let [found-name (column-name :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0")]
+            (is (= found-name new-name)
+              (pp/cl-format nil "column0 name should be ~S but found ~S" new-name found-name))))))))
