@@ -31,8 +31,12 @@
 (def +stable-test-collection-id+ (str +test-data-prefix+ "Collection-0::" "029ef6f7-5170-4671-89b7-386ef1156c2d"))
 (def +stable-test-collection-name+ (str "Collection-0::" "7e1c04c3-4d05-41b3-81d4-a67d64c17092"))
 (def +stable-test-collection-alternate-name+ (str "Collection-0::" "2677e446-3f07-44bc-8be8-785af279c6e1"))
-(def +stable-test-list-id+ (str +test-data-prefix+  "List-0::" "23d4dce0-93f2-4983-a59e-cff092f8a987"))
-(def +stable-test-list-name+ (str  "List-0::" "f8047f56-bbc2-414b-a44b-86aefcc502a4"))
+(def +stable-test-list-0-id+ (str +test-data-prefix+  "List-0::" "23d4dce0-93f2-4983-a59e-cff092f8a987"))
+(def +stable-test-list-0-name+ (str  "List-0::" "f8047f56-bbc2-414b-a44b-86aefcc502a4"))
+(def +stable-test-list-1-id+ (str +test-data-prefix+  "List-1::" "905c6ab2-06a2-43dc-bf98-6fa9996bd64d"))
+(def +stable-test-list-1-name+ (str  "List-1::" "0e803fce-38be-4138-8456-e78b98366e5d"))
+(def +stable-test-list-2-id+ (str +test-data-prefix+  "List-2::" "18c1dbdc-191c-4ac3-9994-abaac99d5522"))
+(def +stable-test-list-2-name+ (str  "List-2::" "56cc71c9-ef89-426d-971f-0baed5e511c6"))
 
 ;;; finds objects whose IDs are prefixed with the +test-data-prefix+
 (defn find-test-data [bucket]
@@ -63,13 +67,12 @@
         user-id (model/email->userid email)]
     ;;; stable test data
     (new-collection :id +stable-test-collection-id+ :name +stable-test-collection-name+ :owner-id user-id)
-    (new-list :id +stable-test-list-id+ :name +stable-test-list-name+ :owner-id user-id)
+    (new-list :id +stable-test-list-0-id+ :name +stable-test-list-0-name+ :owner-id user-id)
+    (new-list :id +stable-test-list-1-id+ :name +stable-test-list-1-name+ :owner-id user-id)
+    (new-list :id +stable-test-list-2-id+ :name +stable-test-list-2-name+ :owner-id user-id)
     ;;; randomly generated names and ids
     (new-collection :id (make-test-id) :name (make-test-name "Collection-1") :owner-id user-id)
-    (new-collection :id (make-test-id) :name (make-test-name "Collection-2") :owner-id user-id)
-    (new-list :id (make-test-id) :name (make-test-name "List-1") :owner-id user-id)
-    (new-list :id (make-test-id) :name (make-test-name "List-2") :owner-id user-id)
-    (new-list :id (make-test-id) :name (make-test-name "List-3") :owner-id user-id))
+    (new-collection :id (make-test-id) :name (make-test-name "Collection-2") :owner-id user-id))
   ;;; wait after setup to make sure DB's API returns consistent results
   (Thread/sleep 2000))
 
@@ -236,35 +239,49 @@
           "test collection should not be deleted, but is"))))
 
 (deftest collection-lists-test
-  (testing "collection-lists, collection-add-list, collection-remove-list, new-list"
+  (testing "collection-lists, collection-add-list, collection-remove-list"
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-id (make-test-id)
-         test-collection-id (make-test-id)
-         test-list-id (make-test-id)
-         test-collection-name (str "TEST-COLLECTION-" test-id)
-         test-list-name (str "TEST-LIST-" test-id)
-         found-collection-id (new-collection :id test-collection-id :name test-collection-name :owner-id user-id)
-         found-list-id (new-list :id test-list-id :name test-list-name :owner-id user-id)
-         test-collection (couchio/get-collection test-collection-id)
-         test-list (couchio/get-list test-list-id)]
+         test-collection (couchio/get-collection +stable-test-collection-id+)
+         test-list-0 (couchio/get-collection +stable-test-list-0-id+)
+         test-list-1 (couchio/get-collection +stable-test-list-1-id+)
+         test-list-2 (couchio/get-collection +stable-test-list-2-id+)]
       (is (and (not (nil? test-collection))
                (instance? JsonObject test-collection)
                (couchio/json-object-type? test-collection +collection-type+))
           "test collection not found")
-      (is (and (not (nil? test-list))
-               (instance? JsonObject test-list)
-               (couchio/json-object-type? test-list +list-type+))
-          "test list not found")
-      (let [collection-lists (collection-lists user-id test-collection-id)]
+      (is (and (not (nil? test-list-0))
+               (instance? JsonObject test-list-0)
+               (couchio/json-object-type? test-list-0 +list-type+))
+          "test list 0 not found")
+      (is (and (not (nil? test-list-1))
+               (instance? JsonObject test-list-1)
+               (couchio/json-object-type? test-list-1 +list-type+))
+          "test list 1 not found")
+      (is (and (not (nil? test-list-2))
+               (instance? JsonObject test-list-2)
+               (couchio/json-object-type? test-list-2 +list-type+))
+          "test list 2 not found")
+      (let [collection-lists (collection-lists user-id +stable-test-collection-id+)]
         (is (empty? collection-lists) "test collection's lists should be empty before adding a list"))
-      (collection-add-list user-id test-collection-id test-list-id)
-      (let [collection-lists (collection-lists user-id test-collection-id)]
-        (is (not (empty? collection-lists)) "test collection's lists shouldn't be empty after adding a list"))
-      (collection-remove-list user-id test-collection-id test-list-id)
-      (let [collection-lists (collection-lists user-id test-collection-id)]
-        (is (empty? collection-lists) "test collection's lists should be empty after removing a list")))))
+      ;; add lists
+      (collection-add-list user-id +stable-test-collection-id+ +stable-test-list-0-id+)
+      (collection-add-list user-id +stable-test-collection-id+ +stable-test-list-1-id+)
+      (collection-add-list user-id +stable-test-collection-id+ +stable-test-list-2-id+)
+      ;; check the collection's lists
+      (let [collection-lists (collection-lists user-id +stable-test-collection-id+)]
+        (is (and (not (empty? collection-lists))
+                 (= 3 (count collection-lists)))
+            (pp/cl-format nil "test collection's lists should contain 3 members, not ~S" (count collection-lists))))
+      ;; remove lists
+      (collection-remove-list user-id +stable-test-collection-id+ +stable-test-list-0-id+)
+      (collection-remove-list user-id +stable-test-collection-id+ +stable-test-list-1-id+)
+      (collection-remove-list user-id +stable-test-collection-id+ +stable-test-list-2-id+)
+      (let [collection-lists (collection-lists user-id +stable-test-collection-id+)]
+        (is (empty? collection-lists)
+            (pp/cl-format nil "test collection's lists should be empty after removing lists but found ~S"
+                          collection-lists))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
