@@ -202,13 +202,12 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (collection-with-id $mikelid "1469fbd0-7d7d-41b2-8e5c-6db466129bcc")
 
-
 (deftest new-collection-test
   (testing "new-collection"
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-name (str "TEST-COLLECTION-" (makeid))
+         test-name (str "NEW-TEST-COLLECTION-" (makeid))
          test-id (make-test-id)
          collection-id (new-collection :id test-id :name test-name :owner-id user-id)
          collection (couchio/get-collection collection-id)]
@@ -216,30 +215,24 @@
                (instance? JsonObject collection)
                (couchio/json-object-type? collection +collection-type+))
           (pp/cl-format nil
-                        "collection should be a collection object.~%~
-  email = ~S~%~
-  user-id = ~S~%~
-  collection = ~S"
-                        email user-id collection)))))
+                        "object ~S should be a collection but found ~S"
+                        collection-id collection)))))
 
 (deftest mark-collection-deleted-test
   (testing "mark-collection-deleted and collection-deleted?"
     (let
         [email (:delectus-test-user (config/delectus-configuration))
          user-id (userid email)
-         test-id (make-test-id)
-         test-name (str "TEST-COLLECTION-" test-id)
-         collection-id (new-collection :id test-id :name test-name :owner-id user-id)
-         collection (couchio/get-collection collection-id)]
-      (mark-collection-deleted user-id test-id true)
+         collection (couchio/get-collection +stable-test-collection-id+)]
+      (mark-collection-deleted user-id +stable-test-collection-id+ true)
       (is (and (not (nil? collection))
                (instance? JsonObject collection)
-               (collection-deleted? user-id collection-id))
+               (collection-deleted? user-id +stable-test-collection-id+))
           "test collection should be deleted, but is not")
-      (mark-collection-deleted user-id test-id false)
+      (mark-collection-deleted user-id +stable-test-collection-id+ false)
       (is (and (not (nil? collection))
                (instance? JsonObject collection)
-               (not (collection-deleted? user-id collection-id)))
+               (not (collection-deleted? user-id +stable-test-collection-id+)))
           "test collection should not be deleted, but is"))))
 
 (deftest collection-lists-test
