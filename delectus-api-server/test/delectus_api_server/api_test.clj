@@ -375,3 +375,22 @@
                (couchio/json-object-type? the-list +list-type+))
           (pp/cl-format nil "test value should be a List object, but found ~S" the-list)))))
 
+
+(deftest mark-list-deleted-test
+  (testing "mark-list-deleted and list-deleted?"
+    (let
+        [email (:delectus-test-user (config/delectus-configuration))
+         user-id (userid email)]
+      (mark-list-deleted user-id +stable-test-list-0-id+ true)
+      (let [found-list (couchio/get-list +stable-test-list-0-id+)]
+        (is (not (nil? found-list)) "test list is nil")
+        (is (instance? JsonObject found-list)
+            (pp/cl-format nil "test value should be a List object, but found ~S" found-list))
+        (is (list-deleted? user-id +stable-test-list-0-id+) "test list should be deleted, but is not"))
+      (mark-list-deleted user-id +stable-test-list-0-id+ false)
+      (let [found-list (couchio/get-list +stable-test-list-0-id+)]
+        (is (not (nil? found-list)) "test list is nil")
+        (is (instance? JsonObject found-list)
+            (pp/cl-format nil "test value should be a List object, but found ~S" found-list))
+        (is (not (collection-deleted? user-id +stable-test-collection-id+))
+            "test list should not be deleted, but is")))))
