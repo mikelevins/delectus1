@@ -455,3 +455,6 @@
           (let [found-name (column-name :owner-id user-id :list-id +stable-test-list-0-id+ :column-id "0")]
             (is (= found-name new-name)
               (pp/cl-format nil "column0 name should be ~S but found ~S" new-name found-name))))))))
+
+;;; TODO: list-items-test
+;;; TODO: list-fields-test
