@@ -1,0 +1,1 @@
+web: java -cp target/uberjar/admin-webapp.jar clojure.main -m admin-webapp.core
