@@ -778,8 +778,12 @@
 
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (new-list :id (makeid) :name "Things" :owner-id (model/email->userid "mikel@evins.net"))
 ;;; (def $thingsid (.get (list-named (userid "mikel@evins.net") "Things") "id"))
 ;;; (list-items $mikelid $thingsid)
+;;; (new-column :owner-id $mikelid :list-id $thingsid :name "Item")
+;;; (new-item :owner-id $mikelid :list-id $thingsid)
+;;; (item-with-id $mikelid $thingsid "0")
 
 ;;; /delectus/item_with_id
 ;;; ---------------------------------------------------------------------

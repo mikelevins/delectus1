@@ -398,7 +398,9 @@
             "test list should not be deleted, but is")))))
 
 
-;;; testing list column functions:
+;;; list-column-test
+;;; ----------------
+;;; testing column functions:
 ;;; list-columns
 ;;; column-with-id
 ;;; column-name
@@ -407,6 +409,7 @@
 ;;; mark-column-deleted
 ;;; new-column
 ;;; rename-column
+
 (deftest list-columns-test
   (testing "list column functions"
     (let [email (:delectus-test-user (config/delectus-configuration))
@@ -416,7 +419,7 @@
       (new-column :owner-id user-id :list-id +stable-test-list-0-id+ :name +stable-test-column-name-b+)
       (let [found-columns (list-columns user-id +stable-test-list-0-id+)]
         (is (not (nil? found-columns)) "found-columns is nil")
-        (is (instance? JsonObject found-list)
+        (is (instance? JsonObject found-columns)
             (pp/cl-format nil "found-columns should be a JsonObject, but found ~S" found-columns))
         (let [column-keys (into [] (.getNames found-columns))]
           (is (= 2 (count column-keys))
@@ -456,5 +459,70 @@
             (is (= found-name new-name)
               (pp/cl-format nil "column0 name should be ~S but found ~S" new-name found-name))))))))
 
-;;; TODO: list-items-test
-;;; TODO: list-fields-test
+
+;;; list-items-test
+;;; ---------------
+;;; testing items functions:
+;;; list-items
+;;; item-with-id
+;;; new-item
+;;; mark-item-deleted
+;;; item-deleted?
+;;; item-column-value
+;;; set-item-column-value
+
+(deftest list-items-test
+  (testing "list items functions"
+    (let [email (:delectus-test-user (config/delectus-configuration))
+          user-id (userid email)
+          found-list (couchio/get-list +stable-test-list-2-id+)]
+      ;; create columns
+      (new-column :owner-id user-id :list-id +stable-test-list-2-id+ :name +stable-test-column-name-a+)
+      (new-column :owner-id user-id :list-id +stable-test-list-2-id+ :name +stable-test-column-name-b+)
+      ;; check columns
+      (let [found-columns (list-columns user-id +stable-test-list-2-id+)]
+        (is (not (nil? found-columns)) "found-columns is nil")
+        (is (instance? JsonObject found-columns)
+            (pp/cl-format nil "found-columns should be a JsonObject, but found ~S" found-columns))
+        (let [column-keys (into [] (.getNames found-columns))]
+          (is (= 2 (count column-keys))
+              (pp/cl-format nil "found-columns should have 2 members, but found ~S" found-columns))))
+      ;; create items
+      (new-item :owner-id user-id :list-id +stable-test-list-2-id+)
+      (new-item :owner-id user-id :list-id +stable-test-list-2-id+)
+      ;; check items
+      (let [found-items (list-items user-id +stable-test-list-2-id+)]
+        (is (not (nil? found-items)) "found-items is nil")
+        (is (instance? JsonObject found-items)
+            (pp/cl-format nil "found-items should be a JsonObject, but found ~S" found-items))
+        (let [item-keys (into [] (.getNames found-items))]
+          (is (= 2 (count item-keys))
+              (pp/cl-format nil "found-items should have 2 members, but found ~S" found-items))))
+      ;; test a single item
+      (let [found-item (item-with-id user-id +stable-test-list-2-id+ "0")]
+        (is (not (nil? found-item)) "found-item is nil")
+        (is (instance? JsonObject found-item)
+            (pp/cl-format nil "found-item should be a JsonObject, but found ~S" found-item))
+        ;; check that it exists and has two fields
+        (let [found-fields (.get found-item +fields-attribute+)
+              field-keys (into [] (.getNames found-fields))]
+          (is (= 2 (count field-keys))
+              (pp/cl-format nil "field-keys should have 2 members, but found ~S" field-keys)))
+        ;; delete and undelete it
+        (mark-item-deleted user-id +stable-test-list-2-id+ "0" true)
+        (is (item-deleted? user-id +stable-test-list-2-id+ "0")
+            "item 0 should be marked deleted, but isn't")
+        (mark-item-deleted user-id +stable-test-list-2-id+ "0" false)
+        (is (not (item-deleted? user-id +stable-test-list-2-id+ "0"))
+            "item 0 shouldn't be marked deleted, but is")
+        ;; write and then read back test data
+        (let [testval1 "supercalifragilisticexpialidocious"
+              testval2 12345]
+          (set-item-column-value user-id +stable-test-list-2-id+ "0" "0" testval1)
+          (set-item-column-value user-id +stable-test-list-2-id+ "1" "1" testval2)
+          (let [foundval1 (item-column-value user-id +stable-test-list-2-id+ "0" "0")
+                foundval2 (item-column-value user-id +stable-test-list-2-id+ "1" "1")]
+            (is (= foundval1 testval1)
+                (pp/cl-format nil "field 0,0 should have value ~S, but found ~S" testval1 foundval1))
+            (is (= foundval2 testval2)
+                (pp/cl-format nil "field 1,1 should have value ~S, but found ~S" testval2 foundval2))))))))
