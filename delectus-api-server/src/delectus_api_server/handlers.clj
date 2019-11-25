@@ -50,11 +50,11 @@
     (if found-user
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body (json/write-str {:token "testing login"})}
+       :body (json/write-str {:token "testing login"
+                              :email supplied-email})}
       {:status  401
-       :headers {"Content-Type" "text/html"}
-       :body    (html [:h1 "Delectus 2"]
-                      [:p "Login failed"])})))
+       :headers {"Content-Type" "application/json"}
+       :body    (json/write-str nil)})))
 
 (defn userid [request]
   {:status  200
