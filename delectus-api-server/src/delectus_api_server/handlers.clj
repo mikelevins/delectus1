@@ -48,13 +48,13 @@
         supplied-password (:password params)
         found-user (api/login supplied-email supplied-password)]
     (if found-user
-      {:status  200
-       :headers {"Content-Type" "application/json"}
-       :body (json/write-str {:token "testing login"
-                              :email supplied-email})}
+      (let [usermap (into {} (.toMap found-user))]
+        {:status  200
+         :headers {"Content-Type" "application/json"}
+         :body (json/write-str (merge usermap {:token "testing login"}))})
       {:status  401
        :headers {"Content-Type" "application/json"}
-       :body    (json/write-str nil)})))
+       :body    (json/write-str {:message "Login failed"})})))
 
 (defn userid [request]
   {:status  200

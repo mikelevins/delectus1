@@ -46,6 +46,10 @@
 <!------------ style definitions ------------>
 
 <style>
+ .authdata {
+     font-family: monospace;
+}
+
  .endpoint { text-align: right; }
  
  table {
@@ -70,6 +74,9 @@
     Logged in as: <strong>{$authorization.email}</strong>&nbsp;
     <button on:click={discardAuthorization}>discard authorization</button>
 </p>
+
+<p>Authorization data:</p>
+<pre>{JSON.stringify($authorization, undefined, 2)}</pre>
 
 <h3>Users</h3>
 
