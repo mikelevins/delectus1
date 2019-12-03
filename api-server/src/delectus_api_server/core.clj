@@ -23,7 +23,8 @@
              (wrap-params
               (wrap-defaults
                (wrap-cors #'app-routes
-                          :access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
+                          ;;:access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
+                          :access-control-allow-origin [#".*"]
                           :access-control-allow-methods [:get :put :post :delete])
                site-defaults))
              {:port port}))
