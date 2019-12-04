@@ -5,6 +5,7 @@
    [clojure.pprint :as pp]
    [delectus-api-server.api :as api]
    [delectus-api-server.configuration :as config]
+   [delectus-api-server.constants :refer :all]
    [delectus-api-server.identifiers :refer [makeid]]
    [delectus-api-server.model :as model]
    [delectus-api-server.utilities :refer [fmt]]
@@ -48,10 +49,19 @@
         supplied-password (:password params)
         found-user (api/login supplied-email supplied-password)]
     (if found-user
-      (let [usermap (into {} (.toMap found-user))]
+      (let [req-session (:session req)
+            login-token (or (:login req-session)
+                            (str "login::" (makeid)))
+            usermap {:id (.get found-user +id-attribute+)
+                     :name (.get found-user +name-attribute+)
+                     :email (.get found-user +email-attribute+)}
+            resp-session (merge req-session {:login login-token})]
+        (pp/cl-format true "~%req-session: ~S~%" req-session)
+        (pp/cl-format true "~%resp-session: ~S~%" resp-session)
         {:status  200
          :headers {"Content-Type" "application/json"}
-         :body (json/write-str (merge usermap {:token "testing login"}))})
+         :body (json/write-str usermap)
+         :session resp-session})
       {:status  401
        :headers {"Content-Type" "application/json"}
        :body    (json/write-str {:message "Login failed"})})))
