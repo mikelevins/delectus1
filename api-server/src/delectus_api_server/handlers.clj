@@ -7,6 +7,7 @@
    [delectus-api-server.configuration :as config]
    [delectus-api-server.constants :refer :all]
    [delectus-api-server.identifiers :refer [makeid]]
+   [delectus-api-server.logging :refer [disable-logging enable-logging logging-enabled? wrap-logger]]
    [delectus-api-server.model :as model]
    [delectus-api-server.utilities :refer [fmt]]
    [hiccup.core :refer :all]
@@ -56,8 +57,8 @@
                      :name (.get found-user +name-attribute+)
                      :email (.get found-user +email-attribute+)}
             resp-session (merge req-session {:login login-token})]
-        (pp/cl-format true "~%req-session: ~S~%" req-session)
-        (pp/cl-format true "~%resp-session: ~S~%" resp-session)
+        (pp/cl-format true "~%~%req-session: ~S" req-session)
+        (pp/cl-format true "~%~%resp-session: ~S" resp-session)
         {:status  200
          :headers {"Content-Type" "application/json"}
          :body (json/write-str usermap)
@@ -65,6 +66,10 @@
       {:status  401
        :headers {"Content-Type" "application/json"}
        :body    (json/write-str {:message "Login failed"})})))
+
+;;; (logging-enabled?)
+;;; (enable-logging)
+;;; (disable-logging)
 
 (defn userid [request]
   {:status  200

@@ -1,6 +1,7 @@
 (ns delectus-api-server.core
   (:require
    [compojure.core :refer :all]
+   [delectus-api-server.logging :refer [disable-logging enable-logging logging-enabled? wrap-logger]]
    [delectus-api-server.routes :refer [app-routes]]
    [org.httpkit.server :as server]
    [ring.middleware.cors :refer [wrap-cors]]
@@ -21,7 +22,8 @@
     ;; Run the server with Ring.defaults middleware
     (reset! server
             (server/run-server
-             (wrap-session
+             (wrap-logger
+              (wrap-session
               (wrap-params
                (wrap-defaults
                 (wrap-cors #'app-routes
@@ -30,7 +32,7 @@
                            :access-control-allow-methods [:get :put :post :delete])
                 site-defaults))
               ;; sessions last 1 hour
-              {:cookie-attrs {:max-age 3600}})
+              {:cookie-attrs {:max-age 3600}}))
              {:port port}))
     ;; Run the server without ring defaults
     ;;(server/run-server #'app-routes {:port port})
