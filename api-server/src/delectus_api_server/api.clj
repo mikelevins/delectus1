@@ -83,6 +83,13 @@
 ;;; (def $userid (userid $email))
 ;;; (def $userid (userid "NOPE!"))
 
+;;; /delectus/user
+(defn user [userid] (couchio/get-user userid))
+
+;;; (def $email (:delectus-test-user (config/delectus-configuration)))
+;;; (def $userid (userid $email))
+;;; (def $user (user $userid))
+
 ;;; ---------------------------------------------------------------------
 ;;; Collections
 ;;; ---------------------------------------------------------------------

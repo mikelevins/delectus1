@@ -66,12 +66,27 @@
        :headers {"Content-Type" "application/json"}
        :body    (json/write-str {:message "Login failed"})})))
 
+
+(defn logout [req]
+  (pp/cl-format true "API function logout is not yet implemented")
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (json/write-str "Not yet implemented: logout")})
+
 (defn userid [request]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (let [email (:email (:params request))]
               (json/write-str (api/userid email)))})
 
+(defn user [request]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [userid (:id (:params request))
+                  user-object (api/user userid)]
+              (if user-object
+                (.toString user-object)
+                (json/write-str nil)))})
 
 ;;; ---------------------------------------------------------------------
 ;;; collections handlers

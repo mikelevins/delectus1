@@ -3,7 +3,7 @@ export function apiEndpoint (endpoint) {
     return "http://mars.local:9000/delectus/"+endpoint;
 }
 
-export function getAPI(uri,authToken, displayElementID){
+export function getAPI(uri, authToken, displayElementID){
     fetch(uri, {method: 'GET',
                 headers: {"Authorization": " Token "+authToken}})
         .then(response => response.json())

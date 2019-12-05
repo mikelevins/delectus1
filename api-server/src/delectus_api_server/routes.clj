@@ -31,6 +31,7 @@
   (GET "/delectus/login" [] handlers/login)
   (GET "/delectus/logout" [] handlers/logout)
   (GET "/delectus/userid" [] handlers/userid)
+  (GET "/delectus/user" [] handlers/user)
 
   ;; collections
   ;; -------------------  
