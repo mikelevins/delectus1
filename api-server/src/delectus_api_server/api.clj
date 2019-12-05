@@ -49,14 +49,6 @@
 ;;; admin
 ;;; ---------------------------------------------------------------------
 
-;;; private admin endpoints
-
-;;; TODO
-;;; api/register-user
-(defn register-user [email password])
-;;; api/update-user!
-(defn update-user! [userid new-values-map])
-
 ;;; ---------------------------------------------------------------------
 ;;; users & sessions
 ;;; ---------------------------------------------------------------------
