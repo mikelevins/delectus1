@@ -44,7 +44,7 @@
 <style>
  .authdata {
      font-family: monospace;
-}
+ }
 
  .endpoint { text-align: right; }
  
@@ -65,22 +65,13 @@
 
 <!------------ component markup ------------>
 
-<h3>Users</h3>
 
-<table>
-    <tr>
-        <th>Method</th>
-        <th>Endpoint</th>
-        <th>Parameters</th>
-        <th>Response</th>
-    </tr>
+<p>
+    Logged in as: <strong>{$authorization.email}</strong>&nbsp;
+    <button on:click={discardAuthorization}>discard authorization</button>
+</p>
 
-    <tr>
-        <td>GET</td>
-        <td class="endpoint"><button on:click={getUserID}>/delectus/userid</button></td>
-        <td></td>
-        <td id="getUserID_response"></td>
-    </tr>
+<p>Authorization data:</p>
+<pre>{JSON.stringify($authorization, undefined, 2)}</pre>
 
-</table>
 

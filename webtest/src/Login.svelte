@@ -8,7 +8,6 @@
      let query_string = "?email=" + email_input + "&password=" + password_input
      fetch(uri+query_string)
          .then(response => response.json())
-         //.then(data => authorization.set({email: email_input, token: data.token}));
          .then(data => authorization.set(data));
  }
 </script>
