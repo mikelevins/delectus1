@@ -268,8 +268,12 @@
  .endpoint { text-align: right; }
 
  .method-column { width: 5%; }
- .parameters-column { width: 25%; }
- .response-column { width: 40%; }
+ .endpoint-column { width: 23%; }
+ .parameters-column { width: 12%; }
+
+ input { font-size: 1rem; }
+
+ pre { font-size: 1rem; }
  
  table {
      border-collapse: collapse;
@@ -305,231 +309,231 @@
         <td>GET</td>
         <td class="endpoint"><button on:click={getUserLists}>/delectus/lists</button></td>
         <td></td>
-        <td id="getUserLists_response"></td>
+        <td><pre id="getUserLists_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getListByID}>/delectus/list_with_id</button></td>
-        <td><input type="text" id="getListByID_list_id" placeholder="List ID"/></td>
-        <td id="getListByID_response"></td>
+        <td><input size="36" type="text" id="getListByID_list_id" placeholder="List ID"/></td>
+        <td><pre id="getListByID_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={listName}>/delectus/list_name</button></td>
-        <td><input type="text" id="listName_list_id" placeholder="List ID"/></td>
-        <td id="listName_response"></td>
+        <td><input size="36" type="text" id="listName_list_id" placeholder="List ID"/></td>
+        <td><pre id="listName_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getListByName}>/delectus/list_named</button></td>
-        <td><input type="text" id="getListByName_list_name" placeholder="List name"/></td>
-        <td id="getListByName_response"></td>
+        <td><input size="36" type="text" id="getListByName_list_name" placeholder="List name"/></td>
+        <td><pre id="getListByName_response"></pre></td>
     </tr>
     
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={renameList}>/delectus/rename_list</button></td>
         <td>
-            <input type="text" id="renameList_list_id" placeholder="List ID"/>
-            <input type="text" id="renameList_new_name" placeholder="New name"/>
+            <input size="36" type="text" id="renameList_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="renameList_new_name" placeholder="New name"/>
         </td>
-        <td id="renameList_response"></td>
+        <td><pre id="renameList_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={newList}>/delectus/new_list</button></td>
-        <td><input type="text" id="newList_list_name" placeholder="List name"/></td>
-        <td id="newList_response"></td>
+        <td><input size="36" type="text" id="newList_list_name" placeholder="List name"/></td>
+        <td><pre id="newList_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={deleteList}>/delectus/delete_list</button></td>
-        <td><input type="text" id="deleteList_list_id" placeholder="List ID"/></td>
-        <td id="deleteList_response"></td>
+        <td><input size="36" type="text" id="deleteList_list_id" placeholder="List ID"/></td>
+        <td><pre id="deleteList_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={undeleteList}>/delectus/undelete_list</button></td>
-        <td><input type="text" id="undeleteList_list_id" placeholder="List ID"/></td>
-        <td id="undeleteList_response"></td>
+        <td><input size="36" type="text" id="undeleteList_list_id" placeholder="List ID"/></td>
+        <td><pre id="undeleteList_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={listDeleted}>/delectus/list_deleted</button></td>
-        <td><input type="text" id="listDeleted_list_id" placeholder="List ID"/></td>
-        <td id="listDeleted_response"></td>
+        <td><input size="36" type="text" id="listDeleted_list_id" placeholder="List ID"/></td>
+        <td><pre id="listDeleted_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={listColumns}>/delectus/list_columns</button></td>
-        <td><input type="text" id="listColumns_list_id" placeholder="List ID"/></td>
-        <td id="listColumns_response"></td>
+        <td><input size="36" type="text" id="listColumns_list_id" placeholder="List ID"/></td>
+        <td><pre id="listColumns_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={newColumn}>/delectus/new_column</button></td>
         <td>
-            <input type="text" id="newColumn_list_id" placeholder="List ID"/>
-            <input type="text" id="newColumn_column_name" placeholder="Column name"/>
+            <input size="36" type="text" id="newColumn_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="newColumn_column_name" placeholder="Column name"/>
         </td>
-        <td id="newColumn_response"></td>
+        <td><pre id="newColumn_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={columnWithID}>/delectus/column_with_id</button></td>
         <td>
-            <input type="text" id="columnWithID_list_id" placeholder="List ID"/>
-            <input type="text" id="columnWithID_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="columnWithID_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="columnWithID_column_id" placeholder="Column ID"/>
         </td>
-        <td id="columnWithID_response"></td>
+        <td><pre id="columnWithID_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={columnName}>/delectus/column_name</button></td>
         <td>
-            <input type="text" id="columnName_list_id" placeholder="List ID"/>
-            <input type="text" id="columnName_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="columnName_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="columnName_column_id" placeholder="Column ID"/>
         </td>
-        <td id="columnName_response"></td>
+        <td><pre id="columnName_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={columnNamed}>/delectus/column_named</button></td>
         <td>
-            <input type="text" id="columnNamed_list_id" placeholder="List ID"/>
-            <input type="text" id="columnNamed_column_name" placeholder="Column name"/>
+            <input size="36" type="text" id="columnNamed_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="columnNamed_column_name" placeholder="Column name"/>
         </td>
-        <td id="columnNamed_response"></td>
+        <td><pre id="columnNamed_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={columnDeleted}>/delectus/column_deleted</button></td>
         <td>
-            <input type="text" id="columnDeleted_list_id" placeholder="List ID"/>
-            <input type="text" id="columnDeleted_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="columnDeleted_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="columnDeleted_column_id" placeholder="Column ID"/>
         </td>
-        <td id="columnDeleted_response"></td>
+        <td><pre id="columnDeleted_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={deleteColumn}>/delectus/delete_column</button></td>
         <td>
-            <input type="text" id="deleteColumn_list_id" placeholder="List ID"/>
-            <input type="text" id="deleteColumn_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="deleteColumn_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="deleteColumn_column_id" placeholder="Column ID"/>
         </td>
-        <td id="deleteColumn_response"></td>
+        <td><pre id="deleteColumn_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={undeleteColumn}>/delectus/undelete_column</button></td>
         <td>
-            <input type="text" id="undeleteColumn_list_id" placeholder="List ID"/>
-            <input type="text" id="undeleteColumn_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="undeleteColumn_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="undeleteColumn_column_id" placeholder="Column ID"/>
         </td>
-        <td id="undeleteColumn_response"></td>
+        <td><pre id="undeleteColumn_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={renameColumn}>/delectus/rename_column</button></td>
         <td>
-            <input type="text" id="renameColumn_list_id" placeholder="List ID"/>
-            <input type="text" id="renameColumn_column_id" placeholder="Column ID"/>
-            <input type="text" id="renameColumn_column_name" placeholder="New name"/>
+            <input size="36" type="text" id="renameColumn_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="renameColumn_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="renameColumn_column_name" placeholder="New name"/>
         </td>
-        <td id="renameColumn_response"></td>
+        <td><pre id="renameColumn_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={listItems}>/delectus/list_items</button></td>
-        <td><input type="text" id="listItems_list_id" placeholder="List ID"/></td>
-        <td id="listItems_response"></td>
+        <td><input size="36" type="text" id="listItems_list_id" placeholder="List ID"/></td>
+        <td><pre id="listItems_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={itemWithID}>/delectus/item_with_id</button></td>
         <td>
-            <input type="text" id="itemWithID_list_id" placeholder="List ID"/>
-            <input type="text" id="itemWithID_item_id" placeholder="Item ID"/>
+            <input size="36" type="text" id="itemWithID_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="itemWithID_item_id" placeholder="Item ID"/>
         </td>
-        <td id="itemWithID_response"></td>
+        <td><pre id="itemWithID_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={newItem}>/delectus/new_item</button></td>
-        <td><input type="text" id="newItem_list_id" placeholder="List ID"/></td>
-        <td id="newItem_response"></td>
+        <td><input size="36" type="text" id="newItem_list_id" placeholder="List ID"/></td>
+        <td><pre id="newItem_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={deleteItem}>/delectus/delete_item</button></td>
         <td>
-            <input type="text" id="deleteItem_list_id" placeholder="List ID"/>
-            <input type="text" id="deleteItem_item_id" placeholder="Item ID"/>
+            <input size="36" type="text" id="deleteItem_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="deleteItem_item_id" placeholder="Item ID"/>
         </td>
-        <td id="deleteItem_response"></td>
+        <td><pre id="deleteItem_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={undeleteItem}>/delectus/undelete_item</button></td>
         <td>
-            <input type="text" id="undeleteItem_list_id" placeholder="List ID"/>
-            <input type="text" id="undeleteItem_item_id" placeholder="Item ID"/>
+            <input size="36" type="text" id="undeleteItem_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="undeleteItem_item_id" placeholder="Item ID"/>
         </td>
-        <td id="undeleteItem_response"></td>
+        <td><pre id="undeleteItem_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={itemDeleted}>/delectus/item_deleted</button></td>
         <td>
-            <input type="text" id="itemDeleted_list_id" placeholder="List ID"/>
-            <input type="text" id="itemDeleted_item_id" placeholder="Item ID"/>
+            <input size="36" type="text" id="itemDeleted_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="itemDeleted_item_id" placeholder="Item ID"/>
         </td>
-        <td id="itemDeleted_response"></td>
+        <td><pre id="itemDeleted_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={itemColumnValue}>/delectus/item_column_value</button></td>
         <td>
-            <input type="text" id="itemColumnValue_list_id" placeholder="List ID"/>
-            <input type="text" id="itemColumnValue_item_id" placeholder="Item ID"/>
-            <input type="text" id="itemColumnValue_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="itemColumnValue_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="itemColumnValue_item_id" placeholder="Item ID"/>
+            <input size="36" type="text" id="itemColumnValue_column_id" placeholder="Column ID"/>
         </td>
-        <td id="itemColumnValue_response"></td>
+        <td><pre id="itemColumnValue_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={setItemColumnValue}>/delectus/set_item_column_value</button></td>
         <td>
-            <input type="text" id="setItemColumnValue_list_id" placeholder="List ID"/>
-            <input type="text" id="setItemColumnValue_item_id" placeholder="Item ID"/>
-            <input type="text" id="setItemColumnValue_column_id" placeholder="Column ID"/>
-            <input type="text" id="setItemColumnValue_new_value" placeholder="New value"/>
+            <input size="36" type="text" id="setItemColumnValue_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="setItemColumnValue_item_id" placeholder="Item ID"/>
+            <input size="36" type="text" id="setItemColumnValue_column_id" placeholder="Column ID"/>
+            <input size="36" type="text" id="setItemColumnValue_new_value" placeholder="New value"/>
         </td>
-        <td id="setItemColumnValue_response"></td>
+        <td><pre id="setItemColumnValue_response"></pre></td>
     </tr>
     
 </table>
