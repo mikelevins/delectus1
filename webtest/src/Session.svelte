@@ -45,7 +45,18 @@
  .authdata {
      font-family: monospace;
  }
-
+ .bg-light-gray {
+     background-color: #efefef;
+ }
+ 
+ .box {
+     border: 1px solid black;
+     padding-top: 0.5rem;
+     padding-bottom: 0.5rem;
+     padding-left: 1rem;
+     padding-right: 1rem;
+ }
+ 
  .endpoint { text-align: right; }
  
  table {
@@ -65,13 +76,14 @@
 
 <!------------ component markup ------------>
 
+<div>
+    <p class="box bg-light-gray">
+        Logged in as: <strong>{$authorization.email}</strong>&nbsp;
+        <button on:click={discardAuthorization}>Log out</button>
+    </p>
 
-<p>
-    Logged in as: <strong>{$authorization.email}</strong>&nbsp;
-    <button on:click={discardAuthorization}>discard authorization</button>
-</p>
-
-<p>Authorization data:</p>
-<pre>{JSON.stringify($authorization, undefined, 2)}</pre>
-
-
+    <div  class="box bg-light-gray">
+        <p>Authorization data:</p>
+        <pre>{JSON.stringify($authorization, undefined, 2)}</pre>
+    </div>
+</div>
