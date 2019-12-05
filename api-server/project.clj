@@ -28,7 +28,9 @@
                  ;; password-hashing library
                  [buddy/buddy-hashers "1.4.0"]
                  ;; response-signing library
-                 [buddy/buddy-sign "3.1.0"]]
+                 [buddy/buddy-sign "3.1.0"]
+                 ;; time utilities
+                 [tick "0.4.21-alpha"]]
 
   ;; for skipping AOT in Pedestal apps
   ;; :main ^:skip-aot delectus-api-server.core
