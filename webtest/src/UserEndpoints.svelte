@@ -17,7 +17,7 @@
  }
  
  function displayResponseData (responseData, displayElementID) {
-     document.getElementById(displayElementID).innerHTML=JSON.stringify(responseData)
+     document.getElementById(displayElementID).innerHTML=JSON.stringify(responseData, undefined, 2)
  }
  
  // user data
@@ -52,17 +52,16 @@
  .endpoint { text-align: right; }
  
  table {
-     border-collapse: collapse;
- }
-
- table, th, td {
      border: 1px solid black;
+     border-collapse: collapse;
  }
  
  th, td {
+     border: 1px solid black;
      padding: 6px;
      text-align: left;
  } 
+
 </style>
 
 
