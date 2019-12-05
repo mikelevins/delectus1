@@ -69,6 +69,13 @@
 ;;; (login $username $password)
 ;;; (login "foo" "bar")
 
+
+;;; /delectus/logout
+;;; ---------------------------------------------------------------------
+
+(defn logout [userid]
+  (throw (ex-info "Not yet implemented" {:context 'logout})))
+
 ;;; /delectus/userid
 (defn userid [email] (model/email->userid email))
 
