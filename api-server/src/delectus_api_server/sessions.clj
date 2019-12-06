@@ -31,17 +31,42 @@
 ;;; (add-session! "1" "session 1")
 ;;; (remove-session! "1")
 
-(defn make-session [& {:keys [sessionid remote-addr userid timestamp expiration]
-                       :or {sessionid nil
+(defn make-session [& {:keys [sessionkey remote-addr userid timestamp expiration]
+                       :or {sessionkey nil
                             remote-addr nil
                             userid nil
                             timestamp (System/currentTimeMillis)
                             ;; expires after 1 hour
                             expiration 3600000}}]
-  {:sessionid sessionid
+  {:sessionkey sessionkey
    :remote-addr remote-addr
    :userid userid
    :timestamp timestamp
    :expiration expiration})
 
 ;;; (make-session)
+
+(defn session-valid? [request session]
+  (let [request-origin (:remote-addr request)
+        session-origin (:remote-addr session)]
+    (if (= request-origin session-origin)
+      (let [timestamp (:timestamp session)
+            timestamp-millis (.toEpochMilli (t/parse timestamp))
+            expiration (:expiration session)
+            expires (+ timestamp-millis expiration)
+            now (System/currentTimeMillis)]
+        (< now expires))
+      false)))
+
+(defn authorized? [request]
+  (let [request-session (:session request)
+        session-key (:sessionkey request-session)
+        active-session (find-session session-key)]
+    (if active-session
+      (if (session-valid? active-session)
+        true
+        (do (remove-session! session-key)
+            false))
+      false)))
+
+
