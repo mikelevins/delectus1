@@ -10,7 +10,8 @@
                  [buddy/buddy-hashers "1.4.0"]
                  ;; Couchbase Java client
                  [com.couchbase.client/java-client "2.7.9"]
-                 ]
+                 ;; time utilities
+                 [tick "0.4.21-alpha"]]
   :ring {:handler delectus-api.handler/app}
   :uberjar-name "delectus-api.jar"
   :profiles {:dev {:dependencies [[javax.servlet/javax.servlet-api "3.1.0"]]

@@ -11,13 +11,12 @@
    [delectus-api.couchio :as couchio]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
-   ))
+   [tick.alpha.api :as t]))
 
-;;; (config/delectus-configuration)
-;;; (config/delectus-users-signing-secret)
-;;; (config/couchbase-cluster)
-;;; (config/delectus-users-bucket)
-;;; (config/delectus-content-bucket)
+
+(s/defschema LoginRequest
+  {:email s/Str
+   :password s/Str})
 
 (defn email->user [email]
   (let [found (couchio/find-objects
@@ -33,21 +32,22 @@
 ;;; (email->user "nobody@nowhere.net")
 
 (defn make-auth-token [user-record]
-  (str (.get user-record +email-attribute+) " logged in"))
+  (let [userid (.get user-record "id")]
+    {:email (.get user-record +email-attribute+)
+     :userid userid
+     :timestamp (str (t/now))
+     ;; in seconds; default 1 hour
+     :expiration 3600}))
 
-(s/defschema LoginRequest
-  {:email s/Str
-   :password s/Str})
-
-;;; how to encrypt and decrypt an auth token
+;;; tokens
 ;;; ---------------------------------------------------------------------
-;;; this method relies on a nonce that is recomputed whenever the server restarts.
-;;; logins therefore do not survive retarting the server
+;;; the token works right if $auth-map-2 equals $auth-map-1
 ;;;
-;;; (def key32 (nonce/random-bytes 32))
-;;; (def data {:name "test value"})
-;;; (def payload (jwt/encrypt data key32))
-;;; (= (jwt/decrypt payload key32) data)
+;;; (def $auth-map-1 (make-auth-token (email->user "mikel@evins.net")))
+;;; (def $jwt-key (nonce/random-bytes 32))
+;;; (def $token (jwt/encrypt $auth-map-1 $jwt-key))
+;;; (def $auth-map-2 (jwt/decrypt $token $jwt-key))
+;;; (= $auth-map-1 $auth-map-2)
 
 (defn authenticate-user [email password]
   (let [found-user (email->user email)]
