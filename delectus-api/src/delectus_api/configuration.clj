@@ -27,15 +27,6 @@
 ;;; (delectus-configuration)
 
 ;;; ---------------------------------------------------------------------
-;;; respose-signing
-;;; ---------------------------------------------------------------------
-
-(defn delectus-users-signing-secret []
-  (:delectus-users-signing-secret (delectus-configuration)))
-
-;;; (delectus-users-signing-secret)
-
-;;; ---------------------------------------------------------------------
 ;;; couchbase connection
 ;;; ---------------------------------------------------------------------
 
@@ -59,29 +50,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; couchbase buckets
 ;;; ---------------------------------------------------------------------
-
-;;; scratch
-;;; --------
-
-(defonce +scratch-bucket+ (atom nil))
-
-(defn scratch-bucket []
-  (when (nil? @+scratch-bucket+)
-    (swap! +scratch-bucket+
-           (fn [old-val]
-             (let [bucketname constants/+scratch-bucket-name+
-                   bucketpass (:scratch-password (delectus-configuration))]
-               (.openBucket (couchbase-cluster) bucketname bucketpass)))))
-  @+scratch-bucket+)
-
-(defn reset-scratch-bucket []
-  (when @+scratch-bucket+
-    (.close @+scratch-bucket+))
-  (swap! +scratch-bucket+ (constantly nil)))
-
-;;; (scratch-bucket)
-;;; (reset-scratch-bucket)
-
 
 ;;; delectus
 ;;; --------
@@ -123,27 +91,4 @@
 
 ;;; (delectus-content-bucket)
 ;;; (reset-delectus-content-bucket)
-
-
-;;; travel-sample
-;;; -------------
-
-(defonce +travel-sample-bucket+ (atom nil))
-
-(defn travel-sample-bucket []
-  (when (nil? @+travel-sample-bucket+)
-    (swap! +travel-sample-bucket+
-           (fn [old-val]
-             (let [bucketname (:travel-sample-bucket-name (delectus-configuration))
-                   bucketpass (:travel-sample-password (delectus-configuration))]
-               (.openBucket (couchbase-cluster) bucketname bucketpass)))))
-  @+travel-sample-bucket+)
-
-(defn reset-travel-sample-bucket []
-  (when @+travel-sample-bucket+
-    (.close @+travel-sample-bucket+))
-  (swap! +travel-sample-bucket+ (constantly nil)))
-
-;;; (travel-sample-bucket)
-;;; (reset-travel-sample-bucket)
 
