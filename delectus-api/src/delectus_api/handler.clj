@@ -1,6 +1,10 @@
 (ns delectus-api.handler
   (:require
+   [buddy.core.bytes :as bytes]
+   [buddy.core.nonce :as nonce]
    [buddy.hashers :as hashers]
+   [buddy.sign.jws :as jws]
+   [buddy.sign.jwt :as jwt]
    [compojure.api.sweet :refer :all]
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
@@ -14,13 +18,6 @@
 ;;; (config/couchbase-cluster)
 ;;; (config/delectus-users-bucket)
 ;;; (config/delectus-content-bucket)
-
-;;; temporary in-memory table of authorized users
-(def +userdb+
-  {"mikel@evins.net" true
-   "greer@evins.net" true
-   "granny@evins.net" true})
-
 
 (defn email->user [email]
   (let [found (couchio/find-objects
@@ -41,6 +38,16 @@
 (s/defschema LoginRequest
   {:email s/Str
    :password s/Str})
+
+;;; how to encrypt and decrypt an auth token
+;;; ---------------------------------------------------------------------
+;;; this method relies on a nonce that is recomputed whenever the server restarts.
+;;; logins therefore do not survive retarting the server
+;;;
+;;; (def key32 (nonce/random-bytes 32))
+;;; (def data {:name "test value"})
+;;; (def payload (jwt/encrypt data key32))
+;;; (= (jwt/decrypt payload key32) data)
 
 (defn authenticate-user [email password]
   (let [found-user (email->user email)]
