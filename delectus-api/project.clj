@@ -10,6 +10,8 @@
                  [buddy/buddy-hashers "1.4.0"]
                  ;; Couchbase Java client
                  [com.couchbase.client/java-client "2.7.9"]
+                 ;; http server abstraction
+                 [ring "1.8.0"]
                  ;; time utilities
                  [tick "0.4.21-alpha"]]
   :ring {:handler delectus-api.handler/app}
