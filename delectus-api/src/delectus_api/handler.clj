@@ -1,6 +1,6 @@
 (ns delectus-api.handler
   (:require
-   [buddy.auth :refer [authenticated? throw-unauthorized]]
+   [buddy.auth :refer [authenticated?]]
    [buddy.auth.backends.token :refer [jwe-backend]]
    [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
    [buddy.core.bytes :as bytes]
