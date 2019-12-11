@@ -49,6 +49,11 @@
 (def auth-backend (jwe-backend {:secret secret
                                 :options {:alg :a256kw :enc :a128gcm}}))
 
+(def userdata {"admin" "12345"
+               "test" "98765"})
+
+;;; (get userdata "admin")
+
 ;;; ---------------------------------------------------------------------
 ;;; the api
 ;;; ---------------------------------------------------------------------
@@ -86,6 +91,14 @@
                      token (jwt/encrypt claims secret {:alg :a256kw :enc :a128gcm})]
                  (ok {:token token}))
                (unauthorized)))))
+
+     (GET "/userid/:email" req
+       :path-params [email :- s/Str]
+       :return s/Str
+       :summary "fetches the userid for the offerd email address"
+       (if-not (authenticated? req)
+         (unauthorized (str "Unauthorized user: " email))
+         (ok (get userdata email))))
 
      )))
 
