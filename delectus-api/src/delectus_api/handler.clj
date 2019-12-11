@@ -92,13 +92,6 @@
                    :description "The Delectus 2 Database API"}
             :tags [{:name "api", :description "api endpoints"}]}}}
 
-   (context "/status" []
-     :tags ["api"]
-
-     (GET "/echo" req
-       :summary "echoes a request"
-       (handle-dump req)))
-
    (context "/api" []
      :tags ["api"]
 
@@ -111,5 +104,4 @@
          (if maybe-auth
            (ok {:token (make-auth-token maybe-auth remote-addr)})
            (unauthorized "Login failed")))))))
-
 
