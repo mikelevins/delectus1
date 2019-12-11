@@ -95,13 +95,18 @@
    (context "/api" []
      :tags ["api"]
 
+     (GET "/echo" req
+       :return s/Str
+       :summary "echoes the request"
+       (handle-dump req))
+     
      (POST "/login" req
        :body [{:keys [email password]} LoginRequest]
        :return {:token s/Str}
        :summary "authenticates a Delectus user"
        (let [remote-addr (:remote-addr req)
-             maybe-auth (authenticate-user email password)]
-         (if maybe-auth
-           (ok {:token (make-auth-token maybe-auth remote-addr)})
-           (unauthorized "Login failed")))))))
+                   maybe-auth (authenticate-user email password)]
+               (if maybe-auth
+                 (ok {:token (make-auth-token maybe-auth remote-addr)})
+                 (unauthorized "Login failed")))))))
 

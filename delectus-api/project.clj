@@ -13,7 +13,9 @@
                  ;; http server abstraction
                  [ring "1.8.0"]
                  ;; time utilities
-                 [tick "0.4.21-alpha"]]
+                 [tick "0.4.21-alpha"]
+                 ;; route debuggin
+                 [tupelo "0.9.175"]]
   :ring {:handler delectus-api.handler/app}
   :uberjar-name "delectus-api.jar"
   :profiles {:dev {:dependencies [[javax.servlet/javax.servlet-api "3.1.0"]]
