@@ -94,8 +94,9 @@
 
      (GET "/userid/:email" req
        :path-params [email :- s/Str]
+       :header-params [authorization :- s/Str]
        :return s/Str
-       :summary "fetches the userid for the offerd email address"
+       :summary "fetches the userid for the offered email address"
        (if-not (authenticated? req)
          (unauthorized (str "Unauthorized user: " email))
          (ok (get userdata email))))
