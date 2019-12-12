@@ -44,3 +44,8 @@ engine/scm/lib/sort-keys.o
 engine/scm/lib/Sort.o
 engine/scm/lib/strings.o
 engine/scm/lib/vectors.o
+api-server/target
+api-server/.lein-failures
+delectus-api/.nrepl-port
+delectus-api/target
+
