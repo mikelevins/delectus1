@@ -5,6 +5,9 @@
    [compojure.route :as route]
    [delectus-api-server.handlers :as handlers]
    [ring.handler.dump :refer [handle-dump]]
+   [ring.middleware.resource :refer [wrap-resource]]
+   [ring.middleware.content-type :refer [wrap-content-type]]
+   [ring.util.response :refer [redirect]]
    [schema.core :as s])
   (:gen-class))
 
@@ -12,11 +15,13 @@
 ;;; routes
 ;;; ---------------------------------------------------------------------
 
+;;; TODO: enable authentication for the API
+;;; so random people can't use the API to modify db data!
 (def api-routes
   (api
    {:swagger
     {:ui "/api"
-     :spec "/swagger.json"
+     :spec "/api/swagger.json"
      :data {:info {:title "Delectus 2"
                    :description "The REST API"} 
             :tags [{:name "api", :description "api endpoints"}]}}}
@@ -32,14 +37,8 @@
      )))
 
 (defroutes app-routes
-
-  ;; general test routes
-  ;; -------------------
-  (GET "/echo" [] handlers/echo)
-  (GET "/status" [] handlers/status)
-
-  ;; Delectus API routes
-  ;; -------------------
+  ;; default landing
+  (GET "/" [] (redirect "index.html"))
 
   ;; sessions
   ;; -------------------  
@@ -102,4 +101,5 @@
 (def router
   (routes
    api-routes
-   app-routes))
+   (wrap-content-type
+    (wrap-resource app-routes "public"))))
