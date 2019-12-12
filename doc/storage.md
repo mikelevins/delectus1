@@ -14,12 +14,13 @@ they are stored in Couchbase.
 
 ## User Data Model
 
-The Delectus 2 **user data model** describes 4 kinds of objects:
+The Delectus 2 **user data model** describes 5 kinds of objects:
 
 - **Lists**
 - **Items**
 - **Columns**
 - **Collections**
+- **User Accounts**
 
 ### Lists
 
@@ -85,6 +86,19 @@ A list is always a member of exactly one collection. Lists are created
 as members of the default collection, but the user may move any list
 to any other collection at any time.
 
+### User Accounts
+
+A **user account** is an object that describes a Delectus user and
+enables the user to log in to the application. In order to browse and
+edit Delectus data, a user must first log in to a valid account.
+
+Each user account has a unique identifier, an email address, and a
+password. An account may be enabled or disabled; only a Delectus
+administrator may change the enabled status of an account.
+
+All lists and collections are owned by user accounts. A user account's
+identifier is used to identify the owner of a list or collection.
+
 ## Storage Model
 
 The user data model is a conceptual outline of how Delectus user data
@@ -96,7 +110,7 @@ work reliably and support pleasant user interfaces.
 
 ### Couchbase Basics
 
-Couchbase is a **document database**, meaning that it stores
+Couchbase is a **document databasemanager**, meaning that it stores
 loosely-structured chunks of data known as **documents**. In the case
 of Couchbase, these documents are mainly stored as **JSON objects**,
 though Couchbase is also able to store arbitrary binary blobs.
@@ -108,7 +122,38 @@ the extra data support varous operations that Delectus needs to
 perform in order to provide a nice interface, such as searching,
 sorting, renaming, and so on.
 
-#### List objects
+Delectus stores its data in two different databases (Couchbase calls
+them "buckets").
+
+The **"delectus_content"** database stores lists and collections.
+
+The **"delectus_users"** database stores user-account data.
+
+### Object identity
+
+Each list and collection object has an ID. The ID is a unique UUID
+string that no other object has. The user interface provides no way
+for a user to choose or change this UUID; it is assigned by Delectus
+when the list or collection is created, and remains the same
+throughout its existence.
+
+Within a list, items and columns have ID strings, too. These IDs are
+not UUIDs. They are required to be unique only within the list that
+contains them. Item and column IDs are of the form "0", "1". "2", and
+so on. The ID is assigned when an item or column is created, and it
+remains the same for the life of the item or column; there is no
+support for changing it.
+
+Within a list item, each field has an ID that it shares with the
+column that the field belongs to. A field whose ID is "0" belongs to
+column "0"of its list; field "1" belongs to column "1", and so
+on. Field IDs are unique within an item.
+
+As with collections, lists, and columns, the ID of a field is assigned
+when the field is created and remains the same throughout the life of
+the field.
+
+### List Objects
 
 A list object looks like the following in JSON form:
 
@@ -116,11 +161,11 @@ A list object looks like the following in JSON form:
 {
   "id": ...",
   "type": "delectus_list"
+  "owner-id": ...",
+  "deleted": ...,
   "name": ...",
   "columns": ...,
   "items": ...,
-  "owner-id": ...",
-  "deleted": ...,
 }
 ```
 
@@ -128,16 +173,22 @@ Its keys have the following meanings:
 
 - id: a UUID that identifies this particular list
 - type: the string `"delectus_list"`, identifying this object as a list
+- owner-id: a UUID that identifies the user account that owns the list
+- deleted: true if the user has marked the list for deletion; false otherwise
 - name: the name given by the user to this list
 - columns: an object containing descriptions of the list's columns
 - items: an object containing the list's items and their fields
-- owner-id: a UUID that identifies the user account that owns the list
-- deleted: true if the user has marked the list for deletion; false otherwise
 
 The id, type, and owner-id are immutable; they may not be changed.
 
 The user may edit the other fields at any time using the Delectus
-UI.
+application.
+
+##### `"deleted"`
+
+The `"deleted"` field contains either true or false: true if the user
+has marked the list for deletion; false otherwise. The user may mark
+or unmark a list at any time.
 
 ##### `"name"`
 
@@ -145,7 +196,7 @@ The `"name"` field is the name the user gave to the list. It's a text
 string whose only restrictions are that the text must be something
 that the Delectus UI can reliably handle and present, and it must be
 unique among the user's lists--no two lists belonging to the same user
-may have the same name.
+may have the same name. The user may change a list's name at any time.
 
 ##### `"columns"`
 
@@ -177,6 +228,12 @@ name at the same time.
 The ID of a column never changes, but the user may change the name at
 any time.
 
+The user may add columns at any time. They may set the "deleted"
+attribute to true or false at any time.
+
+Aside from the abovementioned changes, the user may not change the
+structure of the "columns" object.
+
 ##### `"items"`
 
 The `"items"` field contains a JSON object that describes the list's
@@ -202,6 +259,18 @@ Each item gets a different ID, assigned when it's
 created. The first item created gets the ID "0", the second gets the
 ID "1", and so on. 
 
+Users may add items at any time. They may set the "deleted" attribute
+to true or false at any time.
+
+They may change the contents of any field in the "fields" object, but
+may not change the fields object in any other way, except indirectly,
+by adding or removing columns in the "columns" object.
+
+Users may not change the ID of an item or otherwise affect the
+structure of the "items" object.
+
+#### Items and deleted columns
+
 The number of an item's fields is formally required to be the same as
 the number of the list's columns. Because users may add and removed
 columns at any time, it's possible for the actual number of fields in
@@ -220,4 +289,106 @@ data in fields belonging to the deleted column remain in the database,
 but Delectus doesn't returnor display them in the user interface
 unless the user specifically asks to see deleted data.
 
+
+### Collection Objects
+
+A collection object looks like the following in JSON form:
+
+```
+{
+  "id": ...",
+  "type": "delectus_collection"
+  "owner-id": ...",
+  "deleted": ...,
+  "name": ...,
+  "lists": ...,
+}
+```
+
+Its keys have the following meanings:
+
+- id: a UUID that identifies this particular collection
+- type: the string `"delectus_collection"`, identifying this object as a collection
+- owner-id: a UUID that identifies the user account that owns the collection
+- deleted: true if the user has marked the collection for deletion; false otherwise
+- name: the name given by the user to this collection
+- lists: an object containing descriptions of the collection's lists
+
+The id, type, and owner-id are immutable; they may not be changed.
+
+The user may edit the other fields at any time using the Delectus
+application.
+
+##### `"deleted"`
+
+The `"deleted"` field contains either true or false: true if the user
+has marked the collection for deletion; false otherwise. The user may mark
+or unmark a list at any time.
+
+When a user marks a collection deleted, the lists that it contains
+become invisible in the user interface, unless the user sets a UI
+preference to show deleted items. In order to make the lists visible
+by default, the user must move them to another collection or unmark
+the collection for deletion.
+
+##### `"name"`
+
+The `"name"` field is the name the user gave to the collection. It's a
+text string whose only restrictions are that the text must be
+something that the Delectus UI can reliably handle and present, and it
+must be unique among the user's collections--no two collections
+belonging to the same user may have the same name. The user may change
+a collection's name at any time.
+
+##### `"lists"`
+
+The `"lists"` field is an object whose keys are the IDs of Delectus
+lists. Each ID identifies a list that belongs to the user--users may
+not put other users' lists in their collections.
+
+Because every list muct belong to exactly one collection, creating a
+list adds it to the default collection. The user may then move the
+list to any other collection (that is not marked deleted). Moving a
+list to a different collection removes it from the previous collection
+at the same time.
+
+It's not possible to simply remove a list from a collection. The only
+options are to move the list to another collection, or to mark the
+list deleted.
+
+### User Account Objects
+
+A user account object looks like the following in JSON form:
+
+```
+{
+  "id": ...,
+  "type": "delectus_user"
+  "enabled": ...,
+  "email": ...,
+  "name": ...,
+  "password-hash": ...,
+}
+```
+
+Its keys have the following meanings:
+
+- id: a UUID that identifies this particular user account
+- type: the string `"delectus_user"`, identifying this object as a user account
+- owner-id: a UUID that identifies the user account that owns the list
+- enabled: true if the user account is active and may be used, and
+  false otherwise; only a Delectus admin may change this value
+- email: the email address associated with the user account. Only a
+  Delectus admin may change the email.
+- name: the name that the user wishes to display in the Delectus
+  application. The user may set this value at any time. If it's empty
+  then Delectus uses the value of the email field in place of the
+  name.
+- password-hash: The hashed password string usedto authenticate the
+  user for logins. A user must be authenticated and logged in before
+  it's possible to browse and edit Delectus data. The Delectus
+  application provides an interface for updating the password, as does
+  the admin application.
+
+The id and type are immutable; they may not be changed.
 
