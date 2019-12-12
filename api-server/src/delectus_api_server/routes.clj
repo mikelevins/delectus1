@@ -15,10 +15,10 @@
 (def api-routes
   (api
    {:swagger
-    {:ui "/"
+    {:ui "/api"
      :spec "/swagger.json"
-     :data {:info {:title "api-server"
-                   :description "The Delectus 2 API"} 
+     :data {:info {:title "Delectus 2"
+                   :description "The REST API"} 
             :tags [{:name "api", :description "api endpoints"}]}}}
 
    (context "/api" []
