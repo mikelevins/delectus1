@@ -49,14 +49,6 @@
 ;;; admin
 ;;; ---------------------------------------------------------------------
 
-;;; private admin endpoints
-
-;;; TODO
-;;; api/register-user
-(defn register-user [email password])
-;;; api/update-user!
-(defn update-user! [userid new-values-map])
-
 ;;; ---------------------------------------------------------------------
 ;;; users & sessions
 ;;; ---------------------------------------------------------------------
@@ -77,12 +69,26 @@
 ;;; (login $username $password)
 ;;; (login "foo" "bar")
 
+
+;;; /delectus/logout
+;;; ---------------------------------------------------------------------
+
+(defn logout [userid]
+  (throw (ex-info "Not yet implemented" {:context 'logout})))
+
 ;;; /delectus/userid
 (defn userid [email] (model/email->userid email))
 
 ;;; (def $email (:delectus-test-user (config/delectus-configuration)))
 ;;; (def $userid (userid $email))
 ;;; (def $userid (userid "NOPE!"))
+
+;;; /delectus/user
+(defn user [userid] (couchio/get-user userid))
+
+;;; (def $email (:delectus-test-user (config/delectus-configuration)))
+;;; (def $userid (userid $email))
+;;; (def $user (user $userid))
 
 ;;; ---------------------------------------------------------------------
 ;;; Collections

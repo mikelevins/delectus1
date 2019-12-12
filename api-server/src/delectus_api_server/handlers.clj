@@ -5,6 +5,7 @@
    [clojure.pprint :as pp]
    [delectus-api-server.api :as api]
    [delectus-api-server.configuration :as config]
+   [delectus-api-server.constants :refer :all]
    [delectus-api-server.identifiers :refer [makeid]]
    [delectus-api-server.model :as model]
    [delectus-api-server.utilities :refer [fmt]]
@@ -48,13 +49,29 @@
         supplied-password (:password params)
         found-user (api/login supplied-email supplied-password)]
     (if found-user
-      {:status  200
-       :headers {"Content-Type" "application/json"}
-       :body (json/write-str {:token "testing login"})}
+      (let [req-session (:session req)
+            login-token (or (:login req-session)
+                            (str "login::" (makeid)))
+            usermap {:id (.get found-user +id-attribute+)
+                     :name (.get found-user +name-attribute+)
+                     :email (.get found-user +email-attribute+)}
+            resp-session (merge req-session {:login login-token})]
+        (pp/cl-format true "~%~%req-session: ~S" req-session)
+        (pp/cl-format true "~%~%resp-session: ~S" resp-session)
+        {:status  200
+         :headers {"Content-Type" "application/json"}
+         :body (json/write-str usermap)
+         :session resp-session})
       {:status  401
-       :headers {"Content-Type" "text/html"}
-       :body    (html [:h1 "Delectus 2"]
-                      [:p "Login failed"])})))
+       :headers {"Content-Type" "application/json"}
+       :body    (json/write-str {:message "Login failed"})})))
+
+
+(defn logout [req]
+  (pp/cl-format true "API function logout is not yet implemented")
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (json/write-str "Not yet implemented: logout")})
 
 (defn userid [request]
   {:status  200
@@ -62,6 +79,14 @@
    :body    (let [email (:email (:params request))]
               (json/write-str (api/userid email)))})
 
+(defn user [request]
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (let [userid (:id (:params request))
+                  user-object (api/user userid)]
+              (if user-object
+                (.toString user-object)
+                (json/write-str nil)))})
 
 ;;; ---------------------------------------------------------------------
 ;;; collections handlers

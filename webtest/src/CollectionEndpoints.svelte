@@ -126,11 +126,16 @@
  .endpoint { text-align: right; }
 
  .method-column { width: 5%; }
- .parameters-column { width: 25%; }
- .response-column { width: 40%; }
+ .endpoint-column { width: 23%; }
+ .parameters-column { width: 12%; }
+
+ input { font-size: 1rem; }
+
+ pre { font-size: 1rem; }
 
  table {
      border-collapse: collapse;
+     table-layout: fixed;
  }
 
  table, th, td {
@@ -160,93 +165,93 @@
         <td>GET</td>
         <td class="endpoint"><button on:click={getUserCollections}>/delectus/collections</button></td>
         <td></td>
-        <td id="getUserCollections_response"></td>
+        <td><pre id="getUserCollections_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getCollectionByID}>/delectus/collection_with_id</button></td>
-        <td><input type="text" id="getCollectionByID_collection_id" placeholder="Collection ID"/></td>
-        <td id="getCollectionByID_response"></td>
+        <td><input size="36" type="text" id="getCollectionByID_collection_id" placeholder="Collection ID"/></td>
+        <td><pre id="getCollectionByID_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={collectionName}>/delectus/collection_name</button></td>
-        <td><input type="text" id="collectionName_collection_id" placeholder="Collection ID"/></td>
-        <td id="collectionName_response"></td>
+        <td><input size="36" type="text" id="collectionName_collection_id" placeholder="Collection ID"/></td>
+        <td><pre id="collectionName_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={getCollectionByName}>/delectus/collection_named</button></td>
-        <td><input type="text" id="getCollectionByName_collection_name" placeholder="Collection name"/></td>
-        <td id="getCollectionByName_response"></td>
+        <td><input size="36" type="text" id="getCollectionByName_collection_name" placeholder="Collection name"/></td>
+        <td><pre id="getCollectionByName_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={renameCollection}>/delectus/rename_collection</button></td>
         <td>
-            <input type="text" id="renameCollection_collection_id" placeholder="Collection ID"/>
-            <input type="text" id="renameCollection_new_name" placeholder="New name"/>
+            <input size="36" type="text" id="renameCollection_collection_id" placeholder="Collection ID"/>
+            <input size="36" type="text" id="renameCollection_new_name" placeholder="New name"/>
         </td>
-        <td id="renameCollection_response"></td>
+        <td><pre id="renameCollection_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={newCollection}>/delectus/new_collection</button></td>
-        <td><input type="text" id="newCollection_collection_name" placeholder="Collection name"/></td>
-        <td id="newCollection_response"></td>
+        <td><input size="36" type="text" id="newCollection_collection_name" placeholder="Collection name"/></td>
+        <td><pre id="newCollection_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={deleteCollection}>/delectus/delete_collection</button></td>
-        <td><input type="text" id="deleteCollection_collection_id" placeholder="Collection ID"/></td>
-        <td id="deleteCollection_response"></td>
+        <td><input size="36" type="text" id="deleteCollection_collection_id" placeholder="Collection ID"/></td>
+        <td><pre id="deleteCollection_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={undeleteCollection}>/delectus/undelete_collection</button></td>
-        <td><input type="text" id="undeleteCollection_collection_id" placeholder="Collection ID"/></td>
-        <td id="undeleteCollection_response"></td>
+        <td><input size="36" type="text" id="undeleteCollection_collection_id" placeholder="Collection ID"/></td>
+        <td><pre id="undeleteCollection_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={collectionDeleted}>/delectus/collection_deleted</button></td>
-        <td><input type="text" id="collectionDeleted_collection_id" placeholder="Collection ID"/></td>
-        <td id="collectionDeleted_response"></td>
+        <td><input size="36" type="text" id="collectionDeleted_collection_id" placeholder="Collection ID"/></td>
+        <td><pre id="collectionDeleted_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={collectionLists}>/delectus/collection_lists</button></td>
-        <td><input type="text" id="collectionLists_collection_id" placeholder="Collection ID"/></td>
-        <td id="collectionLists_response"></td>
+        <td><input size="36" type="text" id="collectionLists_collection_id" placeholder="Collection ID"/></td>
+        <td><pre id="collectionLists_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={collectionAddList}>/delectus/collection_add_list</button></td>
         <td>
-            <input type="text" id="collectionAddList_collection_id" placeholder="Collection ID"/>
-            <input type="text" id="collectionAddList_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="collectionAddList_collection_id" placeholder="Collection ID"/>
+            <input size="36" type="text" id="collectionAddList_list_id" placeholder="List ID"/>
         </td>
-        <td id="collectionAddList_response"></td>
+        <td><pre id="collectionAddList_response"></pre></td>
     </tr>
 
     <tr>
         <td>GET</td>
         <td class="endpoint"><button on:click={collectionRemoveList}>/delectus/collection_remove_list</button></td>
         <td>
-            <input type="text" id="collectionRemoveList_collection_id" placeholder="Collection ID"/>
-            <input type="text" id="collectionRemoveList_list_id" placeholder="List ID"/>
+            <input size="36" type="text" id="collectionRemoveList_collection_id" placeholder="Collection ID"/>
+            <input size="36" type="text" id="collectionRemoveList_list_id" placeholder="List ID"/>
         </td>
-        <td id="collectionRemoveList_response"></td>
+        <td><pre id="collectionRemoveList_response"></pre></td>
     </tr>
 
 </table>

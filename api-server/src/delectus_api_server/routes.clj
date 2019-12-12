@@ -1,35 +1,52 @@
 (ns delectus-api-server.routes
   (:require
-   [compojure.core :refer :all]
+   [compojure.api.sweet :refer :all]
+   ;; [compojure.core :refer :all]
    [compojure.route :as route]
-   [delectus-api-server.handlers :as handlers])
+   [delectus-api-server.handlers :as handlers]
+   [ring.handler.dump :refer [handle-dump]]
+   [ring.middleware.resource :refer [wrap-resource]]
+   [ring.middleware.content-type :refer [wrap-content-type]]
+   [ring.util.response :refer [redirect]]
+   [schema.core :as s])
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
 ;;; ---------------------------------------------------------------------
 
+;;; TODO: enable authentication for the API
+;;; so random people can't use the API to modify db data!
+(def api-routes
+  (api
+   {:swagger
+    {:ui "/api"
+     :spec "/api/swagger.json"
+     :data {:info {:title "Delectus 2"
+                   :description "The REST API"} 
+            :tags [{:name "api", :description "api endpoints"}]}}}
+
+   (context "/api" []
+     :tags ["api"]
+
+     (GET "/echo" req
+       :return s/Str
+       :summary "echoes the request"
+       (handle-dump req))
+
+     )))
+
 (defroutes app-routes
-
-  ;; general test routes
-  ;; -------------------
-  (GET "/echo" [] handlers/echo)
-  (GET "/status" [] handlers/status)
-
-  ;; Delectus API routes
-  ;; -------------------
-
-  ;; admin
-  ;; -------------------  
-  
-  ;; (GET "/delectus/register" [] handlers/register)              
-  ;; (GET "/delectus/registerupdate_user" [] handlers/update-user)
+  ;; default landing
+  (GET "/" [] (redirect "index.html"))
 
   ;; sessions
   ;; -------------------  
 
   (GET "/delectus/login" [] handlers/login)
+  (GET "/delectus/logout" [] handlers/logout)
   (GET "/delectus/userid" [] handlers/userid)
+  (GET "/delectus/user" [] handlers/user)
 
   ;; collections
   ;; -------------------  
@@ -80,3 +97,9 @@
   ;; default ("Page not found") route
   ;; --------------------------------
   (route/not-found "Error, page not found!"))
+
+(def router
+  (routes
+   api-routes
+   (wrap-content-type
+    (wrap-resource app-routes "public"))))
