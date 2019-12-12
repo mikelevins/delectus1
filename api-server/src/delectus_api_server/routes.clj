@@ -39,17 +39,16 @@
      (POST "/login" req
        :body [{:keys [email password]} schema/LoginRequest]
        (let [found-user (api/login email password)
-             session (:session req)
-             ring-session (:ring-session req)]
+             session (:session req)]
          (cl-format true "~%/login")
          (cl-format true "~%  email: ~S" email)
          (cl-format true "~%  password: ~S" password)
          (cl-format true "~%  found-user: ~S" found-user)
          (cl-format true "~%  session: ~S" session)
-         (cl-format true "~%  ring-session: ~S" ring-session)
          (if found-user
            (let [usermap (into {} (.toMap found-user))]
-             (ok usermap))
+             (assoc (ok usermap)
+                    :session (assoc session :userid (get usermap "id"))))
            (unauthorized "Login failed"))))
 
      )))
@@ -61,7 +60,6 @@
   ;; sessions
   ;; -------------------  
 
-  (GET "/delectus/login" [] handlers/login)
   (GET "/delectus/logout" [] handlers/logout)
   (GET "/delectus/userid" [] handlers/userid)
   (GET "/delectus/user" [] handlers/user)
