@@ -5,30 +5,31 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
 
   :dependencies [[org.clojure/clojure "1.10.0"]
-                 ;; Compojure - A basic routing library
-                 [compojure "1.6.1"]
-                 ;; Http library
-                 [http-kit "2.3.0"]
-                 ;; Ring defaults - for query params etc
-                 [ring/ring-defaults "0.3.2"]
-                 ;; Ring cors - to enable cross-origin requests
-                 [ring-cors "0.1.13"]
                  ;; standard Clojure JSON library
                  [org.clojure/data.json "0.2.6"]
                  ;; standard Clojure CSV library
                  [org.clojure/data.csv "0.1.4"]
-                 ;; Couchbase Java client
-                 [com.couchbase.client/java-client "2.7.9"]
                  ;; config library
                  [aero "1.1.3"]
-                 ;; hiccup HTML generator
-                 [hiccup "1.0.5"]
                  ;; auth library
                  [buddy/buddy-auth "2.2.0"]
                  ;; password-hashing library
                  [buddy/buddy-hashers "1.4.0"]
                  ;; response-signing library
                  [buddy/buddy-sign "3.1.0"]
+                 ;; Compojure - A basic routing library
+                 [compojure "1.6.1"]
+                 ;; compojure-api - creating swagger-documented api routes
+                 [metosin/compojure-api "2.0.0-alpha30"]
+                 ;; Couchbase Java client
+                 [com.couchbase.client/java-client "2.7.9"]
+                 ;; Http library
+                 [http-kit "2.3.0"]
+                 [ring "1.8.0"]
+                 [ring-cors "0.1.13"]
+                 [ring/ring-defaults "0.3.2"]
+                 ;; hiccup HTML generator
+                 [hiccup "1.0.5"]
                  ;; time utilities
                  [tick "0.4.21-alpha"]]
 

@@ -1,7 +1,7 @@
 (ns delectus-api-server.core
   (:require
-   [compojure.core :refer :all]
-   [delectus-api-server.routes :refer [app-routes]]
+   ;;[compojure.core :refer :all]
+   [delectus-api-server.routes :refer [router]]
    [org.httpkit.server :as server]
    [ring.middleware.cors :refer [wrap-cors]]
    [ring.middleware.defaults :refer :all]
@@ -24,7 +24,7 @@
              (wrap-session
               (wrap-params
                (wrap-defaults
-                (wrap-cors #'app-routes
+                (wrap-cors #'router
                            ;;:access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
                            :access-control-allow-origin [#".*"]
                            :access-control-allow-methods [:get :put :post :delete])

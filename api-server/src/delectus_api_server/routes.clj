@@ -1,13 +1,35 @@
 (ns delectus-api-server.routes
   (:require
-   [compojure.core :refer :all]
+   [compojure.api.sweet :refer :all]
+   ;; [compojure.core :refer :all]
    [compojure.route :as route]
-   [delectus-api-server.handlers :as handlers])
+   [delectus-api-server.handlers :as handlers]
+   [ring.handler.dump :refer [handle-dump]]
+   [schema.core :as s])
   (:gen-class))
 
 ;;; ---------------------------------------------------------------------
 ;;; routes
 ;;; ---------------------------------------------------------------------
+
+(def api-routes
+  (api
+   {:swagger
+    {:ui "/"
+     :spec "/swagger.json"
+     :data {:info {:title "Delectus-api"
+                   :description "The Delectus 2 Database API"} 
+            :tags [{:name "api", :description "api endpoints"}]}}}
+
+   (context "/api" []
+     :tags ["api"]
+
+     (GET "/echo" req
+       :return s/Str
+       :summary "echoes the request"
+       (handle-dump req))
+
+     )))
 
 (defroutes app-routes
 
@@ -18,12 +40,6 @@
 
   ;; Delectus API routes
   ;; -------------------
-
-  ;; admin
-  ;; -------------------  
-  
-  ;; (GET "/delectus/register" [] handlers/register)              
-  ;; (GET "/delectus/registerupdate_user" [] handlers/update-user)
 
   ;; sessions
   ;; -------------------  
@@ -82,3 +98,8 @@
   ;; default ("Page not found") route
   ;; --------------------------------
   (route/not-found "Error, page not found!"))
+
+(def router
+  (routes
+   api-routes
+   app-routes))
