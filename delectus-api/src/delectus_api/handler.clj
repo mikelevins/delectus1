@@ -6,6 +6,7 @@
    [buddy.core.bytes :as bytes]
    [buddy.core.nonce :as nonce]
    [buddy.hashers :as hashers]
+   [buddy.sign.jwe :as jwe]
    [buddy.sign.jwt :as jwt]
    [clj-time.core :as time]
    [clojure.pprint :refer [cl-format]]
@@ -54,10 +55,17 @@
 
 ;;; (get userdata "admin")
 
+;;; (def $claims {:user (keyword "admin") :exp (time/plus (time/now) (time/seconds 3600))})
+;;; (def $blob (jwt/encrypt $claims secret {:alg :a256kw :enc :a128gcm}))
+;;; (jwt/decrypt $blob secret {:alg :a256kw :enc :a128gcm})
+
 ;;; ---------------------------------------------------------------------
 ;;; the api
 ;;; ---------------------------------------------------------------------
 
+(def +last-request+ (atom nil))
+(defn set-last-request! [req]
+  (swap! +last-request+ (constantly req)))
 
 (def app-routes
   (api
@@ -65,8 +73,8 @@
     {:ui "/"
      :spec "/swagger.json"
      :data {:info {:title "Delectus-api"
-                   :description "The Delectus 2 Database API"}
-            :tags [{:name "api", :description "api endpoints"}]}}}
+                   :description "The Delectus 2 Database API"} 
+           :tags [{:name "api", :description "api endpoints"}]}}}
 
    (context "/api" []
      :tags ["api"]
@@ -74,7 +82,17 @@
      (GET "/echo" req
        :return s/Str
        :summary "echoes the request"
-       (handle-dump req))
+       (do
+         (set-last-request! req)
+         (handle-dump req)))
+
+
+     (GET "/last_request" req
+       :return s/Str
+       :summary "echoes the last request"
+       (do
+         (handle-dump @+last-request+)))
+
      
      (POST "/login" req
        :body [{:keys [email password]} LoginRequest]
@@ -83,14 +101,13 @@
        (let [valid? (some-> authdata
                             (get (keyword email))
                             (= password))]
-         (do (cl-format true "~%email: ~S~%password: ~S~%authdata: ~S"
-                        email password authdata)
-             (if valid?
+         (if valid?
                (let [claims {:user (keyword email)
                              :exp (time/plus (time/now) (time/seconds 3600))}
                      token (jwt/encrypt claims secret {:alg :a256kw :enc :a128gcm})]
+                 (set-last-request! req)
                  (ok {:token token}))
-               (unauthorized)))))
+               (unauthorized))))
 
      (GET "/userid/:email" req
        :path-params [email :- s/Str]
@@ -99,10 +116,11 @@
        :summary "fetches the userid for the offered email address"
        (if-not (authenticated? req)
          (unauthorized (str "Unauthorized user: " email))
-         (ok (get userdata email))))
+         (do
+           (set-last-request! req)
+           (ok (get userdata email)))))
 
      )))
-
 
 (def app
   (as-> app-routes $
