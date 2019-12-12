@@ -1,5 +1,6 @@
 (ns delectus-api-server.routes
   (:require
+   [clojure.pprint :refer [cl-format]]
    [compojure.api.sweet :refer :all]
    ;; [compojure.core :refer :all]
    [compojure.route :as route]
@@ -37,7 +38,15 @@
 
      (POST "/login" req
        :body [{:keys [email password]} schema/LoginRequest]
-       (let [found-user (api/login email password)]
+       (let [found-user (api/login email password)
+             session (:session req)
+             ring-session (:ring-session req)]
+         (cl-format true "~%/login")
+         (cl-format true "~%  email: ~S" email)
+         (cl-format true "~%  password: ~S" password)
+         (cl-format true "~%  found-user: ~S" found-user)
+         (cl-format true "~%  session: ~S" session)
+         (cl-format true "~%  ring-session: ~S" ring-session)
          (if found-user
            (let [usermap (into {} (.toMap found-user))]
              (ok usermap))

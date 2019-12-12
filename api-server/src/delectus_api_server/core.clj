@@ -17,15 +17,19 @@
 (defonce server (atom nil))
 
 (defn -main [& args]
-  (let [port (Integer/parseInt (or (System/getenv "PORT") "9000"))]
+  (let [port (Integer/parseInt (or (System/getenv "PORT") "9000"))
+        delectus-security (assoc (:security site-defaults)
+                                 :anti-forgery false)
+        delectus-site-defaults (assoc site-defaults :security delectus-security)]
     ;; Run the server with Ring.defaults middleware
     (reset! server
             (server/run-server
-             ;;(wrap-defaults
+             (wrap-defaults
               (wrap-cors #'router
                          :access-control-allow-origin [#".*"]
                          :access-control-allow-methods [:get :put :post :delete])
-              ;;site-defaults)
+              ;; disable anti-forgery until api routes work
+              delectus-site-defaults)
              {:port port}))
     ;; Run the server without ring defaults
     (println (str "Running webserver at http:/127.0.0.1:" port "/"))))
