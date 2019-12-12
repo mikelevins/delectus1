@@ -17,8 +17,8 @@
    {:swagger
     {:ui "/"
      :spec "/swagger.json"
-     :data {:info {:title "Delectus-api"
-                   :description "The Delectus 2 Database API"} 
+     :data {:info {:title "api-server"
+                   :description "The Delectus 2 API"} 
             :tags [{:name "api", :description "api endpoints"}]}}}
 
    (context "/api" []
