@@ -2,7 +2,7 @@
   (:require
    [buddy.hashers :as hashers]
    [clojure.data.json :as json]
-   [clojure.pprint :as pp]
+   [clojure.pprint :refer [cl-format]]
    [delectus-api-server.api :as api]
    [delectus-api-server.configuration :as config]
    [delectus-api-server.constants :refer :all]
@@ -44,31 +44,28 @@
 ;;; ---------------------------------------------------------------------
 
 (defn login [req]
-  (let [params (:params req)
+  (let [session (:session req)
+        params (:params req)
         supplied-email (:email params)
         supplied-password (:password params)
         found-user (api/login supplied-email supplied-password)]
+    (cl-format true "~%params: ~S" params)
+    (cl-format true "~%supplied-email: ~S" supplied-email)
+    (cl-format true "~%supplied-password: ~S" supplied-password)
+    (cl-format true "~%found-user: ~S" found-user)
     (if found-user
-      (let [req-session (:session req)
-            login-token (or (:login req-session)
-                            (str "login::" (makeid)))
-            usermap {:id (.get found-user +id-attribute+)
-                     :name (.get found-user +name-attribute+)
-                     :email (.get found-user +email-attribute+)}
-            resp-session (merge req-session {:login login-token})]
-        (pp/cl-format true "~%~%req-session: ~S" req-session)
-        (pp/cl-format true "~%~%resp-session: ~S" resp-session)
+      (let [usermap (into {} (.toMap found-user))]
         {:status  200
          :headers {"Content-Type" "application/json"}
-         :body (json/write-str usermap)
-         :session resp-session})
+         :session session
+         :body (json/write-str usermap)})
       {:status  401
        :headers {"Content-Type" "application/json"}
        :body    (json/write-str {:message "Login failed"})})))
 
 
 (defn logout [req]
-  (pp/cl-format true "API function logout is not yet implemented")
+  (cl-format true "API function logout is not yet implemented")
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (json/write-str "Not yet implemented: logout")})

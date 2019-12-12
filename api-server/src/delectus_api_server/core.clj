@@ -21,19 +21,13 @@
     ;; Run the server with Ring.defaults middleware
     (reset! server
             (server/run-server
-             (wrap-session
-              (wrap-params
-               (wrap-defaults
-                (wrap-cors #'router
-                           ;;:access-control-allow-origin [#"http://localhost:5000" #"http://mars.local:5000"]
-                           :access-control-allow-origin [#".*"]
-                           :access-control-allow-methods [:get :put :post :delete])
-                site-defaults))
-              ;; sessions last 1 hour
-              {:cookie-attrs {:max-age 3600}})
+             ;;(wrap-defaults
+              (wrap-cors #'router
+                         :access-control-allow-origin [#".*"]
+                         :access-control-allow-methods [:get :put :post :delete])
+              ;;site-defaults)
              {:port port}))
     ;; Run the server without ring defaults
-    ;;(server/run-server #'app-routes {:port port})
     (println (str "Running webserver at http:/127.0.0.1:" port "/"))))
 
 ;;; (-main)

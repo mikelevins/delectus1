@@ -3,10 +3,13 @@
    [compojure.api.sweet :refer :all]
    ;; [compojure.core :refer :all]
    [compojure.route :as route]
+   [delectus-api-server.api :as api]
    [delectus-api-server.handlers :as handlers]
+   [delectus-api-server.schema :as schema]
    [ring.handler.dump :refer [handle-dump]]
    [ring.middleware.resource :refer [wrap-resource]]
    [ring.middleware.content-type :refer [wrap-content-type]]
+   [ring.util.http-response :refer :all]
    [ring.util.response :refer [redirect]]
    [schema.core :as s])
   (:gen-class))
@@ -27,12 +30,18 @@
             :tags [{:name "api", :description "api endpoints"}]}}}
 
    (context "/api" []
-     :tags ["api"]
-
      (GET "/echo" req
        :return s/Str
        :summary "echoes the request"
        (handle-dump req))
+
+     (POST "/login" req
+       :body [{:keys [email password]} schema/LoginRequest]
+       (let [found-user (api/login email password)]
+         (if found-user
+           (let [usermap (into {} (.toMap found-user))]
+             (ok usermap))
+           (unauthorized "Login failed"))))
 
      )))
 
