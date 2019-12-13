@@ -23,14 +23,12 @@
 ;;; (def $auth-map-2 (jwt/decrypt $token $jwt-key))
 ;;; (= $auth-map-1 $auth-map-2)
 
-(defn make-auth-map [user-record remote-addr]
+(defn make-auth-map [user-record]
   (let [userid (.get user-record "id")]
     {;; identifies the logged-in account
      :userid userid
      ;; identifies the account the client thinks it's authenticating
      :email (.get user-record +email-attribute+)
-     ;; used to prevent a different device from hijacking a token
-     :remote-addr remote-addr
      ;; designates when the authentication became valid
      :timestamp (str (t/now))
      ;; specifies how long it lasts; in seconds; default 1 hour
@@ -41,9 +39,9 @@
 (defn auth-map->token [auth-map]
   (jwt/encrypt auth-map +jwt-secret+))
 
-(defn make-auth-token [user-record remote-addr]
+(defn make-auth-token [user-record]
   (auth-map->token
-   (make-auth-map user-record remote-addr)))
+   (make-auth-map user-record)))
 
 (defn decode-auth-token [token]
   (jwt/decrypt token +jwt-secret+))

@@ -13,11 +13,6 @@
    [tick.alpha.api :as t]
    ))
 
-
-;;; ---------------------------------------------------------------------
-;;; the api
-;;; ---------------------------------------------------------------------
-
 (def app
   (api
    {:swagger
@@ -39,72 +34,34 @@
                   :body [{:keys [email password]} schema/LoginRequest]
                   :return {:token s/Str}
                   :summary "authenticates a Delectus user"
-                  (api/login req email password))
+                  (api/login email password))
 
             (GET "/userid/:email" req
                  :path-params [email :- s/Str]
                  :return s/Str
                  :summary "Returns the userid for the email address"
-                 (api/userid req email))
+                 (api/userid email))
 
             (GET "/userdata/:id" req
                  :path-params [id :- s/Str]
                  :return schema/UserData
                  :summary "Returns name and email of the user with the id"
-                 (api/userdata req id))
+                 (api/userdata id))
 
             (GET "/collections/:email" req
                  :path-params [email :- s/Str]
                  :return [{s/Str s/Str}]
                  :summary "Returns the names and ids of collections that belong to the email address"
-                 (let [userid (couchio/email->userid email)]
-                   (if userid
-                     (let [collections (couchio/find-objects
-                                        (config/delectus-content-bucket) []
-                                        {"type" +collection-type+
-                                         "owner-id" userid})]
-                       (if collections
-                         (let [collection-maps (map #(.toMap %) collections)
-                               descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
-                           (ok descriptions))
-                         (ok [])))
-                     (not-found "No such user"))))
+                 (api/collections email))
 
             (GET "/collection_with_id/:email/:id" req
                  :path-params [email :- s/Str id :- s/Str]
-                 :return [{s/Str s/Str}]
+                 :return {s/Str s/Str}
                  :summary "Returns the name and id of the collection with id, if it belongs to the user"
-                 (let [userid (couchio/email->userid email)]
-                   (if userid
-                     (let [collections (couchio/find-objects
-                                        (config/delectus-content-bucket) []
-                                        {"type" +collection-type+
-                                         "owner-id" userid
-                                         "id" id})]
-                       (if collections
-                         (let [collection-maps (map #(.toMap %) collections)
-                               descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
-                           (ok descriptions))
-                         (ok [])))
-                     (not-found "No such user"))))
+                 (api/collection-with-id email id))
 
             (GET "/collection_name/:email/:id" req
                  :path-params [email :- s/Str id :- s/Str]
                  :return s/Str
                  :summary "Returns the name of the collection with id, if it belongs to the user"
-                 (let [userid (couchio/email->userid email)]
-                   (if userid
-                     (let [collections (couchio/find-objects
-                                        (config/delectus-content-bucket) []
-                                        {"type" +collection-type+
-                                         "owner-id" userid
-                                         "id" id})]
-                       (if collections
-                         (let [collection (first collections)
-                               name (.get collection +name-attribute+)]
-                           (ok name))
-                         (not-found "No such collection")))
-                     (not-found "No such user")))))))
-
-;;; (def $userid (couchio/email->userid "mikel@evins.net"))
-;;; (couchio/find-objects (config/delectus-content-bucket) [] {"type" +collection-type+ "owner-id" (couchio/email->user "greer@evins.net")  "id" "14bae88e-70c4-4c89-981e-1c744ede469c"})
+                 (api/collection-name email id)))))
