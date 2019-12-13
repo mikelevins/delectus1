@@ -185,7 +185,7 @@
             (GET "/collection_with_id/:email/:id" req
                  :path-params [email :- s/Str id :- s/Str]
                  :return [{s/Str s/Str}]
-                 :summary "Returns the names and ids of the collection with id, if it belongs to the user"
+                 :summary "Returns the name and id of the collection with id, if it belongs to the user"
                  (let [userid (email->userid email)]
                    (if userid
                      (let [collections (couchio/find-objects
