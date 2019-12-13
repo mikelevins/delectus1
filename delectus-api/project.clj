@@ -17,7 +17,8 @@
                  [tick "0.4.21-alpha"]
                  ;; route debuggin
                  [tupelo "0.9.175"]]
-  :ring {:handler delectus-api.handler/app}
+  :ring {:handler delectus-api.handler/app
+         :nrepl {:start? true}}
   :uberjar-name "delectus-api.jar"
   :profiles {:dev {:dependencies [[javax.servlet/javax.servlet-api "3.1.0"]]
                    :plugins [[lein-ring "0.12.5"]]}})
