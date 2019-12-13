@@ -45,21 +45,13 @@
                  :path-params [email :- s/Str]
                  :return s/Str
                  :summary "Returns the userid for the email address"
-                 (let [found-user (couchio/email->user email)]
-                   (if found-user
-                     (ok (.get found-user +id-attribute+))
-                     (not-found "No such user"))))
+                 (api/userid req email))
 
             (GET "/userdata/:id" req
                  :path-params [id :- s/Str]
                  :return schema/UserData
                  :summary "Returns name and email of the user with the id"
-                 (let [found-user (couchio/id->user id)]
-                   (if found-user
-                     (ok {:id id
-                          :name (.get found-user +name-attribute+)
-                          :email (.get found-user +email-attribute+)})
-                     (not-found "No such user"))))
+                 (api/userdata req id))
 
             (GET "/collections/:email" req
                  :path-params [email :- s/Str]

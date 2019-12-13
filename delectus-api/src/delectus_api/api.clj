@@ -19,3 +19,19 @@
     (if maybe-auth
       (ok {:token (auth/make-auth-token maybe-auth remote-addr)})
       (unauthorized "Login failed"))))
+
+(defn userid [req email]
+  (let [found-user (couchio/email->user email)]
+    (if found-user
+      (ok (.get found-user +id-attribute+))
+      (not-found "No such user"))))
+
+(defn userdata [req userid]
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (ok {:id userid
+           :name (.get found-user +name-attribute+)
+           :email (.get found-user +email-attribute+)})
+      (not-found "No such user"))))
+
+;;; (couchio/id->user "6235e7b7-eb83-47d9-a8ef-ac129601e810")
