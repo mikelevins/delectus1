@@ -1,6 +1,7 @@
 (ns delectus-api.handler
   (:require
    [compojure.api.sweet :refer :all]
+   [delectus-api.api :as api]
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
@@ -38,11 +39,7 @@
                   :body [{:keys [email password]} schema/LoginRequest]
                   :return {:token s/Str}
                   :summary "authenticates a Delectus user"
-                  (let [remote-addr (:remote-addr req)
-                        maybe-auth (authenticate-user email password)]
-                    (if maybe-auth
-                      (ok {:token (make-auth-token maybe-auth remote-addr)})
-                      (unauthorized "Login failed"))))
+                  (api/login req email password))
 
             (GET "/userid/:email" req
                  :path-params [email :- s/Str]
@@ -118,4 +115,4 @@
                      (not-found "No such user")))))))
 
 ;;; (def $userid (couchio/email->userid "mikel@evins.net"))
-;;; (def $collections (couchio/find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
+;;; (couchio/find-objects (config/delectus-content-bucket) [] {"type" +collection-type+ "owner-id" (couchio/email->user "greer@evins.net")  "id" "14bae88e-70c4-4c89-981e-1c744ede469c"})
