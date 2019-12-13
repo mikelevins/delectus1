@@ -180,6 +180,24 @@
                                descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
                            (ok descriptions))
                          (ok [])))
+                     (not-found "No such user"))))
+
+            (GET "/collection_with_id/:email/:id" req
+                 :path-params [email :- s/Str id :- s/Str]
+                 :return [{s/Str s/Str}]
+                 :summary "Returns the names and ids of the collection with id, if it belongs to the user"
+                 (let [userid (email->userid email)]
+                   (if userid
+                     (let [collections (couchio/find-objects
+                                        (config/delectus-content-bucket) []
+                                        {"type" +collection-type+
+                                         "owner-id" userid
+                                         "id" id})]
+                       (if collections
+                         (let [collection-maps (map #(.toMap %) collections)
+                               descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
+                           (ok descriptions))
+                         (ok [])))
                      (not-found "No such user")))))))
 
 ;;; (def $userid (email->userid "mikel@evins.net"))
