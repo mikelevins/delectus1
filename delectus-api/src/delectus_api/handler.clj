@@ -11,6 +11,7 @@
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
+   [delectus-api.errors :as errors]
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
@@ -24,6 +25,11 @@
 (s/defschema LoginRequest
   {:email s/Str
    :password s/Str})
+
+(s/defschema UserData
+  {:id s/Str
+   :email s/Str
+   :name s/Str})
 
 ;;; ---------------------------------------------------------------------
 ;;; finding registered users
@@ -41,6 +47,9 @@
 ;;; (email->user "mikel@evins.net")
 ;;; (email->user "greer@evins.net")
 ;;; (email->user "nobody@nowhere.net")
+
+(defn id->user [userid]
+  (couchio/get-user userid))
 
 ;;; ---------------------------------------------------------------------
 ;;; auth
@@ -96,12 +105,6 @@
 ;;; (authenticate-user "mikel@evins.net" "foo")
 ;;; (authenticate-user "nobody@evins.net" "foo")
 
-(defn authorized? [req]
-  (let [headers (:headers req)
-        authorization (get headers "authorization")]
-    (pp/cl-format true "~%Authorization: ~S~%" authorization)
-    true))
-
 ;;; ---------------------------------------------------------------------
 ;;; the api
 ;;; ---------------------------------------------------------------------
@@ -116,31 +119,40 @@
             :tags [{:name "api", :description "api endpoints"}]}}}
 
    (context "/api" []
-     :tags ["api"]
+            :tags ["api"]
 
-     (GET "/echo" req
-       :return s/Str
-       :summary "echoes the request"
-       (handle-dump req))
-     
-     (POST "/login" req
-       :body [{:keys [email password]} LoginRequest]
-       :return {:token s/Str}
-       :summary "authenticates a Delectus user"
-       (let [remote-addr (:remote-addr req)
-             maybe-auth (authenticate-user email password)]
-         (if maybe-auth
-           (ok {:token (make-auth-token maybe-auth remote-addr)})
-           (unauthorized "Login failed"))))
+            (GET "/echo" req
+                 :return s/Str
+                 :summary "echoes the request"
+                 (handle-dump req))
+            
+            (POST "/login" req
+                  :body [{:keys [email password]} LoginRequest]
+                  :return {:token s/Str}
+                  :summary "authenticates a Delectus user"
+                  (let [remote-addr (:remote-addr req)
+                        maybe-auth (authenticate-user email password)]
+                    (if maybe-auth
+                      (ok {:token (make-auth-token maybe-auth remote-addr)})
+                      (unauthorized "Login failed"))))
 
-     (GET "/userid/:email" req
-       :path-params [email :- s/Str]
-       :return s/Str
-       :summary "Returns the userid for the offered email address"
-       (if (authorized? req)
-         (let [found-user (email->user email)]
-           (if found-user
-             (ok (.get found-user +id-attribute+))
-             (not-found (str "No such user: " email))))
-         (unauthorized))))))
+            (GET "/userid/:email" req
+                 :path-params [email :- s/Str]
+                 :return s/Str
+                 :summary "Returns the userid for the offered email address"
+                 (let [found-user (email->user email)]
+                   (if found-user
+                     (ok (.get found-user +id-attribute+))
+                     (not-found "No such user"))))
+
+            (GET "/userdata/:id" req
+                 :path-params [id :- s/Str]
+                 :return UserData
+                 :summary "Returns the userid for the offered email address"
+                 (let [found-user (id->user id)]
+                   (if found-user
+                     (ok {:id id
+                          :name (.get found-user +name-attribute+)
+                          :email (.get found-user +email-attribute+)})
+                     (not-found "No such user")))))))
 
