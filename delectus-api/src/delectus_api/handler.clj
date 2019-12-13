@@ -1,12 +1,8 @@
 (ns delectus-api.handler
   (:require
-   [buddy.core.bytes :as bytes]
    [buddy.core.nonce :as nonce]
    [buddy.hashers :as hashers]
-   [buddy.sign.jws :as jws]
    [buddy.sign.jwt :as jwt]
-   [clojure.data.json :as json]
-   [clojure.pprint :as pp]
    [compojure.api.sweet :refer :all]
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
@@ -47,6 +43,19 @@
 ;;; (email->user "mikel@evins.net")
 ;;; (email->user "greer@evins.net")
 ;;; (email->user "nobody@nowhere.net")
+
+
+(defn email->userid [email]
+  (let [found (couchio/find-objects
+               (config/delectus-users-bucket) []
+               {+type-attribute+ +user-type+
+                +email-attribute+ email})]
+    (if (empty? found)
+      nil
+      (.get (first found) +id-attribute+))))
+
+;;; (email->userid "mikel@evins.net")
+;;; (email->userid "nobody@evins.net")
 
 (defn id->user [userid]
   (couchio/get-user userid))
@@ -148,11 +157,30 @@
             (GET "/userdata/:id" req
                  :path-params [id :- s/Str]
                  :return UserData
-                 :summary "Returns the userid for the offered email address"
+                 :summary "Returns the user data for the offered userid"
                  (let [found-user (id->user id)]
                    (if found-user
                      (ok {:id id
                           :name (.get found-user +name-attribute+)
                           :email (.get found-user +email-attribute+)})
+                     (not-found "No such user"))))
+
+            (GET "/collections/:email" req
+                 :path-params [email :- s/Str]
+                 :return [{s/Str s/Str}]
+                 :summary "Returns the list of collections that belong to the offered userid"
+                 (let [userid (email->userid email)]
+                   (if userid
+                     (let [collections (couchio/find-objects
+                                        (config/delectus-content-bucket) []
+                                        {"type" +collection-type+
+                                         "owner-id" userid})]
+                       (if collections
+                         (let [collection-maps (map #(.toMap %) collections)
+                               descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
+                           (ok descriptions))
+                         (ok [])))
                      (not-found "No such user")))))))
 
+;;; (def $userid (email->userid "mikel@evins.net"))
+;;; (def $collections (couchio/find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
