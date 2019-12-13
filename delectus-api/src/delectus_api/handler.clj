@@ -148,7 +148,7 @@
             (GET "/userid/:email" req
                  :path-params [email :- s/Str]
                  :return s/Str
-                 :summary "Returns the userid for the offered email address"
+                 :summary "Returns the userid for the email address"
                  (let [found-user (email->user email)]
                    (if found-user
                      (ok (.get found-user +id-attribute+))
@@ -157,7 +157,7 @@
             (GET "/userdata/:id" req
                  :path-params [id :- s/Str]
                  :return UserData
-                 :summary "Returns the user data for the offered userid"
+                 :summary "Returns name and email of the user with the id"
                  (let [found-user (id->user id)]
                    (if found-user
                      (ok {:id id
@@ -168,7 +168,7 @@
             (GET "/collections/:email" req
                  :path-params [email :- s/Str]
                  :return [{s/Str s/Str}]
-                 :summary "Returns the list of collections that belong to the offered userid"
+                 :summary "Returns the names and ids of collections that belong to the email address"
                  (let [userid (email->userid email)]
                    (if userid
                      (let [collections (couchio/find-objects
