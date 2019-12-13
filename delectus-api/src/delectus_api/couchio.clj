@@ -13,6 +13,49 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 
+;;; =====================================================================
+;;; N1QL queries
+;;; =====================================================================
+;;; Searching for objects that match patterns
+
+(defn make-object-matchers [matchers-map]
+  (let [ks (keys matchers-map)]
+    (map #(str "`" % "` = \"" (get matchers-map %) "\"")
+         ks)))
+
+;;; (make-object-matchers {})
+
+(defn make-object-selector [bucket keys matching]
+  (let [bucket-name (.name bucket)
+        key-expression (if (empty? keys)
+                         "*"
+                         (clojure.string/join "," (map str keys)))
+        matchers (make-object-matchers matching)
+        where-clause (if (empty? matchers)
+                       ";"
+                       (str "WHERE "
+                            (clojure.string/join " AND " matchers)
+                            ";"))
+        selector (str "SELECT " key-expression " FROM `" bucket-name "` " where-clause)]
+    selector))
+
+;;; (make-object-selector (config/delectus-users-bucket) [] {})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" +delectus-list-document-type+ "id" "FOO!"})
+
+(defn find-objects [bucket keys matching]
+  (let [selector (make-object-selector bucket keys matching)
+        bucket-name (.name bucket)
+        results (.query bucket (N1qlQuery/simple selector))]
+    (if (empty? keys)
+      ;; empty keys generate a SELECT *
+      ;; SELECT * returns each result wrapped in a map like this: {bucket-name found-object}
+      (map #(.get (.value %) bucket-name) results)
+      (map #(.value %) results))))
+
+;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +list-type+}))
+
 ;;; ---------------------------------------------------------------------
 ;;; JsonObject
 ;;; ---------------------------------------------------------------------
@@ -68,6 +111,8 @@
 ;;; (def $docid (.get (delectus-api-server.api/collection-named $mikelid  "Default Collection") "id"))
 ;;; (def $doc (get-document $bucket $docid))
 
+;;; ---------------------------------------------------------------------
+
 ;;; Users
 ;;; ---------------------------------------------------------------------
 
@@ -86,6 +131,38 @@
 ;;; (get-user $defaultid)
 ;;; (def $nopeid nil)
 ;;; (get-user $nopeid)
+
+;;; finding registered users
+;;; ---------------------------------------------------------------------
+
+(defn email->user [email]
+  (let [found (find-objects
+               (config/delectus-users-bucket) []
+               {+type-attribute+ +user-type+
+                +email-attribute+ email})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+;;; (email->user "mikel@evins.net")
+;;; (email->user "greer@evins.net")
+;;; (email->user "nobody@nowhere.net")
+
+
+(defn email->userid [email]
+  (let [found (find-objects
+               (config/delectus-users-bucket) []
+               {+type-attribute+ +user-type+
+                +email-attribute+ email})]
+    (if (empty? found)
+      nil
+      (.get (first found) +id-attribute+))))
+
+;;; (email->userid "mikel@evins.net")
+;;; (email->userid "nobody@evins.net")
+
+(defn id->user [userid]
+  (get-user userid))
 
 ;;; Collections
 ;;; ---------------------------------------------------------------------
@@ -128,47 +205,4 @@
 ;;; (get-list $mikelid)
 ;;; (def $nopeid nil)
 ;;; (get-list $nopeid)
-
-;;; =====================================================================
-;;; N1QL queries
-;;; =====================================================================
-;;; Searching for objects that match patterns
-
-(defn make-object-matchers [matchers-map]
-  (let [ks (keys matchers-map)]
-    (map #(str "`" % "` = \"" (get matchers-map %) "\"")
-         ks)))
-
-;;; (make-object-matchers {})
-
-(defn make-object-selector [bucket keys matching]
-  (let [bucket-name (.name bucket)
-        key-expression (if (empty? keys)
-                         "*"
-                         (clojure.string/join "," (map str keys)))
-        matchers (make-object-matchers matching)
-        where-clause (if (empty? matchers)
-                       ";"
-                       (str "WHERE "
-                            (clojure.string/join " AND " matchers)
-                            ";"))
-        selector (str "SELECT " key-expression " FROM `" bucket-name "` " where-clause)]
-    selector))
-
-;;; (make-object-selector (config/delectus-users-bucket) [] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" +delectus-list-document-type+ "id" "FOO!"})
-
-(defn find-objects [bucket keys matching]
-  (let [selector (make-object-selector bucket keys matching)
-        bucket-name (.name bucket)
-        results (.query bucket (N1qlQuery/simple selector))]
-    (if (empty? keys)
-      ;; empty keys generate a SELECT *
-      ;; SELECT * returns each result wrapped in a map like this: {bucket-name found-object}
-      (map #(.get (.value %) bucket-name) results)
-      (map #(.value %) results))))
-
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
-;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +list-type+}))
 
