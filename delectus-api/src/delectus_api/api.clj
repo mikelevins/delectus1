@@ -1,7 +1,7 @@
 (ns delectus-api.api
   (:require
    [compojure.api.sweet :refer :all]
-   [delectus-api.auth :as auth]
+   [delectus-api.handlers :as handlers]
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
@@ -13,61 +13,55 @@
    [tick.alpha.api :as t]
    ))
 
-(defn login [email password]
-  (let [maybe-auth (auth/authenticate-user email password)]
-    (if maybe-auth
-      (ok {:token (auth/make-auth-token maybe-auth)})
-      (unauthorized "Login failed"))))
+(def app
+  (api
+   {:swagger
+    {:ui "/"
+     :spec "/swagger.json"
+     :data {:info {:title "Delectus-api"
+                   :description "The Delectus 2 Database API"}
+            :tags [{:name "api", :description "Delectus endpoints"}]}}}
 
-(defn userid [email]
-  (let [found-user (couchio/email->user email)]
-    (if found-user
-      (ok (.get found-user +id-attribute+))
-      (not-found))))
+   (context "/api" []
+            :tags ["api"]
 
-(defn userdata [userid]
-  (let [found-user (couchio/id->user userid)]
-    (if found-user
-      (ok {:id userid
-           :name (.get found-user +name-attribute+)
-           :email (.get found-user +email-attribute+)})
-      (not-found))))
+            (GET "/echo" req
+                 :return s/Str
+                 :summary "echoes the request"
+                 (handle-dump req))
+            
+            (POST "/login" req
+                  :body [{:keys [email password]} schema/LoginRequest]
+                  :return {:token s/Str}
+                  :summary "authenticates a Delectus user"
+                  (handlers/login email password))
 
-(defn collections [email]
-  (let [userid (couchio/email->userid email)]
-    (if userid
-      (let [collections (couchio/find-objects (config/delectus-content-bucket) []
-                                              {"type" +collection-type+ "owner-id" userid})]
-        (if (empty? collections)
-          (ok [])
-          (let [collection-maps (map #(.toMap %) collections)
-                descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
-            (ok descriptions))))
-      (not-found))))
+            (GET "/userid/:email" req
+                 :path-params [email :- s/Str]
+                 :return s/Str
+                 :summary "Returns the userid for the email address"
+                 (handlers/userid email))
 
-(defn collection-with-id [email id]
-  (let [userid (couchio/email->userid email)]
-    (if userid
-      (let [collections (couchio/find-objects
-                         (config/delectus-content-bucket) []
-                         {"type" +collection-type+ "owner-id" userid "id" id})]
-        (if (empty? collections)
-          (not-found "No such collection")
-          (let [collection (first collections)
-                collection-map {"name" (.get collection +name-attribute+)
-                                "id" (.get collection +id-attribute+)}]
-            (ok collection-map))))
-      (not-found))))
+            (GET "/userdata/:id" req
+                 :path-params [id :- s/Str]
+                 :return schema/UserData
+                 :summary "Returns name and email of the user with the id"
+                 (handlers/userdata id))
 
-(defn collection-name [email id]
-  (let [userid (couchio/email->userid email)]
-    (if userid
-      (let [collections (couchio/find-objects
-                         (config/delectus-content-bucket) []
-                         {"type" +collection-type+ "owner-id" userid "id" id})]
-        (if (empty? collections)
-          (not-found "No such collection")
-          (let [collection (first collections)
-                name (.get collection +name-attribute+)]
-            (ok name))))
-      (not-found))))
+            (GET "/collections/:email" req
+                 :path-params [email :- s/Str]
+                 :return [{s/Str s/Str}]
+                 :summary "Returns the names and ids of collections that belong to the email address"
+                 (handlers/collections email))
+
+            (GET "/collection_with_id/:email/:id" req
+                 :path-params [email :- s/Str id :- s/Str]
+                 :return {s/Str s/Str}
+                 :summary "Returns the name and id of the collection with id, if it belongs to the user"
+                 (handlers/collection-with-id email id))
+
+            (GET "/collection_name/:email/:id" req
+                 :path-params [email :- s/Str id :- s/Str]
+                 :return s/Str
+                 :summary "Returns the name of the collection with id, if it belongs to the user"
+                 (handlers/collection-name email id)))))
