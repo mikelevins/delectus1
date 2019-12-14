@@ -24,21 +24,20 @@
      :spec "/swagger.json"
      :data {:info {:title "Delectus-api"
                    :description "The Delectus 2 Database API"}
-            :tags [{:name "api", :description "Delectus endpoints"}]}}}
+            :tags [{:name "api/diagnostic", :description "Information about the server"}
+                   {:name "api/user", :description "Operations on user accounts"}
+                   {:name "api/collection", :description "Operations on collections"}
+                   {:name "api/list", :description "Operations on lists"}]}}}
 
-   (context "/api" []
-            :tags ["api"]
+   (context "/api/diagnostic" [] :tags ["api/diagnostic"]
 
-            ;; diagnostics
-            ;; -------------------  
-            
             (GET "/echo" req
                  :return s/Str
                  :summary "echoes the request"
-                 (handle-dump req))
-            
-            ;; users
-            ;; -------------------  
+                 (handle-dump req)))
+
+   
+   (context "/api/user" [] :tags ["api/user"]
 
             (POST "/authenticate" req
                   :body [{:keys [userid password]} schema/AuthenticationRequest]
@@ -62,10 +61,9 @@
                  :path-params [userid :- s/Str]
                  :return schema/UserData
                  :summary "Returns information about the user"
-                 (handlers/userdata userid))
+                 (handlers/userdata userid)))
 
-            ;; collections
-            ;; -------------------  
+   (context "/api/collection" [] :tags ["api/collection"]
 
             (GET "/collections/:userid" req
                  :path-params [userid :- s/Str]
@@ -109,11 +107,16 @@
             ;; (GET "/delectus/collection_lists" [] handlers/collection-lists)          
             ;; (GET "/delectus/collection_add_list" [] handlers/collection-add-list)
             ;; (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
+            )
 
-            ;; lists
-            ;; -------------------  
+   (context "/api/list" [] :tags ["api/list"]
 
-            ;; (GET "/delectus/lists" [] handlers/lists)                                  
+            (GET "/lists/:userid" req
+                 :path-params [userid :- s/Str]
+                 :return [{s/Str s/Str}]
+                 :summary "Returns the lists that belong to the user"
+                 (handlers/lists userid))
+
             ;; (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
             ;; (GET "/delectus/list_name" [] handlers/list-name)
             ;; (GET "/delectus/list_named" [] handlers/list-named)                        

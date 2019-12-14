@@ -20,6 +20,8 @@
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
+;;; /api/user
+
 (defn authenticate [userid password]
   (let [maybe-auth (auth/authenticate-user userid password)]
     (if maybe-auth
@@ -45,6 +47,8 @@
            :name (.get found-user +name-attribute+)
            :email (.get found-user +email-attribute+)})
       (not-found "No such user"))))
+
+;;; /api/collection
 
 (defn collections [userid]
   (let [collections (couchio/find-objects (config/delectus-content-bucket) []
@@ -110,3 +114,15 @@
                  collection-doc)
         (ok id))
       (conflict "Name exists"))))
+
+;;; /api/list
+
+
+(defn lists [userid]
+  (let [lists (couchio/find-objects (config/delectus-content-bucket) []
+                                    {"type" +list-type+ "owner-id" userid})]
+    (if (empty? lists)
+      (ok [])
+      (let [list-maps (map #(.toMap %) lists)
+            descriptions (map #(select-keys % ["name" "id"]) list-maps)]
+        (ok descriptions)))))
