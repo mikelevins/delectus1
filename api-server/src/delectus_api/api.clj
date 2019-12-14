@@ -64,3 +64,12 @@
       (let [collection (first collections)]
         {"name" (.get collection +name-attribute+)
          "id" (.get collection +id-attribute+)}))))
+
+(defn collection-name [userid collectionid]
+  (let [collections (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+    (if (empty? collections)
+      nil
+      (let [collection (first collections)]
+        (.get collection +name-attribute+)))))

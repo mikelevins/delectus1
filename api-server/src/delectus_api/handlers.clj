@@ -62,14 +62,10 @@
       (not-found "No such collection"))))
 
 (defn collection-name [userid collectionid]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-    (if (empty? collections)
-      (not-found "No such collection")
-      (let [collection (first collections)
-            name (.get collection +name-attribute+)]
-        (ok name)))))
+  (let [name (api/collection-name userid collectionid)]
+    (if name
+      (ok name)
+      (not-found "No such collection"))))
 
 (defn collection-named [userid name]
   (let [collections (couchio/find-objects
