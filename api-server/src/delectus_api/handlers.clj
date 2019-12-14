@@ -60,10 +60,11 @@
       (not-found (.getMessage ex)))))
 
 (defn collection-with-id [userid collectionid]
-  (let [collection (api/collection-with-id userid collectionid)]
-    (if collection
-      (ok collection)
-      (not-found "No such collection"))))
+  (try
+    (let [collection (api/collection-with-id userid collectionid)]
+      (ok collection))
+    (catch clojure.lang.ExceptionInfo ex
+      (not-found (.getMessage ex)))))
 
 (defn collection-name [userid collectionid]
   (let [name (api/collection-name userid collectionid)]

@@ -61,14 +61,19 @@
 ;;; (collections "BOGUS")
 
 (defn collection-with-id [userid collectionid]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-    (if (empty? collections)
-      nil
-      (let [collection (first collections)]
-        {"name" (.get collection +name-attribute+)
-         "id" (.get collection +id-attribute+)}))))
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+        (if (empty? collections)
+          (throw (ex-info "No such collection" {:cause :collection-not-found
+                                                :userid userid :collectionid collectionid}))
+          (let [collection (first collections)]
+            {"name" (.get collection +name-attribute+)
+             "id" (.get collection +id-attribute+)})))
+      (throw (ex-info "No such user" {:cause :user-not-found
+                                      :userid userid :collectionid collectionid})))))
 
 (defn collection-name [userid collectionid]
   (let [collections (couchio/find-objects
