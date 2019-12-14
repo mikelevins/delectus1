@@ -49,9 +49,12 @@
 ;;; ---------------------------------------------------------------------
 
 (defn collections [userid]
-  (map #(select-keys (.toMap %) ["name" "id"])
-       (couchio/find-objects (config/delectus-content-bucket) []
-                             {"type" +collection-type+ "owner-id" userid})))
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (map #(select-keys (.toMap %) ["name" "id"])
+           (couchio/find-objects (config/delectus-content-bucket) []
+                                 {"type" +collection-type+ "owner-id" userid}))
+      (throw (ex-info "No such user" {:userid userid})))))
 
 ;;; (collections "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (collections "6235e7b7-eb83-47d9-a8ef-ac129601e810")
