@@ -20,6 +20,8 @@
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
+;;; TODO: add error checking for nonexistent users and other DB objects
+
 ;;; users
 ;;; ---------------------------------------------------------------------
 
@@ -95,3 +97,26 @@
             updater (.upsert mutator +name-attribute+ newname)]
         (.execute updater)
         newname))))
+
+(defn new-collection [userid name]
+  (let [collections (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +collection-type+ "owner-id" userid "name" name})]
+    (if (empty? collections)
+      (let [id (makeid)
+            collection-doc (model/make-collection-document :id id :name name :owner-id userid)]
+        (.upsert (config/delectus-content-bucket)
+                 collection-doc)
+        id)
+      (throw (ex-info "Name exists" {:type "delectus_collection" :name name})))))
+
+
+;;; lists
+;;; ---------------------------------------------------------------------
+
+(defn lists [userid]
+  (map #(select-keys (.toMap %) ["name" "id"])
+       (couchio/find-objects (config/delectus-content-bucket) []
+                             {"type" +list-type+ "owner-id" userid})))
+
+

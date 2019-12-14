@@ -51,9 +51,7 @@
 
 (defn collections [userid]
   (let [collections (api/collections userid)]
-    (if (empty? collections)
-      (ok [])
-      (ok collections))))
+    (ok collections)))
 
 (defn collection-with-id [userid collectionid]
   (let [collection (api/collection-with-id userid collectionid)]
@@ -80,25 +78,14 @@
       (ok newname))))
 
 (defn new-collection [userid name]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "name" name})]
-    (if (empty? collections)
-      (let [id (makeid)
-            collection-doc (model/make-collection-document :id id :name name :owner-id userid)]
-        (.upsert (config/delectus-content-bucket)
-                 collection-doc)
-        (ok id))
-      (conflict "Name exists"))))
+  (try (let [newid (api/new-collection userid name)]
+         (ok newid))
+       (catch clojure.lang.ExceptionInfo ex
+         (conflict "Name exists"))))
 
 ;;; /api/list
 
 
 (defn lists [userid]
-  (let [lists (couchio/find-objects (config/delectus-content-bucket) []
-                                    {"type" +list-type+ "owner-id" userid})]
-    (if (empty? lists)
-      (ok [])
-      (let [list-maps (map #(.toMap %) lists)
-            descriptions (map #(select-keys % ["name" "id"]) list-maps)]
-        (ok descriptions)))))
+  (let [lists (api/lists userid)]
+    (ok lists)))
