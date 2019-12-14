@@ -84,3 +84,14 @@
         {"name" (.get collection +name-attribute+)
          "id" (.get collection +id-attribute+)}))))
 
+(defn rename-collection [userid collectionid newname]
+  (let [collections (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+    (if (empty? collections)
+      nil
+      (let [content-bucket (config/delectus-content-bucket)
+            mutator (.mutateIn content-bucket collectionid)
+            updater (.upsert mutator +name-attribute+ newname)]
+        (.execute updater)
+        newname))))
