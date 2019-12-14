@@ -71,3 +71,17 @@
                 name (.get collection +name-attribute+)]
             (ok name))))
       (not-found))))
+
+(defn collection-named [email name]
+  (let [userid (couchio/email->userid email)]
+    (if userid
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "name" name})]
+        (if (empty? collections)
+          (not-found "No such collection")
+          (let [collection (first collections)
+                collection-map {"name" (.get collection +name-attribute+)
+                                "id" (.get collection +id-attribute+)}]
+            (ok collection-map))))
+      (not-found))))

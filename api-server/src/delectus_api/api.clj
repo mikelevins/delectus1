@@ -64,4 +64,10 @@
                  :path-params [email :- s/Str id :- s/Str]
                  :return s/Str
                  :summary "Returns the name of the collection with id, if it belongs to the user"
-                 (handlers/collection-name email id)))))
+                 (handlers/collection-name email id))
+
+            (GET "/collection_named/:email/:name" req
+                 :path-params [email :- s/Str name :- s/Str]
+                 :return {s/Str s/Str}
+                 :summary "Returns the collection named name, if it belongs to the user"
+                 (handlers/collection-named email name)))))
