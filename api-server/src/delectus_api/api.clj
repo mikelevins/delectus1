@@ -38,10 +38,16 @@
             ;; users
             ;; -------------------  
 
+            (POST "/authenticate" req
+                  :body [{:keys [userid password]} schema/AuthenticationRequest]
+                  :return {:token s/Str}
+                  :summary "authenticates a Delectus user"
+                  (handlers/authenticate userid password))
+
             (POST "/login" req
                   :body [{:keys [email password]} schema/LoginRequest]
                   :return {:token s/Str}
-                  :summary "authenticates a Delectus user"
+                  :summary "Logs in a user by email address"
                   (handlers/login email password))
 
             (GET "/userid/:email" req
@@ -50,50 +56,50 @@
                  :summary "Returns the userid"
                  (handlers/userid email))
 
-            (GET "/userdata/:id" req
-                 :path-params [id :- s/Str]
+            (GET "/userdata/:userid" req
+                 :path-params [userid :- s/Str]
                  :return schema/UserData
-                 :summary "Returns information avbout the user"
-                 (handlers/userdata id))
+                 :summary "Returns information about the user"
+                 (handlers/userdata userid))
 
             ;; collections
             ;; -------------------  
 
-            (GET "/collections/:email" req
-                 :path-params [email :- s/Str]
+            (GET "/collections/:userid" req
+                 :path-params [userid :- s/Str]
                  :return [{s/Str s/Str}]
                  :summary "Returns the collections that belong to the user"
-                 (handlers/collections email))
+                 (handlers/collections userid))
 
-            (GET "/collection_with_id/:email/:id" req
-                 :path-params [email :- s/Str id :- s/Str]
+            (GET "/collection_with_id/:userid/:collectionid" req
+                 :path-params [userid :- s/Str collectionid :- s/Str]
                  :return {s/Str s/Str}
                  :summary "Returns the identified collection belonging to the user"
-                 (handlers/collection-with-id email id))
+                 (handlers/collection-with-id userid collectionid))
 
-            (GET "/collection_name/:email/:id" req
-                 :path-params [email :- s/Str id :- s/Str]
+            (GET "/collection_name/:userid/:collectionid" req
+                 :path-params [userid :- s/Str collectionid :- s/Str]
                  :return s/Str
                  :summary "Returns the name of the collection"
-                 (handlers/collection-name email id))
+                 (handlers/collection-name userid collectionid))
 
-            (GET "/collection_named/:email/:name" req
-                 :path-params [email :- s/Str name :- s/Str]
+            (GET "/collection_named/:userid/:name" req
+                 :path-params [userid :- s/Str name :- s/Str]
                  :return {s/Str s/Str}
                  :summary "Returns the named collection belonging to the user"
-                 (handlers/collection-named email name))
+                 (handlers/collection-named userid name))
             
             (POST "/rename_collection" req
-                  :body [{:keys [email collectionid newname]} schema/CollectionRenameRequest]
+                  :body [{:keys [userid collectionid newname]} schema/CollectionRenameRequest]
                   :return s/Str
                   :summary "Renames the collection"
-                  (handlers/rename-collection email collectionid newname))
+                  (handlers/rename-collection userid collectionid newname))
             
             (POST "/new_collection" req
-                  :body [{:keys [email name]} schema/NewCollectionRequest]
+                  :body [{:keys [userid name]} schema/NewCollectionRequest]
                   :return s/Str
                   :summary "Creates a new collection with the supplied name"
-                  (handlers/new-collection email name))
+                  (handlers/new-collection userid name))
 
             ;; (GET "/delectus/delete_collection" [] handlers/delete-collection)        
             ;; (GET "/delectus/undelete_collection" [] handlers/undelete-collection)    

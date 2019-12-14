@@ -7,22 +7,26 @@
 ;;; schemata
 ;;; ---------------------------------------------------------------------
 
+(s/defschema AuthenticationRequest
+  {:userid s/Str
+   :password s/Str})
+
 (s/defschema LoginRequest
   {:email s/Str
    :password s/Str})
 
 (s/defschema UserData
-  {:id s/Str
+  {:userid s/Str
    :email s/Str
    :name s/Str})
 
 (s/defschema CollectionRenameRequest
-  {:email s/Str
+  {:userid s/Str
    :collectionid s/Str
    :newname s/Str})
 
 (s/defschema NewCollectionRequest
-  {:email s/Str
+  {:userid s/Str
    :name s/Str})
 
 

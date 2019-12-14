@@ -50,13 +50,18 @@
 ;;; (def $token-map (decode-auth-token $token))
 ;;; (decode-auth-token "foo")
 
-(defn authenticate-user [email password]
-  (let [found-user (couchio/email->user email)]
+(defn authenticate-user [userid password]
+  (let [found-user (couchio/get-user userid)]
     (if found-user
       (if (hashers/check password (.get found-user +password-hash-attribute+))
         found-user
-        nil)
-      nil)))
+        false))))
 
-;;; (authenticate-user "mikel@evins.net" "foo")
-;;; (authenticate-user "nobody@evins.net" "foo")
+(defn login-user [email password]
+  (let [userid (couchio/email->userid email)]
+    (if userid
+      (authenticate-user userid password)
+      false)))
+
+;;; (login-user "mikel@evins.net" "foo")
+;;; (login-user "nobody@evins.net" "foo")
