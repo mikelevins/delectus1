@@ -43,7 +43,7 @@
       {:userid userid
        :name (.get found-user +name-attribute+)
        :email (.get found-user +email-attribute+)}
-      nil)))
+      (throw (ex-info "No such user" {:userid userid})))))
 
 ;;; collections
 ;;; ---------------------------------------------------------------------

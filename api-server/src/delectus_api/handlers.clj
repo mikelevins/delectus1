@@ -42,10 +42,12 @@
       (not-found "No such user"))))
 
 (defn userdata [userid]
-  (let [found-data (api/userdata userid)]
-    (if found-data
-      (ok found-data)
-      (not-found "No such user"))))
+  (try (let [found-data (api/userdata userid)]
+         (if found-data
+           (ok found-data)
+           (not-found "No such user")))
+       (catch clojure.lang.ExceptionInfo ex
+         (not-found "No such user"))))
 
 ;;; /api/collection
 
