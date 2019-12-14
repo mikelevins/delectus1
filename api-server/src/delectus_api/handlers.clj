@@ -11,7 +11,12 @@
    [ring.util.http-response :refer :all]
    [schema.core :as s]
    [tick.alpha.api :as t]
-   ))
+   )
+  (:import
+   (com.couchbase.client.java.datastructures.collections CouchbaseArrayList CouchbaseMap)
+   (com.couchbase.client.java.document JsonDocument)
+   (com.couchbase.client.java.document.json JsonObject)
+   (com.couchbase.client.java.query N1qlQuery)))
 
 (defn login [email password]
   (let [maybe-auth (auth/authenticate-user email password)]
@@ -84,4 +89,19 @@
                 collection-map {"name" (.get collection +name-attribute+)
                                 "id" (.get collection +id-attribute+)}]
             (ok collection-map))))
+      (not-found))))
+
+(defn rename-collection [email collectionid newname]
+  (let [userid (couchio/email->userid email)]
+    (if userid
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+        (if (empty? collections)
+          (not-found "No such collection")
+          (let [content-bucket (config/delectus-content-bucket)
+                mutator (.mutateIn content-bucket collectionid)
+                updater (.upsert mutator +name-attribute+ newname)]
+            (.execute updater)
+            (ok newname))))
       (not-found))))

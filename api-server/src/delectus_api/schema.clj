@@ -15,3 +15,9 @@
   {:id s/Str
    :email s/Str
    :name s/Str})
+
+(s/defschema CollectionRenameRequest
+  {:email s/Str
+   :collectionid s/Str
+   :newname s/Str})
+
