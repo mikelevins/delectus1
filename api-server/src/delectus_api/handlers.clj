@@ -2,6 +2,7 @@
   (:require
    [compojure.api.sweet :refer :all]
    [delectus-api.auth :as auth]
+   [delectus-api.api :as api]
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
@@ -23,29 +24,27 @@
 ;;; /api/user
 
 (defn authenticate [userid password]
-  (let [maybe-auth (auth/authenticate-user userid password)]
+  (let [maybe-auth (api/authenticate userid password)]
     (if maybe-auth
       (ok {:token (auth/make-auth-token maybe-auth)})
       (unauthorized "Authentication failed"))))
 
 (defn login [email password]
-  (let [maybe-auth (auth/login-user email password)]
+  (let [maybe-auth (api/login email password)]
     (if maybe-auth
       (ok {:token (auth/make-auth-token maybe-auth)})
       (unauthorized "Login failed"))))
 
 (defn userid [email]
-  (let [found-user (couchio/email->user email)]
-    (if found-user
-      (ok (.get found-user +id-attribute+))
+  (let [found-id (api/userid email)]
+    (if found-id
+      (ok found-id)
       (not-found "No such user"))))
 
 (defn userdata [userid]
-  (let [found-user (couchio/id->user userid)]
-    (if found-user
-      (ok {:userid userid
-           :name (.get found-user +name-attribute+)
-           :email (.get found-user +email-attribute+)})
+  (let [found-data (api/userdata userid)]
+    (if found-data
+      (ok found-data)
       (not-found "No such user"))))
 
 ;;; /api/collection
