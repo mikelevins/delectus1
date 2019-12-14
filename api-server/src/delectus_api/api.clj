@@ -20,6 +20,9 @@
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
+;;; users
+;;; ---------------------------------------------------------------------
+
 (defn authenticate [userid password]
   (auth/authenticate-user userid password))
 
@@ -39,3 +42,15 @@
        :name (.get found-user +name-attribute+)
        :email (.get found-user +email-attribute+)}
       nil)))
+
+;;; collections
+;;; ---------------------------------------------------------------------
+
+(defn collections [userid]
+  (map #(select-keys (.toMap %) ["name" "id"])
+       (couchio/find-objects (config/delectus-content-bucket) []
+                             {"type" +collection-type+ "owner-id" userid})))
+
+;;; (collections "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (collections "6235e7b7-eb83-47d9-a8ef-ac129601e810")
+;;; (collections "BOGUS")

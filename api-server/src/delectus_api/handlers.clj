@@ -50,13 +50,10 @@
 ;;; /api/collection
 
 (defn collections [userid]
-  (let [collections (couchio/find-objects (config/delectus-content-bucket) []
-                                          {"type" +collection-type+ "owner-id" userid})]
+  (let [collections (api/collections userid)]
     (if (empty? collections)
       (ok [])
-      (let [collection-maps (map #(.toMap %) collections)
-            descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
-        (ok descriptions)))))
+      (ok collections))))
 
 (defn collection-with-id [userid collectionid]
   (let [collections (couchio/find-objects
