@@ -68,15 +68,10 @@
       (not-found "No such collection"))))
 
 (defn collection-named [userid name]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "name" name})]
-    (if (empty? collections)
-      (not-found "No such collection")
-      (let [collection (first collections)
-            collection-map {"name" (.get collection +name-attribute+)
-                            "id" (.get collection +id-attribute+)}]
-        (ok collection-map)))))
+  (let [collection (api/collection-named userid name)]
+    (if collection
+      (ok collection)
+      (not-found "No such collection"))))
 
 (defn rename-collection [userid collectionid newname]
   (let [collections (couchio/find-objects

@@ -73,3 +73,14 @@
       nil
       (let [collection (first collections)]
         (.get collection +name-attribute+)))))
+
+(defn collection-named [userid name]
+  (let [collections (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +collection-type+ "owner-id" userid "name" name})]
+    (if (empty? collections)
+      nil
+      (let [collection (first collections)]
+        {"name" (.get collection +name-attribute+)
+         "id" (.get collection +id-attribute+)}))))
+
