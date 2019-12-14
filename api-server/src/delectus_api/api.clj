@@ -13,9 +13,9 @@
    [tick.alpha.api :as t]
    ))
 
-;;; TODO: change API endpoints to require a valid auth token
-;;;       (except, of course, the ones used to obtain an
-;;;       auth token)
+;;; TODO:
+;;; Consider using an authentication token to authorize each API
+;;; endpoint except the one used to obtain the token
 
 (def app
   (api
