@@ -21,3 +21,8 @@
    :collectionid s/Str
    :newname s/Str})
 
+(s/defschema NewCollectionRequest
+  {:email s/Str
+   :name s/Str})
+
+

@@ -6,6 +6,8 @@
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
    [delectus-api.errors :as errors]
+   [delectus-api.identifiers :refer [makeid]]
+   [delectus-api.model :as model]
    [delectus-api.schema :as schema]
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
@@ -28,7 +30,7 @@
   (let [found-user (couchio/email->user email)]
     (if found-user
       (ok (.get found-user +id-attribute+))
-      (not-found))))
+      (not-found "No such user"))))
 
 (defn userdata [userid]
   (let [found-user (couchio/id->user userid)]
@@ -36,7 +38,7 @@
       (ok {:id userid
            :name (.get found-user +name-attribute+)
            :email (.get found-user +email-attribute+)})
-      (not-found))))
+      (not-found "No such user"))))
 
 (defn collections [email]
   (let [userid (couchio/email->userid email)]
@@ -48,7 +50,7 @@
           (let [collection-maps (map #(.toMap %) collections)
                 descriptions (map #(select-keys % ["name" "id"]) collection-maps)]
             (ok descriptions))))
-      (not-found))))
+      (not-found "No such user"))))
 
 (defn collection-with-id [email id]
   (let [userid (couchio/email->userid email)]
@@ -62,7 +64,7 @@
                 collection-map {"name" (.get collection +name-attribute+)
                                 "id" (.get collection +id-attribute+)}]
             (ok collection-map))))
-      (not-found))))
+      (not-found "No such user"))))
 
 (defn collection-name [email id]
   (let [userid (couchio/email->userid email)]
@@ -75,7 +77,7 @@
           (let [collection (first collections)
                 name (.get collection +name-attribute+)]
             (ok name))))
-      (not-found))))
+      (not-found "No such user"))))
 
 (defn collection-named [email name]
   (let [userid (couchio/email->userid email)]
@@ -89,7 +91,7 @@
                 collection-map {"name" (.get collection +name-attribute+)
                                 "id" (.get collection +id-attribute+)}]
             (ok collection-map))))
-      (not-found))))
+      (not-found "No such user"))))
 
 (defn rename-collection [email collectionid newname]
   (let [userid (couchio/email->userid email)]
@@ -104,4 +106,19 @@
                 updater (.upsert mutator +name-attribute+ newname)]
             (.execute updater)
             (ok newname))))
-      (not-found))))
+      (not-found "No such user"))))
+
+(defn new-collection [email name]
+  (let [userid (couchio/email->userid email)]
+    (if userid
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "name" name})]
+        (if (empty? collections)
+          (let [id (makeid)
+                collection-doc (model/make-collection-document :id id :name name :owner-id userid)]
+            (.upsert (config/delectus-content-bucket)
+                     collection-doc)
+            (ok id))
+          (conflict "Name exists")))
+      (not-found "No such user"))))

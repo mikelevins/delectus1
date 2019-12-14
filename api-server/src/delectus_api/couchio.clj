@@ -13,6 +13,17 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 
+
+;;; ---------------------------------------------------------------------
+;;; JsonDocument
+;;; ---------------------------------------------------------------------
+
+(defn make-json-document [id object-map]
+  (JsonDocument/create id (JsonObject/from object-map)))
+
+;;; (make-json-document "foo_document" {"name" "Fred" "age" 35})
+;;; (make-json-document "bar_document" {"name" "Fred" "age" 35 "things" {}})
+
 ;;; =====================================================================
 ;;; N1QL queries
 ;;; =====================================================================

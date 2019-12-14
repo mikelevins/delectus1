@@ -71,9 +71,15 @@
                  :return {s/Str s/Str}
                  :summary "Returns the collection named name, if it belongs to the user"
                  (handlers/collection-named email name))
-
+            
             (POST "/rename_collection" req
                   :body [{:keys [email collectionid newname]} schema/CollectionRenameRequest]
                   :return s/Str
                   :summary "Renames the collection to the supplied name, if it belongs to the user"
-                  (handlers/rename-collection email collectionid newname)))))
+                  (handlers/rename-collection email collectionid newname))
+            
+            (POST "/new_collection" req
+                  :body [{:keys [email name]} schema/NewCollectionRequest]
+                  :return s/Str
+                  :summary "Creates a collection with the supplied name"
+                  (handlers/new-collection email name)))))
