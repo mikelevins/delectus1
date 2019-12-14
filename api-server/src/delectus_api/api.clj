@@ -13,7 +13,9 @@
    [tick.alpha.api :as t]
    ))
 
-;;; TODO: change API endpoints to use user ID strings instead of email addresses
+;;; TODO: change API endpoints to require a valid auth token
+;;;       (except, of course, the ones used to obtain an
+;;;       auth token)
 
 (def app
   (api
