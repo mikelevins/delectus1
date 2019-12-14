@@ -21,6 +21,26 @@
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
+;;; ---------------------------------------------------------------------
+;;; error handlers
+;;; ---------------------------------------------------------------------
+
+(def +exception-handlers+
+  {
+   :collection-name-exists conflict
+   :collection-not-found not-found
+   :user-not-found not-found
+   })
+
+(defn handle-exception [ex]
+  (let [cause (:cause (ex-data ex))
+        handler (get +exception-handlers+ cause  internal-server-error)]
+    (handler (.getMessage ex))))
+
+;;; ---------------------------------------------------------------------
+;;; endpoint handlers
+;;; ---------------------------------------------------------------------
+
 ;;; /api/user
 
 (defn authenticate [userid password]
@@ -48,7 +68,7 @@
         (ok found-data)
         (not-found "No such user")))
     (catch clojure.lang.ExceptionInfo ex
-      (not-found (.getMessage ex)))))
+      (handle-exception ex))))
 
 ;;; /api/collection
 
@@ -57,42 +77,51 @@
     (let [collections (api/collections userid)]
       (ok collections))
     (catch clojure.lang.ExceptionInfo ex
-      (not-found (.getMessage ex)))))
+      (handle-exception ex))))
 
 (defn collection-with-id [userid collectionid]
   (try
     (let [collection (api/collection-with-id userid collectionid)]
       (ok collection))
     (catch clojure.lang.ExceptionInfo ex
-      (not-found (.getMessage ex)))))
+      (handle-exception ex))))
 
 (defn collection-name [userid collectionid]
-  (let [name (api/collection-name userid collectionid)]
-    (if name
-      (ok name)
-      (not-found "No such collection"))))
+  (try
+    (let [name (api/collection-name userid collectionid)]
+      (ok name))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
 
 (defn collection-named [userid name]
-  (let [collection (api/collection-named userid name)]
-    (if collection
-      (ok collection)
-      (not-found "No such collection"))))
+  (try
+    (let [collection (api/collection-named userid name)]
+      (ok collection))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
 
 (defn rename-collection [userid collectionid newname]
-  (let [collectionid (api/rename-collection userid collectionid newname)]
-    (if (nil? collectionid)
-      (not-found "No such collection")
-      (ok newname))))
+  (try
+    (let [collectionid (api/rename-collection userid collectionid newname)]
+      (if (nil? collectionid)
+        (not-found "No such collection")
+        (ok newname)))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
 
 (defn new-collection [userid name]
-  (try (let [newid (api/new-collection userid name)]
-         (ok newid))
-       (catch clojure.lang.ExceptionInfo ex
-         (conflict "Name exists"))))
+  (try
+    (let [newid (api/new-collection userid name)]
+      (ok newid))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
 
 ;;; /api/list
 
 
 (defn lists [userid]
-  (let [lists (api/lists userid)]
-    (ok lists)))
+  (try
+    (let [lists (api/lists userid)]
+      (ok lists))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))

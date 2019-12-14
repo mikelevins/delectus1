@@ -43,7 +43,9 @@
       {:userid userid
        :name (.get found-user +name-attribute+)
        :email (.get found-user +email-attribute+)}
-      (throw (ex-info "No such user" {:userid userid})))))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid})))))
 
 ;;; collections
 ;;; ---------------------------------------------------------------------
@@ -54,7 +56,9 @@
       (map #(select-keys (.toMap %) ["name" "id"])
            (couchio/find-objects (config/delectus-content-bucket) []
                                  {"type" +collection-type+ "owner-id" userid}))
-      (throw (ex-info "No such user" {:userid userid})))))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid})))))
 
 ;;; (collections "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (collections "6235e7b7-eb83-47d9-a8ef-ac129601e810")
@@ -67,64 +71,106 @@
                          (config/delectus-content-bucket) []
                          {"type" +collection-type+ "owner-id" userid "id" collectionid})]
         (if (empty? collections)
-          (throw (ex-info "No such collection" {:cause :collection-not-found
-                                                :userid userid :collectionid collectionid}))
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid :collectionid collectionid}))
           (let [collection (first collections)]
             {"name" (.get collection +name-attribute+)
              "id" (.get collection +id-attribute+)})))
-      (throw (ex-info "No such user" {:cause :user-not-found
-                                      :userid userid :collectionid collectionid})))))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid :collectionid collectionid})))))
 
 (defn collection-name [userid collectionid]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-    (if (empty? collections)
-      nil
-      (let [collection (first collections)]
-        (.get collection +name-attribute+)))))
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+        (if (empty? collections)
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid :collectionid collectionid}))
+          (let [collection (first collections)]
+            (.get collection +name-attribute+))))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid :collectionid collectionid})))))
+
 
 (defn collection-named [userid name]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "name" name})]
-    (if (empty? collections)
-      nil
-      (let [collection (first collections)]
-        {"name" (.get collection +name-attribute+)
-         "id" (.get collection +id-attribute+)}))))
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "name" name})]
+        (if (empty? collections)
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid}))
+          (let [collection (first collections)]
+            {"name" (.get collection +name-attribute+)
+             "id" (.get collection +id-attribute+)})))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid})))))
 
 (defn rename-collection [userid collectionid newname]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-    (if (empty? collections)
-      nil
-      (let [content-bucket (config/delectus-content-bucket)
-            mutator (.mutateIn content-bucket collectionid)
-            updater (.upsert mutator +name-attribute+ newname)]
-        (.execute updater)
-        newname))))
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+        (if (empty? collections)
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid :collectionid collectionid}))
+          (let [content-bucket (config/delectus-content-bucket)
+                mutator (.mutateIn content-bucket collectionid)
+                updater (.upsert mutator +name-attribute+ newname)]
+            (.execute updater)
+            newname)))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid :collectionid collectionid})))))
+
+;;; (rename-collection "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" "NOPE!" "foo")
 
 (defn new-collection [userid name]
-  (let [collections (couchio/find-objects
-                     (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner-id" userid "name" name})]
-    (if (empty? collections)
-      (let [id (makeid)
-            collection-doc (model/make-collection-document :id id :name name :owner-id userid)]
-        (.upsert (config/delectus-content-bucket)
-                 collection-doc)
-        id)
-      (throw (ex-info "Name exists" {:type "delectus_collection" :name name})))))
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "name" name})]
+        (if (empty? collections)
+          (let [id (makeid)
+                collection-doc (model/make-collection-document :id id :name name :owner-id userid)]
+            (.upsert (config/delectus-content-bucket)
+                     collection-doc)
+            id)
+          (throw (ex-info "Name exists"
+                          {:cause :collection-name-exists
+                           :collectionname name
+                           :userid userid}))))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid})))))
+
+
 
 
 ;;; lists
 ;;; ---------------------------------------------------------------------
 
 (defn lists [userid]
-  (map #(select-keys (.toMap %) ["name" "id"])
-       (couchio/find-objects (config/delectus-content-bucket) []
-                             {"type" +list-type+ "owner-id" userid})))
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (map #(select-keys (.toMap %) ["name" "id"])
+           (couchio/find-objects (config/delectus-content-bucket) []
+                                 {"type" +list-type+ "owner-id" userid}))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid})))))
+
 
 
