@@ -36,6 +36,15 @@
                            {:cause :user-not-found
                             :userid ~userid}))))))
 
+(defmacro ensure-collection [collectionid]
+  (let [exname (gensym)
+        found-collection-name (gensym)]
+    `(let [~found-collection-name (couchio/get-collection ~collectionid)]
+       (or ~found-collection-name
+           (throw (ex-info "No such collection"
+                           {:cause :collection-not-found
+                            :collectionid ~collectionid}))))))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; api functions
@@ -91,22 +100,14 @@
 
 (defn collection-with-id [userid collectionid]
   (let [found-user (ensure-user userid)]
-    (let [collection (couchio/get-collection collectionid)]
-      (if collection
-        {"name" (.get collection +name-attribute+)
-         "id" (.get collection +id-attribute+)}
-        (throw (ex-info "No such collection"
-                        {:cause :collection-not-found
-                         :userid userid :collectionid collectionid}))))))
+    (let [collection (ensure-collection collectionid)]
+      {"name" (.get collection +name-attribute+)
+       "id" (.get collection +id-attribute+)})))
 
 (defn collection-name [userid collectionid]
   (let [found-user (ensure-user userid)]
-    (let [collection (couchio/get-collection collectionid)]
-      (if collection
-        (.get collection +name-attribute+)
-        (throw (ex-info "No such collection"
-                        {:cause :collection-not-found
-                         :userid userid :collectionid collectionid}))))))
+    (let [collection (ensure-collection collectionid)]
+      (.get collection +name-attribute+))))
 
 (defn collection-named [userid name]
   (let [found-user (ensure-user userid)]
@@ -123,22 +124,18 @@
 
 (defn rename-collection [userid collectionid newname]
   (let [found-user (ensure-user userid)]
-    (let [collection (couchio/get-collection collectionid)]
-      (if collection
-        (try
-          (let [content-bucket (config/delectus-content-bucket)
-                mutator (.mutateIn content-bucket collectionid)
-                updater (.upsert mutator +name-attribute+ newname)]
-            (.execute updater)
-            newname)
-          (catch Exception ex
-            (throw (ex-info "Couchbase Error"
-                            {:cause :couchbase-exception
-                             :exception-object ex
-                             :userid userid :collectionid collectionid}))))
-        (throw (ex-info "No such collection"
-                        {:cause :collection-not-found
-                         :userid userid :collectionid collectionid}))))))
+    (let [collection (ensure-collection collectionid)]
+      (try
+        (let [content-bucket (config/delectus-content-bucket)
+              mutator (.mutateIn content-bucket collectionid)
+              updater (.upsert mutator +name-attribute+ newname)]
+          (.execute updater)
+          newname)
+        (catch Exception ex
+          (throw (ex-info "Couchbase Error"
+                          {:cause :couchbase-exception
+                           :exception-object ex
+                           :userid userid :collectionid collectionid})))))))
 
 (defn new-collection [userid name]
   (let [found-user (ensure-user userid)]
@@ -158,56 +155,44 @@
 
 (defn delete-collection [userid collectionid]
   (let [found-user (ensure-user userid)]
-    (let [collection (couchio/get-collection collectionid)]
-      (if collection
-        (try
-          (let [content-bucket (config/delectus-content-bucket)
-                mutator (.mutateIn content-bucket collectionid)
-                updater (.upsert mutator +deleted-attribute+ true)]
-            (.execute updater)
-            collectionid)
-          (catch Exception ex
-            (throw (ex-info "Couchbase Error"
-                            {:cause :couchbase-exception
-                             :exception-object ex
-                             :userid userid :collectionid collectionid}))))
-        (throw (ex-info "No such collection"
-                        {:cause :collection-not-found
-                         :userid userid :collectionid collectionid}))))))
+    (let [collection (ensure-collection collectionid)]
+      (try
+        (let [content-bucket (config/delectus-content-bucket)
+              mutator (.mutateIn content-bucket collectionid)
+              updater (.upsert mutator +deleted-attribute+ true)]
+          (.execute updater)
+          collectionid)
+        (catch Exception ex
+          (throw (ex-info "Couchbase Error"
+                          {:cause :couchbase-exception
+                           :exception-object ex
+                           :userid userid :collectionid collectionid})))))))
 
 (defn undelete-collection [userid collectionid]
   (let [found-user (ensure-user userid)]
-    (let [collection (couchio/get-collection collectionid)]
-      (if collection
-        (try
-          (let [content-bucket (config/delectus-content-bucket)
-                mutator (.mutateIn content-bucket collectionid)
-                updater (.upsert mutator +deleted-attribute+ false)]
-            (.execute updater)
-            collectionid)
-          (catch Exception ex
-            (throw (ex-info "Couchbase Error"
-                            {:cause :couchbase-exception
-                             :exception-object ex
-                             :userid userid :collectionid collectionid}))))
-        (throw (ex-info "No such collection"
-                        {:cause :collection-not-found
-                         :userid userid :collectionid collectionid}))))))
+    (let [collection (ensure-collection collectionid)]
+      (try
+        (let [content-bucket (config/delectus-content-bucket)
+              mutator (.mutateIn content-bucket collectionid)
+              updater (.upsert mutator +deleted-attribute+ false)]
+          (.execute updater)
+          collectionid)
+        (catch Exception ex
+          (throw (ex-info "Couchbase Error"
+                          {:cause :couchbase-exception
+                           :exception-object ex
+                           :userid userid :collectionid collectionid})))))))
 
 (defn collection-deleted? [userid collectionid]
   (let [found-user (ensure-user userid)]
-    (let [collection (couchio/get-collection collectionid)]
-      (if collection
-        (try
-          (.get collection +deleted-attribute+)
-          (catch Exception ex
-            (throw (ex-info "Couchbase Error"
-                            {:cause :couchbase-exception
-                             :exception-object ex
-                             :userid userid :collectionid collectionid}))))
-        (throw (ex-info "No such collection"
-                        {:cause :collection-not-found
-                         :userid userid :collectionid collectionid}))))))
+    (let [collection (ensure-collection collectionid)]
+      (try
+        (.get collection +deleted-attribute+)
+        (catch Exception ex
+          (throw (ex-info "Couchbase Error"
+                          {:cause :couchbase-exception
+                           :exception-object ex
+                           :userid userid :collectionid collectionid})))))))
 
 
 
