@@ -200,14 +200,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defn lists [userid]
-  (let [found-user (couchio/id->user userid)]
-    (if found-user
-      (map #(select-keys (.toMap %) ["name" "id"])
-           (couchio/find-objects (config/delectus-content-bucket) []
-                                 {"type" +list-type+ "owner-id" userid}))
-      (throw (ex-info "No such user"
-                      {:cause :user-not-found
-                       :userid userid})))))
+  (let [found-user (ensure-user userid)]
+    (map #(select-keys (.toMap %) ["name" "id"])
+         (couchio/find-objects (config/delectus-content-bucket) []
+                               {"type" +list-type+ "owner-id" userid}))))
 
 
 
