@@ -26,13 +26,22 @@
 ;;; ---------------------------------------------------------------------
 
 (defn authenticate [userid password]
-  (auth/authenticate-user userid password))
+  (or (auth/authenticate-user userid password)
+      (throw (ex-info "Authentication failed"
+                      {:cause :authentication-failed
+                       :userid userid}))))
 
 (defn login [userid password]
-  (auth/login-user userid password))
+  (or (auth/login-user userid password)
+      (throw (ex-info "Login failed"
+                      {:cause :login-failed
+                       :userid userid}))))
 
 (defn userid [email]
-  (couchio/email->userid email))
+  (or (couchio/email->userid email)
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :email email}))))
 
 ;;; (userid "mikel@evins.net")
 ;;; (userid "doo@evins.net")

@@ -27,15 +27,20 @@
 
 (def +exception-handlers+
   {
+   :authentication-failed unauthorized
    :collection-name-exists conflict
    :collection-not-found not-found
+   :login-failed unauthorized
    :user-not-found not-found
    })
 
 (defn handle-exception [ex]
-  (let [cause (:cause (ex-data ex))
-        handler (get +exception-handlers+ cause  internal-server-error)]
-    (handler (.getMessage ex))))
+  (let [msg (.getMessage ex)
+        data (ex-data ex)
+        cause (:cause data)
+        handler (get +exception-handlers+ cause internal-server-error)]
+    (let [info (str msg ". " data)]
+      (handler info))))
 
 ;;; ---------------------------------------------------------------------
 ;;; endpoint handlers
@@ -44,22 +49,31 @@
 ;;; /api/user
 
 (defn authenticate [userid password]
-  (let [maybe-auth (api/authenticate userid password)]
-    (if maybe-auth
-      (ok {:token (auth/make-auth-token maybe-auth)})
-      (unauthorized "Authentication failed"))))
+  (try
+    (let [maybe-auth (api/authenticate userid password)]
+      (if maybe-auth
+        (ok {:token (auth/make-auth-token maybe-auth)})
+        (unauthorized "Authentication failed")))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
 
 (defn login [email password]
-  (let [maybe-auth (api/login email password)]
-    (if maybe-auth
-      (ok {:token (auth/make-auth-token maybe-auth)})
-      (unauthorized "Login failed"))))
+  (try
+    (let [maybe-auth (api/login email password)]
+      (if maybe-auth
+        (ok {:token (auth/make-auth-token maybe-auth)})
+        (unauthorized "Login failed")))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
 
 (defn userid [email]
-  (let [found-id (api/userid email)]
-    (if found-id
-      (ok found-id)
-      (not-found "No such user"))))
+  (try
+    (let [found-id (api/userid email)]
+      (if found-id
+        (ok found-id)
+        (not-found "No such user")))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
 
 (defn userdata [userid]
   (try
