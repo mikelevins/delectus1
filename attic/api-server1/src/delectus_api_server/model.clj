@@ -32,7 +32,7 @@
                  +enabled-attribute+ enabled}]
     (couchio/make-json-document id obj-map)))
 
-;;; (make-user-document :email "mikel@evis.net")
+;;; (make-user-document :email "mikel@evins.net")
 
 (defn make-collection-document [& {:keys [id name owner-id lists deleted]
                                    :or {id (makeid)
