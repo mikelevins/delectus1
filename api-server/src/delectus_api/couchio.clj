@@ -6,6 +6,7 @@
    [delectus-api.errors :as errors]
    [delectus-api.identifiers :refer [makeid]])
   (:import
+   (com.couchbase.client.core CouchbaseException)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)
@@ -13,6 +14,22 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 
+;;; ---------------------------------------------------------------------
+;;; error handling
+;;; ---------------------------------------------------------------------
+
+(defmacro with-couchbase-exceptions-rethrown [& forms]
+  (let [exname (gensym)]
+    `(try
+       (do ~@forms)
+       (catch CouchbaseException ~exname
+         (throw (ex-info "Couchbase error"
+                         {:cause :couchbase-exception
+                          :exception-object ~exname})))
+       (catch Exception ~exname
+         (throw (ex-info "Unrecognized error"
+                         {:cause :exception
+                          :exception-object ~exname}))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; JsonDocument
@@ -55,14 +72,15 @@
 ;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" +delectus-list-document-type+ "id" "FOO!"})
 
 (defn find-objects [bucket keys matching]
-  (let [selector (make-object-selector bucket keys matching)
-        bucket-name (.name bucket)
-        results (.query bucket (N1qlQuery/simple selector))]
-    (if (empty? keys)
-      ;; empty keys generate a SELECT *
-      ;; SELECT * returns each result wrapped in a map like this: {bucket-name found-object}
-      (map #(.get (.value %) bucket-name) results)
-      (map #(.value %) results))))
+  (with-couchbase-exceptions-rethrown
+    (let [selector (make-object-selector bucket keys matching)
+          bucket-name (.name bucket)
+          results (.query bucket (N1qlQuery/simple selector))]
+      (if (empty? keys)
+        ;; empty keys generate a SELECT *
+        ;; SELECT * returns each result wrapped in a map like this: {bucket-name found-object}
+        (map #(.get (.value %) bucket-name) results)
+        (map #(.value %) results)))))
 
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
 ;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +list-type+}))
@@ -107,7 +125,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defn id-exists? [bucket docid]
-  (.exists bucket docid))
+  (with-couchbase-exceptions-rethrown
+    (.exists bucket docid)))
 
 ;;; (def $bucket (config/delectus-users-bucket))
 ;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))
@@ -115,7 +134,8 @@
 ;;; (id-exists? $bucket "NOPE!")
 
 (defn get-document [bucket docid]
-  (.get bucket docid))
+  (with-couchbase-exceptions-rethrown
+    (.get bucket docid)))
 
 ;;; (def $bucket (config/delectus-content-bucket))
 ;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))

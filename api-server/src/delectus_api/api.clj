@@ -20,7 +20,11 @@
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
-;;; TODO: add error checking for nonexistent users and other DB objects
+
+
+;;; ---------------------------------------------------------------------
+;;; api functions
+;;; ---------------------------------------------------------------------
 
 ;;; users
 ;;; ---------------------------------------------------------------------

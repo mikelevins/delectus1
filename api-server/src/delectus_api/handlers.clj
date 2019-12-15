@@ -31,6 +31,7 @@
    :collection-name-exists conflict
    :collection-not-found not-found
    :couchbase-exception internal-server-error
+   :exception internal-server-error
    :login-failed unauthorized
    :user-not-found not-found
    })
@@ -108,37 +109,23 @@
     (ok (api/rename-collection userid collectionid newname))))
 
 (defn new-collection [userid name]
-  (try
-    (let [newid (api/new-collection userid name)]
-      (ok newid))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/new-collection userid name))))
 
 (defn delete-collection [userid collectionid]
-  (try
-    (api/delete-collection userid collectionid)
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/delete-collection userid collectionid))))
 
 (defn undelete-collection [userid collectionid]
-  (try
-    (api/undelete-collection userid collectionid)
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/undelete-collection userid collectionid))))
 
 (defn collection-deleted? [userid collectionid]
-  (try
-    (let [deleted (api/collection-deleted? userid collectionid)]
-      (ok deleted))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/collection-deleted? userid collectionid))))
 
 ;;; /api/list
 
-
 (defn lists [userid]
-  (try
-    (let [lists (api/lists userid)]
-      (ok lists))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/lists userid))))
