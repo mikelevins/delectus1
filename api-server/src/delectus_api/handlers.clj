@@ -61,53 +61,28 @@
 
 (defn authenticate [userid password]
   (with-errors-handled
-    (let [maybe-auth (api/authenticate userid password)]
-      (if maybe-auth
-        (ok {:token (auth/make-auth-token maybe-auth)})
-        (unauthorized "Authentication failed")))))
-
-;; (defn login [email password]
-;;   (try
-;;     (let [maybe-auth (api/login email password)]
-;;       (if maybe-auth
-;;         (ok {:token (auth/make-auth-token maybe-auth)})
-;;         (unauthorized "Login failed")))
-;;     (catch clojure.lang.ExceptionInfo ex
-;;       (handle-exception ex))))
+    (ok {:token (auth/make-auth-token (api/authenticate userid password))})))
 
 (defn login [email password]
   (with-errors-handled
-    (let [maybe-auth (api/login email password)]
-      (if maybe-auth
-        (ok {:token (auth/make-auth-token maybe-auth)})
-        (unauthorized "Login failed")))))
+    (ok {:token (auth/make-auth-token (api/login email password))})))
 
 (defn userid [email]
-  (try
-    (let [found-id (api/userid email)]
-      (if found-id
-        (ok found-id)
-        (not-found "No such user")))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/userid email))))
 
 (defn userdata [userid]
-  (try
+  (with-errors-handled
     (let [found-data (api/userdata userid)]
       (if found-data
         (ok found-data)
-        (not-found "No such user")))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+        (not-found "No such user")))))
 
 ;;; /api/collection
 
 (defn collections [userid]
-  (try
-    (let [collections (api/collections userid)]
-      (ok collections))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/collections userid))))
 
 (defn collection-with-id [userid collectionid]
   (try
