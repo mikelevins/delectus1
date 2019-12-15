@@ -1,7 +1,7 @@
 (ns delectus-api.api-test
   (:require [clojure.pprint :as pp]
             [clojure.test :refer :all]
-            [delectus-api.api :refer :all]
+            [delectus-api.api :as api]
             [delectus-api.configuration :as config]
             [delectus-api.constants :refer :all]
             [delectus-api.couchio :as couchio]
@@ -33,37 +33,33 @@
 (defn make-test-name [name]
   (str name "::" (makeid)))
 
-(def +stable-test-collection-id+ (str +test-data-prefix+ "Collection-0::" "029ef6f7-5170-4671-89b7-386ef1156c2d"))
-(def +stable-test-collection-name+ (str "Collection-0::" "7e1c04c3-4d05-41b3-81d4-a67d64c17092"))
-(def +stable-test-collection-alternate-name+ (str "Collection-0::" "Alternate-7e1c04c3-4d05-41b3-81d4-a67d64c17092"))
-(def +stable-test-list-0-id+ (str +test-data-prefix+  "List-0::" "23d4dce0-93f2-4983-a59e-cff092f8a987"))
-(def +stable-test-list-0-name+ (str  "List-0::" "f8047f56-bbc2-414b-a44b-86aefcc502a4"))
-(def +stable-test-list-1-id+ (str +test-data-prefix+  "List-1::" "905c6ab2-06a2-43dc-bf98-6fa9996bd64d"))
-(def +stable-test-list-1-name+ (str  "List-1::" "0e803fce-38be-4138-8456-e78b98366e5d"))
-(def +stable-test-list-1-alternate-name+ (str  "List-1::" "Alternate-0e803fce-38be-4138-8456-e78b98366e5d"))
-(def +stable-test-list-2-id+ (str +test-data-prefix+  "List-2::" "18c1dbdc-191c-4ac3-9994-abaac99d5522"))
-(def +stable-test-list-2-name+ (str  "List-2::" "56cc71c9-ef89-426d-971f-0baed5e511c6"))
-(def +stable-test-column-name-a+ "Column A")
-(def +stable-test-column-name-b+ "Column B")
+(def +test-user-id+ (:delectus-test-user-id (config/delectus-configuration)))
+(def +test-user-email+ (:delectus-test-user-email (config/delectus-configuration)))
+(def +test-user-password+ (:delectus-test-user-password (config/delectus-configuration)))
 
-;;; finds objects whose IDs are prefixed with the +test-data-prefix+
-(defn find-test-data [bucket]
-  (let [bucket-name (.name bucket)
-        selector (str "SELECT * from `" bucket-name "` "
-                      "WHERE id LIKE \"" +test-data-prefix+ "%\"")
-        results (.query bucket (N1qlQuery/simple selector))]
-    (map #(.get (.value %) bucket-name) results)))
+;;; ---------------------------------------------------------------------
+;;; keeping track of test data
+;;; ---------------------------------------------------------------------
 
-;;; (find-test-data (config/delectus-users-bucket))
-;;; (find-test-data (config/delectus-content-bucket))
+(def  +test-data-map+ (atom {}))
 
-;;; deletes objects whose IDs are prefixed with the +test-data-prefix+
-(defn delete-test-data [bucket]
-  (doall (map #(.remove bucket (.get % +id-attribute+))
-              (find-test-data bucket))))
+(defn get-test-data [key]
+  (get @+test-data-map+ key nil))
 
-;;; (delete-test-data (config/delectus-users-bucket))
-;;; (delete-test-data (config/delectus-content-bucket))
+;;; (get-test-data :foo)
+
+(defn reset-test-data! []
+  (swap! +test-data-map+ (constantly {})))
+
+;;; (assert-test-data! :foo "Bar")
+;;; (reset-test-data!)
+;;; (get-test-data :foo)
+
+(defn assert-test-data! [key val]
+  (swap! +test-data-map+ assoc key val))
+
+;;; (assert-test-data! :foo "Bar")
+;;; (get-test-data :foo)
 
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
@@ -71,7 +67,7 @@
 
 (defn setup-test-data []
   (println "setting up test data...")
-  
+
   ;;; wait after setup to make sure DB's API returns consistent results
   (Thread/sleep 2000))
 
@@ -83,8 +79,7 @@
   (println "deleting test data...")
   ;;; wait before teardown to make sure DB's API returns consistent results
   (Thread/sleep 2000)
-  (delete-test-data (config/delectus-users-bucket))
-  (delete-test-data (config/delectus-content-bucket))
+
   (println "Finished."))
 
 (defn test-fixture [f]
@@ -100,10 +95,10 @@
 ;;; ---------------------------------------------------------------------
 
 (deftest authenticate-test
-  (testing "authenticate"
+  (testing "/api/user/authenticate"
     (let [userid (:delectus-test-user-id (config/delectus-configuration))
           password (:delectus-test-user-password (config/delectus-configuration))
-          found-user (authenticate userid password)]
+          found-user (api/authenticate userid password)]
       (is found-user "found-user should be a user object"))))
 
 ;;; (def $userid (:delectus-test-user-id (config/delectus-configuration)))
@@ -111,25 +106,34 @@
 ;;; (authenticate $userid $password)
 
 (deftest login-test
-  (testing "login"
+  (testing "/api/user/login"
     (let [email (:delectus-test-user-email (config/delectus-configuration))
           password (:delectus-test-user-password (config/delectus-configuration))
-          found-user (login email password)]
+          found-user (api/login email password)]
       (is found-user "found-user should be a user object"))))
 
 (deftest userid-test
-  (testing "userid"
+  (testing "/api/user/userid"
     (let [email (:delectus-test-user-email (config/delectus-configuration))
-          found-id (couchio/email->userid email)]
+          found-id (api/userid email)]
       (is found-id "found-id should be a user ID string")
       (is (= found-id (:delectus-test-user-id (config/delectus-configuration)))
           "found-id should equal to the standard test user ID"))))
+
+(deftest userdata-test
+  (testing "/api/user/userdata"
+    (let [data (api/userdata (:delectus-test-user-id (config/delectus-configuration)))]
+      (is (= (:userid data) (:delectus-test-user-id (config/delectus-configuration)))
+          "userid should be the standard test-user ID string")
+      (is (= (:email data) (:delectus-test-user-email (config/delectus-configuration)))
+          "email should be the standard test-user email string"))))
 
 ;;; (def $testid (couchio/email->userid (:delectus-test-user-email (config/delectus-configuration))))
 
 ;;; ---------------------------------------------------------------------
 ;;; Collection tests
 ;;; ---------------------------------------------------------------------
+
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
