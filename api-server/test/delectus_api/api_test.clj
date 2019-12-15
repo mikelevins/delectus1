@@ -99,18 +99,33 @@
 ;;; User tests
 ;;; ---------------------------------------------------------------------
 
+(deftest authenticate-test
+  (testing "authenticate"
+    (let [userid (:delectus-test-user-id (config/delectus-configuration))
+          password (:delectus-test-user-password (config/delectus-configuration))
+          found-user (authenticate userid password)]
+      (is found-user "found-user should be a user object"))))
+
+;;; (def $userid (:delectus-test-user-id (config/delectus-configuration)))
+;;; (def $password (:delectus-test-user-password (config/delectus-configuration)))
+;;; (authenticate $userid $password)
+
 (deftest login-test
   (testing "login"
-    (let [email (:delectus-test-user (config/delectus-configuration))
+    (let [email (:delectus-test-user-email (config/delectus-configuration))
           password (:delectus-test-user-password (config/delectus-configuration))
           found-user (login email password)]
       (is found-user "found-user should be a user object"))))
 
 (deftest userid-test
   (testing "userid"
-    (let [email (:delectus-test-user (config/delectus-configuration))
+    (let [email (:delectus-test-user-email (config/delectus-configuration))
           found-id (couchio/email->userid email)]
-      (is found-id "found-id should be a user ID string"))))
+      (is found-id "found-id should be a user ID string")
+      (is (= found-id (:delectus-test-user-id (config/delectus-configuration)))
+          "found-id should equal to the standard test user ID"))))
+
+;;; (def $testid (couchio/email->userid (:delectus-test-user-email (config/delectus-configuration))))
 
 ;;; ---------------------------------------------------------------------
 ;;; Collection tests
