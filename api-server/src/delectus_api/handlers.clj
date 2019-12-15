@@ -30,6 +30,7 @@
    :authentication-failed unauthorized
    :collection-name-exists conflict
    :collection-not-found not-found
+   :couchbase-exception internal-server-error
    :login-failed unauthorized
    :user-not-found not-found
    })
@@ -73,10 +74,7 @@
 
 (defn userdata [userid]
   (with-errors-handled
-    (let [found-data (api/userdata userid)]
-      (if found-data
-        (ok found-data)
-        (not-found "No such user")))))
+    (ok (api/userdata userid))))
 
 ;;; /api/collection
 
@@ -85,25 +83,16 @@
     (ok (api/collections userid))))
 
 (defn collection-with-id [userid collectionid]
-  (try
-    (let [collection (api/collection-with-id userid collectionid)]
-      (ok collection))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/collection-with-id userid collectionid))))
 
 (defn collection-name [userid collectionid]
-  (try
-    (let [name (api/collection-name userid collectionid)]
-      (ok name))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/collection-name userid collectionid))))
 
 (defn collection-named [userid name]
-  (try
-    (let [collection (api/collection-named userid name)]
-      (ok collection))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+  (with-errors-handled
+    (ok (api/collection-named userid name))))
 
 (defn rename-collection [userid collectionid newname]
   (try
@@ -113,6 +102,10 @@
         (ok newname)))
     (catch clojure.lang.ExceptionInfo ex
       (handle-exception ex))))
+
+(defn rename-collection [userid collectionid newname]
+  (with-errors-handled
+    (ok (api/rename-collection userid collectionid newname))))
 
 (defn new-collection [userid name]
   (try

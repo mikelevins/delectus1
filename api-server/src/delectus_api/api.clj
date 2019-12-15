@@ -134,16 +134,20 @@
           (throw (ex-info "No such collection"
                           {:cause :collection-not-found
                            :userid userid :collectionid collectionid}))
-          (let [content-bucket (config/delectus-content-bucket)
-                mutator (.mutateIn content-bucket collectionid)
-                updater (.upsert mutator +name-attribute+ newname)]
-            (.execute updater)
-            newname)))
+          (try
+            (let [content-bucket (config/delectus-content-bucket)
+                  mutator (.mutateIn content-bucket collectionid)
+                  updater (.upsert mutator +name-attribute+ newname)]
+              (.execute updater)
+              newname)
+            (catch Exception ex
+              (throw (ex-info "Couchbase Error"
+                              {:cause :couchbase-exception
+                               :exception-object ex
+                               :userid userid :collectionid collectionid}))))))
       (throw (ex-info "No such user"
                       {:cause :user-not-found
                        :userid userid :collectionid collectionid})))))
-
-;;; (rename-collection "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" "NOPE!" "foo")
 
 (defn new-collection [userid name]
   (let [found-user (couchio/id->user userid)]
