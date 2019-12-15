@@ -43,28 +43,44 @@
       (handler info))))
 
 ;;; ---------------------------------------------------------------------
+;;; error-handling macros
+;;; ---------------------------------------------------------------------
+
+(defmacro with-errors-handled [& forms]
+  (let [exname (gensym)]
+    `(try
+       (do ~@forms)
+       (catch clojure.lang.ExceptionInfo ~exname
+         (handle-exception ~exname)))))
+
+;;; ---------------------------------------------------------------------
 ;;; endpoint handlers
 ;;; ---------------------------------------------------------------------
 
 ;;; /api/user
 
 (defn authenticate [userid password]
-  (try
+  (with-errors-handled
     (let [maybe-auth (api/authenticate userid password)]
       (if maybe-auth
         (ok {:token (auth/make-auth-token maybe-auth)})
-        (unauthorized "Authentication failed")))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+        (unauthorized "Authentication failed")))))
+
+;; (defn login [email password]
+;;   (try
+;;     (let [maybe-auth (api/login email password)]
+;;       (if maybe-auth
+;;         (ok {:token (auth/make-auth-token maybe-auth)})
+;;         (unauthorized "Login failed")))
+;;     (catch clojure.lang.ExceptionInfo ex
+;;       (handle-exception ex))))
 
 (defn login [email password]
-  (try
+  (with-errors-handled
     (let [maybe-auth (api/login email password)]
       (if maybe-auth
         (ok {:token (auth/make-auth-token maybe-auth)})
-        (unauthorized "Login failed")))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
+        (unauthorized "Login failed")))))
 
 (defn userid [email]
   (try

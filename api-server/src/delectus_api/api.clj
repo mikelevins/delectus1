@@ -31,11 +31,11 @@
                       {:cause :authentication-failed
                        :userid userid}))))
 
-(defn login [userid password]
-  (or (auth/login-user userid password)
+(defn login [email password]
+  (or (auth/login-user email password)
       (throw (ex-info "Login failed"
                       {:cause :login-failed
-                       :userid userid}))))
+                       :email email}))))
 
 (defn userid [email]
   (or (couchio/email->userid email)
