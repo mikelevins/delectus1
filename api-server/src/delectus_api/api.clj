@@ -15,11 +15,26 @@
    [tick.alpha.api :as t]
    )
   (:import
+   (com.couchbase.client.core CouchbaseException)
    (com.couchbase.client.java.datastructures.collections CouchbaseArrayList CouchbaseMap)
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
+
+
+;;; ---------------------------------------------------------------------
+;;; error handling for missing users
+;;; ---------------------------------------------------------------------
+
+(defmacro ensure-user [userid]
+  (let [exname (gensym)
+        found-user-name (gensym)]
+    `(let [~found-user-name (couchio/get-user ~userid)]
+       (or ~found-user-name
+           (throw (ex-info "No such user"
+                           {:cause :user-not-found
+                            :userid ~userid}))))))
 
 
 ;;; ---------------------------------------------------------------------
@@ -49,29 +64,26 @@
 
 ;;; (userid "mikel@evins.net")
 ;;; (userid "doo@evins.net")
+;;; (ensure-user (:delectus-test-user-id (config/delectus-configuration)))
+;;; (ensure-user "NOPE!")
 
 (defn userdata [userid]
-  (let [found-user (couchio/id->user userid)]
-    (if found-user
-      {:userid userid
+  (let [found-user (ensure-user userid)]
+    {:userid userid
        :name (.get found-user +name-attribute+)
-       :email (.get found-user +email-attribute+)}
-      (throw (ex-info "No such user"
-                      {:cause :user-not-found
-                       :userid userid})))))
+       :email (.get found-user +email-attribute+)}))
+
+;;; (userdata (:delectus-test-user-id (config/delectus-configuration)))
+;;; (userdata "NOPE!")
 
 ;;; collections
 ;;; ---------------------------------------------------------------------
 
 (defn collections [userid]
-  (let [found-user (couchio/id->user userid)]
-    (if found-user
-      (map #(select-keys (.toMap %) ["name" "id" "deleted"])
-           (couchio/find-objects (config/delectus-content-bucket) []
-                                 {"type" +collection-type+ "owner-id" userid}))
-      (throw (ex-info "No such user"
-                      {:cause :user-not-found
-                       :userid userid})))))
+  (let [found-user (ensure-user userid)]
+    (map #(select-keys (.toMap %) ["name" "id" "deleted"])
+         (couchio/find-objects (config/delectus-content-bucket) []
+                               {"type" +collection-type+ "owner-id" userid}))))
 
 ;;; (collections "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (collections "6235e7b7-eb83-47d9-a8ef-ac129601e810")
