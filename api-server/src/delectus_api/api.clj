@@ -62,7 +62,7 @@
 (defn collections [userid]
   (let [found-user (couchio/id->user userid)]
     (if found-user
-      (map #(select-keys (.toMap %) ["name" "id"])
+      (map #(select-keys (.toMap %) ["name" "id" "deleted"])
            (couchio/find-objects (config/delectus-content-bucket) []
                                  {"type" +collection-type+ "owner-id" userid}))
       (throw (ex-info "No such user"
@@ -165,8 +165,43 @@
                       {:cause :user-not-found
                        :userid userid})))))
 
+(defn delete-collection [userid collectionid]
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+        (if (empty? collections)
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid :collectionid collectionid}))
+          (let [content-bucket (config/delectus-content-bucket)
+                mutator (.mutateIn content-bucket collectionid)
+                updater (.upsert mutator +deleted-attribute+ true)]
+            (.execute updater)
+            collectionid)))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid :collectionid collectionid})))))
 
-
+(defn undelete-collection [userid collectionid]
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+        (if (empty? collections)
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid :collectionid collectionid}))
+          (let [content-bucket (config/delectus-content-bucket)
+                mutator (.mutateIn content-bucket collectionid)
+                updater (.upsert mutator +deleted-attribute+ false)]
+            (.execute updater)
+            collectionid)))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid :collectionid collectionid})))))
 
 ;;; lists
 ;;; ---------------------------------------------------------------------

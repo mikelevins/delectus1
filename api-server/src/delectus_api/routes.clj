@@ -1,4 +1,4 @@
-(ns delectus-api.endpoints
+(ns delectus-api.routes
   (:require
    [compojure.api.sweet :refer :all]
    [delectus-api.handlers :as handlers]
@@ -67,7 +67,7 @@
 
             (GET "/collections/:userid" req
                  :path-params [userid :- s/Str]
-                 :return [{s/Str s/Str}]
+                 :return [schema/CollectionDescription]
                  :summary "Returns the collections that belong to the user"
                  (handlers/collections userid))
 
@@ -101,8 +101,18 @@
                   :summary "Creates a new collection with the supplied name"
                   (handlers/new-collection userid name))
 
-            ;; (GET "/delectus/delete_collection" [] handlers/delete-collection)        
-            ;; (GET "/delectus/undelete_collection" [] handlers/undelete-collection)    
+            (POST "/delete_collection" req
+                  :body [{:keys [userid collectionid]} schema/DeleteCollectionRequest]
+                  :return s/Str
+                  :summary "Marks a collection deleted"
+                  (handlers/delete-collection userid collectionid))
+
+            (POST "/undelete_collection" req
+                  :body [{:keys [userid collectionid]} schema/DeleteCollectionRequest]
+                  :return s/Str
+                  :summary "Marks a collection not deleted"
+                  (handlers/undelete-collection userid collectionid))
+
             ;; (GET "/delectus/collection_deleted" [] handlers/collection-deleted?)        
             ;; (GET "/delectus/collection_lists" [] handlers/collection-lists)          
             ;; (GET "/delectus/collection_add_list" [] handlers/collection-add-list)

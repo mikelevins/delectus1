@@ -130,6 +130,18 @@
     (catch clojure.lang.ExceptionInfo ex
       (handle-exception ex))))
 
+(defn delete-collection [userid collectionid]
+  (try
+    (api/delete-collection userid collectionid)
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
+
+(defn undelete-collection [userid collectionid]
+  (try
+    (api/undelete-collection userid collectionid)
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
+
 ;;; /api/list
 
 
