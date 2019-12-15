@@ -203,6 +203,22 @@
                       {:cause :user-not-found
                        :userid userid :collectionid collectionid})))))
 
+(defn collection-deleted? [userid collectionid]
+  (let [found-user (couchio/id->user userid)]
+    (if found-user
+      (let [collections (couchio/find-objects
+                         (config/delectus-content-bucket) []
+                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
+        (if (empty? collections)
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid :collectionid collectionid}))
+          (let [collection (first collections)]
+            (.get collection +deleted-attribute+))))
+      (throw (ex-info "No such user"
+                      {:cause :user-not-found
+                       :userid userid :collectionid collectionid})))))
+
 ;;; lists
 ;;; ---------------------------------------------------------------------
 

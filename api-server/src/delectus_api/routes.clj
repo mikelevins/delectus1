@@ -113,7 +113,13 @@
                   :summary "Marks a collection not deleted"
                   (handlers/undelete-collection userid collectionid))
 
-            ;; (GET "/delectus/collection_deleted" [] handlers/collection-deleted?)        
+
+            (GET "/collection_deleted/:userid/:collectionid" req
+                 :path-params [userid :- s/Str collectionid :- s/Str]
+                 :return s/Bool
+                 :summary "Returns true if the collection has been marked deleted, and false otherwise"
+                 (handlers/collection-deleted? userid collectionid))
+
             ;; (GET "/delectus/collection_lists" [] handlers/collection-lists)          
             ;; (GET "/delectus/collection_add_list" [] handlers/collection-add-list)
             ;; (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)

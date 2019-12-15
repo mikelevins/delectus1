@@ -142,6 +142,13 @@
     (catch clojure.lang.ExceptionInfo ex
       (handle-exception ex))))
 
+(defn collection-deleted? [userid collectionid]
+  (try
+    (let [deleted (api/collection-deleted? userid collectionid)]
+      (ok deleted))
+    (catch clojure.lang.ExceptionInfo ex
+      (handle-exception ex))))
+
 ;;; /api/list
 
 
