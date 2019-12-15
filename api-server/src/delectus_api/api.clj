@@ -94,19 +94,15 @@
 (defn collection-name [userid collectionid]
   (let [found-user (couchio/id->user userid)]
     (if found-user
-      (let [collections (couchio/find-objects
-                         (config/delectus-content-bucket) []
-                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-        (if (empty? collections)
+      (let [collection (couchio/get-collection collectionid)]
+        (if collection
+          (.get collection +name-attribute+)
           (throw (ex-info "No such collection"
                           {:cause :collection-not-found
-                           :userid userid :collectionid collectionid}))
-          (let [collection (first collections)]
-            (.get collection +name-attribute+))))
+                           :userid userid :collectionid collectionid}))))
       (throw (ex-info "No such user"
                       {:cause :user-not-found
                        :userid userid :collectionid collectionid})))))
-
 
 (defn collection-named [userid name]
   (let [found-user (couchio/id->user userid)]
@@ -128,13 +124,8 @@
 (defn rename-collection [userid collectionid newname]
   (let [found-user (couchio/id->user userid)]
     (if found-user
-      (let [collections (couchio/find-objects
-                         (config/delectus-content-bucket) []
-                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-        (if (empty? collections)
-          (throw (ex-info "No such collection"
-                          {:cause :collection-not-found
-                           :userid userid :collectionid collectionid}))
+      (let [collection (couchio/get-collection collectionid)]
+        (if collection
           (try
             (let [content-bucket (config/delectus-content-bucket)
                   mutator (.mutateIn content-bucket collectionid)
@@ -145,7 +136,10 @@
               (throw (ex-info "Couchbase Error"
                               {:cause :couchbase-exception
                                :exception-object ex
-                               :userid userid :collectionid collectionid}))))))
+                               :userid userid :collectionid collectionid}))))
+          (throw (ex-info "No such collection"
+                          {:cause :collection-not-found
+                           :userid userid :collectionid collectionid}))))
       (throw (ex-info "No such user"
                       {:cause :user-not-found
                        :userid userid :collectionid collectionid})))))
@@ -173,18 +167,22 @@
 (defn delete-collection [userid collectionid]
   (let [found-user (couchio/id->user userid)]
     (if found-user
-      (let [collections (couchio/find-objects
-                         (config/delectus-content-bucket) []
-                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-        (if (empty? collections)
+      (let [collection (couchio/get-collection collectionid)]
+        (if collection
+          (try
+            (let [content-bucket (config/delectus-content-bucket)
+                  mutator (.mutateIn content-bucket collectionid)
+                  updater (.upsert mutator +deleted-attribute+ true)]
+              (.execute updater)
+              collectionid)
+            (catch Exception ex
+              (throw (ex-info "Couchbase Error"
+                              {:cause :couchbase-exception
+                               :exception-object ex
+                               :userid userid :collectionid collectionid}))))
           (throw (ex-info "No such collection"
                           {:cause :collection-not-found
-                           :userid userid :collectionid collectionid}))
-          (let [content-bucket (config/delectus-content-bucket)
-                mutator (.mutateIn content-bucket collectionid)
-                updater (.upsert mutator +deleted-attribute+ true)]
-            (.execute updater)
-            collectionid)))
+                           :userid userid :collectionid collectionid}))))
       (throw (ex-info "No such user"
                       {:cause :user-not-found
                        :userid userid :collectionid collectionid})))))
@@ -192,18 +190,22 @@
 (defn undelete-collection [userid collectionid]
   (let [found-user (couchio/id->user userid)]
     (if found-user
-      (let [collections (couchio/find-objects
-                         (config/delectus-content-bucket) []
-                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-        (if (empty? collections)
+      (let [collection (couchio/get-collection collectionid)]
+        (if collection
+          (try
+            (let [content-bucket (config/delectus-content-bucket)
+                  mutator (.mutateIn content-bucket collectionid)
+                  updater (.upsert mutator +deleted-attribute+ false)]
+              (.execute updater)
+              collectionid)
+            (catch Exception ex
+              (throw (ex-info "Couchbase Error"
+                              {:cause :couchbase-exception
+                               :exception-object ex
+                               :userid userid :collectionid collectionid}))))
           (throw (ex-info "No such collection"
                           {:cause :collection-not-found
-                           :userid userid :collectionid collectionid}))
-          (let [content-bucket (config/delectus-content-bucket)
-                mutator (.mutateIn content-bucket collectionid)
-                updater (.upsert mutator +deleted-attribute+ false)]
-            (.execute updater)
-            collectionid)))
+                           :userid userid :collectionid collectionid}))))
       (throw (ex-info "No such user"
                       {:cause :user-not-found
                        :userid userid :collectionid collectionid})))))
@@ -211,18 +213,23 @@
 (defn collection-deleted? [userid collectionid]
   (let [found-user (couchio/id->user userid)]
     (if found-user
-      (let [collections (couchio/find-objects
-                         (config/delectus-content-bucket) []
-                         {"type" +collection-type+ "owner-id" userid "id" collectionid})]
-        (if (empty? collections)
+      (let [collection (couchio/get-collection collectionid)]
+        (if collection
+          (try
+            (.get collection +deleted-attribute+)
+            (catch Exception ex
+              (throw (ex-info "Couchbase Error"
+                              {:cause :couchbase-exception
+                               :exception-object ex
+                               :userid userid :collectionid collectionid}))))
           (throw (ex-info "No such collection"
                           {:cause :collection-not-found
-                           :userid userid :collectionid collectionid}))
-          (let [collection (first collections)]
-            (.get collection +deleted-attribute+))))
+                           :userid userid :collectionid collectionid}))))
       (throw (ex-info "No such user"
                       {:cause :user-not-found
                        :userid userid :collectionid collectionid})))))
+
+
 
 ;;; lists
 ;;; ---------------------------------------------------------------------
