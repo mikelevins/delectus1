@@ -42,13 +42,14 @@
 
 (defmacro ensure-user [userid]
   (let [exname (gensym)
-        found-user-name (gensym)]
-    `(let [~found-user-name (couchio/get-user ~userid)]
-       (if ~found-user-name
-         (= +user-type+ (.get ~found-user-name +type-attribute+))
-         (throw (ex-info "No such user"
-                         {:cause :user-not-found
-                          :userid ~userid}))))))
+        found-user (gensym)]
+    `(let [~found-user (couchio/get-user ~userid)]
+       (if ~found-user
+         (if (= +user-type+ (.get ~found-user +type-attribute+))
+           ~found-user
+           (throw (ex-info "No such user"
+                           {:cause :user-not-found
+                            :userid ~userid})))))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
@@ -72,13 +73,18 @@
 
 (defmacro ensure-collection [collectionid]
   (let [exname (gensym)
-        found-collection-name (gensym)]
-    `(let [~found-collection-name (couchio/get-collection ~collectionid)]
-       (if ~found-collection-name
-         (= +collection-type+ (.get ~found-collection-name +type-attribute+))
-         (throw (ex-info "No such collection"
-                         {:cause :collection-not-found
-                          :collectionid ~collectionid}))))))
+        found-collection (gensym)]
+    `(let [~found-collection (couchio/get-collection ~collectionid)]
+       (if ~found-collection
+         (if (= +collection-type+ (.get ~found-collection +type-attribute+))
+           ~found-collection
+           (throw (ex-info "No such collection"
+                           {:cause :collection-not-found
+                            :collectionid ~collectionid})))))))
+
+;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (ensure-collection $collectionid)
 
 (defmacro ensure-list-exists [listid]
   (let [exname (gensym)]
@@ -96,13 +102,18 @@
 
 (defmacro ensure-list [listid]
   (let [exname (gensym)
-        found-list-name (gensym)]
-    `(let [~found-list-name (couchio/get-list ~listid)]
-       (if ~found-list-name
-         (= +list-type+ (.get ~found-list-name +type-attribute+))
-         (throw (ex-info "No such list"
-                         {:cause :list-not-found
-                          :listid ~listid}))))))
+        found-list (gensym)]
+    `(let [~found-list (couchio/get-list ~listid)]
+       (if ~found-list
+         (if (= +list-type+ (.get ~found-list +type-attribute+))
+           ~found-list
+           (throw (ex-info "No such list"
+                           {:cause :list-not-found
+                            :listid ~listid})))))))
+
+;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (ensure-list $listid)
 
 
 ;;; ---------------------------------------------------------------------
@@ -148,10 +159,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defn collections [userid]
-  (let [found-user (ensure-user userid)]
-    (map #(select-keys (.toMap %) ["name" "id" "deleted"])
-         (couchio/find-objects (config/delectus-content-bucket) []
-                               {"type" +collection-type+ "owner-id" userid}))))
+  (ensure-user-exists userid)
+  (map #(select-keys (.toMap %) ["name" "id" "deleted"])
+       (couchio/find-objects (config/delectus-content-bucket) []
+                             {"type" +collection-type+ "owner-id" userid})))
 
 ;;; (userid "mikel@evins.net")
 ;;; (collections "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
@@ -159,10 +170,14 @@
 ;;; (collections "BOGUS")
 
 (defn collection-with-id [userid collectionid]
-  (let [found-user (ensure-user userid)]
-    (let [collection (ensure-collection collectionid)]
-      {"name" (.get collection +name-attribute+)
-       "id" (.get collection +id-attribute+)})))
+  (ensure-user-exists userid)
+  (let [collection (ensure-collection collectionid)]
+    {"name" (.get collection +name-attribute+)
+     "id" (.get collection +id-attribute+)}))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
+;;; (collection-with-id $mikelid $collectionid)
 
 (defn collection-name [userid collectionid]
   (let [found-user (ensure-user userid)]
