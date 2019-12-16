@@ -185,118 +185,130 @@
 
 (defn collection-with-id [userid collectionid]
   (ensure-user-exists userid)
-  (let [collection (ensure-collection collectionid)]
-    {"name" (.get collection +name-attribute+)
-     "id" (.get collection +id-attribute+)}))
+  (ensure-collection-exists collectionid)
+  (ensure-owner collectionid userid)
+  {"name" (couchio/get-object-attribute (config/delectus-content-bucket)
+                                        collectionid +name-attribute+)
+   "id" (couchio/get-object-attribute (config/delectus-content-bucket)
+                                        collectionid +id-attribute+)})
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
 ;;; (collection-with-id $mikelid $collectionid)
 
 (defn collection-name [userid collectionid]
-  (let [found-user (ensure-user userid)]
-    (let [collection (ensure-collection collectionid)]
-      (.get collection +name-attribute+))))
+  (ensure-user-exists userid)
+  (ensure-collection-exists collectionid)
+  (ensure-owner collectionid userid)
+  (couchio/get-object-attribute (config/delectus-content-bucket)
+                                collectionid +name-attribute+))
 
 (defn collection-named [userid name]
-  (let [found-user (ensure-user userid)]
-    (let [collections (couchio/find-objects
-                       (config/delectus-content-bucket) []
-                       {"type" +collection-type+ "owner-id" userid "name" name})]
-      (if (empty? collections)
-        (throw (ex-info "No such collection"
-                        {:cause :collection-not-found
-                         :userid userid}))
-        (let [collection (first collections)]
-          {"name" (.get collection +name-attribute+)
-           "id" (.get collection +id-attribute+)})))))
+  (ensure-user-exists userid)
+  (let [collections (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +collection-type+ "owner-id" userid "name" name})]
+    (if (empty? collections)
+      (throw (ex-info "No such collection"
+                      {:cause :collection-not-found
+                       :userid userid}))
+      (let [collection (first collections)]
+        {"name" (.get collection +name-attribute+)
+         "id" (.get collection +id-attribute+)}))))
 
 (defn rename-collection [userid collectionid newname]
-  (let [found-user (ensure-user userid)]
-    (let [collection (ensure-collection collectionid)]
-      (try
-        (couchio/upsert-object-attribute! (config/delectus-content-bucket)
-                                          collectionid newname)
-        (catch Exception ex
-          (throw (ex-info "Couchbase Error"
-                          {:cause :couchbase-exception
-                           :exception-object ex
-                           :userid userid :collectionid collectionid})))))))
+  (ensure-user-exists userid)
+  (ensure-collection-exists collectionid)
+  (ensure-owner collectionid userid)
+  (let [collection (ensure-collection collectionid)]
+    (try
+      (couchio/upsert-object-attribute! (config/delectus-content-bucket) collectionid +name-attribute+ newname)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :collectionid collectionid}))))))
 
 (defn new-collection [userid name]
-  (let [found-user (ensure-user userid)]
-    (let [collections (couchio/find-objects
-                       (config/delectus-content-bucket) []
-                       {"type" +collection-type+ "owner-id" userid "name" name})]
-      (if (empty? collections)
-        (let [id (makeid)
-              collection-doc (model/make-collection-document :id id :name name :owner-id userid)]
-          (.upsert (config/delectus-content-bucket)
-                   collection-doc)
-          id)
-        (throw (ex-info "Name exists"
-                        {:cause :collection-name-exists
-                         :collectionname name
-                         :userid userid}))))))
+  (ensure-user-exists userid)
+  (let [collections (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +collection-type+ "owner-id" userid "name" name})]
+    (if (empty? collections)
+      (let [id (makeid)
+            collection-doc (model/make-collection-document :id id :name name :owner-id userid)]
+        (.upsert (config/delectus-content-bucket)
+                 collection-doc)
+        id)
+      (throw (ex-info "Name exists"
+                      {:cause :collection-name-exists
+                       :collectionname name
+                       :userid userid})))))
 
 (defn delete-collection [userid collectionid]
-  (let [found-user (ensure-user userid)]
-    (let [collection (ensure-collection collectionid)]
-      (try
-        (let [content-bucket (config/delectus-content-bucket)
-              mutator (.mutateIn content-bucket collectionid)
-              updater (.upsert mutator +deleted-attribute+ true)]
-          (.execute updater)
-          collectionid)
-        (catch Exception ex
-          (throw (ex-info "Couchbase Error"
-                          {:cause :couchbase-exception
-                           :exception-object ex
-                           :userid userid :collectionid collectionid})))))))
+  (ensure-user-exists userid)
+  (ensure-collection-exists collectionid)
+  (ensure-owner collectionid userid)
+  (let [collection (ensure-collection collectionid)]
+    (try
+      (let [content-bucket (config/delectus-content-bucket)
+            mutator (.mutateIn content-bucket collectionid)
+            updater (.upsert mutator +deleted-attribute+ true)]
+        (.execute updater)
+        collectionid)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :collectionid collectionid}))))))
 
 (defn undelete-collection [userid collectionid]
-  (let [found-user (ensure-user userid)]
-    (let [collection (ensure-collection collectionid)]
-      (try
-        (let [content-bucket (config/delectus-content-bucket)
-              mutator (.mutateIn content-bucket collectionid)
-              updater (.upsert mutator +deleted-attribute+ false)]
-          (.execute updater)
-          collectionid)
-        (catch Exception ex
-          (throw (ex-info "Couchbase Error"
-                          {:cause :couchbase-exception
-                           :exception-object ex
-                           :userid userid :collectionid collectionid})))))))
+  (ensure-user-exists userid)
+  (ensure-collection-exists collectionid)
+  (ensure-owner collectionid userid)
+  (let [collection (ensure-collection collectionid)]
+    (try
+      (let [content-bucket (config/delectus-content-bucket)
+            mutator (.mutateIn content-bucket collectionid)
+            updater (.upsert mutator +deleted-attribute+ false)]
+        (.execute updater)
+        collectionid)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :collectionid collectionid}))))))
 
 (defn collection-deleted? [userid collectionid]
-  (let [found-user (ensure-user userid)]
-    (let [collection (ensure-collection collectionid)]
-      (try
-        (.get collection +deleted-attribute+)
-        (catch Exception ex
-          (throw (ex-info "Couchbase Error"
-                          {:cause :couchbase-exception
-                           :exception-object ex
-                           :userid userid :collectionid collectionid})))))))
+  (ensure-user-exists userid)
+  (ensure-collection-exists collectionid)
+  (ensure-owner collectionid userid)
+  (let [collection (ensure-collection collectionid)]
+    (try
+      (.get collection +deleted-attribute+)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :collectionid collectionid}))))))
 
 (defn collection-lists [userid collectionid]
-  (let [found-user (ensure-user userid)]
-    (let [found-collection (ensure-collection collectionid)
-          collection-lists (.get found-collection +lists-attribute+)]
-      (if collection-lists
-        (let [list-map (.toMap collection-lists)
-              list-keys (keys list-map)
-              list-descriptions (filter identity
-                                        (map (fn [k]
-                                               (let [ls (couchio/get-list k)]
-                                                 (if ls
-                                                   {"name" (.get ls +name-attribute+)
-                                                    "id" (.get ls +id-attribute+)}
-                                                   nil)))
-                                             list-keys))]
-          (into [] list-descriptions))
-        nil))))
+  (ensure-user-exists userid)
+  (ensure-collection-exists collectionid)
+  (ensure-owner collectionid userid)
+  (let [collection-lists (couchio/get-object-attribute (config/delectus-content-bucket)
+                                                       collectionid +lists-attribute+)]
+    (if collection-lists
+      (let [list-map (.toMap collection-lists)
+            list-keys (keys list-map)
+            found-lists (map couchio/get-list list-keys)
+            list-descriptions (map #(if %
+                                      {+name-attribute+ (.get % +name-attribute+)
+                                       +id-attribute+ (.get % +id-attribute+)}
+                                      nil)
+                                   found-lists)]
+        (into [] (filter identity list-descriptions)))
+      nil)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
@@ -306,10 +318,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defn lists [userid]
-  (let [found-user (ensure-user userid)]
-    (map #(select-keys (.toMap %) ["name" "id"])
-         (couchio/find-objects (config/delectus-content-bucket) []
-                               {"type" +list-type+ "owner-id" userid}))))
+  (ensure-user-exists userid)
+  (map #(select-keys (.toMap %) ["name" "id"])
+       (couchio/find-objects (config/delectus-content-bucket) []
+                             {"type" +list-type+ "owner-id" userid})))
 
 
 
