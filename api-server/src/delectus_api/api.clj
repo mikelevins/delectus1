@@ -24,7 +24,7 @@
 
 
 ;;; ---------------------------------------------------------------------
-;;; error handling for missing users
+;;; ensuring that users, collections, and lists exist and are of the right type
 ;;; ---------------------------------------------------------------------
 
 (defmacro ensure-user-exists [userid]
@@ -115,6 +115,10 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (ensure-list $listid)
 
+;;; ---------------------------------------------------------------------
+;;; ensuring that objects belong to the expceted owner
+;;; ---------------------------------------------------------------------
+;;; TODO: implement these!
 
 ;;; ---------------------------------------------------------------------
 ;;; api functions
