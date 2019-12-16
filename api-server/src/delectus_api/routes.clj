@@ -124,13 +124,7 @@
                  :path-params [userid :- s/Str collectionid :- s/Str]
                  :return [{s/Str s/Str}]
                  :summary "Returns the collection's lists"
-                 (handlers/collection-lists userid collectionid))
-
-            (POST "/collection_add_list" req
-                  :body [{:keys [userid collectionid listid]} schema/CollectionAddListRequest]
-                  :return s/Str
-                  :summary "Adds the list to the collection"
-                  (handlers/collection-add-list userid collectionid listid))
+                 (handlers/collection-lists userid collectionid))            
 
             ;; (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
             )
@@ -142,6 +136,12 @@
                  :return [{s/Str s/Str}]
                  :summary "Returns the lists that belong to the user"
                  (handlers/lists userid))
+
+            (POST "/move_to_collection" req
+                  :body [{:keys [userid listid collectionid]} schema/ListMoveToCollectionRequest]
+                  :return s/Str
+                  :summary "Adds the list to the collection"
+                  (handlers/list-move-to-collection userid listid collectionid))
 
             ;; (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
             ;; (GET "/delectus/list_name" [] handlers/list-name)

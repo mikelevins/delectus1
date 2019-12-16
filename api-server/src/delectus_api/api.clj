@@ -302,7 +302,17 @@
                               "owner-id" userid
                               "collection" collectionid})))
 
-(defn collection-add-list [userid collectionid listid]
+;;; lists
+;;; ---------------------------------------------------------------------
+
+(defn lists [userid]
+  (ensure-user-exists userid)
+  (map #(select-keys (.toMap %) ["name" "id"])
+       (couchio/find-objects (config/delectus-content-bucket) []
+                             {"type" +list-type+ "owner-id" userid})))
+
+
+(defn list-move-to-collection [userid listid collectionid]
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)
   (ensure-list-exists listid)
@@ -317,17 +327,8 @@
 ;;; (def $things-list-id "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
 ;;; (collection-lists $mikelid $default-collection-id)
 ;;; (collection-lists $mikelid $things-collection-id)
-;;; (collection-add-list $mikelid $default-collection-id $things-list-id)
-;;; (collection-add-list $mikelid $things-collection-id $things-list-id)
-
-;;; lists
-;;; ---------------------------------------------------------------------
-
-(defn lists [userid]
-  (ensure-user-exists userid)
-  (map #(select-keys (.toMap %) ["name" "id"])
-       (couchio/find-objects (config/delectus-content-bucket) []
-                             {"type" +list-type+ "owner-id" userid})))
+;;; (list-move-to-collection $mikelid $things-list-id $default-collection-id)
+;;; (list-move-to-collection $mikelid $things-list-id $things-collection-id)
 
 
 

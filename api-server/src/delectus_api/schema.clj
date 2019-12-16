@@ -11,11 +11,6 @@
   {:userid s/Str
    :password s/Str})
 
-(s/defschema CollectionAddListRequest
-  {:userid s/Str
-   :collectionid s/Str
-   :listid s/Str})
-
 (s/defschema CollectionDescription
   {(s/required-key "name") s/Str
    (s/required-key "id") s/Str
@@ -28,6 +23,11 @@
 
 (s/defschema DeleteCollectionRequest
   {:userid s/Str
+   :collectionid s/Str})
+
+(s/defschema ListMoveToCollectionRequest
+  {:userid s/Str
+   :listid s/Str
    :collectionid s/Str})
 
 (s/defschema LoginRequest
