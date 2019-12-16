@@ -103,6 +103,7 @@
          (couchio/find-objects (config/delectus-content-bucket) []
                                {"type" +collection-type+ "owner-id" userid}))))
 
+;;; (userid "mikel@evins.net")
 ;;; (collections "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (collections "6235e7b7-eb83-47d9-a8ef-ac129601e810")
 ;;; (collections "BOGUS")
@@ -202,6 +203,28 @@
                           {:cause :couchbase-exception
                            :exception-object ex
                            :userid userid :collectionid collectionid})))))))
+
+(defn collection-lists [userid collectionid]
+  (let [found-user (ensure-user userid)]
+    (let [found-collection (ensure-collection collectionid)
+          collection-lists (.get found-collection +lists-attribute+)]
+      (if collection-lists
+        (let [list-map (.toMap collection-lists)
+              list-keys (keys list-map)
+              list-descriptions (filter identity
+                                        (map (fn [k]
+                                               (let [ls (couchio/get-list k)]
+                                                 (if ls
+                                                   {"name" (.get ls +name-attribute+)
+                                                    "id" (.get ls +id-attribute+)}
+                                                   nil)))
+                                             list-keys))]
+          (into [] list-descriptions))
+        nil))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
+;;; (collection-lists $mikelid $collectionid)
 
 ;;; lists
 ;;; ---------------------------------------------------------------------
