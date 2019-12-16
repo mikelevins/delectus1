@@ -28,12 +28,11 @@
 ;;; ---------------------------------------------------------------------
 
 (defmacro ensure-user-exists [userid]
-  (let [exname (gensym)]
-    `(if (couchio/user-exists? ~userid)
-       ~userid
-       (throw (ex-info "No such user"
-                       {:cause :user-not-found
-                        :userid ~userid})))))
+  `(if (couchio/user-exists? ~userid)
+     ~userid
+     (throw (ex-info "No such user"
+                     {:cause :user-not-found
+                      :userid ~userid}))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
@@ -41,15 +40,14 @@
 ;;; (ensure-user-exists $listid)
 
 (defmacro ensure-user [userid]
-  (let [exname (gensym)
-        found-user (gensym)]
+  (let [found-user (gensym)]
     `(let [~found-user (couchio/get-user ~userid)]
-       (if ~found-user
-         (if (= +user-type+ (.get ~found-user +type-attribute+))
-           ~found-user
-           (throw (ex-info "No such user"
-                           {:cause :user-not-found
-                            :userid ~userid})))))))
+       (if (and ~found-user
+                (= +user-type+ (.get ~found-user +type-attribute+)))
+         ~found-user
+         (throw (ex-info "No such user"
+                         {:cause :user-not-found
+                          :userid ~userid}))))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
@@ -58,12 +56,11 @@
 ;;; (ensure-user "NOPE!")
 
 (defmacro ensure-collection-exists [collectionid]
-  (let [exname (gensym)]
-    `(if (couchio/collection-exists? ~collectionid)
-       ~collectionid
-       (throw (ex-info "No such collection"
-                       {:cause :collection-not-found
-                        :collectionid ~collectionid})))))
+  `(if (couchio/collection-exists? ~collectionid)
+     ~collectionid
+     (throw (ex-info "No such collection"
+                     {:cause :collection-not-found
+                      :collectionid ~collectionid}))))
 
 
 ;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
@@ -72,28 +69,25 @@
 ;;; (ensure-collection-exists $mikelid)
 
 (defmacro ensure-collection [collectionid]
-  (let [exname (gensym)
-        found-collection (gensym)]
+  (let [found-collection (gensym)]
     `(let [~found-collection (couchio/get-collection ~collectionid)]
-       (if ~found-collection
-         (if (= +collection-type+ (.get ~found-collection +type-attribute+))
-           ~found-collection
-           (throw (ex-info "No such collection"
-                           {:cause :collection-not-found
-                            :collectionid ~collectionid})))))))
+       (if (and ~found-collection
+                (= +collection-type+ (.get ~found-collection +type-attribute+)))
+         ~found-collection
+         (throw (ex-info "No such collection"
+                         {:cause :collection-not-found
+                          :collectionid ~collectionid}))))))
 
 ;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (ensure-collection $collectionid)
 
 (defmacro ensure-list-exists [listid]
-  (let [exname (gensym)]
-    `(if (couchio/list-exists? ~listid)
-       ~listid
-       (throw (ex-info "No such list"
-                       {:cause :list-not-found
-                        :listid ~listid})))))
-
+  `(if (couchio/list-exists? ~listid)
+     ~listid
+     (throw (ex-info "No such list"
+                     {:cause :list-not-found
+                      :listid ~listid}))))
 
 ;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
@@ -101,24 +95,40 @@
 ;;; (ensure-list-exists $mikelid)
 
 (defmacro ensure-list [listid]
-  (let [exname (gensym)
-        found-list (gensym)]
+  (let [found-list (gensym)]
     `(let [~found-list (couchio/get-list ~listid)]
-       (if ~found-list
-         (if (= +list-type+ (.get ~found-list +type-attribute+))
-           ~found-list
-           (throw (ex-info "No such list"
-                           {:cause :list-not-found
-                            :listid ~listid})))))))
+       (if (and ~found-list
+                (= +list-type+ (.get ~found-list +type-attribute+)))
+         ~found-list
+         (throw (ex-info "No such list"
+                         {:cause :list-not-found
+                          :listid ~listid}))))))
 
 ;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (ensure-list $listid)
 
 ;;; ---------------------------------------------------------------------
-;;; ensuring that objects belong to the expceted owner
+;;; ensuring that objects belong to the expected owner
 ;;; ---------------------------------------------------------------------
-;;; TODO: implement these!
+
+(defmacro ensure-owner [objectid userid]
+  (let [found-owner (gensym)]
+    `(let [~found-owner (couchio/get-object-attribute (config/delectus-content-bucket)
+                                                      ~objectid +owner-id-attribute+)]
+       (if (and ~found-owner
+                (= ~found-owner ~userid))
+         ~found-owner
+         (throw (ex-info "Wrong owner ID"
+                         {:cause :wrong-owner-id
+                          :expected ~userid
+                          :found ~found-owner}))))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $good-collection-id "14bae88e-70c4-4c89-981e-1c744ede469c")
+;;; (def $bad-collection-id "868df782-df55-4528-8034-695eebbff3f3")
+;;; (ensure-owner $good-collection-id $mikelid)
+;;; (ensure-owner $bad-collection-id $mikelid)
 
 ;;; ---------------------------------------------------------------------
 ;;; api functions
