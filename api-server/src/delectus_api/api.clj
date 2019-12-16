@@ -27,32 +27,82 @@
 ;;; error handling for missing users
 ;;; ---------------------------------------------------------------------
 
+(defmacro ensure-user-exists [userid]
+  (let [exname (gensym)]
+    `(if (couchio/user-exists? ~userid)
+       ~userid
+       (throw (ex-info "No such user"
+                       {:cause :user-not-found
+                        :userid ~userid})))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
+;;; (ensure-user-exists $mikelid)
+;;; (ensure-user-exists $listid)
+
 (defmacro ensure-user [userid]
   (let [exname (gensym)
         found-user-name (gensym)]
     `(let [~found-user-name (couchio/get-user ~userid)]
-       (or ~found-user-name
-           (throw (ex-info "No such user"
-                           {:cause :user-not-found
-                            :userid ~userid}))))))
+       (if ~found-user-name
+         (= +user-type+ (.get ~found-user-name +type-attribute+))
+         (throw (ex-info "No such user"
+                         {:cause :user-not-found
+                          :userid ~userid}))))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
+;;; (ensure-user $mikelid)
+;;; (ensure-user $listid)
+;;; (ensure-user "NOPE!")
+
+(defmacro ensure-collection-exists [collectionid]
+  (let [exname (gensym)]
+    `(if (couchio/collection-exists? ~collectionid)
+       ~collectionid
+       (throw (ex-info "No such collection"
+                       {:cause :collection-not-found
+                        :collectionid ~collectionid})))))
+
+
+;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (ensure-collection-exists $collectionid)
+;;; (ensure-collection-exists $mikelid)
 
 (defmacro ensure-collection [collectionid]
   (let [exname (gensym)
         found-collection-name (gensym)]
     `(let [~found-collection-name (couchio/get-collection ~collectionid)]
-       (or ~found-collection-name
-           (throw (ex-info "No such collection"
-                           {:cause :collection-not-found
-                            :collectionid ~collectionid}))))))
+       (if ~found-collection-name
+         (= +collection-type+ (.get ~found-collection-name +type-attribute+))
+         (throw (ex-info "No such collection"
+                         {:cause :collection-not-found
+                          :collectionid ~collectionid}))))))
+
+(defmacro ensure-list-exists [listid]
+  (let [exname (gensym)]
+    `(if (couchio/list-exists? ~listid)
+       ~listid
+       (throw (ex-info "No such list"
+                       {:cause :list-not-found
+                        :listid ~listid})))))
+
+
+;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (ensure-list-exists $listid)
+;;; (ensure-list-exists $mikelid)
 
 (defmacro ensure-list [listid]
   (let [exname (gensym)
         found-list-name (gensym)]
     `(let [~found-list-name (couchio/get-list ~listid)]
-       (or ~found-list-name
-           (throw (ex-info "No such list"
-                           {:cause :list-not-found
-                            :listid ~listid}))))))
+       (if ~found-list-name
+         (= +list-type+ (.get ~found-list-name +type-attribute+))
+         (throw (ex-info "No such list"
+                         {:cause :list-not-found
+                          :listid ~listid}))))))
 
 
 ;;; ---------------------------------------------------------------------
@@ -136,11 +186,8 @@
   (let [found-user (ensure-user userid)]
     (let [collection (ensure-collection collectionid)]
       (try
-        (let [content-bucket (config/delectus-content-bucket)
-              mutator (.mutateIn content-bucket collectionid)
-              updater (.upsert mutator +name-attribute+ newname)]
-          (.execute updater)
-          newname)
+        (couchio/upsert-object-attribute! (config/delectus-content-bucket)
+                                          collectionid newname)
         (catch Exception ex
           (throw (ex-info "Couchbase Error"
                           {:cause :couchbase-exception
