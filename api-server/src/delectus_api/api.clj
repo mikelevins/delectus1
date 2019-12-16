@@ -45,6 +45,15 @@
                            {:cause :collection-not-found
                             :collectionid ~collectionid}))))))
 
+(defmacro ensure-list [listid]
+  (let [exname (gensym)
+        found-list-name (gensym)]
+    `(let [~found-list-name (couchio/get-list ~listid)]
+       (or ~found-list-name
+           (throw (ex-info "No such list"
+                           {:cause :list-not-found
+                            :listid ~listid}))))))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; api functions
@@ -193,8 +202,6 @@
                           {:cause :couchbase-exception
                            :exception-object ex
                            :userid userid :collectionid collectionid})))))))
-
-
 
 ;;; lists
 ;;; ---------------------------------------------------------------------
