@@ -11,6 +11,11 @@
   {:userid s/Str
    :password s/Str})
 
+(s/defschema CollectionAddListRequest
+  {:userid s/Str
+   :collectionid s/Str
+   :listid s/Str})
+
 (s/defschema CollectionDescription
   {(s/required-key "name") s/Str
    (s/required-key "id") s/Str

@@ -123,10 +123,15 @@
             (GET "/collection_lists/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
                  :return [{s/Str s/Str}]
-                 :summary "Returns the collections lists"
+                 :summary "Returns the collection's lists"
                  (handlers/collection-lists userid collectionid))
 
-            ;; (GET "/delectus/collection_add_list" [] handlers/collection-add-list)
+            (POST "/collection_add_list" req
+                  :body [{:keys [userid collectionid listid]} schema/CollectionAddListRequest]
+                  :return s/Str
+                  :summary "Adds the list to the collection"
+                  (handlers/collection-add-list userid collectionid listid))
+
             ;; (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
             )
 

@@ -21,6 +21,7 @@
 ;;; ---------------------------------------------------------------------
 
 (def +columns-attribute+ "columns")
+(def +collection-attribute+ "collection")
 (def +deleted-attribute+ "deleted")
 (def +email-attribute+ "email")
 (def +enabled-attribute+ "enabled")

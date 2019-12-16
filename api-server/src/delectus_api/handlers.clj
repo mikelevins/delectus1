@@ -128,6 +128,10 @@
   (with-errors-handled
     (ok (api/collection-lists userid collectionid))))
 
+(defn collection-add-list [userid collectionid listid]
+  (with-errors-handled
+    (ok (api/collection-add-list userid collectionid listid))))
+
 ;;; /api/list
 
 (defn lists [userid]

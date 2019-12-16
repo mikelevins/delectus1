@@ -77,7 +77,9 @@
 ;;; ---------------------------------------------------------------------
 ;;; N1QL queries
 ;;; ---------------------------------------------------------------------
-;;; Searching for objects that match patterns
+
+;;; Find objects with specific attribute values
+;;; ---------------------------------------------------------------------
 
 (defn make-object-matchers [matchers-map]
   (let [ks (keys matchers-map)]

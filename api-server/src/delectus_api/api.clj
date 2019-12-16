@@ -296,23 +296,29 @@
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)
   (ensure-owner collectionid userid)
-  (let [collection-lists (couchio/get-object-attribute (config/delectus-content-bucket)
-                                                       collectionid +lists-attribute+)]
-    (if collection-lists
-      (let [list-map (.toMap collection-lists)
-            list-keys (keys list-map)
-            found-lists (map couchio/get-list list-keys)
-            list-descriptions (map #(if %
-                                      {+name-attribute+ (.get % +name-attribute+)
-                                       +id-attribute+ (.get % +id-attribute+)}
-                                      nil)
-                                   found-lists)]
-        (into [] (filter identity list-descriptions)))
-      nil)))
+  (map #(select-keys (.toMap %) ["name" "id"])
+       (couchio/find-objects (config/delectus-content-bucket) []
+                             {"type" +list-type+
+                              "owner-id" userid
+                              "collection" collectionid})))
+
+(defn collection-add-list [userid collectionid listid]
+  (ensure-user-exists userid)
+  (ensure-collection-exists collectionid)
+  (ensure-list-exists listid)
+  (ensure-owner collectionid userid)
+  (ensure-owner listid userid)
+  (couchio/upsert-object-attribute! (config/delectus-content-bucket)
+                                    listid +collection-attribute+ collectionid))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
-;;; (collection-lists $mikelid $collectionid)
+;;; (def $default-collection-id "14bae88e-70c4-4c89-981e-1c744ede469c")
+;;; (def $things-collection-id "1a237534-e944-437c-b040-041dc95142fa")
+;;; (def $things-list-id "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
+;;; (collection-lists $mikelid $default-collection-id)
+;;; (collection-lists $mikelid $things-collection-id)
+;;; (collection-add-list $mikelid $default-collection-id $things-list-id)
+;;; (collection-add-list $mikelid $things-collection-id $things-list-id)
 
 ;;; lists
 ;;; ---------------------------------------------------------------------
