@@ -31,7 +31,6 @@
                          {:cause :exception
                           :exception-object ~exname}))))))
 
-
 ;;; ---------------------------------------------------------------------
 ;;; JsonObject
 ;;; ---------------------------------------------------------------------
@@ -47,9 +46,6 @@
   (ensure-json-object obj)
   (.get obj attribute-name))
 
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (json-object-items (get-collection $defaultid))
-
 ;;; predicates
 ;;; ---------------------------------------------------------------------
 
@@ -59,20 +55,12 @@
 (defn json-object-owner? [obj ownerid]
   (= ownerid (json-object-attribute obj +owner-id-attribute+)))
 
-;;; (def $fred (make-json-object {"name" "Fred" "age" 35}))
-;;; (itemizing-json-object? $fred)
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (itemizing-json-object? (get-collection $defaultid))
-
 ;;; ---------------------------------------------------------------------
 ;;; JsonDocument
 ;;; ---------------------------------------------------------------------
 
 (defn make-json-document [id object-map]
   (JsonDocument/create id (JsonObject/from object-map)))
-
-;;; (make-json-document "foo_document" {"name" "Fred" "age" 35})
-;;; (make-json-document "bar_document" {"name" "Fred" "age" 35 "things" {}})
 
 ;;; ---------------------------------------------------------------------
 ;;; N1QL queries
@@ -131,19 +119,9 @@
   (with-couchbase-exceptions-rethrown
     (.exists bucket docid)))
 
-;;; (def $bucket (config/delectus-users-bucket))
-;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))
-;;; (id-exists? $bucket $mikelid)
-;;; (id-exists? $bucket "NOPE!")
-
 (defn get-document [bucket docid]
   (with-couchbase-exceptions-rethrown
     (.get bucket docid)))
-
-;;; (def $bucket (config/delectus-content-bucket))
-;;; (def $mikelid (delectus-api-server.api/email->userid "mikel@evins.net"))
-;;; (def $docid (.get (delectus-api-server.api/collection-named $mikelid  "Default Collection") "id"))
-;;; (def $doc (get-document $bucket $docid))
 
 
 ;;; ---------------------------------------------------------------------
@@ -156,21 +134,11 @@
           result (.execute lookup)]
       (.content result 0))))
 
-;;; (def $thingsid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (get-list $thingsid)
-;;; (time (object-attribute-exists? (config/delectus-content-bucket) $thingsid "name"))
-;;; (time (object-attribute-exists? (config/delectus-content-bucket) $thingsid "NOPE!"))
-
 (defn get-object-attribute [bucket objectid attribute-name]
   (with-couchbase-exceptions-rethrown
     (let [lookup (.get (.lookupIn bucket objectid) (into-array [attribute-name]))
           result (.execute lookup)]
       (.content result 0))))
-
-;;; (def $thingsid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (get-list $thingsid)
-;;; (time (get-object-attribute (config/delectus-content-bucket) $thingsid "name"))
-;;; (time (get-object-attribute (config/delectus-content-bucket) $thingsid "NOPE!"))
 
 ;;; set the attribute, but only if it already exists
 (defn update-object-attribute! [bucket objectid attribute-name value]
@@ -184,23 +152,12 @@
           value)
         (throw (CouchbaseException. "No such attribute"))))))
 
-;;; (def $thingsid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (get-list $thingsid)
-;;; (time (get-object-attribute (config/delectus-content-bucket) $thingsid "test-attribute"))
-;;; (update-object-attribute! (config/delectus-content-bucket) $thingsid "test-attribute" true)
-
-
 ;;; set the attribute, adding it to the object if it's not present
 (defn upsert-object-attribute! [bucket objectid attribute-name value]
   (with-couchbase-exceptions-rethrown
    (let [mutator (.upsert (.mutateIn bucket objectid) attribute-name value)]
     (.execute mutator)
     value)))
-
-;;; (def $thingsid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (get-list $thingsid)
-;;; (time (get-object-attribute (config/delectus-content-bucket) $thingsid "test-attribute"))
-;;; (time (upsert-object-attribute! (config/delectus-content-bucket) $thingsid "test-attribute" true))
 
 ;;; ---------------------------------------------------------------------
 
@@ -213,10 +170,6 @@
           (get-object-attribute (config/delectus-users-bucket)
                                 userid +type-attribute+))))
 
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (user-exists? $mikelid)
-;;; (user-exists? "NOPE!")
-
 (defn get-user [userid]
   (or (and userid
            (let [candidate (get-document (config/delectus-users-bucket) userid)]
@@ -225,13 +178,6 @@
                     (json-object-type? obj +user-type+)
                     obj))))
       nil))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (get-user $mikelid)
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (get-user $defaultid)
-;;; (def $nopeid nil)
-;;; (get-user $nopeid)
 
 ;;; finding registered users
 ;;; ---------------------------------------------------------------------
@@ -245,11 +191,6 @@
       nil
       (first found))))
 
-;;; (email->user "mikel@evins.net")
-;;; (email->user "greer@evins.net")
-;;; (email->user "nobody@nowhere.net")
-
-
 (defn email->userid [email]
   (let [found (find-objects
                (config/delectus-users-bucket) []
@@ -258,9 +199,6 @@
     (if (empty? found)
       nil
       (.get (first found) +id-attribute+))))
-
-;;; (email->userid "mikel@evins.net")
-;;; (email->userid "nobody@evins.net")
 
 (defn id->user [userid]
   (get-user userid))
@@ -283,17 +221,6 @@
                     obj))))
       nil))
 
-;;; (def $defaultid "b8b933f2-1eb0-4d7d-9ecd-a221efb6ced5")
-;;; (get-collection $defaultid)
-;;; (def $bucket (config/delectus-content-bucket))
-;;; (.content (.execute (.get (.lookupIn $bucket $defaultid) (into-array ["lists"]))) 0)
-;;; (.content (.execute (.get (.lookupIn $bucket $defaultid) (into-array ["NOPE"]))) 0)
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (get-collection $mikelid)
-;;; (def $nopeid nil)
-;;; (get-collection $nopeid)
-
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
@@ -311,10 +238,3 @@
                     (json-object-type? obj +list-type+)
                     obj))))
       nil))
-
-;;; (def $thingsid "7ffa6177-a5cf-41d7-a759-6e5aa5b5f642")
-;;; (get-list $thingsid)
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (get-list $mikelid)
-;;; (def $nopeid nil)
-;;; (get-list $nopeid)

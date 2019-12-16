@@ -25,6 +25,10 @@
   {:userid s/Str
    :collectionid s/Str})
 
+(s/defschema ListMakeUncollectedRequest
+  {:userid s/Str
+   :listid s/Str})
+
 (s/defschema ListMoveToCollectionRequest
   {:userid s/Str
    :listid s/Str

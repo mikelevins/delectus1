@@ -137,3 +137,7 @@
 (defn list-move-to-collection [userid listid collectionid]
   (with-errors-handled
     (ok (api/list-move-to-collection userid listid collectionid))))
+
+(defn list-make-uncollected [userid listid]
+  (with-errors-handled
+    (ok (api/list-make-uncollected userid listid))))

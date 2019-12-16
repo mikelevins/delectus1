@@ -22,7 +22,6 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 
-
 ;;; ---------------------------------------------------------------------
 ;;; ensuring that users, collections, and lists exist and are of the right type
 ;;; ---------------------------------------------------------------------
@@ -34,11 +33,6 @@
                      {:cause :user-not-found
                       :userid ~userid}))))
 
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (ensure-user-exists $mikelid)
-;;; (ensure-user-exists $listid)
-
 (defmacro ensure-user [userid]
   (let [found-user (gensym)]
     `(let [~found-user (couchio/get-user ~userid)]
@@ -49,24 +43,12 @@
                          {:cause :user-not-found
                           :userid ~userid}))))))
 
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (ensure-user $mikelid)
-;;; (ensure-user $listid)
-;;; (ensure-user "NOPE!")
-
 (defmacro ensure-collection-exists [collectionid]
   `(if (couchio/collection-exists? ~collectionid)
      ~collectionid
      (throw (ex-info "No such collection"
                      {:cause :collection-not-found
                       :collectionid ~collectionid}))))
-
-
-;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (ensure-collection-exists $collectionid)
-;;; (ensure-collection-exists $mikelid)
 
 (defmacro ensure-collection [collectionid]
   (let [found-collection (gensym)]
@@ -78,21 +60,12 @@
                          {:cause :collection-not-found
                           :collectionid ~collectionid}))))))
 
-;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (ensure-collection $collectionid)
-
 (defmacro ensure-list-exists [listid]
   `(if (couchio/list-exists? ~listid)
      ~listid
      (throw (ex-info "No such list"
                      {:cause :list-not-found
                       :listid ~listid}))))
-
-;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (ensure-list-exists $listid)
-;;; (ensure-list-exists $mikelid)
 
 (defmacro ensure-list [listid]
   (let [found-list (gensym)]
@@ -103,10 +76,6 @@
          (throw (ex-info "No such list"
                          {:cause :list-not-found
                           :listid ~listid}))))))
-
-;;; (def $listid "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (ensure-list $listid)
 
 ;;; ---------------------------------------------------------------------
 ;;; ensuring that objects belong to the expected owner
@@ -123,12 +92,6 @@
                          {:cause :wrong-owner-id
                           :expected ~userid
                           :found ~found-owner}))))))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $good-collection-id "14bae88e-70c4-4c89-981e-1c744ede469c")
-;;; (def $bad-collection-id "868df782-df55-4528-8034-695eebbff3f3")
-;;; (ensure-owner $good-collection-id $mikelid)
-;;; (ensure-owner $bad-collection-id $mikelid)
 
 ;;; ---------------------------------------------------------------------
 ;;; api functions
@@ -155,19 +118,11 @@
                       {:cause :user-not-found
                        :email email}))))
 
-;;; (userid "mikel@evins.net")
-;;; (userid "doo@evins.net")
-;;; (ensure-user (:delectus-test-user-id (config/delectus-configuration)))
-;;; (ensure-user "NOPE!")
-
 (defn userdata [userid]
   (let [found-user (ensure-user userid)]
     {:userid userid
        :name (.get found-user +name-attribute+)
        :email (.get found-user +email-attribute+)}))
-
-;;; (userdata (:delectus-test-user-id (config/delectus-configuration)))
-;;; (userdata "NOPE!")
 
 ;;; collections
 ;;; ---------------------------------------------------------------------
@@ -178,11 +133,6 @@
        (couchio/find-objects (config/delectus-content-bucket) []
                              {"type" +collection-type+ "owner-id" userid})))
 
-;;; (userid "mikel@evins.net")
-;;; (collections "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (collections "6235e7b7-eb83-47d9-a8ef-ac129601e810")
-;;; (collections "BOGUS")
-
 (defn collection-with-id [userid collectionid]
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)
@@ -191,10 +141,6 @@
                                         collectionid +name-attribute+)
    "id" (couchio/get-object-attribute (config/delectus-content-bucket)
                                         collectionid +id-attribute+)})
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $collectionid "14bae88e-70c4-4c89-981e-1c744ede469c")
-;;; (collection-with-id $mikelid $collectionid)
 
 (defn collection-name [userid collectionid]
   (ensure-user-exists userid)
@@ -307,28 +253,25 @@
 
 (defn lists [userid]
   (ensure-user-exists userid)
-  (map #(select-keys (.toMap %) ["name" "id"])
+  (map #(select-keys (.toMap %) ["name" "id" "collection"])
        (couchio/find-objects (config/delectus-content-bucket) []
                              {"type" +list-type+ "owner-id" userid})))
 
-
 (defn list-move-to-collection [userid listid collectionid]
   (ensure-user-exists userid)
-  (ensure-collection-exists collectionid)
   (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (ensure-collection-exists collectionid)
   (ensure-owner collectionid userid)
+  (couchio/upsert-object-attribute! (config/delectus-content-bucket)
+                                    listid +collection-attribute+ collectionid)
+  collectionid)
+
+(defn list-make-uncollected [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
   (ensure-owner listid userid)
   (couchio/upsert-object-attribute! (config/delectus-content-bucket)
-                                    listid +collection-attribute+ collectionid))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $default-collection-id "14bae88e-70c4-4c89-981e-1c744ede469c")
-;;; (def $things-collection-id "1a237534-e944-437c-b040-041dc95142fa")
-;;; (def $things-list-id "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
-;;; (collection-lists $mikelid $default-collection-id)
-;;; (collection-lists $mikelid $things-collection-id)
-;;; (list-move-to-collection $mikelid $things-list-id $default-collection-id)
-;;; (list-move-to-collection $mikelid $things-list-id $things-collection-id)
-
-
+                                    listid +collection-attribute+ nil)
+  nil)
 

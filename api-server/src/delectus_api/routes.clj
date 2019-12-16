@@ -133,7 +133,7 @@
 
             (GET "/lists/:userid" req
                  :path-params [userid :- s/Str]
-                 :return [{s/Str s/Str}]
+                 :return [{s/Str (s/maybe s/Str)}]
                  :summary "Returns the lists that belong to the user"
                  (handlers/lists userid))
 
@@ -142,6 +142,12 @@
                   :return s/Str
                   :summary "Adds the list to the collection"
                   (handlers/list-move-to-collection userid listid collectionid))
+
+            (POST "/make_uncollected" req
+                  :body [{:keys [userid listid]} schema/ListMakeUncollectedRequest]
+                  :return nil
+                  :summary "Moves the list to no collection"
+                  (handlers/list-make-uncollected userid listid))
 
             ;; (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
             ;; (GET "/delectus/list_name" [] handlers/list-name)

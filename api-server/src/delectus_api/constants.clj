@@ -35,8 +35,3 @@
 (def +password-hash-attribute+ "password-hash")
 (def +type-attribute+ "type")
 
-;;; ---------------------------------------------------------------------
-;;; standard values
-;;; ---------------------------------------------------------------------
-
-(def +standard-default-collection-name+ "Default Collection")
