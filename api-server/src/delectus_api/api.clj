@@ -290,3 +290,16 @@
   (ensure-owner listid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 listid +name-attribute+))
+
+(defn list-named [userid name]
+  (ensure-user-exists userid)
+  (let [lists (couchio/find-objects
+               (config/delectus-content-bucket) []
+               {"type" +list-type+ "owner-id" userid "name" name})]
+    (if (empty? lists)
+      (throw (ex-info "No such list"
+                      {:cause :list-not-found
+                       :userid userid}))
+      (let [found-list (first lists)]
+        {"name" (.get found-list +name-attribute+)
+         "id" (.get found-list +id-attribute+)}))))

@@ -150,3 +150,7 @@
 (defn list-name [userid listid]
   (with-errors-handled
     (ok (api/list-name userid listid))))
+
+(defn list-named [userid name]
+  (with-errors-handled
+    (ok (api/list-named userid name))))
