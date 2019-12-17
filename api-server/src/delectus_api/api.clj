@@ -317,3 +317,18 @@
                          :exception-object ex
                          :userid userid :listid listid}))))))
 
+(defn new-list [userid name]
+  (ensure-user-exists userid)
+  (let [found-lists (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +list-type+ "owner-id" userid "name" name})]
+    (if (empty? found-lists)
+      (let [id (makeid)
+            list-doc (model/make-list-document :id id :name name :owner-id userid)]
+        (.upsert (config/delectus-content-bucket)
+                 list-doc)
+        id)
+      (throw (ex-info "Name exists"
+                      {:cause :list-name-exists
+                       :listname name
+                       :userid userid})))))

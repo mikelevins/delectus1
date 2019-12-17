@@ -32,6 +32,7 @@
    :collection-not-found not-found
    :couchbase-exception internal-server-error
    :exception internal-server-error
+   :list-name-exists conflict
    :list-not-found not-found
    :login-failed unauthorized
    :user-not-found not-found
@@ -149,3 +150,7 @@
 (defn rename-list [userid listid newname]
   (with-errors-handled
     (ok (api/rename-list userid listid newname))))
+
+(defn new-list [userid name]
+  (with-errors-handled
+    (ok (api/new-list userid name))))

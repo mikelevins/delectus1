@@ -47,6 +47,10 @@
   {:userid s/Str
    :name s/Str})
 
+(s/defschema NewListRequest
+  {:userid s/Str
+   :name s/Str})
+
 (s/defschema UserData
   {:userid s/Str
    :email s/Str

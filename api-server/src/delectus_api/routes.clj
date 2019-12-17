@@ -169,8 +169,13 @@
                   :return s/Str
                   :summary "Renames the list"
                   (handlers/rename-list userid listid newname))
+            
+            (POST "/new_list" req
+                  :body [{:keys [userid name]} schema/NewListRequest]
+                  :return s/Str
+                  :summary "Creates a new list with the supplied name"
+                  (handlers/new-list userid name))
 
-            ;; (GET "/delectus/new_list" [] handlers/new-list)                         
             ;; (GET "/delectus/delete_list" [] handlers/delete-list)                   
             ;; (GET "/delectus/undelete_list" [] handlers/undelete-list)               
             ;; (GET "/delectus/list_deleted" [] handlers/list-deleted?)                   
