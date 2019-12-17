@@ -34,6 +34,11 @@
    :listid s/Str
    :collectionid s/Str})
 
+(s/defschema ListRenameRequest
+  {:userid s/Str
+   :listid s/Str
+   :newname s/Str})
+
 (s/defschema LoginRequest
   {:email s/Str
    :password s/Str})

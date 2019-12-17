@@ -97,15 +97,6 @@
     (ok (api/collection-named userid name))))
 
 (defn rename-collection [userid collectionid newname]
-  (try
-    (let [collectionid (api/rename-collection userid collectionid newname)]
-      (if (nil? collectionid)
-        (not-found "No such collection")
-        (ok newname)))
-    (catch clojure.lang.ExceptionInfo ex
-      (handle-exception ex))))
-
-(defn rename-collection [userid collectionid newname]
   (with-errors-handled
     (ok (api/rename-collection userid collectionid newname))))
 
@@ -154,3 +145,7 @@
 (defn list-named [userid name]
   (with-errors-handled
     (ok (api/list-named userid name))))
+
+(defn rename-list [userid listid newname]
+  (with-errors-handled
+    (ok (api/rename-list userid listid newname))))

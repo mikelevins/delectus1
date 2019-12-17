@@ -303,3 +303,17 @@
       (let [found-list (first lists)]
         {"name" (.get found-list +name-attribute+)
          "id" (.get found-list +id-attribute+)}))))
+
+(defn rename-list [userid listid newname]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (let [found-list (ensure-list listid)]
+    (try
+      (couchio/upsert-object-attribute! (config/delectus-content-bucket) listid +name-attribute+ newname)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :listid listid}))))))
+

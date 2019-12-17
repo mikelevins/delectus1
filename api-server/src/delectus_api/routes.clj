@@ -152,21 +152,24 @@
                  :summary "Returns the identified list belonging to the user"
                  (handlers/list-with-id userid listid))
 
-            ;; (GET "/delectus/list_name" [] handlers/list-name)
             (GET "/list_name/:userid/:listid" req
                  :path-params [userid :- s/Str listid :- s/Str]
                  :return s/Str
                  :summary "Returns the name of identified list belonging to the user"
                  (handlers/list-name userid listid))
 
-            ;; (GET "/delectus/list_named" [] handlers/list-named)                        
             (GET "/list_named/:userid/:name" req
                  :path-params [userid :- s/Str name :- s/Str]
                  :return {s/Str s/Str}
                  :summary "Returns the named list belonging to the user"
                  (handlers/list-named userid name))
+            
+            (POST "/rename_list" req
+                  :body [{:keys [userid listid newname]} schema/ListRenameRequest]
+                  :return s/Str
+                  :summary "Renames the list"
+                  (handlers/rename-list userid listid newname))
 
-            ;; (GET "/delectus/rename_list" [] handlers/rename-list)
             ;; (GET "/delectus/new_list" [] handlers/new-list)                         
             ;; (GET "/delectus/delete_list" [] handlers/delete-list)                   
             ;; (GET "/delectus/undelete_list" [] handlers/undelete-list)               
@@ -190,3 +193,4 @@
             ;; (GET "/delectus/set_item_column_value" [] handlers/set-item-column-value)
 
             )))
+
