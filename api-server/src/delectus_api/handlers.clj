@@ -32,6 +32,7 @@
    :collection-not-found not-found
    :couchbase-exception internal-server-error
    :exception internal-server-error
+   :list-not-found not-found
    :login-failed unauthorized
    :user-not-found not-found
    })
@@ -141,3 +142,11 @@
 (defn list-make-uncollected [userid listid]
   (with-errors-handled
     (ok (api/list-make-uncollected userid listid))))
+
+(defn list-with-id [userid listid]
+  (with-errors-handled
+    (ok (api/list-with-id userid listid))))
+
+(defn list-name [userid listid]
+  (with-errors-handled
+    (ok (api/list-name userid listid))))

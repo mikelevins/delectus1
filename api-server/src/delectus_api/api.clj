@@ -275,3 +275,18 @@
                                     listid +collection-attribute+ nil)
   nil)
 
+(defn list-with-id [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  {"name" (couchio/get-object-attribute (config/delectus-content-bucket)
+                                        listid +name-attribute+)
+   "id" (couchio/get-object-attribute (config/delectus-content-bucket)
+                                      listid +id-attribute+)})
+
+(defn list-name [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (couchio/get-object-attribute (config/delectus-content-bucket)
+                                listid +name-attribute+))

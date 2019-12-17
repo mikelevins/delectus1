@@ -124,10 +124,7 @@
                  :path-params [userid :- s/Str collectionid :- s/Str]
                  :return [{s/Str s/Str}]
                  :summary "Returns the collection's lists"
-                 (handlers/collection-lists userid collectionid))            
-
-            ;; (GET "/delectus/collection_remove_list" [] handlers/collection-remove-list)
-            )
+                 (handlers/collection-lists userid collectionid)))
 
    (context "/api/list" [] :tags ["api/list"]
 
@@ -149,8 +146,19 @@
                   :summary "Moves the list to no collection"
                   (handlers/list-make-uncollected userid listid))
 
-            ;; (GET "/delectus/list_with_id" [] handlers/list-with-id)                    
+            (GET "/list_with_id/:userid/:listid" req
+                 :path-params [userid :- s/Str listid :- s/Str]
+                 :return {s/Str s/Str}
+                 :summary "Returns the identified list belonging to the user"
+                 (handlers/list-with-id userid listid))
+
             ;; (GET "/delectus/list_name" [] handlers/list-name)
+            (GET "/list_name/:userid/:listid" req
+                 :path-params [userid :- s/Str listid :- s/Str]
+                 :return s/Str
+                 :summary "Returns the name of identified list belonging to the user"
+                 (handlers/list-name userid listid))
+
             ;; (GET "/delectus/list_named" [] handlers/list-named)                        
             ;; (GET "/delectus/rename_list" [] handlers/rename-list)
             ;; (GET "/delectus/new_list" [] handlers/new-list)                         
