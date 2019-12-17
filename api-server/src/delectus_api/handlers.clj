@@ -154,3 +154,15 @@
 (defn new-list [userid name]
   (with-errors-handled
     (ok (api/new-list userid name))))
+
+(defn delete-list [userid listid]
+  (with-errors-handled
+    (ok (api/delete-list userid listid))))
+
+(defn undelete-list [userid listid]
+  (with-errors-handled
+    (ok (api/undelete-list userid listid))))
+
+(defn list-deleted? [userid listid]
+  (with-errors-handled
+    (ok (api/list-deleted? userid listid))))

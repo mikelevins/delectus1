@@ -113,7 +113,6 @@
                   :summary "Marks a collection not deleted"
                   (handlers/undelete-collection userid collectionid))
 
-
             (GET "/collection_deleted/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
                  :return s/Bool
@@ -130,7 +129,10 @@
 
             (GET "/lists/:userid" req
                  :path-params [userid :- s/Str]
-                 :return [{s/Str (s/maybe s/Str)}]
+                 :return [{(s/required-key "name") s/Str
+                           (s/required-key "id") s/Str
+                           (s/required-key "collection") (s/maybe s/Str)
+                           (s/required-key "deleted") (s/maybe s/Bool)}]
                  :summary "Returns the lists that belong to the user"
                  (handlers/lists userid))
 
@@ -176,9 +178,24 @@
                   :summary "Creates a new list with the supplied name"
                   (handlers/new-list userid name))
 
-            ;; (GET "/delectus/delete_list" [] handlers/delete-list)                   
-            ;; (GET "/delectus/undelete_list" [] handlers/undelete-list)               
-            ;; (GET "/delectus/list_deleted" [] handlers/list-deleted?)                   
+            (POST "/delete_list" req
+                  :body [{:keys [userid listid]} schema/DeleteListRequest]
+                  :return s/Str
+                  :summary "Marks a list deleted"
+                  (handlers/delete-list userid listid))
+
+            (POST "/undelete_list" req
+                  :body [{:keys [userid listid]} schema/DeleteListRequest]
+                  :return s/Str
+                  :summary "Marks a list not deleted"
+                  (handlers/undelete-list userid listid))
+
+            (GET "/list_deleted/:userid/:listid" req
+                 :path-params [userid :- s/Str listid :- s/Str]
+                 :return s/Bool
+                 :summary "Returns true if the list has been marked deleted, and false otherwise"
+                 (handlers/list-deleted? userid listid))
+
             ;; (GET "/delectus/list_columns" [] handlers/list-columns)
             ;; (GET "/delectus/new_column" [] handlers/new-column)
             ;; (GET "/delectus/column_with_id" [] handlers/column-with-id)

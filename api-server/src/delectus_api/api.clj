@@ -253,7 +253,7 @@
 
 (defn lists [userid]
   (ensure-user-exists userid)
-  (map #(select-keys (.toMap %) ["name" "id" "collection"])
+  (map #(select-keys (.toMap %) ["name" "id" "collection" "deleted"])
        (couchio/find-objects (config/delectus-content-bucket) []
                              {"type" +list-type+ "owner-id" userid})))
 
@@ -332,3 +332,51 @@
                       {:cause :list-name-exists
                        :listname name
                        :userid userid})))))
+
+
+(defn delete-list [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (let [found-list (ensure-list listid)]
+    (try
+      (let [content-bucket (config/delectus-content-bucket)
+            mutator (.mutateIn content-bucket listid)
+            updater (.upsert mutator +deleted-attribute+ true)]
+        (.execute updater)
+        listid)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :listid listid}))))))
+
+(defn undelete-list [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (let [found-list (ensure-list listid)]
+    (try
+      (let [content-bucket (config/delectus-content-bucket)
+            mutator (.mutateIn content-bucket listid)
+            updater (.upsert mutator +deleted-attribute+ false)]
+        (.execute updater)
+        listid)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :listid listid}))))))
+
+(defn list-deleted? [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (let [found-list (ensure-list listid)]
+    (try
+      (.get found-list +deleted-attribute+)
+      (catch Exception ex
+        (throw (ex-info "Couchbase Error"
+                        {:cause :couchbase-exception
+                         :exception-object ex
+                         :userid userid :listid listid}))))))

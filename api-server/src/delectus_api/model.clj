@@ -73,10 +73,11 @@
                  +deleted-attribute+ false}]
     (couchio/make-json-document obj-id obj-map)))
 
-(defn make-list-document [& {:keys [id name owner-id columns items deleted]
+(defn make-list-document [& {:keys [id name owner-id collection-id columns items deleted]
                              :or {id (makeid)
                                   name nil
                                   owner-id nil
+                                  collection-id nil
                                   columns {}
                                   items {}
                                   deleted false}}]
@@ -86,6 +87,7 @@
                  +id-attribute+ id
                  +name-attribute+ name
                  +owner-id-attribute+ owner-id
+                 +collection-attribute+ collection-id
                  +columns-attribute+ columns
                  +items-attribute+ items
                  +deleted-attribute+ deleted}]
