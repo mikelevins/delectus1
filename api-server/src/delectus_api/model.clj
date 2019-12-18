@@ -6,7 +6,27 @@
    [delectus-api.couchio :as couchio]
    [delectus-api.errors :as errors]
    [delectus-api.identifiers :refer [makeid]]
-   [delectus-api.couchio :as couchio]))
+   [delectus-api.couchio :as couchio])
+  (:import
+   (com.couchbase.client.java.document JsonDocument)))
+
+
+;;; ---------------------------------------------------------------------
+;;; model type-checks
+;;; ---------------------------------------------------------------------
+
+(defmacro ensure-document-type [json-doc type-string]
+  `(if (instance? JsonDocument ~json-doc)
+     (let [found-type# (.get (.content ~json-doc) +type-attribute+)]
+       (or (and (= ~type-string found-type#))
+           (throw (ex-info "Wrong document type"
+                           {:cause :wrong-document-type
+                            :expected-type ~type-string
+                            :found-type found-type#}))))
+     (throw (ex-info "Wrong object type"
+                     {:cause :wrong-object-type
+                      :expected-type JsonDocument
+                      :found-type (type ~json-doc)}))))
 
 ;;; ---------------------------------------------------------------------
 ;;; Users
@@ -29,6 +49,7 @@
 
 
 (defn assert-user! [userdoc]
+  (ensure-document-type userdoc +user-type+)
   (let [users-bucket (config/delectus-users-bucket)
         upserted-doc (.upsert users-bucket userdoc)]
     upserted-doc))
@@ -99,8 +120,18 @@
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
 
+
+(defn assert-collection! [collectiondoc]
+  (ensure-document-type collectiondoc +collection-type+)
+  (let [content-bucket (config/delectus-content-bucket)
+        upserted-doc (.upsert content-bucket collectiondoc)]
+    upserted-doc))
+
+
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (make-collection-document :name "Things" :owner-id $mikelid)q
+;;; (def $thingscol (make-collection-document :name "Things" :owner-id $mikelid))
+;;; (ensure-document-type $thingscol +collection-type+)
+;;; (def $upserted-col (assert-collection! $thingscol))
 
 (defn collection-exists? [collectionid]
   (and (couchio/id-exists? (config/delectus-content-bucket) collectionid)
@@ -141,6 +172,14 @@
                  +items-attribute+ items
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
+
+
+(defn assert-list! [listdoc]
+  (ensure-document-type listdoc +list-type+)
+  (let [content-bucket (config/delectus-content-bucket)
+        upserted-doc (.upsert content-bucket listdoc)]
+    upserted-doc))
+
 
 (defn list-exists? [listid]
   (and (couchio/id-exists? (config/delectus-content-bucket) listid)

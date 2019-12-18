@@ -37,6 +37,8 @@
    :list-not-found not-found
    :login-failed unauthorized
    :user-not-found not-found
+   :wrong-document-type internal-server-error
+   :wrong-object-type internal-server-error
    })
 
 (defn handle-exception [ex]
