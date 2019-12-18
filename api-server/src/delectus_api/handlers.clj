@@ -94,9 +94,9 @@
   (with-errors-handled
     (ok (api/collection-name userid collectionid))))
 
-(defn collection-named [userid name]
+(defn find-collection-with-name [userid name]
   (with-errors-handled
-    (ok (api/collection-named userid name))))
+    (ok (api/find-collection-with-name userid name))))
 
 (defn rename-collection [userid collectionid newname]
   (with-errors-handled
@@ -128,13 +128,13 @@
   (with-errors-handled
     (ok (api/lists userid))))
 
-(defn list-move-to-collection [userid listid collectionid]
+(defn move-list-to-collection [userid listid collectionid]
   (with-errors-handled
-    (ok (api/list-move-to-collection userid listid collectionid))))
+    (ok (api/move-list-to-collection userid listid collectionid))))
 
-(defn list-make-uncollected [userid listid]
+(defn make-list-uncollected [userid listid]
   (with-errors-handled
-    (ok (api/list-make-uncollected userid listid))))
+    (ok (api/make-list-uncollected userid listid))))
 
 (defn list-with-id [userid listid]
   (with-errors-handled
@@ -144,9 +144,9 @@
   (with-errors-handled
     (ok (api/list-name userid listid))))
 
-(defn list-named [userid name]
+(defn find-list-with-name [userid name]
   (with-errors-handled
-    (ok (api/list-named userid name))))
+    (ok (api/find-list-with-name userid name))))
 
 (defn rename-list [userid listid newname]
   (with-errors-handled

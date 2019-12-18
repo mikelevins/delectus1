@@ -83,11 +83,11 @@
                  :summary "Returns the name of the collection"
                  (handlers/collection-name userid collectionid))
 
-            (GET "/collection_named/:userid/:name" req
+            (GET "/find_collection_with_name/:userid/:name" req
                  :path-params [userid :- s/Str name :- s/Str]
-                 :return {s/Str s/Str}
+                 :return [s/Str]
                  :summary "Returns the named collection belonging to the user"
-                 (handlers/collection-named userid name))
+                 (handlers/find-collection-with-name userid name))
             
             (POST "/rename_collection" req
                   :body [{:keys [userid collectionid newname]} schema/CollectionRenameRequest]
@@ -136,17 +136,17 @@
                  :summary "Returns the lists that belong to the user"
                  (handlers/lists userid))
 
-            (POST "/move_to_collection" req
+            (POST "/move_list_to_collection" req
                   :body [{:keys [userid listid collectionid]} schema/ListMoveToCollectionRequest]
                   :return s/Str
                   :summary "Adds the list to the collection"
-                  (handlers/list-move-to-collection userid listid collectionid))
+                  (handlers/move-list-to-collection userid listid collectionid))
 
-            (POST "/make_uncollected" req
+            (POST "/make_list_uncollected" req
                   :body [{:keys [userid listid]} schema/ListMakeUncollectedRequest]
                   :return nil
                   :summary "Moves the list to no collection"
-                  (handlers/list-make-uncollected userid listid))
+                  (handlers/make-list-uncollected userid listid))
 
             (GET "/list_with_id/:userid/:listid" req
                  :path-params [userid :- s/Str listid :- s/Str]
@@ -160,11 +160,11 @@
                  :summary "Returns the name of identified list belonging to the user"
                  (handlers/list-name userid listid))
 
-            (GET "/list_named/:userid/:name" req
+            (GET "/find_list_with_name/:userid/:name" req
                  :path-params [userid :- s/Str name :- s/Str]
                  :return {s/Str s/Str}
                  :summary "Returns the named list belonging to the user"
-                 (handlers/list-named userid name))
+                 (handlers/find-list-with-name userid name))
             
             (POST "/rename_list" req
                   :body [{:keys [userid listid newname]} schema/ListRenameRequest]

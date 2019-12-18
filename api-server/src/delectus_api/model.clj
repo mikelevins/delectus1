@@ -28,7 +28,7 @@
     (couchio/make-json-document id obj-map)))
 
 
-(defn assert-new-user [userdoc]
+(defn assert-user! [userdoc]
   (let [users-bucket (config/delectus-users-bucket)
         upserted-doc (.upsert users-bucket userdoc)]
     upserted-doc))
@@ -39,6 +39,46 @@
 ;;; (def $newuser (make-user-document :email $username :name "Joe Test" :password-hash $password-hash))
 ;;; (def $upserted-user (assert-new-user $newuser))
 
+(defn user-exists? [userid]
+  (and (couchio/id-exists? (config/delectus-users-bucket) userid)
+       (= +user-type+
+          (couchio/get-object-attribute (config/delectus-users-bucket)
+                                        userid +type-attribute+))))
+
+(defn get-user [userid]
+  (or (and userid
+           (let [candidate (couchio/get-document (config/delectus-users-bucket) userid)]
+             (and candidate
+                  (let [obj (.content candidate)]
+                    (if (couchio/json-object-type? obj +user-type+)
+                      obj
+                      nil)))))
+      nil))
+
+;;; finding registered users
+;;; ---------------------------------------------------------------------
+
+(defn email->user [email]
+  (let [found (couchio/find-objects
+               (config/delectus-users-bucket) []
+               {+type-attribute+ +user-type+
+                +email-attribute+ email})]
+    (if (empty? found)
+      nil
+      (first found))))
+
+(defn email->userid [email]
+  (let [found (couchio/find-objects
+               (config/delectus-users-bucket) []
+               {+type-attribute+ +user-type+
+                +email-attribute+ email})]
+    (if (empty? found)
+      nil
+      (.get (first found) +id-attribute+))))
+
+(defn id->user [userid]
+  (get-user userid))
+
 ;;; ---------------------------------------------------------------------
 ;;; Collections
 ;;; ---------------------------------------------------------------------
@@ -47,10 +87,7 @@
                                    :or {id (makeid)
                                         name nil
                                         owner-id nil
-                                        ;; lists is a set of list-ids
-                                        ;; we represent that as a JSON object
-                                        ;; the keys are the lists, the vals are ignored
-                                        lists {}
+                                        lists nil
                                         deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-collection-document"})
   (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-collection-document"})
@@ -63,7 +100,23 @@
     (couchio/make-json-document id obj-map)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (make-collection-document :name "Random stuff" :owner-id $mikelid)
+;;; (make-collection-document :name "Things" :owner-id $mikelid)q
+
+(defn collection-exists? [collectionid]
+  (and (couchio/id-exists? (config/delectus-content-bucket) collectionid)
+       (= +collection-type+
+          (couchio/get-object-attribute (config/delectus-content-bucket)
+                                        collectionid +type-attribute+))))
+
+(defn get-collection [collectionid]
+  (or (and collectionid
+           (let [candidate (couchio/get-document (config/delectus-content-bucket) collectionid)]
+             (and candidate
+                  (let [obj (.content candidate)]
+                    (if (couchio/json-object-type? obj +collection-type+)
+                      obj
+                      nil)))))
+      nil))
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists
@@ -74,8 +127,8 @@
                                   name nil
                                   owner-id nil
                                   collection-id nil
-                                  columns {}
-                                  items {}
+                                  columns nil
+                                  items nil
                                   deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-list-document"})
   (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-list-document"})
@@ -88,4 +141,20 @@
                  +items-attribute+ items
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
+
+(defn list-exists? [listid]
+  (and (couchio/id-exists? (config/delectus-content-bucket) listid)
+       (= +list-type+
+          (couchio/get-object-attribute (config/delectus-content-bucket)
+                                        listid +type-attribute+))))
+
+(defn get-list [listid]
+  (or (and listid
+           (let [candidate (couchio/get-document (config/delectus-content-bucket) listid)]
+             (and candidate
+                  (let [obj (.content candidate)]
+                    (if (couchio/json-object-type? obj +list-type+)
+                      obj
+                      nil)))))
+      nil))
 

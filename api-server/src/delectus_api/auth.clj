@@ -5,6 +5,7 @@
    [buddy.sign.jwt :as jwt]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
+   [delectus-api.model :as model]
    [tick.alpha.api :as t]
    ))
 
@@ -51,14 +52,14 @@
 ;;; (decode-auth-token "foo")
 
 (defn authenticate-user [userid password]
-  (let [found-user (couchio/get-user userid)]
+  (let [found-user (model/get-user userid)]
     (if found-user
       (if (hashers/check password (.get found-user +password-hash-attribute+))
         found-user
         false))))
 
 (defn login-user [email password]
-  (let [userid (couchio/email->userid email)]
+  (let [userid (model/email->userid email)]
     (if userid
       (authenticate-user userid password)
       false)))
