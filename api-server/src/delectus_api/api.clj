@@ -380,3 +380,19 @@
                         {:cause :couchbase-exception
                          :exception-object ex
                          :userid userid :listid listid}))))))
+
+(defn list-columns [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (let [found-columns (couchio/get-object-attribute (config/delectus-content-bucket)
+                                                    listid +columns-attribute+)]
+    (if found-columns
+      (let [columns-map (.toMap found-columns)
+            ids (keys columns-map)]
+        (map (fn [id]
+               {id (get (get columns-map id) "name")})
+             ids))
+      nil)))
+
+;;; (list-columns "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" "8a61bdbc-3910-4257-afec-9ba34ac3fa45")

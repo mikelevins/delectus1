@@ -166,3 +166,7 @@
 (defn list-deleted? [userid listid]
   (with-errors-handled
     (ok (api/list-deleted? userid listid))))
+
+(defn list-columns [userid listid]
+  (with-errors-handled
+    (ok (api/list-columns userid listid))))

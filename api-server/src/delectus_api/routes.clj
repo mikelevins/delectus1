@@ -196,6 +196,12 @@
                  :summary "Returns true if the list has been marked deleted, and false otherwise"
                  (handlers/list-deleted? userid listid))
 
+            (GET "/list_columns/:userid/:listid" req
+                 :path-params [userid :- s/Str listid :- s/Str]
+                 :return [{s/Str s/Str}]
+                 :summary "Returns the list's columns"
+                 (handlers/list-columns userid listid))
+
             ;; (GET "/delectus/list_columns" [] handlers/list-columns)
             ;; (GET "/delectus/new_column" [] handlers/new-column)
             ;; (GET "/delectus/column_with_id" [] handlers/column-with-id)
