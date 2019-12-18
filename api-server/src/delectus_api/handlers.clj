@@ -30,6 +30,7 @@
    :authentication-failed unauthorized
    :collection-name-exists conflict
    :collection-not-found not-found
+   :column-name-exists conflict
    :couchbase-exception internal-server-error
    :exception internal-server-error
    :list-name-exists conflict

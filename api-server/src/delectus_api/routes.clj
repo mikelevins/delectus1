@@ -202,11 +202,11 @@
                  :summary "Returns the list's columns"
                  (handlers/list-columns userid listid))
             
-            (POST "/new_column" req
-                  :body [{:keys [userid listid name]} schema/NewColumnRequest]
-                  :return s/Str
-                  :summary "Creates a new column with the supplied name"
-                  (handlers/new-column userid listid name))
+            ;; (POST "/new_column" req
+            ;;       :body [{:keys [userid listid name]} schema/NewColumnRequest]
+            ;;       :return s/Str
+            ;;       :summary "Creates a new column with the supplied name"
+            ;;       (handlers/new-column userid listid name))
 
             ;; (GET "/delectus/column_with_id" [] handlers/column-with-id)
             ;; (GET "/delectus/column_name" [] handlers/column-name)

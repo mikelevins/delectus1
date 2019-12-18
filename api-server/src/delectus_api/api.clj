@@ -9,6 +9,7 @@
    [delectus-api.identifiers :refer [makeid]]
    [delectus-api.model :as model]
    [delectus-api.schema :as schema]
+   [delectus-api.utilities :as util]
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
@@ -380,9 +381,23 @@
   (ensure-user-exists userid)
   (ensure-list-exists listid)
   (ensure-owner listid userid)
-  )
+  (let [columns (couchio/get-document-path (config/delectus-content-bucket) listid "columns")]
+    (if columns
+      (let [column-names (.getNames columns)]
+        (map (fn [nm]
+               (let [col (.get columns nm)]
+                 {"id" nm
+                  "name" (.get col +name-attribute+)}))
+             column-names))
+      nil)))
 
 (defn new-column [userid listid name]
-  (ensure-user-exists userid)
-  (ensure-owner listid userid)
-  )
+  (let [column-descriptions (list-columns userid listid)
+        already? (some #(= name (get % "name"))
+                       column-descriptions)]
+    (if already?
+      (throw (ex-info "Column name exists"
+                        {:cause :column-name-exists
+                         :column-name name
+                         :userid userid :listid listid}))
+      :create-the-column)))
