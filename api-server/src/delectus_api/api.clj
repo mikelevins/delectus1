@@ -36,12 +36,10 @@
 (defmacro ensure-user [userid]
   (let [found-user (gensym)]
     `(let [~found-user (couchio/get-user ~userid)]
-       (if (and ~found-user
-                (= +user-type+ (.get ~found-user +type-attribute+)))
-         ~found-user
-         (throw (ex-info "No such user"
-                         {:cause :user-not-found
-                          :userid ~userid}))))))
+       (or ~found-user
+           (throw (ex-info "No such user"
+                           {:cause :user-not-found
+                            :userid ~userid}))))))
 
 (defmacro ensure-collection-exists [collectionid]
   `(if (couchio/collection-exists? ~collectionid)
@@ -53,12 +51,10 @@
 (defmacro ensure-collection [collectionid]
   (let [found-collection (gensym)]
     `(let [~found-collection (couchio/get-collection ~collectionid)]
-       (if (and ~found-collection
-                (= +collection-type+ (.get ~found-collection +type-attribute+)))
-         ~found-collection
-         (throw (ex-info "No such collection"
-                         {:cause :collection-not-found
-                          :collectionid ~collectionid}))))))
+       (or ~found-collection
+           (throw (ex-info "No such collection"
+                           {:cause :collection-not-found
+                            :collectionid ~collectionid}))))))
 
 (defmacro ensure-list-exists [listid]
   `(if (couchio/list-exists? ~listid)
@@ -70,12 +66,10 @@
 (defmacro ensure-list [listid]
   (let [found-list (gensym)]
     `(let [~found-list (couchio/get-list ~listid)]
-       (if (and ~found-list
-                (= +list-type+ (.get ~found-list +type-attribute+)))
-         ~found-list
-         (throw (ex-info "No such list"
-                         {:cause :list-not-found
-                          :listid ~listid}))))))
+       (or ~found-list
+           (throw (ex-info "No such list"
+                           {:cause :list-not-found
+                            :listid ~listid}))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; ensuring that objects belong to the expected owner
@@ -92,6 +86,7 @@
                          {:cause :wrong-owner-id
                           :expected ~userid
                           :found ~found-owner}))))))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; api functions
@@ -385,14 +380,9 @@
   (ensure-user-exists userid)
   (ensure-list-exists listid)
   (ensure-owner listid userid)
-  (let [found-columns (couchio/get-object-attribute (config/delectus-content-bucket)
-                                                    listid +columns-attribute+)]
-    (if found-columns
-      (let [columns-map (.toMap found-columns)
-            ids (keys columns-map)]
-        (map (fn [id]
-               {id (get (get columns-map id) "name")})
-             ids))
-      nil)))
+  )
 
-;;; (list-columns "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" "8a61bdbc-3910-4257-afec-9ba34ac3fa45")
+(defn new-column [userid listid name]
+  (ensure-user-exists userid)
+  (ensure-owner listid userid)
+  )

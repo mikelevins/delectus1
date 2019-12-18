@@ -170,3 +170,7 @@
 (defn list-columns [userid listid]
   (with-errors-handled
     (ok (api/list-columns userid listid))))
+
+(defn new-column [userid listid name]
+  (with-errors-handled
+    (ok (api/new-column userid listid name))))

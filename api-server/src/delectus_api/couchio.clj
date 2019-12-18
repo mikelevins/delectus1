@@ -14,9 +14,9 @@
    (com.couchbase.client.java.subdoc SubdocOptionsBuilder)))
 
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; Couchbase error handling
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (defmacro with-couchbase-exceptions-rethrown [& forms]
   (let [exname (gensym)]
@@ -31,9 +31,9 @@
                          {:cause :exception
                           :exception-object ~exname}))))))
 
-;;; ---------------------------------------------------------------------
-;;; JsonObject
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
+;;; JsonObjects
+;;; =====================================================================
 
 ;;; accessors
 ;;; ---------------------------------------------------------------------
@@ -55,18 +55,19 @@
 (defn json-object-owner? [obj ownerid]
   (= ownerid (json-object-attribute obj +owner-id-attribute+)))
 
-;;; ---------------------------------------------------------------------
-;;; JsonDocument
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
+;;; JsonDocuments
+;;; =====================================================================
 
 (defn make-json-document [id object-map]
   (JsonDocument/create id (JsonObject/from object-map)))
 
-;;; ---------------------------------------------------------------------
-;;; N1QL queries
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
+;;; Searches and queries
+;;; =====================================================================
 
-;;; Find objects with specific attribute values
+;;; ---------------------------------------------------------------------
+;;; Finding objects with specific attribute values
 ;;; ---------------------------------------------------------------------
 
 (defn make-object-matchers [matchers-map]
@@ -108,11 +109,12 @@
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
 ;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +list-type+}))
 
-;;; ---------------------------------------------------------------------
-;;; Fetching documents by id
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
+;;; Couchbase accessors
+;;; =====================================================================
 
-;;; generic JsonDocuments
+;;; ---------------------------------------------------------------------
+;;; Documents and attributes
 ;;; ---------------------------------------------------------------------
 
 (defn id-exists? [bucket docid]
@@ -122,11 +124,6 @@
 (defn get-document [bucket docid]
   (with-couchbase-exceptions-rethrown
     (.get bucket docid)))
-
-
-;;; ---------------------------------------------------------------------
-;;; Fetching and storing Couchbase document attributes
-;;; ---------------------------------------------------------------------
 
 (defn object-attribute-exists? [bucket objectid attribute-name]
   (with-couchbase-exceptions-rethrown
@@ -160,7 +157,59 @@
     value)))
 
 ;;; ---------------------------------------------------------------------
+;;; Key-value paths
+;;; ---------------------------------------------------------------------
 
+(defn document-path-exists [bucket documentid key-path]
+  (with-couchbase-exceptions-rethrown
+    (let [lookup (.lookupIn bucket documentid)
+          exists (.exists lookup (into-array [key-path]))
+          result (.execute exists)]
+      (.content result 0))))
+
+;;; (document-path-exists (config/delectus-content-bucket) "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "columns.0.name")
+;;; (document-path-exists (config/delectus-content-bucket) "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "NOPE!")
+
+(defn get-document-path [bucket documentid key-path]
+  (with-couchbase-exceptions-rethrown
+    (let [lookup (.lookupIn bucket documentid)
+          getter (.get lookup (into-array [key-path]))
+          result (.execute getter)]
+      (.content result 0))))
+
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (get-document-path $bucket "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "columns.0.name")
+;;; (get-document-path $bucket "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "NOPE!")
+
+;;; set the attribute at the path, but only if it already exists
+(defn update-document-path! [bucket documentid key-path value]
+  (with-couchbase-exceptions-rethrown
+    (let [lookup (.exists (.lookupIn bucket documentid) (into-array [key-path]))
+          result (.execute lookup)
+          exists? (.content result 0)]
+      (if exists?
+        (let [mutator (.upsert (.mutateIn bucket documentid) key-path value)]
+          (.execute mutator)
+          value)
+        (throw (CouchbaseException. "No such attribute"))))))
+
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (update-document-path! $bucket "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "columns.0.name" "Item")
+;;; (update-document-path! $bucket "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "NOPE!" "frob")
+;;; (get-document-path $bucket "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "columns.0.name")
+
+;;; set the attribute, adding it to the object if it's not present
+(defn upsert-document-path! [bucket documentid key-path value]
+  (with-couchbase-exceptions-rethrown
+    (let [mutator (.upsert (.mutateIn bucket documentid) key-path value)]
+      (.execute mutator)
+      value)))
+
+;;; (def $bucket (config/delectus-content-bucket))
+;;; (upsert-document-path! $bucket "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "test_attr" "Testing...")
+;;; (get-document-path $bucket "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "test_attr")
+
+;;; ---------------------------------------------------------------------
 ;;; Users
 ;;; ---------------------------------------------------------------------
 
@@ -175,8 +224,9 @@
            (let [candidate (get-document (config/delectus-users-bucket) userid)]
              (and candidate
                   (let [obj (.content candidate)]
-                    (json-object-type? obj +user-type+)
-                    obj))))
+                    (if (json-object-type? obj +user-type+)
+                      obj
+                      nil)))))
       nil))
 
 ;;; finding registered users
@@ -217,8 +267,9 @@
            (let [candidate (get-document (config/delectus-content-bucket) collectionid)]
              (and candidate
                   (let [obj (.content candidate)]
-                    (json-object-type? obj +collection-type+)
-                    obj))))
+                    (if (json-object-type? obj +collection-type+)
+                      obj
+                      nil)))))
       nil))
 
 ;;; Lists
@@ -235,6 +286,9 @@
            (let [candidate (get-document (config/delectus-content-bucket) listid)]
              (and candidate
                   (let [obj (.content candidate)]
-                    (json-object-type? obj +list-type+)
-                    obj))))
+                    (if (json-object-type? obj +list-type+)
+                      obj
+                      nil)))))
       nil))
+
+

@@ -9,7 +9,7 @@
    [delectus-api.couchio :as couchio]))
 
 ;;; ---------------------------------------------------------------------
-;;; User, Collection, and List
+;;; Users
 ;;; ---------------------------------------------------------------------
 
 (defn make-user-document [& {:keys [id email name password-hash enabled]
@@ -39,6 +39,10 @@
 ;;; (def $newuser (make-user-document :email $username :name "Joe Test" :password-hash $password-hash))
 ;;; (def $upserted-user (assert-new-user $newuser))
 
+;;; ---------------------------------------------------------------------
+;;; Collections
+;;; ---------------------------------------------------------------------
+
 (defn make-collection-document [& {:keys [id name owner-id lists deleted]
                                    :or {id (makeid)
                                         name nil
@@ -61,17 +65,9 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (make-collection-document :name "Random stuff" :owner-id $mikelid)
 
-(defn make-default-collection [& {:keys [id owner-id]
-                                  :or {id (makeid)
-                                       owner-id nil}}]
-  (let [obj-id (makeid)
-        obj-map {+type-attribute+ +collection-type+
-                 +id-attribute+ obj-id
-                 +name-attribute+ +standard-default-collection-name+
-                 +owner-id-attribute+ owner-id
-                 +lists-attribute+ {}
-                 +deleted-attribute+ false}]
-    (couchio/make-json-document obj-id obj-map)))
+;;; ---------------------------------------------------------------------
+;;; Lists
+;;; ---------------------------------------------------------------------
 
 (defn make-list-document [& {:keys [id name owner-id collection-id columns items deleted]
                              :or {id (makeid)
