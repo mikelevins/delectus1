@@ -34,19 +34,27 @@
 
 (defn setup-test-data []
   (println "setting up test data...")
-
+  (let [test-collection-1 (model/make-collection-document :name "Test Collection 1"
+                                                          :owner-id +test-user1-id+)
+        test-collection-2 (model/make-collection-document :name "Test Collection 2"
+                                                          :owner-id +test-user1-id+)]
+    (model/assert-collection! test-collection-1))
   ;;; wait after setup to make sure DB's API returns consistent results
   (Thread/sleep 1000))
 
 ;;; (setup-test-data)
-;;; (collections (model/email->userid (:delectus-test-user (config/delectus-configuration))))
+;;; (api/collections (:delectus-test-user1-id (config/delectus-configuration)))
 ;;; (lists (model/email->userid (:delectus-test-user (config/delectus-configuration))))
 
 (defn teardown-test-data []
   (println "deleting test data...")
   ;;; wait before teardown to make sure DB's API returns consistent results
   (Thread/sleep 1000)
-  
+  (let [test-documents (couchio/find-objects (config/delectus-content-bucket) []
+                                             {"owner-id" +test-user1-id+})]
+    (doseq [doc test-documents]
+      (couchio/remove-document! (config/delectus-content-bucket)
+                                (.get doc +id-attribute+))))
   (println "Finished."))
 
 (defn test-fixture [f]
@@ -96,6 +104,7 @@
 ;;; ---------------------------------------------------------------------
 ;;; Collection tests
 ;;; ---------------------------------------------------------------------
+
 
 
 ;;; ---------------------------------------------------------------------

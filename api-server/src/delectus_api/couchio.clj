@@ -7,6 +7,7 @@
    [delectus-api.identifiers :refer [makeid]])
   (:import
    (com.couchbase.client.core CouchbaseException)
+   (com.couchbase.client.java CouchbaseBucket)
    (com.couchbase.client.java.document.json JsonArray JsonObject)
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)
@@ -60,6 +61,9 @@
 
 (defn make-json-document [id object-map]
   (JsonDocument/create id (JsonObject/from object-map)))
+
+(defn remove-document! [bucket docid]
+  (.remove bucket docid))
 
 ;;; =====================================================================
 ;;; Searches and queries
