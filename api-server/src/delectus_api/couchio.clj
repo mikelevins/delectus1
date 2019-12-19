@@ -19,17 +19,16 @@
 ;;; =====================================================================
 
 (defmacro with-couchbase-exceptions-rethrown [& forms]
-  (let [exname (gensym)]
-    `(try
-       (do ~@forms)
-       (catch CouchbaseException ~exname
-         (throw (ex-info "Couchbase error"
-                         {:cause :couchbase-exception
-                          :exception-object ~exname})))
-       (catch Exception ~exname
-         (throw (ex-info "Unrecognized error"
-                         {:cause :exception
-                          :exception-object ~exname}))))))
+  `(try
+     (do ~@forms)
+     (catch CouchbaseException couchexc#
+       (throw (ex-info "Couchbase error"
+                       {:cause :couchbase-exception
+                        :exception-object couchexc#})))
+     (catch Exception exc#
+       (throw (ex-info "Unrecognized error"
+                       {:cause :exception
+                        :exception-object exc#})))))
 
 ;;; =====================================================================
 ;;; JsonObjects
@@ -142,8 +141,8 @@
   (with-couchbase-exceptions-rethrown
     (let [lookup (.exists (.lookupIn bucket objectid) (into-array [attribute-name]))
           result (.execute lookup)
-          value (.content result 0)]
-      (if value
+          exists? (.content result 0)]
+      (if exists?
         (let [mutator (.upsert (.mutateIn bucket objectid) attribute-name value)]
           (.execute mutator)
           value)

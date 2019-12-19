@@ -132,10 +132,7 @@
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)
   (ensure-owner collectionid userid)
-  {"name" (couchio/get-object-attribute (config/delectus-content-bucket)
-                                        collectionid +name-attribute+)
-   "id" (couchio/get-object-attribute (config/delectus-content-bucket)
-                                      collectionid +id-attribute+)})
+  (into {} (.toMap (ensure-collection collectionid))))
 
 (defn collection-name [userid collectionid]
   (ensure-user-exists userid)
@@ -156,13 +153,8 @@
   (ensure-collection-exists collectionid)
   (ensure-owner collectionid userid)
   (let [collection (ensure-collection collectionid)]
-    (try
-      (couchio/upsert-object-attribute! (config/delectus-content-bucket) collectionid +name-attribute+ newname)
-      (catch Exception ex
-        (throw (ex-info "Couchbase Error"
-                        {:cause :couchbase-exception
-                         :exception-object ex
-                         :userid userid :collectionid collectionid}))))))
+    (couchio/with-couchbase-exceptions-rethrown
+      (couchio/upsert-object-attribute! (config/delectus-content-bucket) collectionid +name-attribute+ newname))))
 
 (defn new-collection [userid name]
   (ensure-user-exists userid)
