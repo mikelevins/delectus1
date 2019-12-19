@@ -38,7 +38,8 @@
                                                           :owner-id +test-user1-id+)
         test-collection-2 (model/make-collection-document :name "Test Collection 2"
                                                           :owner-id +test-user1-id+)]
-    (model/assert-collection! test-collection-1))
+    (model/assert-collection! test-collection-1)
+    (model/assert-collection! test-collection-2))
   ;;; wait after setup to make sure DB's API returns consistent results
   (Thread/sleep 1000))
 
@@ -105,7 +106,11 @@
 ;;; Collection tests
 ;;; ---------------------------------------------------------------------
 
-
+(deftest collections-test
+  (testing "/api/collection/collections"
+    (let [collections (api/collections +test-user1-id+)]
+      (is (= 2 (count collections))
+          (str "there should be 2 test collections but found " (count collections))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
