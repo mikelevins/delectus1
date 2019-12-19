@@ -110,7 +110,9 @@
   (testing "/api/collection/collections"
     (let [collections (api/collections +test-user1-id+)]
       (is (= 2 (count collections))
-          (str "there should be 2 test collections but found " (count collections))))))
+          (str "there should be 2 test collections but found " (count collections)))
+      (is (every? #(= +collection-type+ (.get % +type-attribute+)) collections)
+          "all found objects should be collections"))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests

@@ -124,9 +124,11 @@
 
 (defn collections [userid]
   (ensure-user-exists userid)
-  (map #(select-keys (.toMap %) ["name" "id" "deleted"])
+  (map #(select-keys (.toMap %) ["name" "id" "deleted" "type"])
        (couchio/find-objects (config/delectus-content-bucket) []
                              {"type" +collection-type+ "owner-id" userid})))
+
+;;; (collections $mikelid)
 
 (defn collection-with-id [userid collectionid]
   (ensure-user-exists userid)
