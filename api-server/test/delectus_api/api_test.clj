@@ -68,34 +68,30 @@
                (= +user-type+ (.get found-user +type-attribute+)))
           "found-user should be a user object"))))
 
-;;; (def $userid (:delectus-test-user-id (config/delectus-configuration)))
-;;; (def $password (:delectus-test-user-password (config/delectus-configuration)))
-;;; (authenticate $userid $password)
+(deftest login-test
+  (testing "/api/user/login"
+    (let [email (:delectus-test-user1-email (config/delectus-configuration))
+          password (:delectus-test-user1-password (config/delectus-configuration))
+          found-user (api/login email password)]
+      (is (and found-user
+               (= +user-type+ (.get found-user +type-attribute+)))
+          "found-user should be a user object"))))
 
-;; (deftest login-test
-;;   (testing "/api/user/login"
-;;     (let [email (:delectus-test-user-email (config/delectus-configuration))
-;;           password (:delectus-test-user-password (config/delectus-configuration))
-;;           found-user (api/login email password)]
-;;       (is found-user "found-user should be a user object"))))
+(deftest userid-test
+  (testing "/api/user/userid"
+    (let [email (:delectus-test-user1-email (config/delectus-configuration))
+          found-id (api/userid email)]
+      (is found-id "found-id should be a user ID string")
+      (is (= found-id (:delectus-test-user1-id (config/delectus-configuration)))
+          "found-id should equal to the standard test user ID"))))
 
-;; (deftest userid-test
-;;   (testing "/api/user/userid"
-;;     (let [email (:delectus-test-user-email (config/delectus-configuration))
-;;           found-id (api/userid email)]
-;;       (is found-id "found-id should be a user ID string")
-;;       (is (= found-id (:delectus-test-user-id (config/delectus-configuration)))
-;;           "found-id should equal to the standard test user ID"))))
-
-;; (deftest userdata-test
-;;   (testing "/api/user/userdata"
-;;     (let [data (api/userdata (:delectus-test-user-id (config/delectus-configuration)))]
-;;       (is (= (:userid data) (:delectus-test-user-id (config/delectus-configuration)))
-;;           "userid should be the standard test-user ID string")
-;;       (is (= (:email data) (:delectus-test-user-email (config/delectus-configuration)))
-;;           "email should be the standard test-user email string"))))
-
-;;; (def $testid (couchio/email->userid (:delectus-test-user-email (config/delectus-configuration))))
+(deftest userdata-test
+  (testing "/api/user/userdata"
+    (let [data (api/userdata (:delectus-test-user1-id (config/delectus-configuration)))]
+      (is (= (get data +id-attribute+) (:delectus-test-user1-id (config/delectus-configuration)))
+          "userid should be the standard test-user ID string")
+      (is (= (get data +email-attribute+) (:delectus-test-user1-email (config/delectus-configuration)))
+          "email should be the standard test-user email string"))))
 
 ;;; ---------------------------------------------------------------------
 ;;; Collection tests
