@@ -152,9 +152,17 @@
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)
   (ensure-owner collectionid userid)
-  (let [collection (ensure-collection collectionid)]
-    (couchio/with-couchbase-exceptions-rethrown
-      (couchio/upsert-object-attribute! (config/delectus-content-bucket) collectionid +name-attribute+ newname))))
+  (let [collections (couchio/find-objects
+                     (config/delectus-content-bucket) []
+                     {"type" +collection-type+ "owner-id" userid "name" newname})]
+    (if (empty? collections)
+      (let [collection (ensure-collection collectionid)]
+        (couchio/with-couchbase-exceptions-rethrown
+          (couchio/upsert-object-attribute! (config/delectus-content-bucket) collectionid +name-attribute+ newname)))
+      (throw (ex-info "Name exists"
+                      {:cause :collection-name-exists
+                       :collectionname newname
+                       :userid userid})))))
 
 (defn new-collection [userid name]
   (ensure-user-exists userid)
@@ -259,14 +267,22 @@
   (ensure-user-exists userid)
   (ensure-list-exists listid)
   (ensure-owner listid userid)
-  (let [found-list (ensure-list listid)]
-    (try
-      (couchio/upsert-object-attribute! (config/delectus-content-bucket) listid +name-attribute+ newname)
-      (catch Exception ex
-        (throw (ex-info "Couchbase Error"
-                        {:cause :couchbase-exception
-                         :exception-object ex
-                         :userid userid :listid listid}))))))
+  (let [lists (couchio/find-objects
+               (config/delectus-content-bucket) []
+               {"type" +list-type+ "owner-id" userid "name" name})]
+    (if (empty? lists)
+      (let [found-list (ensure-list listid)]
+        (try
+          (couchio/upsert-object-attribute! (config/delectus-content-bucket) listid +name-attribute+ newname)
+          (catch Exception ex
+            (throw (ex-info "Couchbase Error"
+                            {:cause :couchbase-exception
+                             :exception-object ex
+                             :userid userid :listid listid})))))
+      (throw (ex-info "Name exists"
+                      {:cause :list-name-exists
+                       :listname newname
+                       :userid userid})))))
 
 (defn new-list [userid name]
   (ensure-user-exists userid)
