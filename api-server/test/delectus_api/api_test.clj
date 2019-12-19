@@ -128,6 +128,12 @@
              +test-collection-name1+)
           "the collection's owner-id should be the standard test-user1 ID"))))
 
+(deftest collection-name-test
+  (testing "/api/collection/collection_name"
+    (let [name (api/collection-name +test-user1-id+ +test-collection-id1+)]
+      (is (= name +test-collection-name1+)
+          "the collection's name should be equal to +test-collection-name1+"))))
+
 ;;; ---------------------------------------------------------------------
 ;;; List tests
 ;;; ---------------------------------------------------------------------
