@@ -108,7 +108,6 @@
                                    :or {id (makeid)
                                         name nil
                                         owner-id nil
-                                        lists nil
                                         deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-collection-document"})
   (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-collection-document"})
@@ -116,7 +115,6 @@
                  +id-attribute+ id
                  +name-attribute+ name
                  +owner-id-attribute+ owner-id
-                 +lists-attribute+ lists
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
 
@@ -180,6 +178,10 @@
         upserted-doc (.upsert content-bucket listdoc)]
     upserted-doc))
 
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $movies (make-list-document :name "Movies" :owner-id $mikelid))
+;;; (ensure-document-type $movies +list-type+)
+;;; (def $upserted-ls (assert-list! $movies))
 
 (defn list-exists? [listid]
   (and (couchio/id-exists? (config/delectus-content-bucket) listid)

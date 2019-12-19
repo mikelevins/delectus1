@@ -239,10 +239,7 @@
   (ensure-user-exists userid)
   (ensure-list-exists listid)
   (ensure-owner listid userid)
-  {"name" (couchio/get-object-attribute (config/delectus-content-bucket)
-                                        listid +name-attribute+)
-   "id" (couchio/get-object-attribute (config/delectus-content-bucket)
-                                      listid +id-attribute+)})
+  (into {} (.toMap (ensure-list listid))))
 
 (defn list-name [userid listid]
   (ensure-user-exists userid)
