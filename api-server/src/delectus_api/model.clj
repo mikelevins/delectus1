@@ -55,10 +55,10 @@
     upserted-doc))
 
 ;;; (def $conf (config/delectus-configuration))
-;;; (def $username (:delectus-test-user $conf))
-;;; (def $password-hash (hashers/derive (:delectus-test-user-password $conf)))
-;;; (def $newuser (make-user-document :email $username :name "Joe Test" :password-hash $password-hash))
-;;; (def $upserted-user (assert-new-user $newuser))
+;;; (def $email (:delectus-test-user2-email $conf))
+;;; (def $password-hash (hashers/derive (:delectus-test-user2-password $conf)))
+;;; (def $newuser (make-user-document :email $email :name "Jane Test" :password-hash $password-hash))
+;;; (def $upserted-user (assert-user! $newuser))
 
 (defn user-exists? [userid]
   (and (couchio/id-exists? (config/delectus-users-bucket) userid)

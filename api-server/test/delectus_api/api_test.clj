@@ -20,46 +20,13 @@
 ;;; functions and data for marking and managing test data
 ;;; (that is, data created by Delectus unit tests)
 
-(def +test-data-prefix+ "DELECTUS-TEST-DATA::")
+(def +test-user1-id+ (:delectus-test-user1-id (config/delectus-configuration)))
+(def +test-user1-email+ (:delectus-test-user1-email (config/delectus-configuration)))
+(def +test-user1-password+ (:delectus-test-user1-password (config/delectus-configuration)))
 
-;;; make-test-id []
-;;; ---------------------------------------------------------------------
-;;; use make-test-id instead of makeid for IDs used in tests; make-test-id
-;;; constructs IDs the we can readily recognize as ephemeral test data
-;;; to be deleted from the database when tests are finished running
-(defn make-test-id []
-  (str +test-data-prefix+ (makeid)))
-
-(defn make-test-name [name]
-  (str name "::" (makeid)))
-
-(def +test-user-id+ (:delectus-test-user-id (config/delectus-configuration)))
-(def +test-user-email+ (:delectus-test-user-email (config/delectus-configuration)))
-(def +test-user-password+ (:delectus-test-user-password (config/delectus-configuration)))
-
-;;; ---------------------------------------------------------------------
-;;; keeping track of test data
-;;; ---------------------------------------------------------------------
-
-(def  +test-data-map+ (atom {}))
-
-(defn get-test-data [key]
-  (get @+test-data-map+ key nil))
-
-;;; (get-test-data :foo)
-
-(defn reset-test-data! []
-  (swap! +test-data-map+ (constantly {})))
-
-;;; (assert-test-data! :foo "Bar")
-;;; (reset-test-data!)
-;;; (get-test-data :foo)
-
-(defn assert-test-data! [key val]
-  (swap! +test-data-map+ assoc key val))
-
-;;; (assert-test-data! :foo "Bar")
-;;; (get-test-data :foo)
+(def +test-user2-id+ (:delectus-test-user2-id (config/delectus-configuration)))
+(def +test-user2-email+ (:delectus-test-user2-email (config/delectus-configuration)))
+(def +test-user2-password+ (:delectus-test-user2-password (config/delectus-configuration)))
 
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
@@ -69,7 +36,7 @@
   (println "setting up test data...")
 
   ;;; wait after setup to make sure DB's API returns consistent results
-  (Thread/sleep 2000))
+  (Thread/sleep 1000))
 
 ;;; (setup-test-data)
 ;;; (collections (model/email->userid (:delectus-test-user (config/delectus-configuration))))
@@ -78,8 +45,8 @@
 (defn teardown-test-data []
   (println "deleting test data...")
   ;;; wait before teardown to make sure DB's API returns consistent results
-  (Thread/sleep 2000)
-
+  (Thread/sleep 1000)
+  
   (println "Finished."))
 
 (defn test-fixture [f]
@@ -96,37 +63,37 @@
 
 (deftest authenticate-test
   (testing "/api/user/authenticate"
-    (let [userid (:delectus-test-user-id (config/delectus-configuration))
-          password (:delectus-test-user-password (config/delectus-configuration))
-          found-user (api/authenticate userid password)]
-      (is found-user "found-user should be a user object"))))
+    (let [found-user (api/authenticate +test-user1-id+ +test-user1-password+)]
+      (is (and found-user
+               (= +user-type+ (.get found-user +type-attribute+)))
+          "found-user should be a user object"))))
 
 ;;; (def $userid (:delectus-test-user-id (config/delectus-configuration)))
 ;;; (def $password (:delectus-test-user-password (config/delectus-configuration)))
 ;;; (authenticate $userid $password)
 
-(deftest login-test
-  (testing "/api/user/login"
-    (let [email (:delectus-test-user-email (config/delectus-configuration))
-          password (:delectus-test-user-password (config/delectus-configuration))
-          found-user (api/login email password)]
-      (is found-user "found-user should be a user object"))))
+;; (deftest login-test
+;;   (testing "/api/user/login"
+;;     (let [email (:delectus-test-user-email (config/delectus-configuration))
+;;           password (:delectus-test-user-password (config/delectus-configuration))
+;;           found-user (api/login email password)]
+;;       (is found-user "found-user should be a user object"))))
 
-(deftest userid-test
-  (testing "/api/user/userid"
-    (let [email (:delectus-test-user-email (config/delectus-configuration))
-          found-id (api/userid email)]
-      (is found-id "found-id should be a user ID string")
-      (is (= found-id (:delectus-test-user-id (config/delectus-configuration)))
-          "found-id should equal to the standard test user ID"))))
+;; (deftest userid-test
+;;   (testing "/api/user/userid"
+;;     (let [email (:delectus-test-user-email (config/delectus-configuration))
+;;           found-id (api/userid email)]
+;;       (is found-id "found-id should be a user ID string")
+;;       (is (= found-id (:delectus-test-user-id (config/delectus-configuration)))
+;;           "found-id should equal to the standard test user ID"))))
 
-(deftest userdata-test
-  (testing "/api/user/userdata"
-    (let [data (api/userdata (:delectus-test-user-id (config/delectus-configuration)))]
-      (is (= (:userid data) (:delectus-test-user-id (config/delectus-configuration)))
-          "userid should be the standard test-user ID string")
-      (is (= (:email data) (:delectus-test-user-email (config/delectus-configuration)))
-          "email should be the standard test-user email string"))))
+;; (deftest userdata-test
+;;   (testing "/api/user/userdata"
+;;     (let [data (api/userdata (:delectus-test-user-id (config/delectus-configuration)))]
+;;       (is (= (:userid data) (:delectus-test-user-id (config/delectus-configuration)))
+;;           "userid should be the standard test-user ID string")
+;;       (is (= (:email data) (:delectus-test-user-email (config/delectus-configuration)))
+;;           "email should be the standard test-user email string"))))
 
 ;;; (def $testid (couchio/email->userid (:delectus-test-user-email (config/delectus-configuration))))
 
