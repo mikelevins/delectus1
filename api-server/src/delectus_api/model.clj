@@ -125,7 +125,6 @@
         upserted-doc (.upsert content-bucket collectiondoc)]
     upserted-doc))
 
-
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $thingscol (make-collection-document :name "Things" :owner-id $mikelid))
 ;;; (ensure-document-type $thingscol +collection-type+)

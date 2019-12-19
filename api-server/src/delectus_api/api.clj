@@ -128,8 +128,6 @@
        (couchio/find-objects (config/delectus-content-bucket) []
                              {"type" +collection-type+ "owner-id" userid})))
 
-;;; (collections $mikelid)
-
 (defn collection-with-id [userid collectionid]
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)

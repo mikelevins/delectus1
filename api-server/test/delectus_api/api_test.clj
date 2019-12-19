@@ -28,16 +28,23 @@
 (def +test-user2-email+ (:delectus-test-user2-email (config/delectus-configuration)))
 (def +test-user2-password+ (:delectus-test-user2-password (config/delectus-configuration)))
 
+(def +test-collection-id1+ "915ffccf-8261-473e-a82e-2b57404cb3b5")
+(def +test-collection-name1+ "Test Collection 1")
+(def +test-collection-id2+ "76856575-c8ba-42ed-af24-2c4f1589caf6")
+(def +test-collection-name2+ "Test Collection 2")
+
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
 ;;; ---------------------------------------------------------------------
 
 (defn setup-test-data []
   (println "setting up test data...")
-  (let [test-collection-1 (model/make-collection-document :name "Test Collection 1"
-                                                          :owner-id +test-user1-id+)
-        test-collection-2 (model/make-collection-document :name "Test Collection 2"
-                                                          :owner-id +test-user1-id+)]
+  (let [test-collection-1 (model/make-collection-document :name +test-collection-name1+
+                                                          :owner-id +test-user1-id+
+                                                          :id +test-collection-id1+)
+        test-collection-2 (model/make-collection-document :name +test-collection-name2+
+                                                          :owner-id +test-user1-id+
+                                                          :id +test-collection-id2+)]
     (model/assert-collection! test-collection-1)
     (model/assert-collection! test-collection-2))
   ;;; wait after setup to make sure DB's API returns consistent results
@@ -79,27 +86,24 @@
 
 (deftest login-test
   (testing "/api/user/login"
-    (let [email (:delectus-test-user1-email (config/delectus-configuration))
-          password (:delectus-test-user1-password (config/delectus-configuration))
-          found-user (api/login email password)]
+    (let [found-user (api/login +test-user1-email+ +test-user1-password+)]
       (is (and found-user
                (= +user-type+ (.get found-user +type-attribute+)))
           "found-user should be a user object"))))
 
 (deftest userid-test
   (testing "/api/user/userid"
-    (let [email (:delectus-test-user1-email (config/delectus-configuration))
-          found-id (api/userid email)]
+    (let [found-id (api/userid +test-user1-email+)]
       (is found-id "found-id should be a user ID string")
-      (is (= found-id (:delectus-test-user1-id (config/delectus-configuration)))
-          "found-id should equal to the standard test user ID"))))
+      (is (= found-id +test-user1-id+)
+          "found-id should equal to the standard test-user1 ID"))))
 
 (deftest userdata-test
   (testing "/api/user/userdata"
-    (let [data (api/userdata (:delectus-test-user1-id (config/delectus-configuration)))]
-      (is (= (get data +id-attribute+) (:delectus-test-user1-id (config/delectus-configuration)))
+    (let [data (api/userdata +test-user1-id+)]
+      (is (= (get data +id-attribute+) +test-user1-id+)
           "userid should be the standard test-user ID string")
-      (is (= (get data +email-attribute+) (:delectus-test-user1-email (config/delectus-configuration)))
+      (is (= (get data +email-attribute+) +test-user1-email+)
           "email should be the standard test-user email string"))))
 
 ;;; ---------------------------------------------------------------------
@@ -113,6 +117,16 @@
           (str "there should be 2 test collections but found " (count collections)))
       (is (every? #(= +collection-type+ (.get % +type-attribute+)) collections)
           "all found objects should be collections"))))
+
+(deftest collection-with-id-test
+  (testing "/api/collection/collection_with_id"
+    (let [collection (api/collection-with-id +test-user1-id+ +test-collection-id1+)]
+      (is (= (get collection +owner-id-attribute+)
+             +test-user1-id+)
+          "the collection's owner-id should be the standard test-user1 ID")
+      (is (= (get collection +name-attribute+)
+             +test-collection-name1+)
+          "the collection's owner-id should be the standard test-user1 ID"))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
