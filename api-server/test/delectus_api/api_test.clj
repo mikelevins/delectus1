@@ -36,6 +36,15 @@
 
 (def +test-new-collection-name+ "New Collection for Testing")
 
+(def +test-list-id1+ "6957a4ba-75ae-4957-af82-529cd016341d")
+(def +test-list-name1+ "Test List 1")
+(def +test-list-alt-name1+ "Test List (alternate name) 1")
+(def +test-list-id2+ "e1cf3bf3-ce80-4fdc-92e6-3e7a33c14fd2")
+(def +test-list-name2+ "Test List 2")
+(def +test-list-id3+ "c8bb5589-1bf1-49a6-994d-0510b7e2e42e")
+(def +test-list-name3+ "Test List 3")
+
+
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
 ;;; ---------------------------------------------------------------------
@@ -47,9 +56,24 @@
                                                           :id +test-collection-id1+)
         test-collection-2 (model/make-collection-document :name +test-collection-name2+
                                                           :owner-id +test-user1-id+
-                                                          :id +test-collection-id2+)]
+                                                          :id +test-collection-id2+)
+        test-list-1 (model/make-list-document :name +test-list-name1+
+                                              :owner-id +test-user1-id+
+                                              :id +test-list-id1+
+                                              :collection-id +test-collection-id1+)
+        test-list-2 (model/make-list-document :name +test-list-name2+
+                                              :owner-id +test-user1-id+
+                                              :id +test-list-id2+
+                                              :collection-id +test-collection-id1+)
+        test-list-3 (model/make-list-document :name +test-list-name3+
+                                              :owner-id +test-user1-id+
+                                              :id +test-list-id3+
+                                              :collection-id +test-collection-id1+)]
     (model/assert-collection! test-collection-1)
-    (model/assert-collection! test-collection-2))
+    (model/assert-collection! test-collection-2)
+    (model/assert-list! test-list-1)
+    (model/assert-list! test-list-2)
+    (model/assert-list! test-list-3))
   ;;; wait after setup to make sure DB's API returns consistent results
   (Thread/sleep 1000))
 
@@ -186,6 +210,13 @@
     (api/undelete-collection +test-user1-id+ +test-collection-id2+)
     (is (not (api/collection-deleted? +test-user1-id+ +test-collection-id2+))
         "expected +test-collection-id2+ to now be marked not deleted")))
+
+(deftest collection-lists-test
+  (testing "/api/collection/collection_lists"
+    (let [foundlists1 (api/collection-lists  +test-user1-id+ +test-collection-id1+)]
+      (is (> (count foundlists1) 0) "expected to find some lists in +test-collection-id1+"))
+    (let [foundlists2 (api/collection-lists  +test-user1-id+ +test-collection-id2+)]
+      (is (not (> (count foundlists2) 0)) "expected to find no lists in +test-collection-id2+"))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
