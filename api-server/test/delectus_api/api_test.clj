@@ -58,9 +58,14 @@
   (println "deleting test data...")
   ;;; wait before teardown to make sure DB's API returns consistent results
   (Thread/sleep 1000)
-  (let [test-documents (couchio/find-objects (config/delectus-content-bucket) []
-                                             {"owner-id" +test-user1-id+})]
-    (doseq [doc test-documents]
+  (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket) []
+                                              {"owner-id" +test-user1-id+})
+        test-documents2 (couchio/find-objects (config/delectus-content-bucket) []
+                                             {"owner-id" +test-user2-id+})]
+    (doseq [doc test-documents1]
+      (couchio/remove-document! (config/delectus-content-bucket)
+                                (.get doc +id-attribute+)))
+    (doseq [doc test-documents2]
       (couchio/remove-document! (config/delectus-content-bucket)
                                 (.get doc +id-attribute+))))
   (println "Finished."))
@@ -127,8 +132,7 @@
           "the collection's owner-id should be the standard test-user1 ID")
       (is (= (get collection +name-attribute+)
              +test-collection-name1+)
-          "the collection's owner-id should be the standard test-user1 ID"))))
-
+          "the collection's name should be the standard test-user1 name"))))
 
 (deftest collection-name-test
   (testing "/api/collection/collection_name"
@@ -145,6 +149,17 @@
               (str "the found collection should have the ID " +test-collection-id1+)))
         (is (= 1 (count found))
             "should be one collection found")))))
+
+(deftest rename-collection-test
+  (testing "/api/collection/rename_collection"
+    (let [found-name (api/collection-name +test-user1-id+ +test-collection-id1+)]
+      (is (= found-name +test-collection-name1+)
+          (str "found-name should initially be equal to " +test-collection-name1+))
+      (api/rename-collection +test-user1-id+ +test-collection-id1+ +test-collection-alt-name1+)
+      (let [found-name (api/collection-name +test-user1-id+ +test-collection-id1+)]
+        (is (= found-name +test-collection-alt-name1+)
+            (str "found-name should now be equal to " +test-collection-alt-name1+)))
+      (api/rename-collection +test-user1-id+ +test-collection-id1+ +test-collection-name1+))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
