@@ -34,6 +34,8 @@
 (def +test-collection-id2+ "76856575-c8ba-42ed-af24-2c4f1589caf6")
 (def +test-collection-name2+ "Test Collection 2")
 
+(def +test-new-collection-name+ "New Collection for Testing")
+
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
 ;;; ---------------------------------------------------------------------
@@ -119,8 +121,8 @@
   (testing "/api/collection/collections"
     (let [collectionids (api/collections +test-user1-id+)
           collections (map #(api/collection-with-id +test-user1-id+ %) collectionids)]
-      (is (= 2 (count collections))
-          (str "there should be 2 test collections but found " (count collections)))
+      (is (> (count collections) 0)
+          (str "there should be several test collections but found " (count collections)))
       (is (every? #(= +collection-type+ (get % +type-attribute+)) collections)
           "all found objects should be collections"))))
 
@@ -160,6 +162,18 @@
         (is (= found-name +test-collection-alt-name1+)
             (str "found-name should now be equal to " +test-collection-alt-name1+)))
       (api/rename-collection +test-user1-id+ +test-collection-id1+ +test-collection-name1+))))
+
+(deftest new-collection-test
+  (testing "/api/collection/new_collection"
+    (let [newcollid (api/new-collection +test-user1-id+ +test-new-collection-name+)]
+      ;; wait to ensure db is consistent before checking
+      (Thread/sleep 500)
+      (let [foundids (api/find-collections-with-name +test-user1-id+ +test-new-collection-name+)]
+        (is (> (count foundids) 0) "expected one found collection"))
+      (let [foundcoll (api/collection-with-id +test-user1-id+ newcollid)
+            foundname (get foundcoll +name-attribute+)]
+        (is (= foundname +test-new-collection-name+)
+            (str "expected the found collection's name to be " +test-new-collection-name+))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests
