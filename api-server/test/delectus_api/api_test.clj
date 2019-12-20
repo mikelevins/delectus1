@@ -253,3 +253,10 @@
            +test-collection-id1+)
         "step 4:expected +test-list-id1+ to be in collection +test-collection-id1+")))
 
+(deftest list-with-id-test
+  (testing "/api/list/list_with_id"
+    (let [found-list (api/list-with-id +test-user1-id+ +test-list-id1+)]
+      (is (= +list-type+ (get found-list +type-attribute+))
+          "expected an object of type delectus_list")
+      (is (= +test-list-name1+ (get found-list +name-attribute+))
+          (str "expected a list named " +test-list-name1+)))))
