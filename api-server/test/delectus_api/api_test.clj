@@ -175,6 +175,18 @@
         (is (= foundname +test-new-collection-name+)
             (str "expected the found collection's name to be " +test-new-collection-name+))))))
 
+
+(deftest delete-collection-test
+  (testing "/api/collection/delete_collection"
+    (is (not (api/collection-deleted? +test-user1-id+ +test-collection-id2+))
+        "expected +test-collection-id2+ to initially be marked not deleted")
+    (api/delete-collection +test-user1-id+ +test-collection-id2+)
+    (is (api/collection-deleted? +test-user1-id+ +test-collection-id2+)
+        "expected +test-collection-id2+ to now be marked deleted")
+    (api/undelete-collection +test-user1-id+ +test-collection-id2+)
+    (is (not (api/collection-deleted? +test-user1-id+ +test-collection-id2+))
+        "expected +test-collection-id2+ to now be marked not deleted")))
+
 ;;; ---------------------------------------------------------------------
 ;;; List tests
 ;;; ---------------------------------------------------------------------
