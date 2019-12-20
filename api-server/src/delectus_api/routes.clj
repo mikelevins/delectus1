@@ -22,7 +22,8 @@
    {:swagger
     {:ui "/"
      :spec "/swagger.json"
-     :data {:info {:title "Delectus-api"
+     :data {:info {:version "0.0.2"
+                   :title "Delectus-api"
                    :description "The Delectus 2 Database API"}
             :tags [{:name "api/diagnostic", :description "Information about the server"}
                    {:name "api/user", :description "Operations on user accounts"}
