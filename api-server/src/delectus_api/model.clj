@@ -10,6 +10,21 @@
   (:import
    (com.couchbase.client.java.document JsonDocument)))
 
+;;; ---------------------------------------------------------------------
+;;; ensuring that objects belong to the expected owner
+;;; ---------------------------------------------------------------------
+
+(defmacro ensure-owner [objectid userid]
+  (let [found-owner (gensym)]
+    `(let [~found-owner (couchio/get-object-attribute (config/delectus-content-bucket)
+                                                      ~objectid +owner-id-attribute+)]
+       (if (and ~found-owner
+                (= ~found-owner ~userid))
+         ~found-owner
+         (throw (ex-info "Wrong owner ID"
+                         {:cause :wrong-owner-id
+                          :expected ~userid
+                          :found ~found-owner}))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; model type-checks
@@ -197,3 +212,52 @@
                       nil)))))
       nil))
 
+
+;;; ---------------------------------------------------------------------
+;;; ensuring that users, collections, and lists exist and are of the right type
+;;; ---------------------------------------------------------------------
+
+(defmacro ensure-user-exists [userid]
+  `(if (user-exists? ~userid)
+     ~userid
+     (throw (ex-info "No such user"
+                     {:cause :user-not-found
+                      :userid ~userid}))))
+
+(defmacro ensure-user [userid]
+  (let [found-user (gensym)]
+    `(let [~found-user (get-user ~userid)]
+       (or ~found-user
+           (throw (ex-info "No such user"
+                           {:cause :user-not-found
+                            :userid ~userid}))))))
+
+(defmacro ensure-collection-exists [collectionid]
+  `(if (collection-exists? ~collectionid)
+     ~collectionid
+     (throw (ex-info "No such collection"
+                     {:cause :collection-not-found
+                      :collectionid ~collectionid}))))
+
+(defmacro ensure-collection [collectionid]
+  (let [found-collection (gensym)]
+    `(let [~found-collection (get-collection ~collectionid)]
+       (or ~found-collection
+           (throw (ex-info "No such collection"
+                           {:cause :collection-not-found
+                            :collectionid ~collectionid}))))))
+
+(defmacro ensure-list-exists [listid]
+  `(if (list-exists? ~listid)
+     ~listid
+     (throw (ex-info "No such list"
+                     {:cause :list-not-found
+                      :listid ~listid}))))
+
+(defmacro ensure-list [listid]
+  (let [found-list (gensym)]
+    `(let [~found-list (get-list ~listid)]
+       (or ~found-list
+           (throw (ex-info "No such list"
+                           {:cause :list-not-found
+                            :listid ~listid}))))))
