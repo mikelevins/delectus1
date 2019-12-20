@@ -143,11 +143,10 @@
 
 (deftest collections-test
   (testing "/api/collection/collections"
-    (let [collectionids (api/collections +test-user1-id+)
-          collections (map #(api/collection-with-id +test-user1-id+ %) collectionids)]
-      (is (> (count collections) 0)
-          (str "there should be several test collections but found " (count collections)))
-      (is (every? #(= +collection-type+ (get % +type-attribute+)) collections)
+    (let [collection-maps (api/collections +test-user1-id+)]
+      (is (> (count collection-maps) 0)
+          (str "there should be several test collections but found " (count collection-maps)))
+      (is (every? #(= +collection-type+ (get % +type-attribute+)) collection-maps)
           "all found objects should be collections"))))
 
 (deftest collection-with-id-test
@@ -170,7 +169,7 @@
   (testing "/api/collection/find_collections_with_name"
     (let [found (api/find-collections-with-name +test-user1-id+ +test-collection-name1+)]
       (if (= 1 (count found))
-        (let [collection (api/collection-with-id +test-user1-id+ (first found))]
+        (let [collection (first found)]
           (is (= +test-collection-id1+ (get collection +id-attribute+))
               (str "the found collection should have the ID " +test-collection-id1+)))
         (is (= 1 (count found))

@@ -22,7 +22,6 @@
    (com.couchbase.client.java.document.json JsonObject)
    (com.couchbase.client.java.query N1qlQuery)))
 
-
 ;;; ---------------------------------------------------------------------
 ;;; api functions
 ;;; ---------------------------------------------------------------------
@@ -102,9 +101,9 @@
 
 ;;; collection-name [userid collectionid] => name-string
 (defn collection-name [userid collectionid]
-  (ensure-user-exists userid)
-  (ensure-collection-exists collectionid)
-  (ensure-owner collectionid userid)
+  (model/ensure-user-exists userid)
+  (model/ensure-collection-exists collectionid)
+  (model/ensure-owner collectionid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 collectionid +name-attribute+))
 
