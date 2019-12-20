@@ -224,6 +224,15 @@
 ;;; List tests
 ;;; ---------------------------------------------------------------------
 
+(deftest lists-test
+  (testing "/api/list/lists"
+    (let [found-lists1 (api/lists +test-user1-id+)]
+      (is (> (count found-lists1) 0)
+          "expected several lists belonging to +test-user1-id+"))
+    (let [found-lists2 (api/lists +test-user2-id+)]
+      (is (<= (count found-lists2) 0)
+          "expected no lists belonging to +test-user2-id+"))))
+
 ;;; move-list-to-collection-test tests:
 ;;;   api/move-list-to-collection
 ;;;   api/make-list-uncollected
@@ -243,3 +252,4 @@
     (is (= (api/list-collection +test-user1-id+ +test-list-id1+)
            +test-collection-id1+)
         "step 4:expected +test-list-id1+ to be in collection +test-collection-id1+")))
+
