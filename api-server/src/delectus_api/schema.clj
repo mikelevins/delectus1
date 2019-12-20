@@ -11,10 +11,11 @@
   {:userid s/Str
    :password s/Str})
 
-(s/defschema CollectionDescription
+(s/defschema CollectionMap
   {(s/required-key "name") s/Str
    (s/required-key "id") s/Str
-   (s/required-key "deleted") s/Bool})
+   (s/required-key "deleted") s/Bool
+   s/Str s/Str})
 
 (s/defschema CollectionRenameRequest
   {:userid s/Str

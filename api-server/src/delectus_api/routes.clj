@@ -68,13 +68,13 @@
 
             (GET "/collections/:userid" req
                  :path-params [userid :- s/Str]
-                 :return [schema/CollectionDescription]
+                 :return [s/Str]
                  :summary "Returns the collections that belong to the user"
                  (handlers/collections userid))
 
             (GET "/collection_with_id/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
-                 :return {s/Str s/Str}
+                 :return schema/CollectionMap
                  :summary "Returns the identified collection belonging to the user"
                  (handlers/collection-with-id userid collectionid))
 
