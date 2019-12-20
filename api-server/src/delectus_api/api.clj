@@ -128,21 +128,21 @@
 ;;; collections
 ;;; ---------------------------------------------------------------------
 
-;;; userdata [userid] => list of id-string
+;;; collections [userid] => list of id-string
 (defn collections [userid]
   (ensure-user-exists userid)
   (map #(.get % "id")
        (couchio/find-objects (config/delectus-content-bucket) ["id"]
                              {"type" +collection-type+ "owner-id" userid})))
 
-;;; userdata [userid] => collection-map
+;;; collection-with-id [userid collectionid] => collection-map
 (defn collection-with-id [userid collectionid]
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)
   (ensure-owner collectionid userid)
   (into {} (.toMap (ensure-collection collectionid))))
 
-;;; userdata [userid] => name-string
+;;; collection-name [userid collectionid] => name-string
 (defn collection-name [userid collectionid]
   (ensure-user-exists userid)
   (ensure-collection-exists collectionid)

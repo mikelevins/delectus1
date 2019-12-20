@@ -30,6 +30,7 @@
 
 (def +test-collection-id1+ "915ffccf-8261-473e-a82e-2b57404cb3b5")
 (def +test-collection-name1+ "Test Collection 1")
+(def +test-collection-alt-name1+ "Test Collection (alternate name) 1")
 (def +test-collection-id2+ "76856575-c8ba-42ed-af24-2c4f1589caf6")
 (def +test-collection-name2+ "Test Collection 2")
 
@@ -51,8 +52,7 @@
   (Thread/sleep 1000))
 
 ;;; (setup-test-data)
-;;; (api/collections (:delectus-test-user1-id (config/delectus-configuration)))
-;;; (lists (model/email->userid (:delectus-test-user (config/delectus-configuration))))
+;;; (teardown-test-data)
 
 (defn teardown-test-data []
   (println "deleting test data...")
@@ -81,14 +81,14 @@
   (testing "/api/user/authenticate"
     (let [found-user (api/authenticate +test-user1-id+ +test-user1-password+)]
       (is (and found-user
-               (= +user-type+ (.get found-user +type-attribute+)))
+               (= +user-type+ (get found-user +type-attribute+)))
           "found-user should be a user object"))))
 
 (deftest login-test
   (testing "/api/user/login"
     (let [found-user (api/login +test-user1-email+ +test-user1-password+)]
       (is (and found-user
-               (= +user-type+ (.get found-user +type-attribute+)))
+               (= +user-type+ (get found-user +type-attribute+)))
           "found-user should be a user object"))))
 
 (deftest userid-test
@@ -112,10 +112,11 @@
 
 (deftest collections-test
   (testing "/api/collection/collections"
-    (let [collections (api/collections +test-user1-id+)]
+    (let [collectionids (api/collections +test-user1-id+)
+          collections (map #(api/collection-with-id +test-user1-id+ %) collectionids)]
       (is (= 2 (count collections))
           (str "there should be 2 test collections but found " (count collections)))
-      (is (every? #(= +collection-type+ (.get % +type-attribute+)) collections)
+      (is (every? #(= +collection-type+ (get % +type-attribute+)) collections)
           "all found objects should be collections"))))
 
 (deftest collection-with-id-test
@@ -128,11 +129,22 @@
              +test-collection-name1+)
           "the collection's owner-id should be the standard test-user1 ID"))))
 
+
 (deftest collection-name-test
   (testing "/api/collection/collection_name"
     (let [name (api/collection-name +test-user1-id+ +test-collection-id1+)]
       (is (= name +test-collection-name1+)
           "the collection's name should be equal to +test-collection-name1+"))))
+
+(deftest find-collections-with-name-test
+  (testing "/api/collection/find_collections_with_name"
+    (let [found (api/find-collections-with-name +test-user1-id+ +test-collection-name1+)]
+      (if (= 1 (count found))
+        (let [collection (api/collection-with-id +test-user1-id+ (first found))]
+          (is (= +test-collection-id1+ (get collection +id-attribute+))
+              (str "the found collection should have the ID " +test-collection-id1+)))
+        (is (= 1 (count found))
+            "should be one collection found")))))
 
 ;;; ---------------------------------------------------------------------
 ;;; List tests

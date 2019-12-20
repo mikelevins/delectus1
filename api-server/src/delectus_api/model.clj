@@ -118,7 +118,6 @@
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
 
-
 (defn assert-collection! [collectiondoc]
   (ensure-document-type collectiondoc +collection-type+)
   (let [content-bucket (config/delectus-content-bucket)
