@@ -199,7 +199,10 @@
         (is (= foundname +test-new-collection-name+)
             (str "expected the found collection's name to be " +test-new-collection-name+))))))
 
-
+;;; delete-collection-test tests:
+;;;   api/collection-deleted?
+;;;   api/delete-collection
+;;;   api/undelete-collection
 (deftest delete-collection-test
   (testing "/api/collection/delete_collection"
     (is (not (api/collection-deleted? +test-user1-id+ +test-collection-id2+))
@@ -222,3 +225,22 @@
 ;;; List tests
 ;;; ---------------------------------------------------------------------
 
+;;; move-list-to-collection-test tests:
+;;;   api/move-list-to-collection
+;;;   api/make-list-uncollected
+(deftest move-list-to-collection-test
+  (testing "/api/list/move_list_to_collection"
+    (is (= (api/list-collection +test-user1-id+ +test-list-id1+)
+           +test-collection-id1+)
+        "step 1: expected +test-list-id1+ to be in collection +test-collection-id1+")
+    (api/make-list-uncollected +test-user1-id+ +test-list-id1+)
+    (is (nil? (api/list-collection +test-user1-id+ +test-list-id1+))
+        "step 2: expected +test-list-id1+ to be uncollected")
+    (api/move-list-to-collection +test-user1-id+ +test-list-id1+ +test-collection-id2+)
+    (is (= (api/list-collection +test-user1-id+ +test-list-id1+)
+           +test-collection-id2+)
+        "step3: expected +test-list-id1+ to be in collection +test-collection-id2+")
+    (api/move-list-to-collection +test-user1-id+ +test-list-id1+ +test-collection-id1+)
+    (is (= (api/list-collection +test-user1-id+ +test-list-id1+)
+           +test-collection-id1+)
+        "step 4:expected +test-list-id1+ to be in collection +test-collection-id1+")))

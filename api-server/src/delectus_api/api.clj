@@ -271,6 +271,14 @@
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 listid +name-attribute+))
 
+;;; list-collection [userid listid] => id-string
+(defn list-collection [userid listid]
+  (ensure-user-exists userid)
+  (ensure-list-exists listid)
+  (ensure-owner listid userid)
+  (couchio/get-object-attribute (config/delectus-content-bucket)
+                                listid +collection-attribute+))
+
 ;;; find-lists-with-name [userid name] => list of id-string
 (defn find-lists-with-name [userid name]
   (ensure-user-exists userid)
