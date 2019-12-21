@@ -260,3 +260,9 @@
           "expected an object of type delectus_list")
       (is (= +test-list-name1+ (get found-list +name-attribute+))
           (str "expected a list named " +test-list-name1+)))))
+
+(deftest list-name-test
+  (testing "/api/list/list-name"
+    (let [found-name (api/list-name +test-user1-id+ +test-list-id1+)]
+      (is (= found-name +test-list-name1+)
+          (str "expected found name to be " +test-list-name1+)))))
