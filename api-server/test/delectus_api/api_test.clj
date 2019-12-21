@@ -44,6 +44,7 @@
 (def +test-list-id3+ "c8bb5589-1bf1-49a6-994d-0510b7e2e42e")
 (def +test-list-name3+ "Test List 3")
 
+(def +test-new-list-name+ "New List for Testing")
 
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
@@ -295,3 +296,16 @@
         (is (= found-name +test-list-alt-name1+)
             (str "found-name should now be equal to " +test-list-alt-name1+)))
       (api/rename-list +test-user1-id+ +test-list-id1+ +test-list-name1+))))
+
+
+(deftest new-list-test
+  (testing "/api/list/new_list"
+    (let [newlistid (api/new-list +test-user1-id+ +test-new-list-name+)]
+      ;; wait to ensure db is consistent before checking
+      (Thread/sleep 500)
+      (let [foundids (api/find-lists-with-name +test-user1-id+ +test-new-list-name+ [])]
+        (is (> (count foundids) 0) "expected one found list"))
+      (let [foundlist (api/list-with-id +test-user1-id+ newlistid [])
+            foundname (get foundlist +name-attribute+)]
+        (is (= foundname +test-new-list-name+)
+            (str "expected the found list's name to be " +test-new-list-name+))))))
