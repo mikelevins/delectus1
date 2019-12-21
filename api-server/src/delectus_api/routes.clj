@@ -87,11 +87,13 @@
                  :summary "Returns the name of the collection"
                  (handlers/collection-name userid collectionid))
 
-            (GET "/find_collection_with_name/:userid/:name" req
-                 :path-params [userid :- s/Str name :- s/Str]
-                 :return [s/Str]
-                 :summary "Returns the named collection belonging to the user"
-                 (handlers/find-collection-with-name userid name))
+            (POST "/find_collections_with_name" req
+                  :body-params [userid :- s/Str
+                                name :- s/Str
+                                {fields :- [s/Str] []}]
+                  :return [schema/CollectionMap]
+                  :summary "Returns the named collections belonging to the user"
+                  (handlers/find-collections-with-name userid name fields))
             
             (POST "/rename_collection" req
                   :body [{:keys [userid collectionid newname]} schema/CollectionRenameRequest]

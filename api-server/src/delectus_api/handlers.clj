@@ -106,9 +106,15 @@
   (with-errors-handled
     (ok (api/collection-name userid collectionid))))
 
-(defn find-collection-with-name [userid name]
-  (with-errors-handled
-    (ok (api/find-collection-with-name userid name))))
+(defn find-collections-with-name
+  ([userid name]
+   (with-errors-handled
+     (ok (api/find-collections-with-name userid name))))
+  ([userid name fields]
+   (if (empty? fields)
+     (ok (api/find-collections-with-name userid name))
+     (with-errors-handled
+       (ok (api/find-collections-with-name userid name fields))))))
 
 (defn rename-collection [userid collectionid newname]
   (with-errors-handled
