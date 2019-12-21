@@ -283,3 +283,15 @@
               (str "the found list should have the ID " +test-list-id1+)))
         (is (= 1 (count found))
             "should be one list found")))))
+
+
+(deftest rename-list-test
+  (testing "/api/list/rename_list"
+    (let [found-name (api/list-name +test-user1-id+ +test-list-id1+)]
+      (is (= found-name +test-list-name1+)
+          (str "found-name should initially be equal to " +test-list-name1+))
+      (api/rename-list +test-user1-id+ +test-list-id1+ +test-list-alt-name1+)
+      (let [found-name (api/list-name +test-user1-id+ +test-list-id1+)]
+        (is (= found-name +test-list-alt-name1+)
+            (str "found-name should now be equal to " +test-list-alt-name1+)))
+      (api/rename-list +test-user1-id+ +test-list-id1+ +test-list-name1+))))
