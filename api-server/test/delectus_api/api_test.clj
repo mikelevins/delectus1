@@ -272,3 +272,14 @@
     (let [found-collection-id (api/list-collection +test-user1-id+ +test-list-id3+)]
       (is (= found-collection-id +test-collection-id1+)
           (str "expected found collection ID to be " +test-collection-id1+)))))
+
+
+(deftest find-lists-with-name-test
+  (testing "/api/collection/find_lists_with_name"
+    (let [found (api/find-lists-with-name +test-user1-id+ +test-list-name1+ [])]
+      (if (= 1 (count found))
+        (let [found-list (first found)]
+          (is (= +test-list-id1+ (get found-list +id-attribute+))
+              (str "the found list should have the ID " +test-list-id1+)))
+        (is (= 1 (count found))
+            "should be one list found")))))
