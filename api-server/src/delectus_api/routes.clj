@@ -153,12 +153,14 @@
                   :return nil
                   :summary "Moves the list to no collection"
                   (handlers/make-list-uncollected userid listid))
-
-            (GET "/list_with_id/:userid/:listid" req
-                 :path-params [userid :- s/Str listid :- s/Str]
-                 :return {s/Str s/Str}
-                 :summary "Returns the identified list belonging to the user"
-                 (handlers/list-with-id userid listid))
+            
+            (POST "/list_with_id" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                {fields :- [s/Str] []}]
+                  :return schema/ListMap
+                  :summary "Returns the identified list belonging to the user"
+                  (handlers/list-with-id userid listid fields))
 
             (GET "/list_name/:userid/:listid" req
                  :path-params [userid :- s/Str listid :- s/Str]
@@ -166,11 +168,13 @@
                  :summary "Returns the name of identified list belonging to the user"
                  (handlers/list-name userid listid))
 
-            (GET "/find_list_with_name/:userid/:name" req
-                 :path-params [userid :- s/Str name :- s/Str]
-                 :return {s/Str s/Str}
-                 :summary "Returns the named list belonging to the user"
-                 (handlers/find-list-with-name userid name))
+            (POST "/find_lists_with_name" req
+                  :body-params [userid :- s/Str
+                                name :- s/Str
+                                {fields :- [s/Str] []}]
+                  :return [schema/ListMap]
+                  :summary "Returns the named lists"
+                  (handlers/find-lists-with-name userid name fields))
             
             (POST "/rename_list" req
                   :body [{:keys [userid listid newname]} schema/ListRenameRequest]
@@ -202,11 +206,13 @@
                  :summary "Returns true if the list has been marked deleted, and false otherwise"
                  (handlers/list-deleted? userid listid))
 
-            (GET "/list_columns/:userid/:listid" req
-                 :path-params [userid :- s/Str listid :- s/Str]
-                 :return [{s/Str s/Str}]
+            (POST "/list_columns" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                {fields :- [s/Str] []}]
+                  :return [{s/Str s/Any}]
                  :summary "Returns the list's columns"
-                 (handlers/list-columns userid listid))
+                 (handlers/list-columns userid listid fields))
             
             ;; (POST "/new_column" req
             ;;       :body [{:keys [userid listid name]} schema/NewColumnRequest]

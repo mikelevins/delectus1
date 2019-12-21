@@ -131,7 +131,7 @@
 
 (deftest userdata-test
   (testing "/api/user/userdata"
-    (let [data (api/userdata +test-user1-id+)]
+    (let [data (api/userdata +test-user1-id+ [])]
       (is (= (get data +id-attribute+) +test-user1-id+)
           "userid should be the standard test-user ID string")
       (is (= (get data +email-attribute+) +test-user1-email+)
@@ -143,7 +143,7 @@
 
 (deftest collections-test
   (testing "/api/collection/collections"
-    (let [collection-maps (api/collections +test-user1-id+)]
+    (let [collection-maps (api/collections +test-user1-id+ [])]
       (is (> (count collection-maps) 0)
           (str "there should be several test collections but found " (count collection-maps)))
       (is (every? #(= +collection-type+ (get % +type-attribute+)) collection-maps)
@@ -151,7 +151,7 @@
 
 (deftest collection-with-id-test
   (testing "/api/collection/collection_with_id"
-    (let [collection (api/collection-with-id +test-user1-id+ +test-collection-id1+)]
+    (let [collection (api/collection-with-id +test-user1-id+ +test-collection-id1+ [])]
       (is (= (get collection +owner-id-attribute+)
              +test-user1-id+)
           "the collection's owner-id should be the standard test-user1 ID")
@@ -167,7 +167,7 @@
 
 (deftest find-collections-with-name-test
   (testing "/api/collection/find_collections_with_name"
-    (let [found (api/find-collections-with-name +test-user1-id+ +test-collection-name1+)]
+    (let [found (api/find-collections-with-name +test-user1-id+ +test-collection-name1+ [])]
       (if (= 1 (count found))
         (let [collection (first found)]
           (is (= +test-collection-id1+ (get collection +id-attribute+))
@@ -191,9 +191,9 @@
     (let [newcollid (api/new-collection +test-user1-id+ +test-new-collection-name+)]
       ;; wait to ensure db is consistent before checking
       (Thread/sleep 500)
-      (let [foundids (api/find-collections-with-name +test-user1-id+ +test-new-collection-name+)]
+      (let [foundids (api/find-collections-with-name +test-user1-id+ +test-new-collection-name+ [])]
         (is (> (count foundids) 0) "expected one found collection"))
-      (let [foundcoll (api/collection-with-id +test-user1-id+ newcollid)
+      (let [foundcoll (api/collection-with-id +test-user1-id+ newcollid [])
             foundname (get foundcoll +name-attribute+)]
         (is (= foundname +test-new-collection-name+)
             (str "expected the found collection's name to be " +test-new-collection-name+))))))
@@ -215,9 +215,9 @@
 
 (deftest collection-lists-test
   (testing "/api/collection/collection_lists"
-    (let [foundlists1 (api/collection-lists  +test-user1-id+ +test-collection-id1+)]
+    (let [foundlists1 (api/collection-lists  +test-user1-id+ +test-collection-id1+ [])]
       (is (> (count foundlists1) 0) "expected to find some lists in +test-collection-id1+"))
-    (let [foundlists2 (api/collection-lists  +test-user1-id+ +test-collection-id2+)]
+    (let [foundlists2 (api/collection-lists +test-user1-id+ +test-collection-id2+ [])]
       (is (not (> (count foundlists2) 0)) "expected to find no lists in +test-collection-id2+"))))
 
 ;;; ---------------------------------------------------------------------
@@ -226,10 +226,10 @@
 
 (deftest lists-test
   (testing "/api/list/lists"
-    (let [found-lists1 (api/lists +test-user1-id+)]
+    (let [found-lists1 (api/lists +test-user1-id+ [])]
       (is (> (count found-lists1) 0)
           "expected several lists belonging to +test-user1-id+"))
-    (let [found-lists2 (api/lists +test-user2-id+)]
+    (let [found-lists2 (api/lists +test-user2-id+ [])]
       (is (<= (count found-lists2) 0)
           "expected no lists belonging to +test-user2-id+"))))
 
@@ -255,7 +255,7 @@
 
 (deftest list-with-id-test
   (testing "/api/list/list_with_id"
-    (let [found-list (api/list-with-id +test-user1-id+ +test-list-id1+)]
+    (let [found-list (api/list-with-id +test-user1-id+ +test-list-id1+ [])]
       (is (= +list-type+ (get found-list +type-attribute+))
           "expected an object of type delectus_list")
       (is (= +test-list-name1+ (get found-list +name-attribute+))

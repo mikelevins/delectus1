@@ -54,11 +54,12 @@
                       {:cause :user-not-found
                        :email email}))))
 
-;;; userdata [userid] => user-map
-(defn userdata
-  ([userid] (into {} (.toMap (model/ensure-user userid))))
-  ([userid fields] (select-keys (into {} (.toMap (model/ensure-user userid)))
-                                  fields)))
+;;; userdata [userid fields] => user-map
+(defn userdata [userid fields]
+  (if (empty? fields)
+    (into {} (.toMap (model/ensure-user userid)))
+    (select-keys (into {} (.toMap (model/ensure-user userid)))
+                 fields)))
 
 ;;; (userdata $mikelid)
 ;;; (userdata $mikelid ["name" "id"])
@@ -66,35 +67,25 @@
 ;;; collections
 ;;; ---------------------------------------------------------------------
 
-;;; collections [userid] => list of collection-map
-(defn collections
-  ([userid]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) []
-                              {"type" +collection-type+ "owner-id" userid})))
-  ([userid fields]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) fields
-                              {"type" +collection-type+ "owner-id" userid}))))
+;;; collections [userid fields] => list of collection-map
+(defn collections [userid fields]
+  (model/ensure-user-exists userid)
+  (map #(into {} (.toMap %))
+       (couchio/find-objects (config/delectus-content-bucket) fields
+                             {"type" +collection-type+ "owner-id" userid})))
 
 ;;; (collections $mikelid)
 ;;; (collections $mikelid ["name" "id"])
 
 ;;; collection-with-id [userid collectionid] => collection-map
-(defn collection-with-id
-  ([userid collectionid]
-   (model/ensure-user-exists userid)
-   (model/ensure-collection-exists collectionid)
-   (model/ensure-owner collectionid userid)
-   (into {} (.toMap (model/ensure-collection collectionid))))
-  ([userid collectionid fields]
-   (model/ensure-user-exists userid)
-   (model/ensure-collection-exists collectionid)
-   (model/ensure-owner collectionid userid)
-   (select-keys (into {} (.toMap (model/ensure-collection collectionid)))
-                fields)))
+(defn collection-with-id [userid collectionid fields]
+  (model/ensure-user-exists userid)
+  (model/ensure-collection-exists collectionid)
+  (model/ensure-owner collectionid userid)
+  (if (empty? fields)
+    (into {} (.toMap (model/ensure-collection collectionid)))
+    (select-keys (into {} (.toMap (model/ensure-collection collectionid)))
+                 fields)))
 
 ;;; (collection-with-id $mikelid "5b541f1a-d34a-4a83-a4bd-9c2b309423bf")
 ;;; (collection-with-id $mikelid "5b541f1a-d34a-4a83-a4bd-9c2b309423bf" ["name" "id" "deleted"])
@@ -108,20 +99,13 @@
                                 collectionid +name-attribute+))
 
 ;;; find-collections-with-name [userid name] => list of collection-map
-(defn find-collections-with-name
-  ([userid name]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) []
-                              {"type" +collection-type+ "owner-id" userid "name" name})))
-  ([userid name fields]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) fields
-                              {"type" +collection-type+ "owner-id" userid "name" name}))))
+(defn find-collections-with-name [userid name fields]
+  (model/ensure-user-exists userid)
+  (map #(into {} (.toMap %))
+       (couchio/find-objects (config/delectus-content-bucket) fields
+                             {"type" +collection-type+ "owner-id" userid "name" name})))
 
-;;; (find-collections-with-name $mikelid "Widgets")
-;;; (find-collections-with-name $mikelid "Widgets" ["id" "name"])
+;;; (find-collections-with-name $mikelid "Widgets" [])
 
 ;;; rename-collection [userid collectionid newname] => name-string
 (defn rename-collection [userid collectionid newname]
@@ -181,27 +165,17 @@
                                 +deleted-attribute+))
 
 ;;; collection-lists [userid collectionid] => list of list-map
-(defn collection-lists
-  ([userid collectionid]
-   (model/ensure-user-exists userid)
-   (model/ensure-collection-exists collectionid)
-   (model/ensure-owner collectionid userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) []
-                              {"type" +list-type+
-                               "owner-id" userid
-                               "collection" collectionid})))
-  ([userid collectionid fields]
-   (model/ensure-user-exists userid)
-   (model/ensure-collection-exists collectionid)
-   (model/ensure-owner collectionid userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) fields
-                              {"type" +list-type+
-                               "owner-id" userid
-                               "collection" collectionid}))))
+(defn collection-lists [userid collectionid fields]
+  (model/ensure-user-exists userid)
+  (model/ensure-collection-exists collectionid)
+  (model/ensure-owner collectionid userid)
+  (map #(into {} (.toMap %))
+       (couchio/find-objects (config/delectus-content-bucket) fields
+                             {"type" +list-type+
+                              "owner-id" userid
+                              "collection" collectionid})))
 
-;;; (collection-lists $mikelid "7941ad3f-12b2-409c-9120-18ea9cbc94d5")
+;;; (collection-lists $mikelid "7941ad3f-12b2-409c-9120-18ea9cbc94d5" [])
 ;;; (collection-lists $mikelid "7941ad3f-12b2-409c-9120-18ea9cbc94d5" ["name" "id"])
 
 
@@ -209,21 +183,14 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; lists [userid] => list of list-map
-(defn lists
-  ([userid]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) []
-                              {"type" +list-type+ "owner-id" userid})))
-  ([userid fields]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) fields
-                              {"type" +list-type+ "owner-id" userid}))))
+(defn lists [userid fields]
+  (model/ensure-user-exists userid)
+  (map #(into {} (.toMap %))
+       (couchio/find-objects (config/delectus-content-bucket) fields
+                             {"type" +list-type+ "owner-id" userid})))
 
 ;;; (lists $mikelid)
 ;;; (lists $mikelid ["id" "name"])
-
 
 ;;; move-list-to-collection [userid listid collectionid] => id-string
 (defn move-list-to-collection [userid listid collectionid]
@@ -246,18 +213,14 @@
   nil)
 
 ;;; list-with-id [userid listid] => list-map
-(defn list-with-id
-  ([userid listid]
-   (model/ensure-user-exists userid)
-   (model/ensure-list-exists listid)
-   (model/ensure-owner listid userid)
-   (into {} (.toMap (model/ensure-list listid))))
-  ([userid listid fields]
-   (model/ensure-user-exists userid)
-   (model/ensure-list-exists listid)
-   (model/ensure-owner listid userid)
-   (select-keys (into {} (.toMap (model/ensure-list listid)))
-                fields)))
+(defn list-with-id [userid listid fields]
+  (model/ensure-user-exists userid)
+  (model/ensure-list-exists listid)
+  (model/ensure-owner listid userid)
+  (if (empty? fields)
+    (into {} (.toMap (model/ensure-list listid)))
+    (select-keys (into {} (.toMap (model/ensure-list listid)))
+                 fields)))
 
 ;;; (list-with-id $mikelid "9bd33bf4-7ef9-458b-b0f6-ca5e65787fbf")
 ;;; (list-with-id $mikelid "9bd33bf4-7ef9-458b-b0f6-ca5e65787fbf" ["name"])
@@ -279,17 +242,11 @@
                                 listid +collection-attribute+))
 
 ;;; find-lists-with-name [userid name] => list of list-map
-(defn find-lists-with-name
-  ([userid name]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) []
-                              {"type" +list-type+ "owner-id" userid "name" name})))
-  ([userid name fields]
-   (model/ensure-user-exists userid)
-   (map #(into {} (.toMap %))
-        (couchio/find-objects (config/delectus-content-bucket) fields
-                              {"type" +list-type+ "owner-id" userid "name" name}))))
+(defn find-lists-with-name [userid name fields]
+  (model/ensure-user-exists userid)
+  (map #(into {} (.toMap %))
+       (couchio/find-objects (config/delectus-content-bucket) fields
+                             {"type" +list-type+ "owner-id" userid "name" name})))
 
 ;;; (find-lists-with-name $mikelid "Movies")
 ;;; (find-lists-with-name $mikelid "Movies" ["id" "name"])

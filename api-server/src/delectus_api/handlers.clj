@@ -84,37 +84,21 @@
 
 ;;; /api/collection
 
-(defn collections
-  ([userid]
-   (with-errors-handled
-     (ok (api/collections userid))))
-  ([userid fields]
-   (with-errors-handled
-     (ok (api/collections userid fields)))))
+(defn collections [userid fields]
+  (with-errors-handled
+    (ok (api/collections userid fields))))
 
-(defn collection-with-id
-  ([userid collectionid]
-   (with-errors-handled
-     (ok (api/collection-with-id userid collectionid))))
-  ([userid collectionid fields]
-   (if (empty? fields)
-     (collection-with-id userid collectionid)
-     (with-errors-handled
-       (ok (api/collection-with-id userid collectionid fields))))))
+(defn collection-with-id [userid collectionid fields]
+  (with-errors-handled
+    (ok (api/collection-with-id userid collectionid fields))))
 
 (defn collection-name [userid collectionid]
   (with-errors-handled
     (ok (api/collection-name userid collectionid))))
 
-(defn find-collections-with-name
-  ([userid name]
-   (with-errors-handled
-     (ok (api/find-collections-with-name userid name))))
-  ([userid name fields]
-   (if (empty? fields)
-     (ok (api/find-collections-with-name userid name))
-     (with-errors-handled
-       (ok (api/find-collections-with-name userid name fields))))))
+(defn find-collections-with-name [userid name fields]
+  (with-errors-handled
+    (ok (api/find-collections-with-name userid name fields))))
 
 (defn rename-collection [userid collectionid newname]
   (with-errors-handled
@@ -142,13 +126,9 @@
 
 ;;; /api/list
 
-(defn lists
-  ([userid]
-   (with-errors-handled
-     (ok (api/lists userid))))
-  ([userid fields]
-   (with-errors-handled
-     (ok (api/lists userid fields)))))
+(defn lists [userid fields]
+  (with-errors-handled
+    (ok (api/lists userid fields))))
 
 (defn move-list-to-collection [userid listid collectionid]
   (with-errors-handled
@@ -158,17 +138,17 @@
   (with-errors-handled
     (ok (api/make-list-uncollected userid listid))))
 
-(defn list-with-id [userid listid]
+(defn list-with-id [userid listid fields]
   (with-errors-handled
-    (ok (api/list-with-id userid listid))))
+    (ok (api/list-with-id userid listid fields))))
 
 (defn list-name [userid listid]
   (with-errors-handled
     (ok (api/list-name userid listid))))
 
-(defn find-list-with-name [userid name]
+(defn find-lists-with-name [userid name]
   (with-errors-handled
-    (ok (api/find-list-with-name userid name))))
+    (ok (api/find-lists-with-name userid name))))
 
 (defn rename-list [userid listid newname]
   (with-errors-handled
