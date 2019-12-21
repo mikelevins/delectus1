@@ -92,9 +92,15 @@
    (with-errors-handled
      (ok (api/collections userid fields)))))
 
-(defn collection-with-id [userid collectionid]
-  (with-errors-handled
-    (ok (api/collection-with-id userid collectionid))))
+(defn collection-with-id
+  ([userid collectionid]
+   (with-errors-handled
+     (ok (api/collection-with-id userid collectionid))))
+  ([userid collectionid fields]
+   (if (empty? fields)
+     (collection-with-id userid collectionid)
+     (with-errors-handled
+       (ok (api/collection-with-id userid collectionid fields))))))
 
 (defn collection-name [userid collectionid]
   (with-errors-handled

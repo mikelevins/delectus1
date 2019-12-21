@@ -73,11 +73,13 @@
                   :summary "Returns the collections that belong to the user"
                   (handlers/collections userid fields))
 
-            (GET "/collection_with_id/:userid/:collectionid" req
-                 :path-params [userid :- s/Str collectionid :- s/Str]
+            (POST "/collection_with_id" req
+                  :body-params [userid :- s/Str
+                                collectionid :- s/Str
+                                {fields :- [s/Str] []}]
                  :return schema/CollectionMap
                  :summary "Returns the identified collection belonging to the user"
-                 (handlers/collection-with-id userid collectionid))
+                 (handlers/collection-with-id userid collectionid fields))
 
             (GET "/collection_name/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
