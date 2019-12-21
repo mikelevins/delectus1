@@ -84,9 +84,13 @@
 
 ;;; /api/collection
 
-(defn collections [userid]
-  (with-errors-handled
-    (ok (api/collections userid))))
+(defn collections
+  ([userid]
+   (with-errors-handled
+     (ok (api/collections userid))))
+  ([userid fields]
+   (with-errors-handled
+     (ok (api/collections userid fields)))))
 
 (defn collection-with-id [userid collectionid]
   (with-errors-handled

@@ -66,11 +66,12 @@
 
    (context "/api/collection" [] :tags ["api/collection"]
 
-            (GET "/collections/:userid" req
-                 :path-params [userid :- s/Str]
-                 :return [s/Str]
-                 :summary "Returns the collections that belong to the user"
-                 (handlers/collections userid))
+            (POST "/collections" req
+                  :body-params [userid :- s/Str
+                                {fields :- [s/Str] []}]
+                  :return [schema/CollectionMap]
+                  :summary "Returns the collections that belong to the user"
+                  (handlers/collections userid fields))
 
             (GET "/collection_with_id/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
