@@ -135,14 +135,12 @@
 
    (context "/api/list" [] :tags ["api/list"]
 
-            (GET "/lists/:userid" req
-                 :path-params [userid :- s/Str]
-                 :return [{(s/required-key "name") s/Str
-                           (s/required-key "id") s/Str
-                           (s/required-key "collection") (s/maybe s/Str)
-                           (s/required-key "deleted") (s/maybe s/Bool)}]
-                 :summary "Returns the lists that belong to the user"
-                 (handlers/lists userid))
+            (POST "/lists" req
+                  :body-params [userid :- s/Str
+                                {fields :- [s/Str] []}]
+                  :return [schema/ListMap]
+                  :summary "Returns the lists that belong to the user"
+                  (handlers/lists userid fields))
 
             (POST "/move_list_to_collection" req
                   :body [{:keys [userid listid collectionid]} schema/ListMoveToCollectionRequest]

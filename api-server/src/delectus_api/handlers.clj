@@ -142,9 +142,13 @@
 
 ;;; /api/list
 
-(defn lists [userid]
-  (with-errors-handled
-    (ok (api/lists userid))))
+(defn lists
+  ([userid]
+   (with-errors-handled
+     (ok (api/lists userid))))
+  ([userid fields]
+   (with-errors-handled
+     (ok (api/lists userid fields)))))
 
 (defn move-list-to-collection [userid listid collectionid]
   (with-errors-handled
