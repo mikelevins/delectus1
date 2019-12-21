@@ -31,6 +31,9 @@
   {:userid s/Str
    :listid s/Str})
 
+(s/defschema ListMap
+  {s/Str s/Any})
+
 (s/defschema ListMoveToCollectionRequest
   {:userid s/Str
    :listid s/Str

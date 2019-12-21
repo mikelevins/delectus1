@@ -125,11 +125,13 @@
                  :summary "Returns true if the collection has been marked deleted, and false otherwise"
                  (handlers/collection-deleted? userid collectionid))
 
-            (GET "/collection_lists/:userid/:collectionid" req
-                 :path-params [userid :- s/Str collectionid :- s/Str]
-                 :return [{s/Str s/Str}]
+            (POST "/collection_lists" req
+                  :body-params [userid :- s/Str
+                                collectionid :- s/Str
+                                {fields :- [s/Str] []}]
+                 :return [schema/ListMap]
                  :summary "Returns the collection's lists"
-                 (handlers/collection-lists userid collectionid)))
+                 (handlers/collection-lists userid collectionid fields)))
 
    (context "/api/list" [] :tags ["api/list"]
 

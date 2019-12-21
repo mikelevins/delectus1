@@ -136,9 +136,9 @@
   (with-errors-handled
     (ok (api/collection-deleted? userid collectionid))))
 
-(defn collection-lists [userid collectionid]
+(defn collection-lists [userid collectionid fields]
   (with-errors-handled
-    (ok (api/collection-lists userid collectionid))))
+    (ok (api/collection-lists userid collectionid fields))))
 
 ;;; /api/list
 
