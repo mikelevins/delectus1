@@ -266,3 +266,9 @@
     (let [found-name (api/list-name +test-user1-id+ +test-list-id1+)]
       (is (= found-name +test-list-name1+)
           (str "expected found name to be " +test-list-name1+)))))
+
+(deftest list-collection-test
+  (testing "/api/list/list-name"
+    (let [found-collection-id (api/list-collection +test-user1-id+ +test-list-id3+)]
+      (is (= found-collection-id +test-collection-id1+)
+          (str "expected found collection ID to be " +test-collection-id1+)))))
