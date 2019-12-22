@@ -309,3 +309,18 @@
             foundname (get foundlist +name-attribute+)]
         (is (= foundname +test-new-list-name+)
             (str "expected the found list's name to be " +test-new-list-name+))))))
+
+;;; delete-list-test tests:
+;;;   api/list-deleted?
+;;;   api/delete-list
+;;;   api/undelete-list
+(deftest delete-list-test
+  (testing "/api/list/delete_list"
+    (is (not (api/list-deleted? +test-user1-id+ +test-list-id2+))
+        "expected +test-list-id2+ to initially be marked not deleted")
+    (api/delete-list +test-user1-id+ +test-list-id2+)
+    (is (api/list-deleted? +test-user1-id+ +test-list-id2+)
+        "expected +test-list-id2+ to now be marked deleted")
+    (api/undelete-list +test-user1-id+ +test-list-id2+)
+    (is (not (api/list-deleted? +test-user1-id+ +test-list-id2+))
+        "expected +test-list-id2+ to now be marked not deleted")))
