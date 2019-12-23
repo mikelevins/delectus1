@@ -160,29 +160,38 @@ set of columns and a set of items. Each item contains a set of columns
 that exactly mirrors the set of columns belonging to the list it
 bleongs to.
 
-Concretely, Delectus data are stored somehwat differently, in order to
-facilitate working with the data stored in a Couchbase bucket.
+The way that Delectus actually stores data is a little different, in
+order to provide better speed and consistency.
 
-Collections, Lists, and Items are represented by Couchbase documents,
-each with a UUID to distinguish it from all other such objects.
+Instead of storing lists in a collection object, and storing items in
+a list object, Delectus stores lists and items separately from their
+containers. Each list has a field that stores the ID of the collection
+that contains it, and to find a collection's lists, Delectus asks for
+all of a user's lists that match the collection's ID. Similarly, each
+item stores the ID of its list, and fetching a list's items means
+getting all of a user's items that match the list's ID.
 
-Each item stores the ID of the list it belongs to; an item may belong
-to only one list at a time.
+Couchbase provides a fast query engine for retrieving objects this
+way, and by storing data this way we can offer better speed and
+reliability for the most common ways that users interact with their
+data.
 
-Similarly, each list stores the ID of the collection it belongs to. A
-list may belong to only one collection at a time.
+To see why, consider sorting and presenting the contents of a large
+list with a few thousand items. If we store the list's items in the
+list document, then in order to sort the items and present them we
+must fetch the entire document, transferring thousands of items over
+the network even though we may only wish to display a dozen or so. By
+storing the items separately, each as its own document, we can ask
+Couchbase for a collated subset of the items, transferring only as
+many records as we want to display. This approach enables the Delectus
+application to present the contents of lists and collections much more
+quickly and using much less bandwidth.
 
-Collections do not store enumerations of their lists; instead,
-Delectus finds a collection's lists by asking Couchbase for all the
-objects of type `"delectus_list"` with the collection's ID in their
-`"collection"` fields.
-
-Similarly, lists do not store enumerations of their items. Instead,
-Delectus finds the items belonging to a list by searching for items
-whose `"list"` ID matches the list in question.
-
-A list's columns, on the other hand, are stored in a JSON object
-stored in a list's `"columnes"` field.
+On the other hand, it also requires us to understand that, although
+conceptually items are in lists and lists are in collections, in the
+concreate layout of the database items, lists, and collections are
+completely separate objects that we assemble in application code to
+present the appearance that some are contained by others.
 
 ### Item Objects
 
@@ -302,41 +311,6 @@ attribute to true or false at any time.
 Aside from the abovementioned changes, the user may not change the
 structure of the "columns" object.
 
-##### `"items"`
-
-The `"items"` field contains a JSON object that describes the list's
-items. An "items" object might look like this:
-
-```
-{
-  "0": {
-    "deleted": false,
-    "fields": {
-      "0": "My random item"
-    },
-  "id": "0"
-  }
-}
-```
-
-This "items" object contains a single item, item "0" with id "0". Item
-"0" is not deleted. It contains a single field in column "0", which
-contains the text value "My random item".
-
-Each item gets a different ID, assigned when it's
-created. The first item created gets the ID "0", the second gets the
-ID "1", and so on. 
-
-Users may add items at any time. They may set the "deleted" attribute
-to true or false at any time.
-
-They may change the contents of any field in the "fields" object, but
-may not change the fields object in any other way, except indirectly,
-by adding or removing columns in the "columns" object.
-
-Users may not change the ID of an item or otherwise affect the
-structure of the "items" object.
-
 #### Items and deleted columns
 
 The number of an item's fields is formally required to be the same as
@@ -354,7 +328,7 @@ new values to a nonexistent field, Delectus creates the field.
 If a user deletes a column, Delectus changes the column's "deleted"
 value to `true`, but does not change the contents of any items. The
 data in fields belonging to the deleted column remain in the database,
-but Delectus doesn't returnor display them in the user interface
+but Delectus doesn't return or display them in the user interface
 unless the user specifically asks to see deleted data.
 
 
@@ -369,7 +343,6 @@ A collection object looks like the following in JSON form:
   "owner": ...",
   "deleted": ...,
   "name": ...,
-  "lists": ...,
 }
 ```
 
@@ -380,7 +353,6 @@ Its keys have the following meanings:
 - owner: a UUID that identifies the user account that owns the collection
 - deleted: true if the user has marked the collection for deletion; false otherwise
 - name: the name given by the user to this collection
-- lists: an object containing descriptions of the collection's lists
 
 The id, type, and owner are immutable; they may not be changed.
 
@@ -407,22 +379,6 @@ something that the Delectus UI can reliably handle and present, and it
 must be unique among the user's collections--no two collections
 belonging to the same user may have the same name. The user may change
 a collection's name at any time.
-
-##### `"lists"`
-
-The `"lists"` field is an object whose keys are the IDs of Delectus
-lists. Each ID identifies a list that belongs to the user--users may
-not put other users' lists in their collections.
-
-Because every list muct belong to exactly one collection, creating a
-list adds it to the default collection. The user may then move the
-list to any other collection (that is not marked deleted). Moving a
-list to a different collection removes it from the previous collection
-at the same time.
-
-It's not possible to simply remove a list from a collection. The only
-options are to move the list to another collection, or to mark the
-list deleted.
 
 ### User Account Objects
 
