@@ -8,4 +8,3 @@
           (and (pred (val kv))
                (val kv)))
         a-map))
-

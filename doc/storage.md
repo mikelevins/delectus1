@@ -73,18 +73,18 @@ This list contains three **items**, with values 1, 2, and 3 in the "Number" colu
 ## Collections
 
 A **collection** is a named, ordered sequence of lists. You can think
-of a collection as a list of lists, or maybe as a folder of lists. A
-new user account comes with an already-created collection named
-"Default Collection". The user can create as many collections as
-needed, and can delete any of them at any time. (You can even delete
-the "Default Collection", but it will then be automatically recreated
-if you create any lists.)
+of a collection as a list of lists, or maybe as a folder of lists.
 
 A collection has a name and a sequence of zero or more lists.
 
-A list is always a member of exactly one collection. Lists are created
-as members of the default collection, but the user may move any list
-to any other collection at any time.
+Delectus maintains a special **default collection** that contains
+every new list when it's initially created. The default collection has
+no name or identifier, and can also be thought of as a container for
+**uncollected** lists.
+
+A list is always a member of one collection. When initially created, a
+list belongs to the default collection. The user may move a list to
+any collection at any time.
 
 ### User Accounts
 
@@ -94,7 +94,8 @@ edit Delectus data, a user must first log in to a valid account.
 
 Each user account has a unique identifier, an email address, and a
 password. An account may be enabled or disabled; only a Delectus
-administrator may change the enabled status of an account.
+administrator may change the enabled status of an account. A User may
+log in to an account only if it's enabled.
 
 All lists and collections are owned by user accounts. A user account's
 identifier is used to identify the owner of a list or collection.
@@ -110,7 +111,7 @@ work reliably and support pleasant user interfaces.
 
 ### Couchbase Basics
 
-Couchbase is a **document databasemanager**, meaning that it stores
+Couchbase is a **document database manager**, meaning that it stores
 loosely-structured chunks of data known as **documents**. In the case
 of Couchbase, these documents are mainly stored as **JSON objects**,
 though Couchbase is also able to store arbitrary binary blobs.
@@ -131,18 +132,17 @@ The **"delectus_users"** database stores user-account data.
 
 ### Object identity
 
-Each list and collection object has an ID. The ID is a unique UUID
-string that no other object has. The user interface provides no way
-for a user to choose or change this UUID; it is assigned by Delectus
-when the list or collection is created, and remains the same
+Each item, list and collection object has an ID. The ID is a unique
+UUID string that no other object has. The user interface provides no
+way for a user to choose or change this UUID; it is assigned by
+Delectus when the list or collection is created, and remains the same
 throughout its existence.
 
-Within a list, items and columns have ID strings, too. These IDs are
-not UUIDs. They are required to be unique only within the list that
-contains them. Item and column IDs are of the form "0", "1". "2", and
-so on. The ID is assigned when an item or column is created, and it
-remains the same for the life of the item or column; there is no
-support for changing it.
+Within a list, columns have ID strings, too. These IDs are not
+UUIDs. They are required to be unique only within the list that
+contains them. Column IDs are of the form "0", "1". "2", and so
+on. The ID is assigned when a column is created, and it remains the
+same for the life of the column; there is no support for changing it.
 
 Within a list item, each field has an ID that it shares with the
 column that the field belongs to. A field whose ID is "0" belongs to
@@ -153,19 +153,79 @@ As with collections, lists, and columns, the ID of a field is assigned
 when the field is created and remains the same throughout the life of
 the field.
 
+### Object storage
+
+Conceptually, a collection contains a set of lists. A list contains a
+set of columns and a set of items. Each item contains a set of columns
+that exactly mirrors the set of columns belonging to the list it
+bleongs to.
+
+Concretely, Delectus data are stored somehwat differently, in order to
+facilitate working with the data stored in a Couchbase bucket.
+
+Collections, Lists, and Items are represented by Couchbase documents,
+each with a UUID to distinguish it from all other such objects.
+
+Each item stores the ID of the list it belongs to; an item may belong
+to only one list at a time.
+
+Similarly, each list stores the ID of the collection it belongs to. A
+list may belong to only one collection at a time.
+
+Collections do not store enumerations of their lists; instead,
+Delectus finds a collection's lists by asking Couchbase for all the
+objects of type `"delectus_list"` with the collection's ID in their
+`"collection"` fields.
+
+Similarly, lists do not store enumerations of their items. Instead,
+Delectus finds the items belonging to a list by searching for items
+whose `"list"` ID matches the list in question.
+
+A list's columns, on the other hand, are stored in a JSON object
+stored in a list's `"columnes"` field.
+
+### Item Objects
+
+An item object looks like the following in JSON form:
+
+```
+{
+  "id": ...,
+  "type": "delectus_item"
+  "owner": ...,
+  "list": ...",
+  "deleted": ...,
+  "fields": ...,
+}
+```
+
+Its keys have the following meanings:
+
+- id: a UUID that identifies this particular item
+- type: the string `"delectus_item"`, identifying this object as an item
+- owner: a UUID that identifies the user account that owns the item
+- list: a UUID that identifies the list the item belongs to; this attribute may not be null
+- deleted: true if the user has marked the item for deletion; false otherwise
+- fields: an object containing a value for each of the list's columns in this item
+
+The id, type, list, and owner are immutable; they may not be changed.
+
+The user may edit the other fields at any time using the Delectus
+application.
+
 ### List Objects
 
 A list object looks like the following in JSON form:
 
 ```
 {
-  "id": ...",
+  "id": ...,
   "type": "delectus_list"
-  "owner-id": ...",
+  "owner": ...,
+  "collection": ...,
   "deleted": ...,
-  "name": ...",
+  "name": ...,
   "columns": ...,
-  "items": ...,
 }
 ```
 
@@ -173,16 +233,24 @@ Its keys have the following meanings:
 
 - id: a UUID that identifies this particular list
 - type: the string `"delectus_list"`, identifying this object as a list
-- owner-id: a UUID that identifies the user account that owns the list
+- owner: a UUID that identifies the user account that owns the list
+- collection: a UUID that identifies the collection the list belongs to
 - deleted: true if the user has marked the list for deletion; false otherwise
 - name: the name given by the user to this list
 - columns: an object containing descriptions of the list's columns
-- items: an object containing the list's items and their fields
 
-The id, type, and owner-id are immutable; they may not be changed.
+The id, type, and owner are immutable; they may not be changed.
 
 The user may edit the other fields at any time using the Delectus
 application.
+
+##### `"collection"`
+
+The `"collection"` field contains either a null value or a UUID string
+that identifies a collection object that belongs to the user. If the
+value is a UUID, then the list is a member of the identified
+collection. If it's null then the list is **uncollected**, which is
+the same as saying it's a member of the **default collection**.
 
 ##### `"deleted"`
 
@@ -298,7 +366,7 @@ A collection object looks like the following in JSON form:
 {
   "id": ...",
   "type": "delectus_collection"
-  "owner-id": ...",
+  "owner": ...",
   "deleted": ...,
   "name": ...,
   "lists": ...,
@@ -309,12 +377,12 @@ Its keys have the following meanings:
 
 - id: a UUID that identifies this particular collection
 - type: the string `"delectus_collection"`, identifying this object as a collection
-- owner-id: a UUID that identifies the user account that owns the collection
+- owner: a UUID that identifies the user account that owns the collection
 - deleted: true if the user has marked the collection for deletion; false otherwise
 - name: the name given by the user to this collection
 - lists: an object containing descriptions of the collection's lists
 
-The id, type, and owner-id are immutable; they may not be changed.
+The id, type, and owner are immutable; they may not be changed.
 
 The user may edit the other fields at any time using the Delectus
 application.
@@ -375,7 +443,7 @@ Its keys have the following meanings:
 
 - id: a UUID that identifies this particular user account
 - type: the string `"delectus_user"`, identifying this object as a user account
-- owner-id: a UUID that identifies the user account that owns the list
+- owner: a UUID that identifies the user account that owns the list
 - enabled: true if the user account is active and may be used, and
   false otherwise; only a Delectus admin may change this value
 - email: the email address associated with the user account. Only a

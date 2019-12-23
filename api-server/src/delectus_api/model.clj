@@ -10,9 +10,57 @@
   (:import
    (com.couchbase.client.java.document JsonDocument)))
 
+
 ;;; ---------------------------------------------------------------------
-;;; ensuring that objects belong to the expected owner
+;;; ensuring type and attribute invariants
 ;;; ---------------------------------------------------------------------
+
+(defmacro ensure-user-exists [userid]
+  `(if (user-exists? ~userid)
+     ~userid
+     (throw (ex-info "No such user"
+                     {:cause :user-not-found
+                      :userid ~userid}))))
+
+(defmacro ensure-user [userid]
+  (let [found-user (gensym)]
+    `(let [~found-user (get-user ~userid)]
+       (or ~found-user
+           (throw (ex-info "No such user"
+                           {:cause :user-not-found
+                            :userid ~userid}))))))
+
+(defmacro ensure-collection-exists [collectionid]
+  `(if (collection-exists? ~collectionid)
+     ~collectionid
+     (throw (ex-info "No such collection"
+                     {:cause :collection-not-found
+                      :collectionid ~collectionid}))))
+
+(defmacro ensure-collection [collectionid]
+  (let [found-collection (gensym)]
+    `(let [~found-collection (get-collection ~collectionid)]
+       (or ~found-collection
+           (throw (ex-info "No such collection"
+                           {:cause :collection-not-found
+                            :collectionid ~collectionid}))))))
+
+(defmacro ensure-list-exists [listid]
+  `(if (list-exists? ~listid)
+     ~listid
+     (throw (ex-info "No such list"
+                     {:cause :list-not-found
+                      :listid ~listid}))))
+
+(defmacro ensure-list [listid]
+  (let [found-list (gensym)]
+    `(let [~found-list (get-list ~listid)]
+       (or ~found-list
+           (throw (ex-info "No such list"
+                           {:cause :list-not-found
+                            :listid ~listid}))))))
+
+
 
 (defmacro ensure-owner [objectid userid]
   (let [found-owner (gensym)]
@@ -164,13 +212,12 @@
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
-(defn make-list-document [& {:keys [id name owner-id collection-id columns items deleted]
+(defn make-list-document [& {:keys [id name owner-id collection-id columns deleted]
                              :or {id (makeid)
                                   name nil
                                   owner-id nil
                                   collection-id nil
                                   columns nil
-                                  items nil
                                   deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-list-document"})
   (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-list-document"})
@@ -180,7 +227,6 @@
                  +owner-id-attribute+ owner-id
                  +collection-attribute+ collection-id
                  +columns-attribute+ columns
-                 +items-attribute+ items
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
 
@@ -212,52 +258,18 @@
                       nil)))))
       nil))
 
-
-;;; ---------------------------------------------------------------------
-;;; ensuring that users, collections, and lists exist and are of the right type
+;;; list columns
 ;;; ---------------------------------------------------------------------
 
-(defmacro ensure-user-exists [userid]
-  `(if (user-exists? ~userid)
-     ~userid
-     (throw (ex-info "No such user"
-                     {:cause :user-not-found
-                      :userid ~userid}))))
+(defn get-list-columns [listid]
+  (let [found-list (ensure-list listid)]
+    (.get found-list +columns-attribute+)))
 
-(defmacro ensure-user [userid]
-  (let [found-user (gensym)]
-    `(let [~found-user (get-user ~userid)]
-       (or ~found-user
-           (throw (ex-info "No such user"
-                           {:cause :user-not-found
-                            :userid ~userid}))))))
+;;; TODO: use a N1QL query to return items whose list is identified by the the supplied listid 
+(defn get-list-items [listid]
+  )
 
-(defmacro ensure-collection-exists [collectionid]
-  `(if (collection-exists? ~collectionid)
-     ~collectionid
-     (throw (ex-info "No such collection"
-                     {:cause :collection-not-found
-                      :collectionid ~collectionid}))))
+;;; (def $moviesid "9bd33bf4-7ef9-458b-b0f6-ca5e65787fbf")
+;;; (get-list-columns $moviesid)
+;;; (get-list-items $moviesid)
 
-(defmacro ensure-collection [collectionid]
-  (let [found-collection (gensym)]
-    `(let [~found-collection (get-collection ~collectionid)]
-       (or ~found-collection
-           (throw (ex-info "No such collection"
-                           {:cause :collection-not-found
-                            :collectionid ~collectionid}))))))
-
-(defmacro ensure-list-exists [listid]
-  `(if (list-exists? ~listid)
-     ~listid
-     (throw (ex-info "No such list"
-                     {:cause :list-not-found
-                      :listid ~listid}))))
-
-(defmacro ensure-list [listid]
-  (let [found-list (gensym)]
-    `(let [~found-list (get-list ~listid)]
-       (or ~found-list
-           (throw (ex-info "No such list"
-                           {:cause :list-not-found
-                            :listid ~listid}))))))
