@@ -72,7 +72,7 @@
   (model/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
-                             {"type" +collection-type+ "owner" userid})))
+                             {+type-attribute+ +collection-type+ "owner" userid})))
 
 ;;; (collections $mikelid)
 ;;; (collections $mikelid ["name" "id"])
@@ -103,7 +103,7 @@
   (model/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
-                             {"type" +collection-type+ "owner" userid "name" name})))
+                             {+type-attribute+ +collection-type+ "owner" userid "name" name})))
 
 ;;; (find-collections-with-name $mikelid "Widgets" [])
 
@@ -121,7 +121,7 @@
   (model/ensure-user-exists userid)
   (let [collections (couchio/find-objects
                      (config/delectus-content-bucket) []
-                     {"type" +collection-type+ "owner" userid "name" name})]
+                     {+type-attribute+ +collection-type+ "owner" userid "name" name})]
     (if (empty? collections)
       (let [id (makeid)
             collection-doc (model/make-collection-document :id id :name name :owner userid)]
@@ -171,7 +171,7 @@
   (model/ensure-owner collectionid userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
-                             {"type" +list-type+
+                             {+type-attribute+ +list-type+
                               "owner" userid
                               "collection" collectionid})))
 
@@ -187,7 +187,7 @@
   (model/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
-                             {"type" +list-type+ "owner" userid})))
+                             {+type-attribute+ +list-type+ "owner" userid})))
 
 ;;; (lists $mikelid)
 ;;; (lists $mikelid ["id" "name"])
@@ -246,7 +246,7 @@
   (model/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
-                             {"type" +list-type+ "owner" userid "name" name})))
+                             {+type-attribute+ +list-type+ "owner" userid "name" name})))
 
 ;;; (find-lists-with-name $mikelid "Movies")
 ;;; (find-lists-with-name $mikelid "Movies" ["id" "name"])
@@ -265,7 +265,7 @@
   (model/ensure-user-exists userid)
   (let [found-lists (couchio/find-objects
                      (config/delectus-content-bucket) []
-                     {"type" +list-type+ "owner" userid "name" name})]
+                     {+type-attribute+ +list-type+ "owner" userid "name" name})]
     (if (empty? found-lists)
       (let [listid (makeid)
             list-doc (model/make-list-document :id listid :name name :owner userid)]
