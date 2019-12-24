@@ -63,15 +63,15 @@
         test-list-1 (model/make-list-document :name +test-list-name-1+
                                               :owner +test-user-id-1+
                                               :id +test-list-id-1+
-                                              :collection-id +test-collection-id-1+)
+                                              :collection +test-collection-id-1+)
         test-list-2 (model/make-list-document :name +test-list-name-2+
                                               :owner +test-user-id-1+
                                               :id +test-list-id-2+
-                                              :collection-id +test-collection-id-1+)
+                                              :collection +test-collection-id-1+)
         test-list-3 (model/make-list-document :name +test-list-name-3+
                                               :owner +test-user-id-1+
                                               :id +test-list-id-3+
-                                              :collection-id +test-collection-id-1+)]
+                                              :collection +test-collection-id-1+)]
     (model/assert-collection! test-collection-1)
     (model/assert-collection! test-collection-2)
     (model/assert-list! test-list-1)

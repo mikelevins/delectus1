@@ -212,11 +212,11 @@
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
-(defn make-list-document [& {:keys [id name owner collection-id columns deleted]
+(defn make-list-document [& {:keys [id name owner collection columns deleted]
                              :or {id (makeid)
                                   name nil
                                   owner nil
-                                  collection-id nil
+                                  collection nil
                                   columns nil
                                   deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-list-document"})
@@ -225,7 +225,7 @@
                  +id-attribute+ id
                  +name-attribute+ name
                  +owner-attribute+ owner
-                 +collection-attribute+ collection-id
+                 +collection-attribute+ collection
                  +columns-attribute+ columns
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
