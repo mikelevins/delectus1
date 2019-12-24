@@ -20,8 +20,8 @@
 ;;; JSON object attributes
 ;;; ---------------------------------------------------------------------
 
-(def +columns-attribute+ "columns")
 (def +collection-attribute+ "collection")
+(def +columns-attribute+ "columns")
 (def +deleted-attribute+ "deleted")
 (def +email-attribute+ "email")
 (def +enabled-attribute+ "enabled")
