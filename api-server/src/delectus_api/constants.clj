@@ -13,6 +13,7 @@
 ;;; ---------------------------------------------------------------------
 
 (def +collection-type+ "delectus_collection")
+(def +item-type+ "delectus_item")
 (def +list-type+ "delectus_list")
 (def +user-type+ "delectus_user")
 
