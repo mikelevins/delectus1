@@ -20,13 +20,13 @@
 ;;; functions and data for marking and managing test data
 ;;; (that is, data created by Delectus unit tests)
 
-(def +test-user-id-1+ (:delectus-test-user1-id (config/delectus-configuration)))
-(def +test-user-email-1+ (:delectus-test-user1-email (config/delectus-configuration)))
-(def +test-user-password-1+ (:delectus-test-user1-password (config/delectus-configuration)))
+(def +test-user-id-1+ (:delectus-test-user-id-1 (config/delectus-configuration)))
+(def +test-user-email-1+ (:delectus-test-user-email-1 (config/delectus-configuration)))
+(def +test-user-password-1+ (:delectus-test-user-password-1 (config/delectus-configuration)))
 
-(def +test-user-id-2+ (:delectus-test-user2-id (config/delectus-configuration)))
-(def +test-user-email-2+ (:delectus-test-user2-email (config/delectus-configuration)))
-(def +test-user-password-2+ (:delectus-test-user2-password (config/delectus-configuration)))
+(def +test-user-id-2+ (:delectus-test-user-id-2 (config/delectus-configuration)))
+(def +test-user-email-2+ (:delectus-test-user-email-2 (config/delectus-configuration)))
+(def +test-user-password-2+ (:delectus-test-user-password-2 (config/delectus-configuration)))
 
 (def +test-collection-id-1+ "915ffccf-8261-473e-a82e-2b57404cb3b5")
 (def +test-collection-name-1+ "Test Collection 1")
