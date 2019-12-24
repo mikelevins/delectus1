@@ -65,12 +65,12 @@
 (defmacro ensure-owner [objectid userid]
   (let [found-owner (gensym)]
     `(let [~found-owner (couchio/get-object-attribute (config/delectus-content-bucket)
-                                                      ~objectid +owner-id-attribute+)]
+                                                      ~objectid +owner-attribute+)]
        (if (and ~found-owner
                 (= ~found-owner ~userid))
          ~found-owner
          (throw (ex-info "Wrong owner ID"
-                         {:cause :wrong-owner-id
+                         {:cause :wrong-owner
                           :expected ~userid
                           :found ~found-owner}))))))
 
@@ -167,17 +167,17 @@
 ;;; Collections
 ;;; ---------------------------------------------------------------------
 
-(defn make-collection-document [& {:keys [id name owner-id lists deleted]
+(defn make-collection-document [& {:keys [id name owner lists deleted]
                                    :or {id (makeid)
                                         name nil
-                                        owner-id nil
+                                        owner nil
                                         deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-collection-document"})
-  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-collection-document"})
+  (errors/error-if-nil owner "Missing owner parameter" {:context "make-collection-document"})
   (let [obj-map {+type-attribute+ +collection-type+
                  +id-attribute+ id
                  +name-attribute+ name
-                 +owner-id-attribute+ owner-id
+                 +owner-attribute+ owner
                  +deleted-attribute+ deleted}]
     (couchio/make-json-document id obj-map)))
 
@@ -188,7 +188,7 @@
     upserted-doc))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $thingscol (make-collection-document :name "Things" :owner-id $mikelid))
+;;; (def $thingscol (make-collection-document :name "Things" :owner $mikelid))
 ;;; (ensure-document-type $thingscol +collection-type+)
 ;;; (def $upserted-col (assert-collection! $thingscol))
 
@@ -212,19 +212,19 @@
 ;;; Lists
 ;;; ---------------------------------------------------------------------
 
-(defn make-list-document [& {:keys [id name owner-id collection-id columns deleted]
+(defn make-list-document [& {:keys [id name owner collection-id columns deleted]
                              :or {id (makeid)
                                   name nil
-                                  owner-id nil
+                                  owner nil
                                   collection-id nil
                                   columns nil
                                   deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-list-document"})
-  (errors/error-if-nil owner-id "Missing owner-id parameter" {:context "make-list-document"})
+  (errors/error-if-nil owner "Missing owner parameter" {:context "make-list-document"})
   (let [obj-map {+type-attribute+ +list-type+
                  +id-attribute+ id
                  +name-attribute+ name
-                 +owner-id-attribute+ owner-id
+                 +owner-attribute+ owner
                  +collection-attribute+ collection-id
                  +columns-attribute+ columns
                  +deleted-attribute+ deleted}]
@@ -238,7 +238,7 @@
     upserted-doc))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $movies (make-list-document :name "Movies" :owner-id $mikelid))
+;;; (def $movies (make-list-document :name "Movies" :owner $mikelid))
 ;;; (ensure-document-type $movies +list-type+)
 ;;; (def $upserted-ls (assert-list! $movies))
 

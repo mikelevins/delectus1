@@ -32,7 +32,7 @@
 (def +list-attribute+ "list")
 (def +name-attribute+ "name")
 (def +order-attribute+ "order")
-(def +owner-id-attribute+ "owner-id")
+(def +owner-attribute+ "owner")
 (def +password-hash-attribute+ "password-hash")
 (def +type-attribute+ "type")
 

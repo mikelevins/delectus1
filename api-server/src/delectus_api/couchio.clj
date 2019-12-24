@@ -53,7 +53,7 @@
   (= type-string (json-object-attribute obj +type-attribute+)))
 
 (defn json-object-owner? [obj ownerid]
-  (= ownerid (json-object-attribute obj +owner-id-attribute+)))
+  (= ownerid (json-object-attribute obj +owner-attribute+)))
 
 ;;; =====================================================================
 ;;; JsonDocuments

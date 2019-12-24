@@ -55,21 +55,21 @@
 (defn setup-test-data []
   (println "setting up test data...")
   (let [test-collection-1 (model/make-collection-document :name +test-collection-name-1+
-                                                          :owner-id +test-user-id-1+
+                                                          :owner +test-user-id-1+
                                                           :id +test-collection-id-1+)
         test-collection-2 (model/make-collection-document :name +test-collection-name-2+
-                                                          :owner-id +test-user-id-1+
+                                                          :owner +test-user-id-1+
                                                           :id +test-collection-id-2+)
         test-list-1 (model/make-list-document :name +test-list-name-1+
-                                              :owner-id +test-user-id-1+
+                                              :owner +test-user-id-1+
                                               :id +test-list-id-1+
                                               :collection-id +test-collection-id-1+)
         test-list-2 (model/make-list-document :name +test-list-name-2+
-                                              :owner-id +test-user-id-1+
+                                              :owner +test-user-id-1+
                                               :id +test-list-id-2+
                                               :collection-id +test-collection-id-1+)
         test-list-3 (model/make-list-document :name +test-list-name-3+
-                                              :owner-id +test-user-id-1+
+                                              :owner +test-user-id-1+
                                               :id +test-list-id-3+
                                               :collection-id +test-collection-id-1+)]
     (model/assert-collection! test-collection-1)
@@ -88,9 +88,9 @@
   ;;; wait before teardown to make sure DB's API returns consistent results
   (Thread/sleep 1000)
   (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket) []
-                                              {"owner-id" +test-user-id-1+})
+                                              {"owner" +test-user-id-1+})
         test-documents2 (couchio/find-objects (config/delectus-content-bucket) []
-                                             {"owner-id" +test-user-id-2+})]
+                                             {"owner" +test-user-id-2+})]
     (doseq [doc test-documents1]
       (couchio/remove-document! (config/delectus-content-bucket)
                                 (.get doc +id-attribute+)))
@@ -155,9 +155,9 @@
 (deftest collection-with-id-test
   (testing "/api/collection/collection_with_id"
     (let [collection (api/collection-with-id +test-user-id-1+ +test-collection-id-1+ [])]
-      (is (= (get collection +owner-id-attribute+)
+      (is (= (get collection +owner-attribute+)
              +test-user-id-1+)
-          "the collection's owner-id should be the standard test-user1 ID")
+          "the collection's owner should be the standard test-user1 ID")
       (is (= (get collection +name-attribute+)
              +test-collection-name-1+)
           "the collection's name should be the standard test-user1 name"))))
