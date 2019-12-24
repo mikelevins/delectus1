@@ -29,7 +29,7 @@
 (def +fields-attribute+ "fields")
 (def +id-attribute+ "id")
 (def +items-attribute+ "items")
-(def +lists-attribute+ "lists")
+(def +list-attribute+ "list")
 (def +name-attribute+ "name")
 (def +order-attribute+ "order")
 (def +owner-id-attribute+ "owner-id")
