@@ -4,7 +4,6 @@
 ;;; bucket names
 ;;; ---------------------------------------------------------------------
 
-(def +scratch-bucket-name+ "scratch")
 (def +delectus-users-bucket-name+ "delectus_users")
 (def +delectus-content-bucket-name+ "delectus_content")
 
@@ -28,7 +27,6 @@
 (def +enabled-attribute+ "enabled")
 (def +fields-attribute+ "fields")
 (def +id-attribute+ "id")
-(def +items-attribute+ "items")
 (def +list-attribute+ "list")
 (def +name-attribute+ "name")
 (def +order-attribute+ "order")
