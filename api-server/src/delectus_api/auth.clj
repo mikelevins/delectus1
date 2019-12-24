@@ -25,7 +25,7 @@
 ;;; (= $auth-map-1 $auth-map-2)
 
 (defn make-auth-map [user-record]
-  (let [userid (.get user-record "id")]
+  (let [userid (.get user-record +id-attribute+)]
     {;; identifies the logged-in account
      :userid userid
      ;; identifies the account the client thinks it's authenticating

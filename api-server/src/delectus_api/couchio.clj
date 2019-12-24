@@ -95,8 +95,8 @@
     selector))
 
 ;;; (make-object-selector (config/delectus-users-bucket) [] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" "type"] {"type" +delectus-list-document-type+ "id" "FOO!"})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+type-attribute+ +delectus-list-document-type+ "id" "FOO!"})
 
 (defn find-objects [bucket keys matching]
   (with-couchbase-exceptions-rethrown
@@ -109,8 +109,8 @@
         (map #(.get (.value %) bucket-name) results)
         (map #(.value %) results)))))
 
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {"type" +collection-type+}))
-;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {"type" +list-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +collection-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {+type-attribute+ +list-type+}))
 
 ;;; =====================================================================
 ;;; Couchbase accessors

@@ -88,9 +88,9 @@
   ;;; wait before teardown to make sure DB's API returns consistent results
   (Thread/sleep 1000)
   (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket) []
-                                              {"owner" +test-user-id-1+})
+                                              {+owner-attribute+ +test-user-id-1+})
         test-documents2 (couchio/find-objects (config/delectus-content-bucket) []
-                                             {"owner" +test-user-id-2+})]
+                                             {+owner-attribute+ +test-user-id-2+})]
     (doseq [doc test-documents1]
       (couchio/remove-document! (config/delectus-content-bucket)
                                 (.get doc +id-attribute+)))

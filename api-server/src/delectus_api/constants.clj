@@ -29,7 +29,6 @@
 (def +id-attribute+ "id")
 (def +list-attribute+ "list")
 (def +name-attribute+ "name")
-(def +order-attribute+ "order")
 (def +owner-attribute+ "owner")
 (def +password-hash-attribute+ "password-hash")
 (def +type-attribute+ "type")

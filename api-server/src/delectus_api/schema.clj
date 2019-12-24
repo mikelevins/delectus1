@@ -1,5 +1,6 @@
 (ns delectus-api.schema
   (:require
+   [delectus-api.constants :refer :all]
    [schema.core :as s]
    ))
 
@@ -57,11 +58,11 @@
    :name s/Str})
 
 (s/defschema UserData
-  {(s/required-key "id") s/Str
-   (s/required-key "name") s/Str
-   (s/required-key "email") (s/maybe s/Str)
-   (s/required-key "password-hash") (s/maybe s/Str)
-   (s/required-key "type") s/Str
-   (s/required-key "enabled") s/Bool})
+  {(s/required-key +id-attribute+) s/Str
+   (s/required-key +name-attribute+) s/Str
+   (s/required-key +email-attribute+) (s/maybe s/Str)
+   (s/required-key +password-hash-attribute+) (s/maybe s/Str)
+   (s/required-key +type-attribute+) s/Str
+   (s/required-key +enabled-attribute+) s/Bool})
 
 
