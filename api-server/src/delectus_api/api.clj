@@ -5,6 +5,7 @@
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
+   [delectus-api.ensure :as ensure]
    [delectus-api.errors :as errors]
    [delectus-api.identifiers :refer [makeid]]
    [delectus-api.model :as model]
@@ -57,8 +58,8 @@
 ;;; userdata [userid fields] => user-map
 (defn userdata [userid fields]
   (if (empty? fields)
-    (into {} (.toMap (model/ensure-user userid)))
-    (select-keys (into {} (.toMap (model/ensure-user userid)))
+    (into {} (.toMap (ensure/ensure-user userid)))
+    (select-keys (into {} (.toMap (ensure/ensure-user userid)))
                  fields)))
 
 ;;; (userdata $mikelid)
@@ -69,7 +70,7 @@
 
 ;;; collections [userid fields] => list of collection-map
 (defn collections [userid fields]
-  (model/ensure-user-exists userid)
+  (ensure/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
                              {+type-attribute+ +collection-type+ +owner-attribute+ userid})))
@@ -79,12 +80,12 @@
 
 ;;; collection-with-id [userid collectionid] => collection-map
 (defn collection-with-id [userid collectionid fields]
-  (model/ensure-user-exists userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (if (empty? fields)
-    (into {} (.toMap (model/ensure-collection collectionid)))
-    (select-keys (into {} (.toMap (model/ensure-collection collectionid)))
+    (into {} (.toMap (ensure/ensure-collection collectionid)))
+    (select-keys (into {} (.toMap (ensure/ensure-collection collectionid)))
                  fields)))
 
 ;;; (collection-with-id $mikelid "5b541f1a-d34a-4a83-a4bd-9c2b309423bf")
@@ -92,15 +93,15 @@
 
 ;;; collection-name [userid collectionid] => name-string
 (defn collection-name [userid collectionid]
-  (model/ensure-user-exists userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 collectionid +name-attribute+))
 
 ;;; find-collections-with-name [userid name] => list of collection-map
 (defn find-collections-with-name [userid name fields]
-  (model/ensure-user-exists userid)
+  (ensure/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
                              {+type-attribute+ +collection-type+ +owner-attribute+ userid +name-attribute+ name})))
@@ -109,16 +110,16 @@
 
 ;;; rename-collection [userid collectionid newname] => name-string
 (defn rename-collection [userid collectionid newname]
-  (model/ensure-user-exists userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (couchio/with-couchbase-exceptions-rethrown
     (couchio/upsert-object-attribute! (config/delectus-content-bucket) collectionid +name-attribute+ newname))
   newname)
 
 ;;; new-collection [userid name] => id-string
 (defn new-collection [userid name]
-  (model/ensure-user-exists userid)
+  (ensure/ensure-user-exists userid)
   (let [collections (couchio/find-objects
                      (config/delectus-content-bucket) []
                      {+type-attribute+ +collection-type+ +owner-attribute+ userid +name-attribute+ name})]
@@ -135,9 +136,9 @@
 
 ;;; delete-collection [userid collectionid] => id-string
 (defn delete-collection [userid collectionid]
-  (model/ensure-user-exists userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (couchio/update-object-attribute! (config/delectus-content-bucket)
                                     collectionid
                                     +deleted-attribute+
@@ -146,9 +147,9 @@
 
 ;;; undelete-collection [userid collectionid] => id-string
 (defn undelete-collection [userid collectionid]
-  (model/ensure-user-exists userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (couchio/update-object-attribute! (config/delectus-content-bucket)
                                     collectionid
                                     +deleted-attribute+
@@ -157,18 +158,18 @@
 
 ;;; collection-deleted? [userid collectionid] => Boolean
 (defn collection-deleted? [userid collectionid]
-  (model/ensure-user-exists userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 collectionid
                                 +deleted-attribute+))
 
 ;;; collection-lists [userid collectionid] => list of list-map
 (defn collection-lists [userid collectionid fields]
-  (model/ensure-user-exists userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
                              {+type-attribute+ +list-type+
@@ -184,7 +185,7 @@
 
 ;;; lists [userid] => list of list-map
 (defn lists [userid fields]
-  (model/ensure-user-exists userid)
+  (ensure/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
                              {+type-attribute+ +list-type+ +owner-attribute+ userid})))
@@ -194,32 +195,32 @@
 
 ;;; move-list-to-collection [userid listid collectionid] => id-string
 (defn move-list-to-collection [userid listid collectionid]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
-  (model/ensure-collection-exists collectionid)
-  (model/ensure-owner collectionid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (ensure/ensure-collection-exists collectionid)
+  (ensure/ensure-owner collectionid userid)
   (couchio/upsert-object-attribute! (config/delectus-content-bucket)
                                     listid +collection-attribute+ collectionid)
   collectionid)
 
 ;;; make-list-uncollected [userid listid] => nil
 (defn make-list-uncollected [userid listid]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/upsert-object-attribute! (config/delectus-content-bucket)
                                     listid +collection-attribute+ nil)
   nil)
 
 ;;; list-with-id [userid listid] => list-map
 (defn list-with-id [userid listid fields]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (if (empty? fields)
-    (into {} (.toMap (model/ensure-list listid)))
-    (select-keys (into {} (.toMap (model/ensure-list listid)))
+    (into {} (.toMap (ensure/ensure-list listid)))
+    (select-keys (into {} (.toMap (ensure/ensure-list listid)))
                  fields)))
 
 ;;; (list-with-id $mikelid "9bd33bf4-7ef9-458b-b0f6-ca5e65787fbf")
@@ -227,23 +228,23 @@
 
 ;;; list-name [userid listid] => name-string
 (defn list-name [userid listid]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 listid +name-attribute+))
 
 ;;; list-collection [userid listid] => id-string
 (defn list-collection [userid listid]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 listid +collection-attribute+))
 
 ;;; find-lists-with-name [userid name] => list of list-map
 (defn find-lists-with-name [userid name fields]
-  (model/ensure-user-exists userid)
+  (ensure/ensure-user-exists userid)
   (map #(into {} (.toMap %))
        (couchio/find-objects (config/delectus-content-bucket) fields
                              {+type-attribute+ +list-type+ +owner-attribute+ userid +name-attribute+ name})))
@@ -253,16 +254,16 @@
 
 ;;; rename-list [userid listid newname] => name-string
 (defn rename-list [userid listid newname]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/with-couchbase-exceptions-rethrown
     (couchio/upsert-object-attribute! (config/delectus-content-bucket) listid +name-attribute+ newname))
   newname)
 
 ;;; new-list [userid name] => id-string
 (defn new-list [userid name]
-  (model/ensure-user-exists userid)
+  (ensure/ensure-user-exists userid)
   (let [found-lists (couchio/find-objects
                      (config/delectus-content-bucket) []
                      {+type-attribute+ +list-type+ +owner-attribute+ userid +name-attribute+ name})]
@@ -279,9 +280,9 @@
 
 ;;; delete-list [userid listid] => id-string
 (defn delete-list [userid listid]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/update-object-attribute! (config/delectus-content-bucket)
                                     listid
                                     +deleted-attribute+
@@ -290,9 +291,9 @@
 
 ;;; undelete-list [userid listid] => id-string
 (defn undelete-list [userid listid]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/update-object-attribute! (config/delectus-content-bucket)
                                     listid
                                     +deleted-attribute+
@@ -301,17 +302,17 @@
 
 ;;; list-deleted? [userid listid] => Boolean
 (defn list-deleted? [userid listid]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 listid
                                 +deleted-attribute+))
 
 (defn list-columns [userid listid fields]
-  (model/ensure-user-exists userid)
-  (model/ensure-list-exists listid)
-  (model/ensure-owner listid userid)
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
   (couchio/get-object-attribute (config/delectus-content-bucket)
                                 listid
                                 +columns-attribute+)

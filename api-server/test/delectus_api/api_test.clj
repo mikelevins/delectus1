@@ -5,6 +5,7 @@
             [delectus-api.configuration :as config]
             [delectus-api.constants :refer :all]
             [delectus-api.couchio :as couchio]
+            [delectus-api.ensure :as ensure]
             [delectus-api.identifiers :refer [makeid]]
             [delectus-api.model :as model])
   (:import

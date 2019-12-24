@@ -4,92 +4,13 @@
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
+   [delectus-api.ensure :as ensure]
    [delectus-api.errors :as errors]
    [delectus-api.identifiers :refer [makeid]]
    [delectus-api.couchio :as couchio])
   (:import
    (com.couchbase.client.java.document JsonDocument)))
 
-
-;;; ---------------------------------------------------------------------
-;;; ensuring type and attribute invariants
-;;; ---------------------------------------------------------------------
-
-(defmacro ensure-user-exists [userid]
-  `(if (user-exists? ~userid)
-     ~userid
-     (throw (ex-info "No such user"
-                     {:cause :user-not-found
-                      :userid ~userid}))))
-
-(defmacro ensure-user [userid]
-  (let [found-user (gensym)]
-    `(let [~found-user (get-user ~userid)]
-       (or ~found-user
-           (throw (ex-info "No such user"
-                           {:cause :user-not-found
-                            :userid ~userid}))))))
-
-(defmacro ensure-collection-exists [collectionid]
-  `(if (collection-exists? ~collectionid)
-     ~collectionid
-     (throw (ex-info "No such collection"
-                     {:cause :collection-not-found
-                      :collectionid ~collectionid}))))
-
-(defmacro ensure-collection [collectionid]
-  (let [found-collection (gensym)]
-    `(let [~found-collection (get-collection ~collectionid)]
-       (or ~found-collection
-           (throw (ex-info "No such collection"
-                           {:cause :collection-not-found
-                            :collectionid ~collectionid}))))))
-
-(defmacro ensure-list-exists [listid]
-  `(if (list-exists? ~listid)
-     ~listid
-     (throw (ex-info "No such list"
-                     {:cause :list-not-found
-                      :listid ~listid}))))
-
-(defmacro ensure-list [listid]
-  (let [found-list (gensym)]
-    `(let [~found-list (get-list ~listid)]
-       (or ~found-list
-           (throw (ex-info "No such list"
-                           {:cause :list-not-found
-                            :listid ~listid}))))))
-
-
-
-(defmacro ensure-owner [objectid userid]
-  (let [found-owner (gensym)]
-    `(let [~found-owner (couchio/get-object-attribute (config/delectus-content-bucket)
-                                                      ~objectid +owner-attribute+)]
-       (if (and ~found-owner
-                (= ~found-owner ~userid))
-         ~found-owner
-         (throw (ex-info "Wrong owner ID"
-                         {:cause :wrong-owner
-                          :expected ~userid
-                          :found ~found-owner}))))))
-
-;;; ---------------------------------------------------------------------
-;;; model type-checks
-;;; ---------------------------------------------------------------------
-
-(defmacro ensure-document-type [json-doc type-string]
-  `(if (instance? JsonDocument ~json-doc)
-     (let [found-type# (.get (.content ~json-doc) +type-attribute+)]
-       (or (and (= ~type-string found-type#))
-           (throw (ex-info "Wrong document type"
-                           {:cause :wrong-document-type
-                            :expected-type ~type-string
-                            :found-type found-type#}))))
-     (throw (ex-info "Wrong object type"
-                     {:cause :wrong-object-type
-                      :expected-type JsonDocument
-                      :found-type (type ~json-doc)}))))
 
 ;;; ---------------------------------------------------------------------
 ;;; Users
@@ -112,7 +33,7 @@
 
 
 (defn assert-user! [userdoc]
-  (ensure-document-type userdoc +user-type+)
+  (ensure/ensure-document-type userdoc +user-type+)
   (let [users-bucket (config/delectus-users-bucket)
         upserted-doc (.upsert users-bucket userdoc)]
     upserted-doc))
@@ -130,14 +51,7 @@
                                         userid +type-attribute+))))
 
 (defn get-user [userid]
-  (or (and userid
-           (let [candidate (couchio/get-document (config/delectus-users-bucket) userid)]
-             (and candidate
-                  (let [obj (.content candidate)]
-                    (if (couchio/json-object-type? obj +user-type+)
-                      obj
-                      nil)))))
-      nil))
+  (couchio/get-object-of-type (config/delectus-users-bucket) userid +user-type+))
 
 ;;; finding registered users
 ;;; ---------------------------------------------------------------------
@@ -182,14 +96,14 @@
     (couchio/make-json-document id obj-map)))
 
 (defn assert-collection! [collectiondoc]
-  (ensure-document-type collectiondoc +collection-type+)
+  (ensure/ensure-document-type collectiondoc +collection-type+)
   (let [content-bucket (config/delectus-content-bucket)
         upserted-doc (.upsert content-bucket collectiondoc)]
     upserted-doc))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $thingscol (make-collection-document :name "Things" :owner $mikelid))
-;;; (ensure-document-type $thingscol +collection-type+)
+;;; (ensure/ensure-document-type $thingscol +collection-type+)
 ;;; (def $upserted-col (assert-collection! $thingscol))
 
 (defn collection-exists? [collectionid]
@@ -199,14 +113,8 @@
                                         collectionid +type-attribute+))))
 
 (defn get-collection [collectionid]
-  (or (and collectionid
-           (let [candidate (couchio/get-document (config/delectus-content-bucket) collectionid)]
-             (and candidate
-                  (let [obj (.content candidate)]
-                    (if (couchio/json-object-type? obj +collection-type+)
-                      obj
-                      nil)))))
-      nil))
+  (couchio/get-object-of-type (config/delectus-content-bucket) collectionid +collection-type+))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; Lists
@@ -232,14 +140,14 @@
 
 
 (defn assert-list! [listdoc]
-  (ensure-document-type listdoc +list-type+)
+  (ensure/ensure-document-type listdoc +list-type+)
   (let [content-bucket (config/delectus-content-bucket)
         upserted-doc (.upsert content-bucket listdoc)]
     upserted-doc))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $movies (make-list-document :name "Movies" :owner $mikelid))
-;;; (ensure-document-type $movies +list-type+)
+;;; (ensure/ensure-document-type $movies +list-type+)
 ;;; (def $upserted-ls (assert-list! $movies))
 
 (defn list-exists? [listid]
@@ -249,20 +157,14 @@
                                         listid +type-attribute+))))
 
 (defn get-list [listid]
-  (or (and listid
-           (let [candidate (couchio/get-document (config/delectus-content-bucket) listid)]
-             (and candidate
-                  (let [obj (.content candidate)]
-                    (if (couchio/json-object-type? obj +list-type+)
-                      obj
-                      nil)))))
-      nil))
+  (couchio/get-object-of-type (config/delectus-content-bucket) listid +list-type+))
+
 
 ;;; list columns
 ;;; ---------------------------------------------------------------------
 
 (defn get-list-columns [listid]
-  (let [found-list (ensure-list listid)]
+  (let [found-list (ensure/ensure-list listid)]
     (.get found-list +columns-attribute+)))
 
 ;;; TODO: use a N1QL query to return items whose list is identified by the the supplied listid 

@@ -128,6 +128,24 @@
   (with-couchbase-exceptions-rethrown
     (.get bucket docid)))
 
+(defn get-document-of-type [bucket docid type-name]
+  (with-couchbase-exceptions-rethrown
+    (if docid
+      (let [doc (get-document bucket docid)]
+        (if doc
+          (let [obj (.content doc)]
+            (if (json-object-type? obj type-name)
+              doc
+              nil))
+          nil))
+      nil)))
+
+(defn get-object-of-type [bucket docid type-name]
+  (let [doc (get-document-of-type bucket docid type-name)]
+    (if doc
+      (.content doc)
+      nil)))
+
 (defn object-attribute-exists? [bucket objectid attribute-name]
   (with-couchbase-exceptions-rethrown
     (let [lookup (.exists (.lookupIn bucket objectid) (into-array [attribute-name]))
