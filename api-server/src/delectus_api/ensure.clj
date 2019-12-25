@@ -7,9 +7,8 @@
   (:import
    (com.couchbase.client.java.document JsonDocument)))
 
-
 ;;; ---------------------------------------------------------------------
-;;; ensuring type and attribute invariants
+;;; ensuring object type and attribute invariants
 ;;; ---------------------------------------------------------------------
 
 (defmacro ensure-user-exists [userid]

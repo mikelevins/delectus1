@@ -148,13 +148,25 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $movies (make-list-document :name "Movies" :owner $mikelid))
 ;;; (ensure/ensure-document-type $movies +list-type+)
-;;; (def $upserted-ls (assert-list! $movies))
+;;; (def $moviesid (assert-list! $movies))
 
 (defn list-exists? [listid]
   (and (couchio/id-exists? (config/delectus-content-bucket) listid)
        (= +list-type+
           (couchio/get-object-attribute (config/delectus-content-bucket)
                                         listid +type-attribute+))))
+
+(defn list-name-exists? [userid listname]
+  (let [found (couchio/find-objects
+               (config/delectus-content-bucket) ["id"]
+               {+type-attribute+ +list-type+
+                +name-attribute+ listname
+                +owner-attribute+ userid})]
+    (if (empty? found)
+      false
+      true)))
+
+;;; (list-name-exists? $mikelid "Movies")
 
 (defn get-list [listid]
   (couchio/get-object-of-type (config/delectus-content-bucket) listid +list-type+))

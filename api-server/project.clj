@@ -1,6 +1,7 @@
 (defproject delectus-api "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.10.0"]
+                 [org.clojure/data.csv "0.1.4"]
                  [org.clojure/tools.logging "0.5.0"]
                  [metosin/compojure-api "2.0.0-alpha30"]
                  ;; config library
