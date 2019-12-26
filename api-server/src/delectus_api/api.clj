@@ -165,19 +165,27 @@
                                 collectionid
                                 +deleted-attribute+))
 
-;;; collection-lists [userid collectionid] => list of list-map
+;;; collection-lists [userid collectionid fields] => list of list-map
 (defn collection-lists [userid collectionid fields]
   (ensure/ensure-user-exists userid)
-  (ensure/ensure-collection-exists collectionid)
-  (ensure/ensure-owner collectionid userid)
-  (map #(into {} (.toMap %))
-       (couchio/find-objects (config/delectus-content-bucket) fields
-                             {+type-attribute+ +list-type+
-                              +owner-attribute+ userid
-                              "collection" collectionid})))
+  (if (nil? collectionid)
+    (map #(into {} (.toMap %))
+         (couchio/find-objects (config/delectus-content-bucket) fields
+                               {+type-attribute+ +list-type+
+                                +owner-attribute+ userid
+                                +collection-attribute+ nil}))
+    (do (ensure/ensure-collection-exists collectionid)
+        (ensure/ensure-owner collectionid userid)
+        (map #(into {} (.toMap %))
+             (couchio/find-objects (config/delectus-content-bucket) fields
+                                   {+type-attribute+ +list-type+
+                                    +owner-attribute+ userid
+                                    +collection-attribute+ collectionid})))))
 
+;;; (def $mikelid (model/email->userid "mikel@evins.net"))
 ;;; (collection-lists $mikelid "7941ad3f-12b2-409c-9120-18ea9cbc94d5" [])
 ;;; (collection-lists $mikelid "7941ad3f-12b2-409c-9120-18ea9cbc94d5" [+name-attribute+ "id"])
+;;; (collection-lists $mikelid nil [])
 
 
 ;;; lists

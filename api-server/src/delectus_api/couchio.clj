@@ -1,6 +1,8 @@
 (ns delectus-api.couchio
   (:require
+   [clojure.data.json :as json]
    [clojure.edn :as edn]
+   [clojure.pprint :refer [cl-format]]
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.errors :as errors]
@@ -74,11 +76,16 @@
 ;;; ---------------------------------------------------------------------
 
 (defn make-object-matchers [matchers-map]
-  (let [ks (keys matchers-map)]
-    (map #(str "`" % "` = \"" (get matchers-map %) "\"")
-         ks)))
+  (map (fn [e]
+         (let [k (key e)
+               v (val e)]
+           (if (nil? v)
+             (cl-format nil "`~A` = null" k)
+             (cl-format nil "`~A` = \"~A\"" k v))))
+       matchers-map))
 
 ;;; (make-object-matchers {})
+;;; (make-object-matchers {+id-attribute+ "FOO" +collection-attribute+ nil})
 
 (defn make-object-selector [bucket keys matching]
   (let [bucket-name (.name bucket)
@@ -96,7 +103,8 @@
 
 ;;; (make-object-selector (config/delectus-users-bucket) [] {})
 ;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+type-attribute+ +delectus-list-document-type+ "id" "FOO!"})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+type-attribute+ +list-type+})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+id-attribute+ "FOO" +collection-attribute+ nil})
 
 (defn find-objects [bucket keys matching]
   (with-couchbase-exceptions-rethrown
@@ -110,7 +118,7 @@
         (map #(.value %) results)))))
 
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +collection-type+}))
-;;; (def $objs (find-objects (config/delectus-content-bucket) ["name"] {+type-attribute+ +list-type+}))
+;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f"}))
 
 ;;; =====================================================================
 ;;; Couchbase accessors
