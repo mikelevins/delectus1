@@ -108,6 +108,15 @@
 ;;; (ensure/ensure-document-type $thingscol +collection-type+)
 ;;; (def $upserted-col (assert-collection! $thingscol))
 
+(defn count-collections [userid]
+  (couchio/with-couchbase-exceptions-rethrown
+    (let [selector (str "SELECT COUNT(*) AS `collectioncount` FROM `delectus_content` "
+                        "WHERE `type` = '" +collection-type+ "' AND `owner` = '" userid "';")
+          results (.query (config/delectus-content-bucket) (N1qlQuery/simple selector))]
+      (.get (.value (.get (.allRows results) 0)) "collectioncount"))))
+
+;;; (time (count-collections $mikelid))
+
 (defn collection-exists? [collectionid]
   (and (couchio/id-exists? (config/delectus-content-bucket) collectionid)
        (= +collection-type+
@@ -151,6 +160,23 @@
 ;;; (def $movies (make-list-document :name "Movies" :owner $mikelid))
 ;;; (ensure/ensure-document-type $movies +list-type+)
 ;;; (def $moviesid (assert-list! $movies))
+
+(defn count-lists [userid collectionid]
+  (if (nil? collectionid)
+    ;;; count uncollected lists
+    (couchio/with-couchbase-exceptions-rethrown
+      (let [selector (str "SELECT COUNT(*) AS `listcount` FROM `delectus_content` "
+                          "WHERE `collection` IS NULL AND `owner` = '" userid "';")
+            results (.query (config/delectus-content-bucket) (N1qlQuery/simple selector))]
+        (.get (.value (.get (.allRows results) 0)) "listcount")))
+    ;;; count lists in collectionid
+    (couchio/with-couchbase-exceptions-rethrown
+      (let [selector (str "SELECT COUNT(*) AS `listcount` FROM `delectus_content` "
+                          "WHERE `collection` = '" collectionid "' AND `owner` = '" userid "';")
+            results (.query (config/delectus-content-bucket) (N1qlQuery/simple selector))]
+        (.get (.value (.get (.allRows results) 0)) "listcount")))))
+
+;;; (time (count-lists $mikelid nil))
 
 (defn list-exists? [listid]
   (and (couchio/id-exists? (config/delectus-content-bucket) listid)
@@ -220,18 +246,18 @@
         upserted-doc (.upsert content-bucket itemdoc)]
     upserted-doc))
 
-(defn count-items [listid]
+(defn count-items [userid listid]
   (couchio/with-couchbase-exceptions-rethrown
     (let [selector (str "SELECT COUNT(*) AS `itemcount` FROM `delectus_content` "
-                        "WHERE `list` = '" listid "';")
+                        "WHERE `list` = '" listid "' AND `owner` = '" userid "' ;")
           results (.query (config/delectus-content-bucket) (N1qlQuery/simple selector))]
       (.get (.value (.get (.allRows results) 0)) "itemcount"))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $moviesid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (def $zipcodesid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
-;;; (time (count-items $moviesid))
-;;; (time (count-items $zipcodesid))
+;;; (time (count-items $mikelid $moviesid))
+;;; (time (count-items $mikelid $zipcodesid))
 
 (defn item-exists? [itemid]
   (and (couchio/id-exists? (config/delectus-content-bucket) itemid)
