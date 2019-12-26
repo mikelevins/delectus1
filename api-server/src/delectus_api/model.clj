@@ -187,3 +187,43 @@
 ;;; (get-list-columns $moviesid)
 ;;; (get-list-items $moviesid)
 
+;;; ---------------------------------------------------------------------
+;;; Items
+;;; ---------------------------------------------------------------------
+
+(defn make-item [& {:keys [id owner list fields deleted]
+                         :or {id (makeid)
+                              owner nil
+                              list nil
+                              fields nil
+                              deleted false}}]
+  (errors/error-if-nil owner "Missing owner parameter" {:context "make-list-document"})
+  (errors/error-if-nil list "Missing list parameter" {:context "make-list-document"})
+  (let [obj-map {+type-attribute+ +item-type+
+                 +id-attribute+ id
+                 +owner-attribute+ owner
+                 +list-attribute+ list
+                 +fields-attribute+ fields
+                 +deleted-attribute+ deleted}]
+    (couchio/make-json-document id obj-map)))
+
+(defn values->item-document [userid listid vals]
+  (make-item :id (makeid) :owner userid :list listid :deleted false
+             :fields (let [keys (map str (range 0 (count vals)))]
+                       (zipmap keys vals))))
+
+(defn assert-item! [itemdoc]
+  (ensure/ensure-document-type itemdoc +item-type+)
+  (let [content-bucket (config/delectus-content-bucket)
+        upserted-doc (.upsert content-bucket itemdoc)]
+    upserted-doc))
+
+(defn item-exists? [itemid]
+  (and (couchio/id-exists? (config/delectus-content-bucket) itemid)
+       (= +item-type+
+          (couchio/get-object-attribute (config/delectus-content-bucket)
+                                        itemid +type-attribute+))))
+
+(defn get-item [itemid]
+  (couchio/get-object-of-type (config/delectus-content-bucket) itemid +item-type+))
+

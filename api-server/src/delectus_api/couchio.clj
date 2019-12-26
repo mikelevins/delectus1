@@ -80,7 +80,7 @@
          (let [k (key e)
                v (val e)]
            (if (nil? v)
-             (cl-format nil "`~A` = null" k)
+             (cl-format nil "`~A` IS NULL" k)
              (cl-format nil "`~A` = \"~A\"" k v))))
        matchers-map))
 
@@ -118,7 +118,8 @@
         (map #(.value %) results)))))
 
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +collection-type+}))
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f"}))
+;;; (time (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-attribute+ nil})))
+;;; (make-object-selector (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-attribute+ nil})
 
 ;;; =====================================================================
 ;;; Couchbase accessors

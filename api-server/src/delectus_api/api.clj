@@ -185,7 +185,7 @@
 ;;; (def $mikelid (model/email->userid "mikel@evins.net"))
 ;;; (collection-lists $mikelid "7941ad3f-12b2-409c-9120-18ea9cbc94d5" [])
 ;;; (collection-lists $mikelid "7941ad3f-12b2-409c-9120-18ea9cbc94d5" [+name-attribute+ "id"])
-;;; (collection-lists $mikelid nil [])
+;;; (time (collection-lists $mikelid nil []))
 
 
 ;;; lists
