@@ -222,13 +222,15 @@
 
 (defn count-items [listid]
   (couchio/with-couchbase-exceptions-rethrown
-    (let [selector (str "SELECT COUNT(*) FROM `delectus_content` "
+    (let [selector (str "SELECT COUNT(*) AS `itemcount` FROM `delectus_content` "
                         "WHERE `list` = '" listid "';")
           results (.query (config/delectus-content-bucket) (N1qlQuery/simple selector))]
-      results)))
+      (.get (.value (.get (.allRows results) 0)) "itemcount"))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $moviesid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (def $zipcodesid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (count-items $moviesid))
 ;;; (time (count-items $zipcodesid))
 
 (defn item-exists? [itemid]
