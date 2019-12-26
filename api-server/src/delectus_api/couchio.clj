@@ -106,6 +106,19 @@
 ;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+type-attribute+ +list-type+})
 ;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+id-attribute+ "FOO" +collection-attribute+ nil})
 
+(defn make-object-counter [bucket matching]
+  (let [bucket-name (.name bucket)
+        matchers (make-object-matchers matching)
+        where-clause (if (empty? matchers)
+                       ";"
+                       (str "WHERE "
+                            (clojure.string/join " AND " matchers)
+                            ";"))
+        selector (str "SELECT COUNT(*) FROM `" bucket-name "` " where-clause)]
+    selector))
+
+;;; (make-object-counter (config/delectus-users-bucket) {+id-attribute+ "FOO" +collection-attribute+ nil})
+
 (defn find-objects [bucket keys matching]
   (with-couchbase-exceptions-rethrown
     (let [selector (make-object-selector bucket keys matching)
@@ -120,6 +133,19 @@
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +collection-type+}))
 ;;; (time (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-attribute+ nil})))
 ;;; (make-object-selector (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-attribute+ nil})
+
+(defn count-objects [bucket matching]
+  (with-couchbase-exceptions-rethrown
+    (let [selector (make-object-counter bucket matching)
+          bucket-name (.name bucket)
+          results (.query bucket (N1qlQuery/simple selector))]
+      (class results))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (time (count-objects (config/delectus-content-bucket) {+type-attribute+ +list-type+ +owner-attribute+ $mikelid +collection-attribute+ nil}))
+;;; (time (count-objects (config/delectus-content-bucket) {+type-attribute+ +item-type+ +owner-attribute+ $mikelid +collection-attribute+ nil}))
+;;; (time (count-objects (config/delectus-content-bucket) {+type-attribute+ +item-type+}))
+
 
 ;;; =====================================================================
 ;;; Couchbase accessors

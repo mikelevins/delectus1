@@ -1,6 +1,7 @@
 (ns delectus-api.model
   (:require
    [buddy.hashers :as hashers]
+   [clojure.pprint :refer [cl-format]]
    [delectus-api.configuration :as config]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
@@ -9,7 +10,8 @@
    [delectus-api.identifiers :refer [makeid]]
    [delectus-api.couchio :as couchio])
   (:import
-   (com.couchbase.client.java.document JsonDocument)))
+   (com.couchbase.client.java.document JsonDocument)
+   (com.couchbase.client.java.query N1qlQuery)))
 
 
 ;;; ---------------------------------------------------------------------
@@ -217,6 +219,17 @@
   (let [content-bucket (config/delectus-content-bucket)
         upserted-doc (.upsert content-bucket itemdoc)]
     upserted-doc))
+
+(defn count-items [listid]
+  (couchio/with-couchbase-exceptions-rethrown
+    (let [selector (str "SELECT COUNT(*) FROM `delectus_content` "
+                        "WHERE `list` = '" listid "';")
+          results (.query (config/delectus-content-bucket) (N1qlQuery/simple selector))]
+      results)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $zipcodesid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (count-items $zipcodesid))
 
 (defn item-exists? [itemid]
   (and (couchio/id-exists? (config/delectus-content-bucket) itemid)

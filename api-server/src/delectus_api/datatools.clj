@@ -52,7 +52,10 @@
 ;;; (def $listid (makeid))
 ;;; (def $listpath "/home/mikel/Workshop/src/delectus/test-data/zipcode.csv")
 ;;; (time (def $zipsdoc (load-csv-file $mikelid $listid "Zipcodes" true $listpath)))
-;;; (class $zipsdoc)
-;;; (count (second $zipsdoc))
-;;; (.get (.content (first $zipsdoc)) +columns-attribute+)
-;;; (first (second $zipsdoc))
+
+;;; (def $mikelid (model/email->userid "mikel@evins.net"))
+;;; (def $listid (makeid))
+;;; (def $listpath "/home/mikel/Workshop/src/delectus/test-data/Movies.csv")
+;;; (time (def $zipsdoc (load-csv-file $mikelid $listid "Movies" true $listpath)))
+
+
