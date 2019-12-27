@@ -261,6 +261,21 @@
 ;;; (time (count-items $mikelid $moviesid))
 ;;; (time (count-items $mikelid $zipcodesid))
 
+(defn get-items [userid listid fields]
+  (couchio/with-couchbase-exceptions-rethrown
+    (couchio/find-objects (config/delectus-content-bucket)
+                          fields
+                          {+owner-attribute+ userid
+                           +list-attribute+ listid
+                           +type-attribute+ +item-type+})))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $moviesid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (def $zipcodesid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (def $items (time (get-items $mikelid $moviesid [])))
+;;; (.toMap (nth $items 0))
+;;; (time (get-items $mikelid $zipcodesid))
+
 (defn item-exists? [itemid]
   (and (couchio/id-exists? (config/delectus-content-bucket) itemid)
        (= +item-type+
