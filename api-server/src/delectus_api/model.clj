@@ -248,10 +248,12 @@
 
 (defn count-items [userid listid]
   (couchio/with-couchbase-exceptions-rethrown
-    (let [selector (str "SELECT COUNT(*) AS `itemcount` FROM `delectus_content` "
-                        "WHERE `list` = '" listid "' AND `owner` = '" userid "' ;")
+    (let [selector (str "SELECT COUNT(*) FROM `delectus_content` "
+                        "WHERE `list` = '" listid "'"
+                        " AND `owner` = '" userid "'"
+                        " AND `type` = '" +item-type+ "' ;")
           results (.query (config/delectus-content-bucket) (N1qlQuery/simple selector))]
-      (.get (.value (.get (.allRows results) 0)) "itemcount"))))
+      (.get (.value (.get (.allRows results) 0)) "$1"))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $moviesid "12c8b02b-8bba-4179-b328-94010ede7f01")
