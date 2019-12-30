@@ -331,6 +331,9 @@
   (ensure/ensure-user-exists userid)
   (ensure/ensure-list-exists listid)
   (ensure/ensure-owner listid userid)
-  (let [col-id 
-        newcol (make-column :id col-id :name name :deleted false)]
-    ))
+  (let [col-id (model/next-column-id listid)]
+    (model/assert-column! listid col-id name)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (new-column $mikelid $listid "Genre")

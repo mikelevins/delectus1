@@ -231,9 +231,41 @@
 (defn column-ids [listid]
   (column-attribute-values listid +id-attribute+))
 
+(defn get-list-columns [listid]
+  (let [found-list (ensure/ensure-list listid)]
+    (.get found-list +columns-attribute+)))
+
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (get-list-columns $listid)
+
+(defn get-list-column [listid columnid]
+  (ensure/ensure-list-exists listid)
+  (couchio/get-document-path (config/delectus-content-bucket)
+                             listid (str +columns-attribute+ "." columnid)))
+
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (get-list-column $listid "8")
+
+(defn get-list-column-ids [listid]
+  (let [found-list (ensure/ensure-list listid)]
+    (.getNames (.get found-list +columns-attribute+))))
+
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (get-list-column-ids $listid)
+
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
 ;;; (time (column-ids $listid))
+
+(defn columnid-exists? [listid column-id]
+  (let [cols (get-list-columns listid)
+        ids (.getNames cols)]
+    (some (fn [id] (= column-id id))
+          ids)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (column-id-exists? $listid "6"))
 
 (defn next-column-id [listid]
   (let [ids (column-attribute-values listid +id-attribute+)]
@@ -242,10 +274,6 @@
       (let [ids (sort < (map #(Integer. %) ids))
             maxid (apply max ids)]
         (str (+ 1 maxid))))))
-
-;; (let [ids (sort < (map #(Integer. %) ids))
-;;             maxid (max ids)]
-;;         (str (+ maxid 1)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
@@ -268,34 +296,89 @@
 ;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
 ;;; (time (column-name-exists? $listid "dst"))
 
+(defn column-deleted? [listid columnid]
+  (let [found-column (get-list-column listid columnid)]
+    (errors/error-if-not found-column "Column ID not found" {:context 'column-deleted? :id columnid})
+    (.get found-column +deleted-attribute+)))
+
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (column-deleted? $listid "8")
+
+(defn mark-column-deleted! [listid columnid deleted?]
+  (couchio/update-document-path! (config/delectus-content-bucket)
+                                 listid (str +columns-attribute+ "." columnid "." +deleted-attribute+)
+                                 deleted?))
+
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (mark-column-deleted! $listid "8" true)
+;;; (mark-column-deleted! $listid "8" false)
+;;; (column-deleted? $listid "8")
+
+(defn update-column-name! [listid columnid new-name]
+  (couchio/update-document-path! (config/delectus-content-bucket)
+                                 listid (str +columns-attribute+ "." columnid "." +name-attribute+)
+                                 new-name))
+
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (update-column-name! $listid "8" "Circa")
+;;; (update-column-name! $listid "8" "Year")
+
 ;;; assert-column!'s required behavior is complex:
-;;; Case 1: column-id and column-name exist on the same column:
-;;;         do nothing; our request is already satisfied
-;;; Case 2: column-id and column-name exist on different columns:
+;;; Case 1: columnid and column-name exist on the same column:
+;;;         the requested column already exists; just make sure it
+;;;         isn't marked deleted
+;;; Case 2: columnid and column-name exist on different columns:
 ;;;         signal an error; we're trying to rename a column using a
 ;;;         duplicate name
-;;; Case 3: column-id exists, column-name doesn't:
+;;; Case 3: columnid exists, column-name doesn't:
 ;;;         rename the identified column to column-name
-;;; Case 4: column-name exists, column-id doesn't:
+;;; Case 4: column-name exists, columnid doesn't:
 ;;;         signal an error; we're trying to use a duplicate name
-;;; Case 5: column-id and column name don't exist in the list: 
+;;; Case 5: columnid and column name don't exist in the list: 
 ;;;         add the requested column
-(defn assert-column! [listid column-id column-name]
-  )
 
-(defn get-list-columns [listid]
+(defn assert-column! [listid columnid column-name]
   (let [found-list (ensure/ensure-list listid)]
-    (.get found-list +columns-attribute+)))
+    (errors/error-if-nil found-list "No such list"
+                         {:context assert-column! :id listid})
+    (let [found-columnid? (columnid-exists? listid columnid)
+          found-column-name? (column-name-exists? listid column-name)]
+      ;; handle cases
+      (cond
+        ;; columnid and column-name both exist
+        (and found-columnid? found-column-name?)
+        (let [found-column (get-list-column listid columnid)
+              found-name (.get found-column +name-attribute+)]
+          (if (= column-name found-name)
+            ;; they exist on the same column; just mark it undeleted
+            (mark-column-deleted! listid columnid false)
+            ;; they exist on different columns; signal an error
+            (throw (ex-info (str "A different column is using the name \"" column-name "\"")
+                            {:context assert-column! :name column-name}))))
+        ;; columnid exists, column-name doesn't
+        (and found-columnid? (not found-column-name?))
+        (update-column-name! listid columnid column-name)
+        ;; column-name exists, columnid doesn't
+        (and found-column-name? (not found-columnid?))
+        (throw (ex-info (str "Another column is using the name " column-name)
+                        {:context assert-column! :listid listid
+                         :name column-name}))
+        ;; neither columnid nor column-name exists; add the column
+        (and (not found-column-name?) (not found-columnid?))
+        (let [column-obj (make-column :id columnid :name column-name :deleted false)
+              column-keypath (str +columns-attribute+ "." columnid)]
+          (couchio/with-couchbase-exceptions-rethrown
+            (couchio/upsert-document-path! (config/delectus-content-bucket)
+                                           listid column-keypath column-obj)))
+        ;; something impossible has happened
+        :else (throw (ex-info (str "Inconsistent results checking for columnid and column-name")
+                              {:context assert-column! :listid listid
+                               :columnid columnid :column-name column-name}))))))
 
-;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
-;;; (get-list-columns $listid)
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (assert-column! $listid (next-column-id $listid) "Genre")
+;;; (time (column-names $listid))
 
-(defn get-list-column-ids [listid]
-  (let [found-list (ensure/ensure-list listid)]
-    (.getNames (.get found-list +columns-attribute+))))
-
-;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
-;;; (get-list-column-ids $listid)
 
 ;;; ---------------------------------------------------------------------
 ;;; Items
