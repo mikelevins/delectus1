@@ -48,6 +48,9 @@
 (def +test-list-name-3+ "Test List 3")
 
 (def +test-new-list-name+ "New List for Testing")
+(def +test-new-column-name-0+ "Column 0")
+(def +test-new-column-name-1+ "Column 1")
+(def +test-new-column-name-2+ "Column 2")
 
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
@@ -327,3 +330,30 @@
     (api/undelete-list +test-user-id-1+ +test-list-id-2+)
     (is (not (api/list-deleted? +test-user-id-1+ +test-list-id-2+))
         "expected +test-list-id-2+ to now be marked not deleted")))
+
+;;; list-columns-test:
+;;;   /api/list_columns
+;;;   /api/new_column
+(deftest list-columns-test
+  (testing "/api/list/list_columns"
+    (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+ [])]
+      (is (empty? found-columns) "found-columns should be empty"))
+    ;; add a column
+    (api/new-column +test-user-id-1+ +test-list-id-2+ +test-new-column-name-0+)
+    ;; wait a bit for it to settle
+    (Thread/sleep 1000)
+    ;; check that it was created
+    (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+ [])
+          found-keys (keys found-columns)]
+      (is (= 1 (count found-keys)) "found-columns should contain one column"))
+    ;; add another column
+    (api/new-column +test-user-id-1+ +test-list-id-2+ +test-new-column-name-1+)
+    ;; wait a bit for it to settle
+    (Thread/sleep 1000)
+    ;; check that it was created
+    (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+ [])
+          found-keys (keys found-columns)]
+      (is (= 2 (count found-keys)) "found-columns should contain two columns"))))
+
+;;; (model/next-column-id +test-list-id-2+)
+;;; (model/get-list-columns +test-list-id-2+)

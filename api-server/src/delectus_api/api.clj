@@ -321,7 +321,10 @@
   (ensure/ensure-user-exists userid)
   (ensure/ensure-list-exists listid)
   (ensure/ensure-owner listid userid)
-  (into {} (.toMap (model/get-list-columns listid))))
+  (let [cols (model/get-list-columns listid)]
+    (if cols
+      (into {} (.toMap cols))
+      nil)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")

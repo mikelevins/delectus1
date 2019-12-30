@@ -268,12 +268,14 @@
 ;;; (time (column-id-exists? $listid "6"))
 
 (defn next-column-id [listid]
-  (let [ids (column-attribute-values listid +id-attribute+)]
-    (if (empty? ids)
-      "0"
-      (let [ids (sort < (map #(Integer. %) ids))
+  (if (nil? (get-list-columns listid))
+    "0"
+    (let [ids (column-attribute-values listid +id-attribute+)]
+      (if (empty? ids)
+        "0"
+        (let [ids (sort < (map #(Integer. %) ids))
             maxid (apply max ids)]
-        (str (+ 1 maxid))))))
+        (str (+ 1 maxid)))))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
@@ -341,6 +343,12 @@
   (let [found-list (ensure/ensure-list listid)]
     (errors/error-if-nil found-list "No such list"
                          {:context assert-column! :id listid})
+    ;; ensure that the list has a columns object
+    (let [cols (get-list-columns listid)]
+      (when (nil? cols)
+        (couchio/upsert-document-path! (config/delectus-content-bucket)
+                                       listid +columns-attribute+ (couchio/make-json-object {}))))
+    ;; handle the request to create a column
     (let [found-columnid? (columnid-exists? listid columnid)
           found-column-name? (column-name-exists? listid column-name)]
       ;; handle cases
