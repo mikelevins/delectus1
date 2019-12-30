@@ -321,11 +321,10 @@
   (ensure/ensure-user-exists userid)
   (ensure/ensure-list-exists listid)
   (ensure/ensure-owner listid userid)
-  (couchio/get-object-attribute (config/delectus-content-bucket)
-                                listid
-                                +columns-attribute+)
-  )
+  (into {} (.toMap (couchio/get-object-attribute (config/delectus-content-bucket)
+                                                 listid
+                                                 +columns-attribute+))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $listid "9bd33bf4-7ef9-458b-b0f6-ca5e65787fbf")
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (list-columns $mikelid $listid [])

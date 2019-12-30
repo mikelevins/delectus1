@@ -210,7 +210,7 @@
                   :body-params [userid :- s/Str
                                 listid :- s/Str
                                 {fields :- [s/Str] []}]
-                  :return [{s/Str s/Any}]
+                  :return {s/Str s/Any}
                  :summary "Returns the list's columns"
                  (handlers/list-columns userid listid fields))
             
