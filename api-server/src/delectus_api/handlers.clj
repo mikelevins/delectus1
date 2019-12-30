@@ -174,6 +174,6 @@
   (with-errors-handled
     (ok (api/list-columns userid listid fields))))
 
-;; (defn new-column [userid listid name]
-;;   (with-errors-handled
-;;     (ok (api/new-column userid listid name))))
+(defn new-column [userid listid name]
+  (with-errors-handled
+    (ok (api/new-column userid listid name))))

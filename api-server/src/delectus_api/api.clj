@@ -321,10 +321,16 @@
   (ensure/ensure-user-exists userid)
   (ensure/ensure-list-exists listid)
   (ensure/ensure-owner listid userid)
-  (into {} (.toMap (couchio/get-object-attribute (config/delectus-content-bucket)
-                                                 listid
-                                                 +columns-attribute+))))
+  (into {} (.toMap (model/get-list-columns listid))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (list-columns $mikelid $listid [])
+
+(defn new-column [userid listid name]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [col-id 
+        newcol (make-column :id col-id :name name :deleted false)]
+    ))

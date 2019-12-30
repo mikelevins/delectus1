@@ -40,6 +40,9 @@
 ;;; accessors
 ;;; ---------------------------------------------------------------------
 
+(defn make-json-object [object-map]
+  (JsonObject/from object-map))
+
 (defn ensure-json-object [obj]
   (errors/error-if-not (instance? JsonObject obj) "Not JSON object" {:object obj})
   obj)

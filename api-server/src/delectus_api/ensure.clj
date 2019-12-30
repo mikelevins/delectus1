@@ -85,6 +85,14 @@
 ;;; model type-checks
 ;;; ---------------------------------------------------------------------
 
+(defmacro ensure-json-object [object]
+  `(if (instance? JsonObject ~object)
+     ~object
+     (throw (ex-info "Not a JSON object"
+                     {:cause :wrong-object-type
+                      :expected-type JsonObject
+                      :found-type (type ~object)}))))
+
 (defmacro ensure-document-type [json-doc type-string]
   `(if (instance? JsonDocument ~json-doc)
      (let [found-type# (.get (.content ~json-doc) +type-attribute+)]

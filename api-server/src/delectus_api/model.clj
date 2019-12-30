@@ -8,7 +8,8 @@
    [delectus-api.ensure :as ensure]
    [delectus-api.errors :as errors]
    [delectus-api.identifiers :refer [makeid]]
-   [delectus-api.couchio :as couchio])
+   [delectus-api.couchio :as couchio]
+   [delectus-api.utilities :as utils])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)))
@@ -203,17 +204,98 @@
 ;;; list columns
 ;;; ---------------------------------------------------------------------
 
+(defn make-column [& {:keys [id name deleted]
+                      :or {id nil
+                           name nil
+                           deleted false}}]
+  (errors/error-if-nil id "Missing id parameter" {:context 'make-column})
+  (errors/error-if-nil name "Missing name parameter" {:context 'make-column})
+  (let [col-map {+id-attribute+ id
+                 +name-attribute+ name
+                 +deleted-attribute+ deleted}]
+    (couchio/make-json-object col-map)))
+
+;;; (make-column :id "0" :name "Foo" :deleted false)
+
+(defn column-attribute-values [listid attribute-name]
+  (let [found-list (ensure/ensure-list listid)
+        cols (.get found-list +columns-attribute+)
+        ids (.getNames cols)]
+    (map (fn [id] (.get (.get cols id) attribute-name))
+         ids)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (column-attribute-values $listid "id"))
+
+(defn column-ids [listid]
+  (column-attribute-values listid +id-attribute+))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (column-ids $listid))
+
+(defn next-column-id [listid]
+  (let [ids (column-attribute-values listid +id-attribute+)]
+    (if (empty? ids)
+      "0"
+      (let [ids (sort < (map #(Integer. %) ids))
+            maxid (apply max ids)]
+        (str (+ 1 maxid))))))
+
+;; (let [ids (sort < (map #(Integer. %) ids))
+;;             maxid (max ids)]
+;;         (str (+ maxid 1)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (next-column-id $listid))
+
+(defn column-names [listid]
+  (column-attribute-values listid +name-attribute+))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (column-names $listid))
+
+(defn column-name-exists? [listid name]
+  (let [cols (get-list-columns listid)
+        ids (.getNames cols)]
+    (some (fn [id] (= name (.get (.get cols id) +name-attribute+)))
+          ids)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (column-name-exists? $listid "dst"))
+
+;;; assert-column!'s required behavior is complex:
+;;; Case 1: column-id and column-name exist on the same column:
+;;;         do nothing; our request is already satisfied
+;;; Case 2: column-id and column-name exist on different columns:
+;;;         signal an error; we're trying to rename a column using a
+;;;         duplicate name
+;;; Case 3: column-id exists, column-name doesn't:
+;;;         rename the identified column to column-name
+;;; Case 4: column-name exists, column-id doesn't:
+;;;         signal an error; we're trying to use a duplicate name
+;;; Case 5: column-id and column name don't exist in the list: 
+;;;         add the requested column
+(defn assert-column! [listid column-id column-name]
+  )
+
 (defn get-list-columns [listid]
   (let [found-list (ensure/ensure-list listid)]
     (.get found-list +columns-attribute+)))
 
-;;; TODO: use a N1QL query to return items whose list is identified by the the supplied listid 
-(defn get-list-items [listid]
-  )
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (get-list-columns $listid)
 
-;;; (def $moviesid "9bd33bf4-7ef9-458b-b0f6-ca5e65787fbf")
-;;; (get-list-columns $moviesid)
-;;; (get-list-items $moviesid)
+(defn get-list-column-ids [listid]
+  (let [found-list (ensure/ensure-list listid)]
+    (.getNames (.get found-list +columns-attribute+))))
+
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (get-list-column-ids $listid)
 
 ;;; ---------------------------------------------------------------------
 ;;; Items
