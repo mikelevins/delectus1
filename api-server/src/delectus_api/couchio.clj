@@ -219,15 +219,15 @@
 ;;; Key-value paths
 ;;; ---------------------------------------------------------------------
 
-(defn document-path-exists [bucket documentid key-path]
+(defn document-path-exists? [bucket documentid key-path]
   (with-couchbase-exceptions-rethrown
     (let [lookup (.lookupIn bucket documentid)
           exists (.exists lookup (into-array [key-path]))
           result (.execute exists)]
       (.content result 0))))
 
-;;; (document-path-exists (config/delectus-content-bucket) "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "columns.0.name")
-;;; (document-path-exists (config/delectus-content-bucket) "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "NOPE!")
+;;; (document-path-exists? (config/delectus-content-bucket) "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "columns.0.name")
+;;; (document-path-exists? (config/delectus-content-bucket) "8a61bdbc-3910-4257-afec-9ba34ac3fa45" "NOPE!")
 
 (defn get-document-path [bucket documentid key-path]
   (with-couchbase-exceptions-rethrown

@@ -222,6 +222,14 @@
                   :summary "Creates a new column with the supplied name"
                   (handlers/new-column userid listid name))
 
+            (POST "/column_with_id" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                id :- s/Str]
+                  :return (s/maybe {s/Str s/Any})
+                  :summary "Returns the identified column"
+                  (handlers/column-with-id userid listid id))
+
             ;; (GET "/delectus/column_with_id" [] handlers/column-with-id)
             ;; (GET "/delectus/column_name" [] handlers/column-name)
             ;; (GET "/delectus/column_named" [] handlers/column-named)

@@ -341,3 +341,18 @@
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (new-column $mikelid $listid "Genre")
+
+(defn column-with-id [userid listid columnid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [col (model/get-column listid columnid)]
+    (if col
+      (into {} (.toMap col))
+      (throw (ex-info "Column not found"
+                      {:cause :column-not-found
+                       :userid userid :listid listid :columnid columnid})))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (column-with-id $mikelid $listid "9")

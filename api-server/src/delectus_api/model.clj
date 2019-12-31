@@ -257,15 +257,29 @@
 ;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
 ;;; (time (column-ids $listid))
 
-(defn columnid-exists? [listid column-id]
-  (let [cols (get-list-columns listid)
-        ids (.getNames cols)]
-    (some (fn [id] (= column-id id))
-          ids)))
+(defn columnid-exists? [listid columnid]
+  (let [keypath (str +columns-attribute+ "." columnid)]
+    (couchio/document-path-exists? (config/delectus-content-bucket)
+                                   listid
+                                   keypath)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
-;;; (time (column-id-exists? $listid "6"))
+;;; (time (column-id-exists? $listid "16"))
+
+(defn get-column [listid columnid]
+  (let [keypath (str +columns-attribute+ "." columnid)]
+    (if (couchio/document-path-exists? (config/delectus-content-bucket)
+                                       listid
+                                       keypath)
+      (couchio/get-document-path (config/delectus-content-bucket)
+                                 listid
+                                 keypath)
+      nil)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
+;;; (time (get-column $listid "22"))
 
 (defn next-column-id [listid]
   (if (nil? (get-list-columns listid))

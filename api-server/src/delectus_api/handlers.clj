@@ -31,6 +31,7 @@
    :collection-name-exists conflict
    :collection-not-found not-found
    :column-name-exists conflict
+   :column-not-found not-found
    :couchbase-exception internal-server-error
    :exception internal-server-error
    :list-name-exists conflict
@@ -177,3 +178,7 @@
 (defn new-column [userid listid name]
   (with-errors-handled
     (ok (api/new-column userid listid name))))
+
+(defn column-with-id [userid listid columnid]
+  (with-errors-handled
+    (ok (api/column-with-id userid listid columnid))))
