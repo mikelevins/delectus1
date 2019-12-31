@@ -230,7 +230,14 @@
                   :summary "Returns the identified column"
                   (handlers/column-with-id userid listid id))
 
-            ;; (GET "/delectus/column_name" [] handlers/column-name)
+            (POST "/column_name" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                id :- s/Str]
+                  :return (s/maybe s/Str)
+                  :summary "Returns the name of the identified column"
+                  (handlers/column-name userid listid id))
+
             ;; (GET "/delectus/column_named" [] handlers/column-named)
             ;; (GET "/delectus/column_deleted" [] handlers/column-deleted?)
             ;; (GET "/delectus/delete_column" [] handlers/delete-column)

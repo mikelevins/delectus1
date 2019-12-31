@@ -335,6 +335,7 @@
 ;;;   api/list_columns
 ;;;   api/new_column
 ;;;   api/column_with_id
+;;;   api/column_name
 (deftest list-columns-test
   (testing "/api/list/list_columns"
     (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+ [])]
@@ -358,7 +359,7 @@
     ;; check that column "0" has name +test-new-column-name-0+
     (let [found-column (api/column-with-id +test-user-id-1+ +test-list-id-2+ "0")]
       (is found-column "found-columns should be non-nil")
-      (let [found-name (get found-column +name-attribute+)]
+      (let [found-name (api/column-name +test-user-id-1+ +test-list-id-2+ "0")]
         (is found-name +test-new-column-name-0+)
         (str "The name of found-column should be " +test-new-column-name-0+)))))
 

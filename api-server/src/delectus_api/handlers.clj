@@ -182,3 +182,7 @@
 (defn column-with-id [userid listid columnid]
   (with-errors-handled
     (ok (api/column-with-id userid listid columnid))))
+
+(defn column-name [userid listid columnid]
+  (with-errors-handled
+    (ok (api/column-name userid listid columnid))))
