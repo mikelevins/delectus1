@@ -367,3 +367,27 @@
       (throw (ex-info "Column not found"
                       {:cause :column-not-found
                        :userid userid :listid listid :columnid columnid})))))
+
+(defn column-named [userid listid name]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [cols (model/get-list-columns listid)]
+    (if cols
+      (let [cols-map (into {} (.toMap cols))
+            found-cols (keep #(when (= (get (val %) +name-attribute+)
+                                       name)
+                                (val %))
+                             cols-map)]
+        (if (empty? found-cols)
+          (throw (ex-info "Column not found"
+                          {:cause :column-not-found
+                           :userid userid :listid listid :name name}))
+          (into {} (first found-cols))))
+      (throw (ex-info "Column not found"
+                      {:cause :column-not-found
+                       :userid userid :listid listid :name name})))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (class (column-named $mikelid $listid "Costar"))

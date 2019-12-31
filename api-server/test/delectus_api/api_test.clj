@@ -336,6 +336,7 @@
 ;;;   api/new_column
 ;;;   api/column_with_id
 ;;;   api/column_name
+;;;   api/column_named
 (deftest list-columns-test
   (testing "/api/list/list_columns"
     (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+ [])]
@@ -358,10 +359,16 @@
       (is (= 2 (count found-keys)) "found-columns should contain two columns"))
     ;; check that column "0" has name +test-new-column-name-0+
     (let [found-column (api/column-with-id +test-user-id-1+ +test-list-id-2+ "0")]
-      (is found-column "found-columns should be non-nil")
+      (is found-column "found-column should be non-nil")
       (let [found-name (api/column-name +test-user-id-1+ +test-list-id-2+ "0")]
         (is found-name +test-new-column-name-0+)
-        (str "The name of found-column should be " +test-new-column-name-0+)))))
+        (str "The name of found-column should be " +test-new-column-name-0+)))
+    ;; check that column named +test-new-column-name-1+ has ID "1"
+    (let [found-column (api/column-named +test-user-id-1+ +test-list-id-2+ +test-new-column-name-1+)]
+      (is found-column "found-column should be non-nil")
+      (let [found-id (get found-column +id-attribute+)]
+        (is found-id "1")
+        (str "The ID of found-column should be 1")))))
 
 ;;; (model/next-column-id +test-list-id-2+)
 ;;; (model/get-list-columns +test-list-id-2+)
