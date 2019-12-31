@@ -26,12 +26,12 @@
                                   password-hash nil
                                   enabled true}}]
   (errors/error-if-nil email "Missing email parameter" {:context "make-user-document"})
-  (let [obj-map {+type-attribute+ +user-type+
-                 +id-attribute+ id
-                 +email-attribute+ email
-                 +name-attribute+ name
-                 +password-hash-attribute+ password-hash
-                 +enabled-attribute+ enabled}]
+  (let [obj-map {+type-key+ +user-type+
+                 +id-key+ id
+                 +email-key+ email
+                 +name-key+ name
+                 +password-hash-key+ password-hash
+                 +enabled-key+ enabled}]
     (couchio/make-json-document id obj-map)))
 
 
@@ -51,7 +51,7 @@
   (and (couchio/id-exists? (config/delectus-users-bucket) userid)
        (= +user-type+
           (couchio/get-object-attribute (config/delectus-users-bucket)
-                                        userid +type-attribute+))))
+                                        userid +type-key+))))
 
 (defn get-user [userid]
   (couchio/get-object-of-type (config/delectus-users-bucket) userid +user-type+))
@@ -62,8 +62,8 @@
 (defn email->user [email]
   (let [found (couchio/find-objects
                (config/delectus-users-bucket) []
-               {+type-attribute+ +user-type+
-                +email-attribute+ email})]
+               {+type-key+ +user-type+
+                +email-key+ email})]
     (if (empty? found)
       nil
       (first found))))
@@ -71,11 +71,11 @@
 (defn email->userid [email]
   (let [found (couchio/find-objects
                (config/delectus-users-bucket) []
-               {+type-attribute+ +user-type+
-                +email-attribute+ email})]
+               {+type-key+ +user-type+
+                +email-key+ email})]
     (if (empty? found)
       nil
-      (.get (first found) +id-attribute+))))
+      (.get (first found) +id-key+))))
 
 (defn id->user [userid]
   (get-user userid))
@@ -91,11 +91,11 @@
                                         deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-collection-document"})
   (errors/error-if-nil owner "Missing owner parameter" {:context "make-collection-document"})
-  (let [obj-map {+type-attribute+ +collection-type+
-                 +id-attribute+ id
-                 +name-attribute+ name
-                 +owner-attribute+ owner
-                 +deleted-attribute+ deleted}]
+  (let [obj-map {+type-key+ +collection-type+
+                 +id-key+ id
+                 +name-key+ name
+                 +owner-key+ owner
+                 +deleted-key+ deleted}]
     (couchio/make-json-document id obj-map)))
 
 (defn assert-collection! [collectiondoc]
@@ -122,7 +122,7 @@
   (and (couchio/id-exists? (config/delectus-content-bucket) collectionid)
        (= +collection-type+
           (couchio/get-object-attribute (config/delectus-content-bucket)
-                                        collectionid +type-attribute+))))
+                                        collectionid +type-key+))))
 
 (defn get-collection [collectionid]
   (couchio/get-object-of-type (config/delectus-content-bucket) collectionid +collection-type+))
@@ -141,13 +141,13 @@
                                   deleted false}}]
   (errors/error-if-nil name "Missing name parameter" {:context "make-list-document"})
   (errors/error-if-nil owner "Missing owner parameter" {:context "make-list-document"})
-  (let [obj-map {+type-attribute+ +list-type+
-                 +id-attribute+ id
-                 +name-attribute+ name
-                 +owner-attribute+ owner
-                 +collection-attribute+ collection
-                 +columns-attribute+ columns
-                 +deleted-attribute+ deleted}]
+  (let [obj-map {+type-key+ +list-type+
+                 +id-key+ id
+                 +name-key+ name
+                 +owner-key+ owner
+                 +collection-key+ collection
+                 +columns-key+ columns
+                 +deleted-key+ deleted}]
     (couchio/make-json-document id obj-map)))
 
 
@@ -183,14 +183,14 @@
   (and (couchio/id-exists? (config/delectus-content-bucket) listid)
        (= +list-type+
           (couchio/get-object-attribute (config/delectus-content-bucket)
-                                        listid +type-attribute+))))
+                                        listid +type-key+))))
 
 (defn list-name-exists? [userid listname]
   (let [found (couchio/find-objects
                (config/delectus-content-bucket) ["id"]
-               {+type-attribute+ +list-type+
-                +name-attribute+ listname
-                +owner-attribute+ userid})]
+               {+type-key+ +list-type+
+                +name-key+ listname
+                +owner-key+ userid})]
     (if (empty? found)
       false
       true)))
@@ -210,16 +210,16 @@
                            deleted false}}]
   (errors/error-if-nil id "Missing id parameter" {:context 'make-column})
   (errors/error-if-nil name "Missing name parameter" {:context 'make-column})
-  (let [col-map {+id-attribute+ id
-                 +name-attribute+ name
-                 +deleted-attribute+ deleted}]
+  (let [col-map {+id-key+ id
+                 +name-key+ name
+                 +deleted-key+ deleted}]
     (couchio/make-json-object col-map)))
 
 ;;; (make-column :id "0" :name "Foo" :deleted false)
 
 (defn column-attribute-values [listid attribute-name]
   (let [found-list (ensure/ensure-list listid)
-        cols (.get found-list +columns-attribute+)
+        cols (.get found-list +columns-key+)
         ids (.getNames cols)]
     (map (fn [id] (.get (.get cols id) attribute-name))
          ids)))
@@ -229,11 +229,11 @@
 ;;; (time (column-attribute-values $listid "id"))
 
 (defn column-ids [listid]
-  (column-attribute-values listid +id-attribute+))
+  (column-attribute-values listid +id-key+))
 
 (defn get-list-columns [listid]
   (let [found-list (ensure/ensure-list listid)]
-    (.get found-list +columns-attribute+)))
+    (.get found-list +columns-key+)))
 
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (get-list-columns $listid)
@@ -241,14 +241,14 @@
 (defn get-list-column [listid columnid]
   (ensure/ensure-list-exists listid)
   (couchio/get-document-path (config/delectus-content-bucket)
-                             listid (str +columns-attribute+ "." columnid)))
+                             listid (str +columns-key+ "." columnid)))
 
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (get-list-column $listid "8")
 
 (defn get-list-column-ids [listid]
   (let [found-list (ensure/ensure-list listid)]
-    (.getNames (.get found-list +columns-attribute+))))
+    (.getNames (.get found-list +columns-key+))))
 
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (get-list-column-ids $listid)
@@ -258,7 +258,7 @@
 ;;; (time (column-ids $listid))
 
 (defn columnid-exists? [listid columnid]
-  (let [keypath (str +columns-attribute+ "." columnid)]
+  (let [keypath (str +columns-key+ "." columnid)]
     (couchio/document-path-exists? (config/delectus-content-bucket)
                                    listid
                                    keypath)))
@@ -268,7 +268,7 @@
 ;;; (time (column-id-exists? $listid "16"))
 
 (defn get-column [listid columnid]
-  (let [keypath (str +columns-attribute+ "." columnid)]
+  (let [keypath (str +columns-key+ "." columnid)]
     (if (couchio/document-path-exists? (config/delectus-content-bucket)
                                        listid
                                        keypath)
@@ -284,7 +284,7 @@
 (defn next-column-id [listid]
   (if (nil? (get-list-columns listid))
     "0"
-    (let [ids (column-attribute-values listid +id-attribute+)]
+    (let [ids (column-attribute-values listid +id-key+)]
       (if (empty? ids)
         "0"
         (let [ids (sort < (map #(Integer. %) ids))
@@ -296,7 +296,7 @@
 ;;; (time (next-column-id $listid))
 
 (defn column-names [listid]
-  (column-attribute-values listid +name-attribute+))
+  (column-attribute-values listid +name-key+))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $listid "3518c607-a3cb-4cd9-b21f-05845827ca0d")
@@ -305,7 +305,7 @@
 (defn column-name-exists? [listid name]
   (let [cols (get-list-columns listid)
         ids (.getNames cols)]
-    (some (fn [id] (= name (.get (.get cols id) +name-attribute+)))
+    (some (fn [id] (= name (.get (.get cols id) +name-key+)))
           ids)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
@@ -315,14 +315,14 @@
 (defn column-deleted? [listid columnid]
   (let [found-column (get-list-column listid columnid)]
     (errors/error-if-not found-column "Column ID not found" {:context 'column-deleted? :id columnid})
-    (.get found-column +deleted-attribute+)))
+    (.get found-column +deleted-key+)))
 
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (column-deleted? $listid "8")
 
 (defn mark-column-deleted! [listid columnid deleted?]
   (couchio/update-document-path! (config/delectus-content-bucket)
-                                 listid (str +columns-attribute+ "." columnid "." +deleted-attribute+)
+                                 listid (str +columns-key+ "." columnid "." +deleted-key+)
                                  deleted?))
 
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
@@ -332,7 +332,7 @@
 
 (defn update-column-name! [listid columnid new-name]
   (couchio/update-document-path! (config/delectus-content-bucket)
-                                 listid (str +columns-attribute+ "." columnid "." +name-attribute+)
+                                 listid (str +columns-key+ "." columnid "." +name-key+)
                                  new-name))
 
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
@@ -361,7 +361,7 @@
     (let [cols (get-list-columns listid)]
       (when (nil? cols)
         (couchio/upsert-document-path! (config/delectus-content-bucket)
-                                       listid +columns-attribute+ (couchio/make-json-object {}))))
+                                       listid +columns-key+ (couchio/make-json-object {}))))
     ;; handle the request to create a column
     (let [found-columnid? (columnid-exists? listid columnid)
           found-column-name? (column-name-exists? listid column-name)]
@@ -370,7 +370,7 @@
         ;; columnid and column-name both exist
         (and found-columnid? found-column-name?)
         (let [found-column (get-list-column listid columnid)
-              found-name (.get found-column +name-attribute+)]
+              found-name (.get found-column +name-key+)]
           (if (= column-name found-name)
             ;; they exist on the same column; just mark it undeleted
             (mark-column-deleted! listid columnid false)
@@ -388,7 +388,7 @@
         ;; neither columnid nor column-name exists; add the column
         (and (not found-column-name?) (not found-columnid?))
         (let [column-obj (make-column :id columnid :name column-name :deleted false)
-              column-keypath (str +columns-attribute+ "." columnid)]
+              column-keypath (str +columns-key+ "." columnid)]
           (couchio/with-couchbase-exceptions-rethrown
             (couchio/upsert-document-path! (config/delectus-content-bucket)
                                            listid column-keypath column-obj)))
@@ -414,12 +414,12 @@
                               deleted false}}]
   (errors/error-if-nil owner "Missing owner parameter" {:context "make-list-document"})
   (errors/error-if-nil list "Missing list parameter" {:context "make-list-document"})
-  (let [obj-map {+type-attribute+ +item-type+
-                 +id-attribute+ id
-                 +owner-attribute+ owner
-                 +list-attribute+ list
-                 +fields-attribute+ fields
-                 +deleted-attribute+ deleted}]
+  (let [obj-map {+type-key+ +item-type+
+                 +id-key+ id
+                 +owner-key+ owner
+                 +list-key+ list
+                 +fields-key+ fields
+                 +deleted-key+ deleted}]
     (couchio/make-json-document id obj-map)))
 
 (defn values->item-document [userid listid vals]
@@ -452,9 +452,9 @@
   (couchio/with-couchbase-exceptions-rethrown
     (couchio/find-objects (config/delectus-content-bucket)
                           fields
-                          {+owner-attribute+ userid
-                           +list-attribute+ listid
-                           +type-attribute+ +item-type+})))
+                          {+owner-key+ userid
+                           +list-key+ listid
+                           +type-key+ +item-type+})))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $moviesid "12c8b02b-8bba-4179-b328-94010ede7f01")
@@ -467,7 +467,7 @@
   (and (couchio/id-exists? (config/delectus-content-bucket) itemid)
        (= +item-type+
           (couchio/get-object-attribute (config/delectus-content-bucket)
-                                        itemid +type-attribute+))))
+                                        itemid +type-key+))))
 
 (defn get-item [itemid]
   (couchio/get-object-of-type (config/delectus-content-bucket) itemid +item-type+))

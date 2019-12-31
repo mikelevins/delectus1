@@ -58,11 +58,11 @@
    :name s/Str})
 
 (s/defschema UserData
-  {(s/required-key +id-attribute+) s/Str
-   (s/required-key +name-attribute+) s/Str
-   (s/required-key +email-attribute+) (s/maybe s/Str)
-   (s/required-key +password-hash-attribute+) (s/maybe s/Str)
-   (s/required-key +type-attribute+) s/Str
-   (s/required-key +enabled-attribute+) s/Bool})
+  {(s/required-key +id-key+) s/Str
+   (s/required-key +name-key+) s/Str
+   (s/required-key +email-key+) (s/maybe s/Str)
+   (s/required-key +password-hash-key+) (s/maybe s/Str)
+   (s/required-key +type-key+) s/Str
+   (s/required-key +enabled-key+) s/Bool})
 
 

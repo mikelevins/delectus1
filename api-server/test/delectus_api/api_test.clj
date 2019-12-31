@@ -92,15 +92,15 @@
   ;;; wait before teardown to make sure DB's API returns consistent results
   (Thread/sleep 1000)
   (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket) []
-                                              {+owner-attribute+ +test-user-id-1+})
+                                              {+owner-key+ +test-user-id-1+})
         test-documents2 (couchio/find-objects (config/delectus-content-bucket) []
-                                             {+owner-attribute+ +test-user-id-2+})]
+                                             {+owner-key+ +test-user-id-2+})]
     (doseq [doc test-documents1]
       (couchio/remove-document! (config/delectus-content-bucket)
-                                (.get doc +id-attribute+)))
+                                (.get doc +id-key+)))
     (doseq [doc test-documents2]
       (couchio/remove-document! (config/delectus-content-bucket)
-                                (.get doc +id-attribute+))))
+                                (.get doc +id-key+))))
   (println "Finished."))
 
 (defn test-fixture [f]
@@ -119,14 +119,14 @@
   (testing "/api/user/authenticate"
     (let [found-user (api/authenticate +test-user-id-1+ +test-user-password-1+)]
       (is (and found-user
-               (= +user-type+ (get found-user +type-attribute+)))
+               (= +user-type+ (get found-user +type-key+)))
           "found-user should be a user object"))))
 
 (deftest login-test
   (testing "/api/user/login"
     (let [found-user (api/login +test-user-email-1+ +test-user-password-1+)]
       (is (and found-user
-               (= +user-type+ (get found-user +type-attribute+)))
+               (= +user-type+ (get found-user +type-key+)))
           "found-user should be a user object"))))
 
 (deftest userid-test
@@ -139,9 +139,9 @@
 (deftest userdata-test
   (testing "/api/user/userdata"
     (let [data (api/userdata +test-user-id-1+ [])]
-      (is (= (get data +id-attribute+) +test-user-id-1+)
+      (is (= (get data +id-key+) +test-user-id-1+)
           "userid should be the standard test-user ID string")
-      (is (= (get data +email-attribute+) +test-user-email-1+)
+      (is (= (get data +email-key+) +test-user-email-1+)
           "email should be the standard test-user email string"))))
 
 ;;; ---------------------------------------------------------------------
@@ -153,16 +153,16 @@
     (let [collection-maps (api/collections +test-user-id-1+ [])]
       (is (> (count collection-maps) 0)
           (str "there should be several test collections but found " (count collection-maps)))
-      (is (every? #(= +collection-type+ (get % +type-attribute+)) collection-maps)
+      (is (every? #(= +collection-type+ (get % +type-key+)) collection-maps)
           "all found objects should be collections"))))
 
 (deftest collection-with-id-test
   (testing "/api/collection/collection_with_id"
     (let [collection (api/collection-with-id +test-user-id-1+ +test-collection-id-1+ [])]
-      (is (= (get collection +owner-attribute+)
+      (is (= (get collection +owner-key+)
              +test-user-id-1+)
           "the collection's owner should be the standard test-user1 ID")
-      (is (= (get collection +name-attribute+)
+      (is (= (get collection +name-key+)
              +test-collection-name-1+)
           "the collection's name should be the standard test-user1 name"))))
 
@@ -177,7 +177,7 @@
     (let [found (api/find-collections-with-name +test-user-id-1+ +test-collection-name-1+ [])]
       (if (= 1 (count found))
         (let [collection (first found)]
-          (is (= +test-collection-id-1+ (get collection +id-attribute+))
+          (is (= +test-collection-id-1+ (get collection +id-key+))
               (str "the found collection should have the ID " +test-collection-id-1+)))
         (is (= 1 (count found))
             "should be one collection found")))))
@@ -201,7 +201,7 @@
       (let [foundids (api/find-collections-with-name +test-user-id-1+ +test-new-collection-name+ [])]
         (is (> (count foundids) 0) "expected one found collection"))
       (let [foundcoll (api/collection-with-id +test-user-id-1+ newcollid [])
-            foundname (get foundcoll +name-attribute+)]
+            foundname (get foundcoll +name-key+)]
         (is (= foundname +test-new-collection-name+)
             (str "expected the found collection's name to be " +test-new-collection-name+))))))
 
@@ -263,9 +263,9 @@
 (deftest list-with-id-test
   (testing "/api/list/list_with_id"
     (let [found-list (api/list-with-id +test-user-id-1+ +test-list-id-1+ [])]
-      (is (= +list-type+ (get found-list +type-attribute+))
+      (is (= +list-type+ (get found-list +type-key+))
           "expected an object of type delectus_list")
-      (is (= +test-list-name-1+ (get found-list +name-attribute+))
+      (is (= +test-list-name-1+ (get found-list +name-key+))
           (str "expected a list named " +test-list-name-1+)))))
 
 (deftest list-name-test
@@ -286,7 +286,7 @@
     (let [found (api/find-lists-with-name +test-user-id-1+ +test-list-name-1+ [])]
       (if (= 1 (count found))
         (let [found-list (first found)]
-          (is (= +test-list-id-1+ (get found-list +id-attribute+))
+          (is (= +test-list-id-1+ (get found-list +id-key+))
               (str "the found list should have the ID " +test-list-id-1+)))
         (is (= 1 (count found))
             "should be one list found")))))
@@ -312,7 +312,7 @@
       (let [foundids (api/find-lists-with-name +test-user-id-1+ +test-new-list-name+ [])]
         (is (> (count foundids) 0) "expected one found list"))
       (let [foundlist (api/list-with-id +test-user-id-1+ newlistid [])
-            foundname (get foundlist +name-attribute+)]
+            foundname (get foundlist +name-key+)]
         (is (= foundname +test-new-list-name+)
             (str "expected the found list's name to be " +test-new-list-name+))))))
 
@@ -366,7 +366,7 @@
     ;; check that column named +test-new-column-name-1+ has ID "1"
     (let [found-column (api/column-named +test-user-id-1+ +test-list-id-2+ +test-new-column-name-1+)]
       (is found-column "found-column should be non-nil")
-      (let [found-id (get found-column +id-attribute+)]
+      (let [found-id (get found-column +id-key+)]
         (is found-id "1")
         (str "The ID of found-column should be 1")))))
 

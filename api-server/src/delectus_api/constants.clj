@@ -20,16 +20,16 @@
 ;;; JSON object attributes
 ;;; ---------------------------------------------------------------------
 
-(def +collection-attribute+ "collection")
-(def +columns-attribute+ "columns")
-(def +deleted-attribute+ "deleted")
-(def +email-attribute+ "email")
-(def +enabled-attribute+ "enabled")
-(def +fields-attribute+ "fields")
-(def +id-attribute+ "id")
-(def +list-attribute+ "list")
-(def +name-attribute+ "name")
-(def +owner-attribute+ "owner")
-(def +password-hash-attribute+ "password-hash")
-(def +type-attribute+ "type")
+(def +collection-key+ "collection")
+(def +columns-key+ "columns")
+(def +deleted-key+ "deleted")
+(def +email-key+ "email")
+(def +enabled-key+ "enabled")
+(def +fields-key+ "fields")
+(def +id-key+ "id")
+(def +list-key+ "list")
+(def +name-key+ "name")
+(def +owner-key+ "owner")
+(def +password-hash-key+ "password-hash")
+(def +type-key+ "type")
 

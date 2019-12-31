@@ -15,7 +15,7 @@
   `(if (and (couchio/id-exists? (config/delectus-users-bucket) ~userid)
             (= +user-type+
                (couchio/get-object-attribute (config/delectus-users-bucket)
-                                             ~userid +type-attribute+)))
+                                             ~userid +type-key+)))
      ~userid
      (throw (ex-info "No such user"
                      {:cause :user-not-found
@@ -34,7 +34,7 @@
   `(if (and (couchio/id-exists? (config/delectus-content-bucket) ~collectionid)
             (= +collection-type+
                (couchio/get-object-attribute (config/delectus-content-bucket)
-                                             ~collectionid +type-attribute+)))
+                                             ~collectionid +type-key+)))
      ~collectionid
      (throw (ex-info "No such collection"
                      {:cause :collection-not-found
@@ -53,7 +53,7 @@
   `(if (and (couchio/id-exists? (config/delectus-content-bucket) ~listid)
             (= +list-type+
                (couchio/get-object-attribute (config/delectus-content-bucket)
-                                             ~listid +type-attribute+)))
+                                             ~listid +type-key+)))
      ~listid
      (throw (ex-info "No such list"
                      {:cause :list-not-found
@@ -72,7 +72,7 @@
 
 (defmacro ensure-owner [objectid userid]
   `(let [found-owner# (couchio/get-object-attribute (config/delectus-content-bucket)
-                                                    ~objectid +owner-attribute+)]
+                                                    ~objectid +owner-key+)]
      (if (and found-owner#
               (= found-owner# ~userid))
        found-owner#
@@ -95,7 +95,7 @@
 
 (defmacro ensure-document-type [json-doc type-string]
   `(if (instance? JsonDocument ~json-doc)
-     (let [found-type# (.get (.content ~json-doc) +type-attribute+)]
+     (let [found-type# (.get (.content ~json-doc) +type-key+)]
        (or (and (= ~type-string found-type#))
            (throw (ex-info "Wrong document type"
                            {:cause :wrong-document-type

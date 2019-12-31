@@ -25,11 +25,11 @@
 ;;; (= $auth-map-1 $auth-map-2)
 
 (defn make-auth-map [user-record]
-  (let [userid (.get user-record +id-attribute+)]
+  (let [userid (.get user-record +id-key+)]
     {;; identifies the logged-in account
      :userid userid
      ;; identifies the account the client thinks it's authenticating
-     :email (.get user-record +email-attribute+)
+     :email (.get user-record +email-key+)
      ;; designates when the authentication became valid
      :timestamp (str (t/now))
      ;; specifies how long it lasts; in seconds; default 1 hour
@@ -54,7 +54,7 @@
 (defn authenticate-user [userid password]
   (let [found-user (model/get-user userid)]
     (if found-user
-      (if (hashers/check password (.get found-user +password-hash-attribute+))
+      (if (hashers/check password (.get found-user +password-hash-key+))
         found-user
         false))))
 

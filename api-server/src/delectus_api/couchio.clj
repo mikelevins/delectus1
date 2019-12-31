@@ -55,10 +55,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defn json-object-type? [obj type-string]
-  (= type-string (json-object-attribute obj +type-attribute+)))
+  (= type-string (json-object-attribute obj +type-key+)))
 
 (defn json-object-owner? [obj ownerid]
-  (= ownerid (json-object-attribute obj +owner-attribute+)))
+  (= ownerid (json-object-attribute obj +owner-key+)))
 
 ;;; =====================================================================
 ;;; JsonDocuments
@@ -88,7 +88,7 @@
        matchers-map))
 
 ;;; (make-object-matchers {})
-;;; (make-object-matchers {+id-attribute+ "FOO" +collection-attribute+ nil})
+;;; (make-object-matchers {+id-key+ "FOO" +collection-key+ nil})
 
 (defn make-object-selector [bucket keys matching]
   (let [bucket-name (.name bucket)
@@ -105,9 +105,9 @@
     selector))
 
 ;;; (make-object-selector (config/delectus-users-bucket) [] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+type-attribute+ +list-type+})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-attribute+] {+id-attribute+ "FOO" +collection-attribute+ nil})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-key+] {})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-key+] {+type-key+ +list-type+})
+;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-key+] {+id-key+ "FOO" +collection-key+ nil})
 
 (defn make-object-counter [bucket matching]
   (let [bucket-name (.name bucket)
@@ -120,7 +120,7 @@
         selector (str "SELECT COUNT(*) FROM `" bucket-name "` " where-clause)]
     selector))
 
-;;; (make-object-counter (config/delectus-users-bucket) {+id-attribute+ "FOO" +collection-attribute+ nil})
+;;; (make-object-counter (config/delectus-users-bucket) {+id-key+ "FOO" +collection-key+ nil})
 
 (defn find-objects [bucket keys matching]
   (with-couchbase-exceptions-rethrown
@@ -133,9 +133,9 @@
         (map #(.get (.value %) bucket-name) results)
         (map #(.value %) results)))))
 
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +collection-type+}))
-;;; (time (def $objs (find-objects (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-attribute+ nil})))
-;;; (make-object-selector (config/delectus-content-bucket) [] {+type-attribute+ +list-type+ +owner-attribute+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-attribute+ nil})
+;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-key+ +collection-type+}))
+;;; (time (def $objs (find-objects (config/delectus-content-bucket) [] {+type-key+ +list-type+ +owner-key+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-key+ nil})))
+;;; (make-object-selector (config/delectus-content-bucket) [] {+type-key+ +list-type+ +owner-key+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-key+ nil})
 
 (defn count-objects [bucket matching]
   (with-couchbase-exceptions-rethrown
@@ -145,9 +145,9 @@
       (class results))))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (time (count-objects (config/delectus-content-bucket) {+type-attribute+ +list-type+ +owner-attribute+ $mikelid +collection-attribute+ nil}))
-;;; (time (count-objects (config/delectus-content-bucket) {+type-attribute+ +item-type+ +owner-attribute+ $mikelid +collection-attribute+ nil}))
-;;; (time (count-objects (config/delectus-content-bucket) {+type-attribute+ +item-type+}))
+;;; (time (count-objects (config/delectus-content-bucket) {+type-key+ +list-type+ +owner-key+ $mikelid +collection-key+ nil}))
+;;; (time (count-objects (config/delectus-content-bucket) {+type-key+ +item-type+ +owner-key+ $mikelid +collection-key+ nil}))
+;;; (time (count-objects (config/delectus-content-bucket) {+type-key+ +item-type+}))
 
 
 ;;; =====================================================================

@@ -36,7 +36,6 @@
                  :return s/Str
                  :summary "echoes the request"
                  (handle-dump req)))
-
    
    (context "/api/user" [] :tags ["api/user"]
 
