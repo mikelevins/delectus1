@@ -17,6 +17,10 @@
 ;;; Consider using an authentication token to authorize each API
 ;;; endpoint except the one used to obtain the token
 
+;;; TODO:
+;;; For each POST API that accepts a list of keys to return, add a GET
+;;; route that just returns all of them
+
 (def app
   (api
    {:swagger
