@@ -200,7 +200,8 @@
                   (handlers/undelete-list userid listid))
 
             (GET "/list_deleted/:userid/:listid" req
-                 :path-params [userid :- s/Str listid :- s/Str]
+                 :path-params [userid :- s/Str
+                               listid :- s/Str]
                  :return s/Bool
                  :summary "Returns true if the list has been marked deleted, and false otherwise"
                  (handlers/list-deleted? userid listid))
@@ -221,29 +222,29 @@
                   :summary "Creates a new column with the supplied name"
                   (handlers/new-column userid listid name))
 
-            (POST "/column_with_id" req
-                  :body-params [userid :- s/Str
-                                listid :- s/Str
-                                id :- s/Str]
-                  :return (s/maybe {s/Str s/Any})
-                  :summary "Returns the identified column"
-                  (handlers/column-with-id userid listid id))
+            (GET "/column_with_id/:userid/:listid/:columnid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               columnid :- s/Str]
+                 :return (s/maybe {s/Str s/Any})
+                 :summary "Returns the identified column"
+                 (handlers/column-with-id userid listid columnid))
 
-            (POST "/column_name" req
-                  :body-params [userid :- s/Str
-                                listid :- s/Str
-                                id :- s/Str]
-                  :return (s/maybe s/Str)
-                  :summary "Returns the name of the identified column"
-                  (handlers/column-name userid listid id))
+            (GET "/column_name/:userid/:listid/:columnid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               columnid :- s/Str]
+                 :return (s/maybe s/Str)
+                 :summary "Returns the name of the identified column"
+                 (handlers/column-name userid listid columnid))
 
-            (POST "/column_named" req
-                  :body-params [userid :- s/Str
-                                listid :- s/Str
-                                name :- s/Str]
-                  :return (s/maybe {s/Str s/Any})
-                  :summary "Returns the named column"
-                  (handlers/column-named userid listid name))
+            (GET "/column_named/:userid/:listid/:name" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               name :- s/Str]
+                 :return (s/maybe {s/Str s/Any})
+                 :summary "Returns the named column"
+                 (handlers/column-named userid listid name))
 
             ;; (GET "/delectus/column_deleted" [] handlers/column-deleted?)
             ;; (GET "/delectus/delete_column" [] handlers/delete-column)
