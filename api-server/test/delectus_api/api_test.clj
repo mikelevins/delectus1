@@ -332,8 +332,8 @@
         "expected +test-list-id-2+ to now be marked not deleted")))
 
 ;;; list-columns-test:
-;;;   /api/list_columns
-;;;   /api/new_column
+;;;   api/list_columns
+;;;   api/new_column
 (deftest list-columns-test
   (testing "/api/list/list_columns"
     (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+ [])]
