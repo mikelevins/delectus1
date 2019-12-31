@@ -230,7 +230,6 @@
                   :summary "Returns the identified column"
                   (handlers/column-with-id userid listid id))
 
-            ;; (GET "/delectus/column_with_id" [] handlers/column-with-id)
             ;; (GET "/delectus/column_name" [] handlers/column-name)
             ;; (GET "/delectus/column_named" [] handlers/column-named)
             ;; (GET "/delectus/column_deleted" [] handlers/column-deleted?)
