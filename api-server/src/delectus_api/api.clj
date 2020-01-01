@@ -320,7 +320,7 @@
                                 listid
                                 +deleted-key+))
 
-(defn list-columns [userid listid fields]
+(defn list-columns [userid listid]
   (ensure/ensure-user-exists userid)
   (ensure/ensure-list-exists listid)
   (ensure/ensure-owner listid userid)
