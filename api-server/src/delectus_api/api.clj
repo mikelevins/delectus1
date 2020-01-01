@@ -439,3 +439,17 @@
                                    keypath
                                    false))
   columnid)
+
+;;; rename-column [userid listid columnid name] => id-string
+(defn rename-column [userid listid columnid name]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [bucket (config/delectus-content-bucket)
+        keypath (str +columns-key+ "." columnid "." +name-key+)]
+    (couchio/update-document-path! bucket
+                                   listid
+                                   keypath
+                                   name))
+  columnid)
+

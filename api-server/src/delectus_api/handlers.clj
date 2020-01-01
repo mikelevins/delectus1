@@ -202,3 +202,7 @@
 (defn undelete-column [userid listid columnid]
   (with-errors-handled
     (ok (api/undelete-column userid listid columnid))))
+
+(defn rename-column [userid listid columnid name]
+  (with-errors-handled
+    (ok (api/rename-column userid listid columnid name))))

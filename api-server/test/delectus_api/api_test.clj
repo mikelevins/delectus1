@@ -49,6 +49,7 @@
 
 (def +test-new-list-name+ "New List for Testing")
 (def +test-new-column-name-0+ "Column 0")
+(def +test-column-alt-name-0+ "Column 0 Alternate Title")
 (def +test-new-column-name-1+ "Column 1")
 (def +test-new-column-name-2+ "Column 2")
 
@@ -340,6 +341,7 @@
 ;;;   api/column_deleted
 ;;;   api/delete_column
 ;;;   api/undelete_column
+;;;   api/rename_column
 (deftest list-columns-test
   (testing "/api/list/list_columns"
     (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+)]
@@ -402,7 +404,21 @@
 
     ;; check that column "0" is not marked deleted
     (let [found-deleted? (api/column-deleted +test-user-id-1+ +test-list-id-2+ "0")]
-      (is (not found-deleted?) "found-column should not be deleted"))))
+      (is (not found-deleted?) "found-column should not be deleted"))
+
+    ;; wait a bit for it to settle
+    (Thread/sleep 500)
+
+    ;; change the title of column "0"
+    (api/rename-column +test-user-id-1+ +test-list-id-2+ "0" +test-column-alt-name-0+)
+
+    ;; wait a bit for it to settle
+    (Thread/sleep 500)
+
+    ;; check that column "0" has name +test-column-alt-name-0+
+    (let [found-name (api/column-name +test-user-id-1+ +test-list-id-2+ "0")]
+      (is found-name +test-column-alt-name-0+)
+      (str "The name of found-column should be " +test-new-column-name-0+ ", not " found-name))))
 
 ;;; (model/next-column-id +test-list-id-2+)
 ;;; (model/get-list-columns +test-list-id-2+)

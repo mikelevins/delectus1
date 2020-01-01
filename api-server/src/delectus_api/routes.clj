@@ -14,12 +14,13 @@
    ))
 
 ;;; TODO:
+;;; 1. auth tokens
 ;;; Consider using an authentication token to authorize each API
 ;;; endpoint except the one used to obtain the token
-
-;;; TODO:
-;;; For each POST API that accepts a list of keys to return, add a GET
-;;; route that just returns all of them
+;;;
+;;; 2. REST verbs
+;;; Review the API endpoints; some may be better expressed as
+;;; different REST verbs
 
 (def app
   (api
@@ -319,8 +320,24 @@
                   :return s/Str
                   :summary "Marks the identified column not deleted"
                   (handlers/undelete-column userid listid columnid))            
-            
-            ;; (GET "/delectus/rename_column" [] handlers/rename-column)
+
+            (POST "/delete_column" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                columnid :- s/Str]
+                  :return s/Str
+                  :summary "Marks the identified column deleted"
+                  (handlers/delete-column userid listid columnid))            
+
+            (POST "/rename_column" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                columnid :- s/Str
+                                name :- s/Str]
+                  :return s/Str
+                  :summary "Renames the identified column"
+                  (handlers/rename-column userid listid columnid name))            
+
             ;; (GET "/delectus/list_items" [] handlers/list-items)
             ;; (GET "/delectus/item_with_id" [] handlers/item-with-id)
             ;; (GET "/delectus/new_item" [] handlers/new-item)
