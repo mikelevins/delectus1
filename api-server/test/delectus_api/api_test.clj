@@ -83,7 +83,7 @@
     (model/assert-list! test-list-2)
     (model/assert-list! test-list-3))
   ;;; wait after setup to make sure DB's API returns consistent results
-  (Thread/sleep 1000))
+  (Thread/sleep 500))
 
 ;;; (setup-test-data)
 ;;; (teardown-test-data)
@@ -91,7 +91,7 @@
 (defn teardown-test-data []
   (println "deleting test data...")
   ;;; wait before teardown to make sure DB's API returns consistent results
-  (Thread/sleep 1000)
+  (Thread/sleep 500)
   (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket) []
                                               {+owner-key+ +test-user-id-1+})
         test-documents2 (couchio/find-objects (config/delectus-content-bucket) []
@@ -198,7 +198,7 @@
   (testing "/api/collection/new_collection"
     (let [newcollid (api/new-collection +test-user-id-1+ +test-new-collection-name+)]
       ;; wait to ensure db is consistent before checking
-      (Thread/sleep 500)
+      (Thread/sleep 250)
       (let [foundids (api/find-collections-with-name +test-user-id-1+ +test-new-collection-name+ [])]
         (is (> (count foundids) 0) "expected one found collection"))
       (let [foundcoll (api/collection-with-id +test-user-id-1+ newcollid [])
@@ -309,7 +309,7 @@
   (testing "/api/list/new_list"
     (let [newlistid (api/new-list +test-user-id-1+ +test-new-list-name+)]
       ;; wait to ensure db is consistent before checking
-      (Thread/sleep 500)
+      (Thread/sleep 250)
       (let [foundids (api/find-lists-with-name +test-user-id-1+ +test-new-list-name+ [])]
         (is (> (count foundids) 0) "expected one found list"))
       (let [foundlist (api/list-with-id +test-user-id-1+ newlistid [])
@@ -351,7 +351,7 @@
     (api/new-column +test-user-id-1+ +test-list-id-2+ +test-new-column-name-0+)
     
     ;; wait a bit for it to settle
-    (Thread/sleep 500)
+    (Thread/sleep 250)
 
     ;; check that it was created
     (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+)
@@ -362,7 +362,7 @@
     (api/new-column +test-user-id-1+ +test-list-id-2+ +test-new-column-name-1+)
     
     ;; wait a bit for it to settle
-    (Thread/sleep 500)
+    (Thread/sleep 250)
     
     ;; check that it was created
     (let [found-columns (api/list-columns +test-user-id-1+ +test-list-id-2+)
@@ -390,7 +390,7 @@
     (api/delete-column +test-user-id-1+ +test-list-id-2+ "0")
     
     ;; wait a bit for it to settle
-    (Thread/sleep 500)
+    (Thread/sleep 250)
     
     ;; check that column "0" is marked deleted
     (let [found-deleted? (api/column-deleted +test-user-id-1+ +test-list-id-2+ "0")]
@@ -400,20 +400,20 @@
     (api/undelete-column +test-user-id-1+ +test-list-id-2+ "0")
 
     ;; wait a bit for it to settle
-    (Thread/sleep 500)
+    (Thread/sleep 250)
 
     ;; check that column "0" is not marked deleted
     (let [found-deleted? (api/column-deleted +test-user-id-1+ +test-list-id-2+ "0")]
       (is (not found-deleted?) "found-column should not be deleted"))
 
     ;; wait a bit for it to settle
-    (Thread/sleep 500)
+    (Thread/sleep 250)
 
     ;; change the title of column "0"
     (api/rename-column +test-user-id-1+ +test-list-id-2+ "0" +test-column-alt-name-0+)
 
     ;; wait a bit for it to settle
-    (Thread/sleep 500)
+    (Thread/sleep 250)
 
     ;; check that column "0" has name +test-column-alt-name-0+
     (let [found-name (api/column-name +test-user-id-1+ +test-list-id-2+ "0")]
