@@ -106,7 +106,7 @@
        (couchio/find-objects (config/delectus-content-bucket) fields
                              {+type-key+ +collection-type+ +owner-key+ userid +name-key+ name})))
 
-;;; (find-collections-with-name $mikelid "Widgets" [])
+;;; (find-collections-with-name $mikelid "Things" [])
 
 ;;; rename-collection [userid collectionid newname] => name-string
 (defn rename-collection [userid collectionid newname]
@@ -133,6 +133,9 @@
                       {:cause :collection-name-exists
                        :collectionname name
                        :userid userid})))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $collid (new-collection $mikelid "Things"))
 
 ;;; delete-collection [userid collectionid] => id-string
 (defn delete-collection [userid collectionid]

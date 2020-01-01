@@ -69,19 +69,32 @@
 
    (context "/api/collection" [] :tags ["api/collection"]
 
+            (GET "/collections/:userid" req
+                  :path-params [userid :- s/Str]
+                  :return [schema/CollectionMap]
+                  :summary "Returns the user's collections"
+                  (handlers/collections userid []))
+
             (POST "/collections" req
                   :body-params [userid :- s/Str
                                 {fields :- [s/Str] []}]
                   :return [schema/CollectionMap]
-                  :summary "Returns the collections that belong to the user"
+                  :summary "Returns selected fields of the user's collections"
                   (handlers/collections userid fields))
+
+            (GET "/collection_with_id/:userid/:collectionid" req
+                 :path-params [userid :- s/Str
+                               collectionid :- s/Str]
+                 :return schema/CollectionMap
+                 :summary "Returns the identified collection"
+                 (handlers/collection-with-id userid collectionid []))
 
             (POST "/collection_with_id" req
                   :body-params [userid :- s/Str
                                 collectionid :- s/Str
                                 {fields :- [s/Str] []}]
                  :return schema/CollectionMap
-                 :summary "Returns the identified collection belonging to the user"
+                 :summary "Returns selected fields of the identified collection"
                  (handlers/collection-with-id userid collectionid fields))
 
             (GET "/collection_name/:userid/:collectionid" req
@@ -89,6 +102,13 @@
                  :return s/Str
                  :summary "Returns the name of the collection"
                  (handlers/collection-name userid collectionid))
+
+            (GET "/find_collections_with_name/:userid/:name" req
+                 :path-params [userid :- s/Str
+                               name :- s/Str]
+                 :return [schema/CollectionMap]
+                 :summary "Returns the named collections belonging to the user"
+                 (handlers/find-collections-with-name userid name []))
 
             (POST "/find_collections_with_name" req
                   :body-params [userid :- s/Str
@@ -127,6 +147,13 @@
                  :return s/Bool
                  :summary "Returns true if the collection has been marked deleted, and false otherwise"
                  (handlers/collection-deleted? userid collectionid))
+            
+            (GET "/collection_lists/:userid/:collectionid" req
+                 :path-params [userid :- s/Str
+                               collectionid :- s/Str]
+                 :return [schema/ListMap]
+                 :summary "Returns the collection's lists"
+                 (handlers/collection-lists userid collectionid []))
 
             (POST "/collection_lists" req
                   :body-params [userid :- s/Str
