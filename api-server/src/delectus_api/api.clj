@@ -405,3 +405,29 @@
       (throw (ex-info "Column not found"
                       {:cause :column-not-found
                        :userid userid :listid listid :columnid columnid})))))
+
+;;; delete-column [userid listid columnid] => id-string
+(defn delete-column [userid listid columnid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [bucket (config/delectus-content-bucket)
+        keypath (str +columns-key+ "." columnid "." +deleted-key+)]
+    (couchio/update-document-path! bucket
+                                   listid
+                                   keypath
+                                   true))
+  columnid)
+
+;;; undelete-column [userid listid columnid] => id-string
+(defn undelete-column [userid listid columnid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [bucket (config/delectus-content-bucket)
+        keypath (str +columns-key+ "." columnid "." +deleted-key+)]
+    (couchio/update-document-path! bucket
+                                   listid
+                                   keypath
+                                   false))
+  columnid)

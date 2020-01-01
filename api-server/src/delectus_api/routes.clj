@@ -304,10 +304,22 @@
                  :summary "Returns true if the column is marked deleted, and false otherwise"
                  (handlers/column-deleted userid listid columnid))
 
+            (POST "/delete_column" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                columnid :- s/Str]
+                  :return s/Str
+                  :summary "Marks the identified column deleted"
+                  (handlers/delete-column userid listid columnid))            
 
-            ;; (GET "/delectus/column_deleted" [] handlers/column-deleted?)
-            ;; (GET "/delectus/delete_column" [] handlers/delete-column)
-            ;; (GET "/delectus/undelete_column" [] handlers/undelete-column)
+            (POST "/undelete_column" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                columnid :- s/Str]
+                  :return s/Str
+                  :summary "Marks the identified column not deleted"
+                  (handlers/undelete-column userid listid columnid))            
+            
             ;; (GET "/delectus/rename_column" [] handlers/rename-column)
             ;; (GET "/delectus/list_items" [] handlers/list-items)
             ;; (GET "/delectus/item_with_id" [] handlers/item-with-id)

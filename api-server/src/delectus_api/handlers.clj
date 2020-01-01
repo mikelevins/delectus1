@@ -194,3 +194,11 @@
 (defn column-deleted [userid listid columnid]
   (with-errors-handled
     (ok (api/column-deleted userid listid columnid))))
+
+(defn delete-column [userid listid columnid]
+  (with-errors-handled
+    (ok (api/delete-column userid listid columnid))))
+
+(defn undelete-column [userid listid columnid]
+  (with-errors-handled
+    (ok (api/undelete-column userid listid columnid))))
