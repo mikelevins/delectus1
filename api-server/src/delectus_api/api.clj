@@ -24,6 +24,14 @@
    (com.couchbase.client.java.query N1qlQuery)))
 
 ;;; ---------------------------------------------------------------------
+;;; TODO
+;;; ---------------------------------------------------------------------
+
+;;; 1. new-column: check to see if the offered column name exists in a
+;;;    deleted column; if so, undelete the column (it will contain
+;;;    legacy data)
+
+;;; ---------------------------------------------------------------------
 ;;; api functions
 ;;; ---------------------------------------------------------------------
 
