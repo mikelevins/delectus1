@@ -58,13 +58,13 @@
             (GET "/userid/:email" req
                  :path-params [email :- s/Str]
                  :return s/Str
-                 :summary "Returns the userid"
+                 :summary "Returns the userid associated with the email address"
                  (handlers/userid email))
 
             (GET "/userdata/:userid" req
                  :path-params [userid :- s/Str]
                  :return schema/UserData
-                 :summary "Returns information about the user"
+                 :summary "Returns information about the identified user"
                  (handlers/userdata userid)))
 
    (context "/api/collection" [] :tags ["api/collection"]
