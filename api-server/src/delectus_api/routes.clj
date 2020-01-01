@@ -107,7 +107,7 @@
                  :path-params [userid :- s/Str
                                name :- s/Str]
                  :return [schema/CollectionMap]
-                 :summary "Returns the named collections belonging to the user"
+                 :summary "Returns the named collections"
                  (handlers/find-collections-with-name userid name []))
 
             (POST "/find_collections_with_name" req
@@ -115,7 +115,7 @@
                                 name :- s/Str
                                 {fields :- [s/Str] []}]
                   :return [schema/CollectionMap]
-                  :summary "Returns the named collections belonging to the user"
+                  :summary "Returns selected fields of the named collections"
                   (handlers/find-collections-with-name userid name fields))
             
             (POST "/rename_collection" req
@@ -145,7 +145,7 @@
             (GET "/collection_deleted/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
                  :return s/Bool
-                 :summary "Returns true if the collection has been marked deleted, and false otherwise"
+                 :summary "Returns true if the collection is marked deleted, and false otherwise"
                  (handlers/collection-deleted? userid collectionid))
             
             (GET "/collection_lists/:userid/:collectionid" req
@@ -160,7 +160,7 @@
                                 collectionid :- s/Str
                                 {fields :- [s/Str] []}]
                  :return [schema/ListMap]
-                 :summary "Returns the collection's lists"
+                 :summary "Returns selected fields of the collection's lists"
                  (handlers/collection-lists userid collectionid fields)))
 
    (context "/api/list" [] :tags ["api/list"]
