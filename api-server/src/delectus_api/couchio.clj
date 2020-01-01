@@ -90,41 +90,39 @@
 ;;; (make-object-matchers {})
 ;;; (make-object-matchers {+id-key+ "FOO" +collection-key+ nil})
 
-(defn make-object-selector [bucket keys matching]
+(defn make-object-selector [bucket keys match offset limit]
   (let [bucket-name (.name bucket)
         key-expression (if (empty? keys)
                          "*"
                          (clojure.string/join "," (map str keys)))
-        matchers (make-object-matchers matching)
+        matchers (make-object-matchers match)
         where-clause (if (empty? matchers)
-                       ";"
+                       ""
                        (str "WHERE "
-                            (clojure.string/join " AND " matchers)
-                            ";"))
-        selector (str "SELECT " key-expression " FROM `" bucket-name "` " where-clause)]
+                            (clojure.string/join " AND " matchers)))
+        offset-clause (if (nil? offset) "" (cl-format nil " OFFSET ~A " offset))
+        limit-clause (if (nil? limit) "" (cl-format nil " LIMIT ~A " limit))
+        terminator ";"
+        selector (str "SELECT " key-expression " FROM `" bucket-name "` " where-clause
+                      offset-clause limit-clause terminator)]
     selector))
 
-;;; (make-object-selector (config/delectus-users-bucket) [] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-key+] {})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-key+] {+type-key+ +list-type+})
-;;; (make-object-selector (config/delectus-users-bucket) ["id" +type-key+] {+id-key+ "FOO" +collection-key+ nil})
+;;; (make-object-selector (config/delectus-content-bucket) [] {} 0 100)
+;;; (make-object-selector (config/delectus-content-bucket) [] {} nil nil)
+;;; (make-object-selector (config/delectus-content-bucket) ["id" +type-key+] {} 0 100)
+;;; (make-object-selector (config/delectus-content-bucket) ["id" +type-key+] {+type-key+ +list-type+} 0 100)
+;;; (make-object-selector (config/delectus-content-bucket) ["id" +type-key+] {+id-key+ "FOO" +collection-key+ nil} 0 100)
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (make-object-selector (config/delectus-content-bucket) [] {+type-key+ +collection-type+ +owner-key+ $mikelid} 0 100)
 
-(defn make-object-counter [bucket matching]
-  (let [bucket-name (.name bucket)
-        matchers (make-object-matchers matching)
-        where-clause (if (empty? matchers)
-                       ";"
-                       (str "WHERE "
-                            (clojure.string/join " AND " matchers)
-                            ";"))
-        selector (str "SELECT COUNT(*) FROM `" bucket-name "` " where-clause)]
-    selector))
-
-;;; (make-object-counter (config/delectus-users-bucket) {+id-key+ "FOO" +collection-key+ nil})
-
-(defn find-objects [bucket keys matching]
+(defn find-objects [bucket
+                    & {:keys [keys match offset limit]
+                       :or {keys []
+                            match nil
+                            offset (:delectus-default-find-offset (config/delectus-configuration))
+                            limit (:delectus-default-find-limit (config/delectus-configuration))}}]
   (with-couchbase-exceptions-rethrown
-    (let [selector (make-object-selector bucket keys matching)
+    (let [selector (make-object-selector bucket keys match offset limit)
           bucket-name (.name bucket)
           results (.query bucket (N1qlQuery/simple selector))]
       (if (empty? keys)
@@ -136,18 +134,6 @@
 ;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-key+ +collection-type+}))
 ;;; (time (def $objs (find-objects (config/delectus-content-bucket) [] {+type-key+ +list-type+ +owner-key+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-key+ nil})))
 ;;; (make-object-selector (config/delectus-content-bucket) [] {+type-key+ +list-type+ +owner-key+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-key+ nil})
-
-(defn count-objects [bucket matching]
-  (with-couchbase-exceptions-rethrown
-    (let [selector (make-object-counter bucket matching)
-          bucket-name (.name bucket)
-          results (.query bucket (N1qlQuery/simple selector))]
-      (class results))))
-
-;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (time (count-objects (config/delectus-content-bucket) {+type-key+ +list-type+ +owner-key+ $mikelid +collection-key+ nil}))
-;;; (time (count-objects (config/delectus-content-bucket) {+type-key+ +item-type+ +owner-key+ $mikelid +collection-key+ nil}))
-;;; (time (count-objects (config/delectus-content-bucket) {+type-key+ +item-type+}))
 
 
 ;;; =====================================================================

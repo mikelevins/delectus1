@@ -92,10 +92,12 @@
   (println "deleting test data...")
   ;;; wait before teardown to make sure DB's API returns consistent results
   (Thread/sleep 500)
-  (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket) []
-                                              {+owner-key+ +test-user-id-1+})
-        test-documents2 (couchio/find-objects (config/delectus-content-bucket) []
-                                             {+owner-key+ +test-user-id-2+})]
+  (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket)
+                                              :keys []
+                                              :match {+owner-key+ +test-user-id-1+})
+        test-documents2 (couchio/find-objects (config/delectus-content-bucket)
+                                              :keys []
+                                              :match {+owner-key+ +test-user-id-2+})]
     (doseq [doc test-documents1]
       (couchio/remove-document! (config/delectus-content-bucket)
                                 (.get doc +id-key+)))
@@ -156,6 +158,8 @@
           (str "there should be several test collections but found " (count collection-maps)))
       (is (every? #(= +collection-type+ (get % +type-key+)) collection-maps)
           "all found objects should be collections"))))
+
+
 
 (deftest collection-with-id-test
   (testing "/api/collection/collection_with_id"
