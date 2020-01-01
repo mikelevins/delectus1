@@ -296,6 +296,15 @@
                  :summary "Returns the named column"
                  (handlers/column-named userid listid name))
 
+            (GET "/column_deleted/:userid/:listid/:columnid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               columnid :- s/Str]
+                 :return (s/maybe s/Bool)
+                 :summary "Returns true if the column is marked deleted, and false otherwise"
+                 (handlers/column-deleted userid listid columnid))
+
+
             ;; (GET "/delectus/column_deleted" [] handlers/column-deleted?)
             ;; (GET "/delectus/delete_column" [] handlers/delete-column)
             ;; (GET "/delectus/undelete_column" [] handlers/undelete-column)

@@ -190,3 +190,7 @@
 (defn column-named [userid listid name]
   (with-errors-handled
     (ok (api/column-named userid listid name))))
+
+(defn column-deleted [userid listid columnid]
+  (with-errors-handled
+    (ok (api/column-deleted userid listid columnid))))
