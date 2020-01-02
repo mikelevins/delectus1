@@ -9,17 +9,26 @@
             [delectus-api.identifiers :refer [makeid]]
             [delectus-api.model :as model]))
 
+(defn canonicalize-csv-field [field]
+  (if (= "#f" field)
+    false
+    field))
+
+(defn canonicalize-csv-row [row]
+  (map canonicalize-csv-field row))
+
 (defn read-csv-file [filename]
   (with-open [reader (io/reader filename)]
-    (mapv identity (csv/read-csv reader))))
+    (map canonicalize-csv-row
+         (mapv identity (csv/read-csv reader)))))
 
 ;;; (time (def $data (read-csv-file "/home/mikel/Workshop/src/delectus/test-data/zipcode.csv")))
 ;;; (count $data)
 ;;; (nth $data 0)
 
-;;; (time (def $data (read-csv-file "/home/mikel/Workshop/src/delectus/test-data/zipcode.csv")))
+;;; (time (def $data (read-csv-file "/home/mikel/Workshop/src/delectus/test-data/Movies.csv")))
 ;;; (count $data)
-;;; (nth $data 1)
+;;; (nth $data 3)
 
 (defn make-list-columns [column-names]
   (let [keys (map str (range 0 (count column-names)))
@@ -48,9 +57,11 @@
       (doseq [it item-docs]
         (model/assert-item! it)))))
 
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $mikelid (model/email->userid "mikel@evins.net"))
 ;;; (def $listid (makeid))
 ;;; (def $listpath "/home/mikel/Workshop/src/delectus/test-data/zipcode.csv")
+;;; (model/list-name-exists? $mikelid "Zipcodes")
 ;;; (time (def $zipsdoc (load-csv-file $mikelid $listid "Zipcodes" true $listpath)))
 
 ;;; (def $mikelid (model/email->userid "mikel@evins.net"))
@@ -58,4 +69,29 @@
 ;;; (def $listpath "/home/mikel/Workshop/src/delectus/test-data/Movies.csv")
 ;;; (time (def $zipsdoc (load-csv-file $mikelid $listid "Movies" true $listpath)))
 
+;;; (def $content-bucket (config/delectus-content-bucket))
+;;; (def $items (couchio/find-objects $content-bucket :keys [] :limit nil :match {+type-key+ +item-type+}))
+;;; (count $items)
+;;; (def $lists (couchio/find-objects $content-bucket :keys [] :limit nil :match {+type-key+ +list-type+}))
+;;; (count $lists)
+;;; (def $collections (couchio/find-objects $content-bucket :keys [] :limit nil :match {+type-key+ +collection-type+}))
+;;; (count $collections)
+;;; (nth $items 0)
+
+;;; (def $mikelid (model/email->userid "mikel@evins.net"))
+
+
+(defn remove-documents! [bucket doclist]
+  (doseq [doc doclist]
+    (let [docid (.get doc +id-key+)]
+      (if docid
+        (couchio/remove-document! bucket docid)
+        (throw (ex-info "Not an ID string"
+                        {:context 'remove-documents!
+                         :docid docid}))))))
+
+;;; (def $content-bucket (config/delectus-content-bucket))
+;;; (def $found (couchio/find-objects $content-bucket :keys [] :limit nil :match {+type-key+ +collection-type+}))
+;;; (count $found)
+;;; (remove-documents! $content-bucket $found)
 

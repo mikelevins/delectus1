@@ -114,6 +114,9 @@
 ;;; (make-object-selector (config/delectus-content-bucket) ["id" +type-key+] {+id-key+ "FOO" +collection-key+ nil} 0 100)
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (make-object-selector (config/delectus-content-bucket) [] {+type-key+ +collection-type+ +owner-key+ $mikelid} 0 100)
+;;; (make-object-selector (config/delectus-content-bucket) [] {+type-key+ +list-type+ +name-key+ "Zipcodes" +owner-key+ $mikelid} 0 100)
+
+
 
 (defn find-objects [bucket
                     & {:keys [keys match offset limit]
@@ -131,6 +134,9 @@
         (map #(.get (.value %) bucket-name) results)
         (map #(.value %) results)))))
 
+;;; (def $found (find-objects (config/delectus-content-bucket) :keys [] :match {+type-key+ +item-type+}))
+;;; (count $found)
+;;; (nth $found 0)
 
 ;;; =====================================================================
 ;;; Couchbase accessors

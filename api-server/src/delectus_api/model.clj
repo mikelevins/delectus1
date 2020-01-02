@@ -60,22 +60,25 @@
 ;;; ---------------------------------------------------------------------
 
 (defn email->user [email]
-  (let [found (couchio/find-objects
-               (config/delectus-users-bucket) []
-               {+type-key+ +user-type+
-                +email-key+ email})]
+  (let [found (couchio/find-objects (config/delectus-users-bucket)
+                                    :keys []
+                                    :match {+type-key+ +user-type+
+                                            +email-key+ email})]
     (if (empty? found)
       nil
       (first found))))
 
 (defn email->userid [email]
-  (let [found (couchio/find-objects
-               (config/delectus-users-bucket) []
-               {+type-key+ +user-type+
-                +email-key+ email})]
+  (let [found (couchio/find-objects (config/delectus-users-bucket)
+                                    :keys []
+                                    :match {+type-key+ +user-type+
+                                            +email-key+ email})]
     (if (empty? found)
       nil
       (.get (first found) +id-key+))))
+
+;;; (email->user "mikel@evins.net")
+;;; (email->userid "mikel@evins.net")
 
 (defn id->user [userid]
   (get-user userid))
@@ -186,16 +189,17 @@
                                         listid +type-key+))))
 
 (defn list-name-exists? [userid listname]
-  (let [found (couchio/find-objects
-               (config/delectus-content-bucket) ["id"]
-               {+type-key+ +list-type+
-                +name-key+ listname
-                +owner-key+ userid})]
+  (let [found (couchio/find-objects (config/delectus-content-bucket)
+                                    :keys ["id"]
+                                    :match {+type-key+ +list-type+
+                                            +name-key+ listname
+                                            +owner-key+ userid})]
     (if (empty? found)
       false
       true)))
 
-;;; (list-name-exists? $mikelid "Movies")
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (list-name-exists? $mikelid "Zipcodes")
 
 (defn get-list [listid]
   (couchio/get-object-of-type (config/delectus-content-bucket) listid +list-type+))
@@ -451,10 +455,10 @@
 (defn get-items [userid listid fields]
   (couchio/with-couchbase-exceptions-rethrown
     (couchio/find-objects (config/delectus-content-bucket)
-                          fields
-                          {+owner-key+ userid
-                           +list-key+ listid
-                           +type-key+ +item-type+})))
+                          :keys fields
+                          :match {+owner-key+ userid
+                                  +list-key+ listid
+                                  +type-key+ +item-type+})))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $moviesid "12c8b02b-8bba-4179-b328-94010ede7f01")
