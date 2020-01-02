@@ -474,6 +474,24 @@
                                      +owner-key+ userid
                                      +list-key+ listid})))
 
+
+(defn list-item-with-id [userid listid itemid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (let [found-doc (ensure/ensure-item itemid)]
+    (if (nil? found-doc)
+      nil
+      (let [found-obj (.content found-doc)]
+        (if (and (couchio/json-object-type? found-obj +item-type+)
+                 (couchio/json-object-owner? found-obj userid)
+                 (= listid (.get found-obj +list-key+)))
+          (into {} (.toMap found-obj))
+          nil)))))
+
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
-;;; (def $moviesid "8fff2397-afcd-483c-bb40-54b90f139a3d")
-;;; (def $items (list-items $mikelid $moviesid :offset 0 :limit 5))
+;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
+;;; (def $moviesid "b65f029c-6108-4c9c-a973-7fa16b8841c0")
+;;; (def $itemid "002153f5-431a-47a3-82d5-f2161ed1d4d0")
+;;; (list-item-with-id $mikelid $moviesid $itemid)
+;;; (list-item-with-id $greerid $moviesid $itemid)
+

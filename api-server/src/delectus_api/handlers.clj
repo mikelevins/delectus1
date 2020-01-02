@@ -34,6 +34,7 @@
    :column-not-found not-found
    :couchbase-exception internal-server-error
    :exception internal-server-error
+   :item-not-found not-found
    :list-name-exists conflict
    :list-not-found not-found
    :login-failed unauthorized
@@ -211,3 +212,7 @@
                                    :or {offset 0 limit 100}}]
   (with-errors-handled
     (ok (api/list-items userid listid :offset offset :limit limit))))
+
+(defn list-item-with-id [userid listid itemid]
+  (with-errors-handled
+    (ok (api/list-item-with-id userid listid itemid))))

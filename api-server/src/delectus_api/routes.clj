@@ -347,8 +347,15 @@
                   :summary "Returns items from the identified list"
                   (handlers/list-items userid listid :offset offset :limit limit))            
 
-            ;; (GET "/delectus/list_items" [] handlers/list-items)
-            ;; (GET "/delectus/item_with_id" [] handlers/item-with-id)
+
+            (GET "/item_with_id/:userid/:listid/:itemid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               itemid :- s/Str]
+                 :return (s/maybe {s/Str s/Any})
+                 :summary "Returns the identified item"
+                 (handlers/list-item-with-id userid listid itemid))
+            
             ;; (GET "/delectus/new_item" [] handlers/new-item)
             ;; (GET "/delectus/delete_item" [] handlers/delete-item)
             ;; (GET "/delectus/undelete_item" [] handlers/undelete-item)

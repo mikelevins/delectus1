@@ -68,8 +68,6 @@
                          {:cause :list-not-found
                           :listid ~listid})))))
 
-
-
 (defmacro ensure-owner [objectid userid]
   `(let [found-owner# (couchio/get-object-attribute (config/delectus-content-bucket)
                                                     ~objectid +owner-key+)]
@@ -80,6 +78,33 @@
                        {:cause :wrong-owner
                         :expected ~userid
                         :found found-owner#})))))
+
+
+(defmacro ensure-item-exists [itemid]
+  `(if (and (couchio/id-exists? (config/delectus-content-bucket) ~itemid)
+            (= +item-type+
+               (couchio/get-object-attribute (config/delectus-content-bucket)
+                                             ~itemid +type-key+)))
+     ~itemid
+     (throw (ex-info "No such item"
+                     {:cause :item-not-found
+                      :itemid ~itemid}))))
+
+;;; (ensure-item-exists "00007c0b-21a7-426f-8b76-8440d75f6ac3")
+;;; (ensure-item-exists "NO")
+
+(defmacro ensure-item [itemid]
+  `(let [found-item# (couchio/get-document-of-type (config/delectus-content-bucket)
+                                                   ~itemid
+                                                   +item-type+)]
+     (or found-item#
+         (throw (ex-info "No such item"
+                         {:cause :item-not-found
+                          :itemid ~itemid})))))
+
+;;; (ensure-item "00007c0b-21a7-426f-8b76-8440d75f6ac3")
+;;; (ensure-item "002153f5-431a-47a3-82d5-f2161ed1d4d0")
+;;; (ensure-item "NO")
 
 ;;; ---------------------------------------------------------------------
 ;;; model type-checks

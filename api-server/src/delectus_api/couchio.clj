@@ -55,7 +55,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defn json-object-type? [obj type-string]
-  (= type-string (json-object-attribute obj +type-key+)))
+  (and (instance? JsonObject obj)
+       (= type-string (json-object-attribute obj +type-key+))))
 
 (defn json-object-owner? [obj ownerid]
   (= ownerid (json-object-attribute obj +owner-key+)))
