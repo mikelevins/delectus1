@@ -361,11 +361,32 @@
                   :return s/Str
                   :summary "Adds a new item to the list"
                   (handlers/new-list-item userid listid))
+
             
-            ;; (GET "/delectus/new_item" [] handlers/new-item)
-            ;; (GET "/delectus/delete_item" [] handlers/delete-item)
-            ;; (GET "/delectus/undelete_item" [] handlers/undelete-item)
-            ;; (GET "/delectus/item_deleted" [] handlers/item-deleted?)
+            (POST "/delete_list_item/:userid/:listid/:itemid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               itemid :- s/Str]
+                 :return s/Str
+                 :summary "Marks the identified item deleted"
+                 (handlers/delete-list-item userid listid itemid))
+            
+            (POST "/undelete_list_item/:userid/:listid/:itemid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               itemid :- s/Str]
+                 :return s/Str
+                 :summary "Marks the identified item not deleted"
+                 (handlers/undelete-list-item userid listid itemid))
+
+            (GET "/list_item_deleted/:userid/:listid/:itemid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               itemid :- s/Str]
+                 :return s/Bool
+                 :summary "Returns true if the identified item is marked deleted, and false otherwise"
+                 (handlers/list-item-deleted userid listid itemid))
+            
             ;; (GET "/delectus/item_column_value" [] handlers/item-column-value)
             ;; (GET "/delectus/set_item_column_value" [] handlers/set-item-column-value)
 

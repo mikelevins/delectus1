@@ -220,3 +220,15 @@
 (defn new-list-item [userid listid]
   (with-errors-handled
     (ok (api/new-list-item userid listid))))
+
+(defn delete-list-item [userid listid itemid]
+  (with-errors-handled
+    (ok (api/delete-list-item userid listid itemid))))
+
+(defn undelete-list-item [userid listid itemid]
+  (with-errors-handled
+    (ok (api/undelete-list-item userid listid itemid))))
+
+(defn list-item-deleted [userid listid itemid]
+  (with-errors-handled
+    (ok (api/list-item-deleted userid listid itemid))))

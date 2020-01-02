@@ -27,6 +27,7 @@
 (def +enabled-key+ "enabled")
 (def +fields-key+ "fields")
 (def +id-key+ "id")
+(def +items-key+ "items")
 (def +list-key+ "list")
 (def +name-key+ "name")
 (def +owner-key+ "owner")

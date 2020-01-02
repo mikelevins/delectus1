@@ -516,3 +516,42 @@
 ;;; (def $moviesid "b65f029c-6108-4c9c-a973-7fa16b8841c0")
 ;;; (def $new-item (new-list-item $mikelid $moviesid))
 
+(defn delete-list-item [userid listid itemid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [item-exists? (ensure/ensure-item-exists itemid)]
+    (if item-exists?
+      (do (couchio/update-object-attribute! (config/delectus-content-bucket)
+                                            itemid +deleted-key+ true)
+          itemid)
+      (throw (ex-info "No such item" {:context 'delete-list-item :listid listid :itemid itemid})))))
+
+(defn undelete-list-item [userid listid itemid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [item-exists? (ensure/ensure-item-exists itemid)]
+    (if item-exists?
+      (do (couchio/update-object-attribute! (config/delectus-content-bucket)
+                                            itemid +deleted-key+ false)
+          itemid)
+      (throw (ex-info "No such item" {:context 'undelete-list-item :listid listid :itemid itemid})))))
+
+
+(defn list-item-deleted [userid listid itemid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [item-exists? (ensure/ensure-item-exists itemid)]
+    (if item-exists?
+      (couchio/get-object-attribute (config/delectus-content-bucket)
+                                    itemid +deleted-key+)
+      (throw (ex-info "No such item" {:context 'list-item-deleted :listid listid :itemid itemid})))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $moviesid "b65f029c-6108-4c9c-a973-7fa16b8841c0")
+;;; (def $itemid "002153f5-431a-47a3-82d5-f2161ed1d4d0")
+;;; (list-item-deleted $mikelid $moviesid $itemid)
+;;; (delete-list-item $mikelid $moviesid $itemid)
+;;; (undelete-list-item $mikelid $moviesid $itemid)
