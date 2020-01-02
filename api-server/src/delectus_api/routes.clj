@@ -338,6 +338,15 @@
                   :summary "Renames the identified column"
                   (handlers/rename-column userid listid columnid name))            
 
+            (POST "/list_items" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                {offset :- s/Int 0}
+                                {limit :- s/Int 100}]
+                  :return [{s/Str s/Any}]
+                  :summary "Returns items from the identified list"
+                  (handlers/list-items userid listid :offset offset :limit limit))            
+
             ;; (GET "/delectus/list_items" [] handlers/list-items)
             ;; (GET "/delectus/item_with_id" [] handlers/item-with-id)
             ;; (GET "/delectus/new_item" [] handlers/new-item)

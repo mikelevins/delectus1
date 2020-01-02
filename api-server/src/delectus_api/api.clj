@@ -1,5 +1,6 @@
 (ns delectus-api.api
   (:require
+   [clojure.pprint :as pp]
    [compojure.api.sweet :refer :all]
    [delectus-api.auth :as auth]
    [delectus-api.configuration :as config]
@@ -461,3 +462,18 @@
                                    name))
   columnid)
 
+(defn list-items [userid listid & {:keys [offset limit]
+                                   :or {offset 0 limit 100}}]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (map #(into {} (.toMap %))
+       (couchio/find-objects (config/delectus-content-bucket)
+                             :offset offset :limit limit
+                             :match {+type-key+ +item-type+
+                                     +owner-key+ userid
+                                     +list-key+ listid})))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
+;;; (def $items (list-items $mikelid $listid :offset 0 :limit 5))

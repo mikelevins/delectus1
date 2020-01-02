@@ -131,10 +131,6 @@
         (map #(.get (.value %) bucket-name) results)
         (map #(.value %) results)))))
 
-;;; (def $objs (find-objects (config/delectus-content-bucket) [] {+type-key+ +collection-type+}))
-;;; (time (def $objs (find-objects (config/delectus-content-bucket) [] {+type-key+ +list-type+ +owner-key+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-key+ nil})))
-;;; (make-object-selector (config/delectus-content-bucket) [] {+type-key+ +list-type+ +owner-key+ "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f" +collection-key+ nil})
-
 
 ;;; =====================================================================
 ;;; Couchbase accessors

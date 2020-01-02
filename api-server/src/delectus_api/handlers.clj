@@ -206,3 +206,8 @@
 (defn rename-column [userid listid columnid name]
   (with-errors-handled
     (ok (api/rename-column userid listid columnid name))))
+
+(defn list-items [userid listid & {:keys [offset limit]
+                                   :or {offset 0 limit 100}}]
+  (with-errors-handled
+    (ok (api/list-items userid listid :offset offset :limit limit))))
