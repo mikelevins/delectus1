@@ -216,3 +216,7 @@
 (defn list-item-with-id [userid listid itemid]
   (with-errors-handled
     (ok (api/list-item-with-id userid listid itemid))))
+
+(defn new-list-item [userid listid]
+  (with-errors-handled
+    (ok (api/new-list-item userid listid))))

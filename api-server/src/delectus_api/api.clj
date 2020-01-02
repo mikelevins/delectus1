@@ -492,6 +492,27 @@
 ;;; (def $greerid "6235e7b7-eb83-47d9-a8ef-ac129601e810")
 ;;; (def $moviesid "b65f029c-6108-4c9c-a973-7fa16b8841c0")
 ;;; (def $itemid "002153f5-431a-47a3-82d5-f2161ed1d4d0")
-;;; (list-item-with-id $mikelid $moviesid $itemid)
+;;; (def $item (list-item-with-id $mikelid $moviesid $itemid))
 ;;; (list-item-with-id $greerid $moviesid $itemid)
+
+(defn new-list-item [userid listid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (let [found-columns (model/get-list-columns listid)]
+    (if (nil? found-columns)
+      (throw (ex-info "No columns found" {:context 'new-list-item :listid listid}))
+      (let [columns-map (.getNames found-columns)
+            column-count (count (keys columns-map))
+            vals (take column-count (repeat nil))
+            item-doc (model/values->item-document userid listid vals)
+            asserted-doc (model/assert-item! item-doc)]
+        (if (nil? asserted-doc)
+          (throw (ex-info "Couchbase error" {:context 'new-list-item :listid listid
+                                             :cause :new-list-item-failed}))
+          (.get (.content asserted-doc) +id-key+))))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $moviesid "b65f029c-6108-4c9c-a973-7fa16b8841c0")
+;;; (def $new-item (new-list-item $mikelid $moviesid))
 

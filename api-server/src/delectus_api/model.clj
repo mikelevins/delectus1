@@ -37,9 +37,10 @@
 
 (defn assert-user! [userdoc]
   (ensure/ensure-document-type userdoc +user-type+)
-  (let [users-bucket (config/delectus-users-bucket)
-        upserted-doc (.upsert users-bucket userdoc)]
-    upserted-doc))
+  (couchio/with-couchbase-exceptions-rethrown
+    (let [users-bucket (config/delectus-users-bucket)
+          upserted-doc (.upsert users-bucket userdoc)]
+      upserted-doc)))
 
 ;;; (def $conf (config/delectus-configuration))
 ;;; (def $email (:delectus-test-user2-email $conf))
@@ -103,9 +104,10 @@
 
 (defn assert-collection! [collectiondoc]
   (ensure/ensure-document-type collectiondoc +collection-type+)
-  (let [content-bucket (config/delectus-content-bucket)
-        upserted-doc (.upsert content-bucket collectiondoc)]
-    upserted-doc))
+  (couchio/with-couchbase-exceptions-rethrown
+    (let [content-bucket (config/delectus-content-bucket)
+          upserted-doc (.upsert content-bucket collectiondoc)]
+      upserted-doc)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $thingscol (make-collection-document :name "Things" :owner $mikelid))
@@ -156,9 +158,10 @@
 
 (defn assert-list! [listdoc]
   (ensure/ensure-document-type listdoc +list-type+)
-  (let [content-bucket (config/delectus-content-bucket)
-        upserted-doc (.upsert content-bucket listdoc)]
-    upserted-doc))
+  (couchio/with-couchbase-exceptions-rethrown
+    (let [content-bucket (config/delectus-content-bucket)
+          upserted-doc (.upsert content-bucket listdoc)]
+      upserted-doc)))
 
 ;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
 ;;; (def $movies (make-list-document :name "Movies" :owner $mikelid))
@@ -433,9 +436,10 @@
 
 (defn assert-item! [itemdoc]
   (ensure/ensure-document-type itemdoc +item-type+)
-  (let [content-bucket (config/delectus-content-bucket)
-        upserted-doc (.upsert content-bucket itemdoc)]
-    upserted-doc))
+  (couchio/with-couchbase-exceptions-rethrown
+    (let [content-bucket (config/delectus-content-bucket)
+          upserted-doc (.upsert content-bucket itemdoc)]
+      upserted-doc)))
 
 (defn count-items [userid listid]
   (couchio/with-couchbase-exceptions-rethrown
