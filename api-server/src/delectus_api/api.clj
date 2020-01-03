@@ -555,3 +555,48 @@
 ;;; (list-item-deleted $mikelid $moviesid $itemid)
 ;;; (delete-list-item $mikelid $moviesid $itemid)
 ;;; (undelete-list-item $mikelid $moviesid $itemid)
+
+(defn item-column-value [userid listid itemid columnid]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (ensure/ensure-item-exists itemid)
+  (ensure/ensure-owner itemid userid)
+  (let [keypath (str +fields-key+ "." columnid)]
+    (couchio/get-document-path (config/delectus-content-bucket)
+                               itemid keypath)))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $moviesid "b65f029c-6108-4c9c-a973-7fa16b8841c0")
+;;; (def $itemid "002153f5-431a-47a3-82d5-f2161ed1d4d0")
+;;; (item-column-value $mikelid $moviesid $itemid 3)
+
+(defn set-item-column-value! [userid listid itemid columnid value]
+  (ensure/ensure-user-exists userid)
+  (ensure/ensure-list-exists listid)
+  (ensure/ensure-owner listid userid)
+  (ensure/ensure-item-exists itemid)
+  (ensure/ensure-owner itemid userid)
+  (let [keypath (str +fields-key+ "." columnid)
+        columnpath (str +columns-key+ "." columnid)]
+    ;; we use upsert because adding a column to the list does not
+    ;; automatically add a field to every item in the list. The
+    ;; destination field may therefore not exist in the destination
+    ;; item. In order to avoid adding bogus fields, we must first
+    ;; check that the target column exists in the list, and reject the
+    ;; upsert if it does not.
+    (if (couchio/document-path-exists? (config/delectus-content-bucket)
+                                       listid columnpath)
+      (couchio/upsert-document-path! (config/delectus-content-bucket)
+                                     itemid keypath value)
+      (throw (ex-info "No such column" {:cause :no-such-column :context 'set-item-column-value
+                                        :listid listid :itemid itemid :columnid columnid})))))
+
+;;; (def $mikelid "5d7f805d-5712-4e8b-bdf1-6e24cf4fe06f")
+;;; (def $moviesid "b65f029c-6108-4c9c-a973-7fa16b8841c0")
+;;; (list-with-id $mikelid $moviesid ["columns"])
+;;; (def $itemid "002153f5-431a-47a3-82d5-f2161ed1d4d0")
+;;; (item-with-id $mikelid $moviesid $itemid)
+;;; (item-column-value $mikelid $moviesid $itemid 6)
+;;; (set-item-column-value! $mikelid $moviesid $itemid 101 "bogus")
+;;; (set-item-column-value! $mikelid $moviesid $itemid 6 "a test comment")

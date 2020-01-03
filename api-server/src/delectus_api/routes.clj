@@ -386,9 +386,25 @@
                  :return s/Bool
                  :summary "Returns true if the identified item is marked deleted, and false otherwise"
                  (handlers/list-item-deleted userid listid itemid))
-            
-            ;; (GET "/delectus/item_column_value" [] handlers/item-column-value)
-            ;; (GET "/delectus/set_item_column_value" [] handlers/set-item-column-value)
 
+            (GET "/item_column_value/:userid/:listid/:itemid/:columnid" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               itemid :- s/Str
+                               columnid :- s/Int]
+                 :return (s/maybe s/Str)
+                 :summary "Returns the value from the column of the item"
+                 (handlers/item-column-value userid listid itemid columnid))
+
+            (POST "/set_item_column_value/:userid/:listid/:itemid/:columnid/:value" req
+                 :path-params [userid :- s/Str
+                               listid :- s/Str
+                               itemid :- s/Str
+                               columnid :- s/Int
+                               value :- s/Str]
+                 :return (s/maybe s/Str)
+                 :summary "Updates the value in the column of the item"
+                 (handlers/set-item-column-value! userid listid itemid columnid value))
+            
             )))
 

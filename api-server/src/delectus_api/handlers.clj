@@ -232,3 +232,11 @@
 (defn list-item-deleted [userid listid itemid]
   (with-errors-handled
     (ok (api/list-item-deleted userid listid itemid))))
+
+(defn item-column-value [userid listid itemid columnid]
+  (with-errors-handled
+    (ok (api/item-column-value userid listid itemid columnid))))
+
+(defn set-item-column-value! [userid listid itemid columnid value]
+  (with-errors-handled
+    (ok (api/set-item-column-value! userid listid itemid columnid value))))
