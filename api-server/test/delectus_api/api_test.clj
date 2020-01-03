@@ -453,6 +453,10 @@
 ;;; (model/next-column-id +test-list-id-2+)
 ;;; (model/get-list-columns +test-list-id-2+)
 
+;;; list-items-test:
+;;;   api/list_items
+;;;   api/list_item_with_id
+;;;   api/new_list_item (executed in setup; checkedhere)
 (deftest list-items-test
   (testing "/api/list/list_items"
     ;; test list-items
