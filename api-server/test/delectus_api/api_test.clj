@@ -54,6 +54,14 @@
 (def +test-column-name-2+ "Column 2")
 (def +test-column-name-3+ "Column 3")
 
+(def +test-item-ids+ (atom []))
+
+(defn add-test-list-item-id! [id]
+  (swap! +test-item-ids+ conj id))
+
+(defn clear-test-list-item-ids! []
+  (swap! +test-item-ids+ (constantly [])))
+
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
 ;;; ---------------------------------------------------------------------
@@ -95,11 +103,11 @@
   (api/new-column +test-user-id-1+ +test-list-id-1+ +test-column-name-3+)
   (Thread/sleep 250)
   ;;; add some items to list 1
-  (doseq [i (range 0 10)]
-    (api/new-list-item +test-user-id-1+ +test-list-id-1+)
+  (doseq [i (range 10)]
+    (add-test-list-item-id! (api/new-list-item +test-user-id-1+ +test-list-id-1+))
     (Thread/sleep 100))
   ;;; wait after setup to make sure DB's API returns consistent results
-  (Thread/sleep 500))
+  (Thread/sleep 250))
 
 ;;; (setup-test-data)
 ;;; (teardown-test-data)
@@ -107,7 +115,9 @@
 (defn teardown-test-data []
   (println "deleting test data...")
   ;;; wait before teardown to make sure DB's API returns consistent results
-  (Thread/sleep 500)
+  (Thread/sleep 250)
+  (clear-test-list-item-ids!)
+  (Thread/sleep 250)
   (let [test-documents1 (couchio/find-objects (config/delectus-content-bucket)
                                               :keys []
                                               :match {+owner-key+ +test-user-id-1+})
@@ -445,5 +455,11 @@
 
 (deftest list-items-test
   (testing "/api/list/list_items"
+    ;; test list-items
     (let [found-items (api/list-items +test-user-id-1+ +test-list-id-1+)]
-      (is (= 10 (count found-items)) "+test-list-id-1+ should contains 10 items"))))
+      (is (= 10 (count found-items)) "+test-list-id-1+ should contains 10 items"))
+    ;; test list-item-with-id
+    (let [found-id (nth @+test-item-ids+ 0)
+          found-item (api/list-item-with-id +test-user-id-1+ +test-list-id-1+ found-id)]
+      (is found-item "found-item should be non-nil"))
+    ))
