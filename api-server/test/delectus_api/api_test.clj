@@ -464,6 +464,25 @@
       (is (= 10 (count found-items)) "+test-list-id-1+ should contains 10 items"))
     ;; test list-item-with-id
     (let [found-id (nth @+test-item-ids+ 0)
-          found-item (api/list-item-with-id +test-user-id-1+ +test-list-id-1+ found-id)]
-      (is found-item "found-item should be non-nil"))
-    ))
+          found-item (api/list-item-with-id +test-user-id-1+ +test-list-id-1+ found-id)
+          test-field-value-0 "Test field value 0"]
+      (is found-item "found-item should be non-nil")
+      ;; test list-item-deleted, delete-list-item, and undelete-list-item
+      (is (not (api/list-item-deleted +test-user-id-1+ +test-list-id-1+ found-id))
+          (str "item " found-id " should be marked not deleted"))
+      (api/delete-list-item +test-user-id-1+ +test-list-id-1+ found-id)
+      (Thread/sleep 125)
+      (is (api/list-item-deleted +test-user-id-1+ +test-list-id-1+ found-id)
+          (str "item " found-id " should be marked deleted"))
+      (api/undelete-list-item +test-user-id-1+ +test-list-id-1+ found-id)
+      (Thread/sleep 125)
+      (is (not (api/list-item-deleted +test-user-id-1+ +test-list-id-1+ found-id))
+          (str "item " found-id " should be marked not deleted"))
+      (Thread/sleep 125)
+      ;; test item-column-value and set-item-column-value!
+      (is (nil? (api/item-column-value +test-user-id-1+ +test-list-id-1+ found-id 0))
+          "found value should be null")
+      (api/set-item-column-value! +test-user-id-1+ +test-list-id-1+ found-id 0 test-field-value-0)
+      (Thread/sleep 125)
+      (is (= test-field-value-0 (api/item-column-value +test-user-id-1+ +test-list-id-1+ found-id 0))
+          (str "found value should be " test-field-value-0)))))
