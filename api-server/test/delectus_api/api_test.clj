@@ -48,10 +48,11 @@
 (def +test-list-name-3+ "Test List 3")
 
 (def +test-new-list-name+ "New List for Testing")
-(def +test-new-column-name-0+ "Column 0")
+(def +test-column-name-0+ "Column 0")
 (def +test-column-alt-name-0+ "Column 0 Alternate Title")
-(def +test-new-column-name-1+ "Column 1")
-(def +test-new-column-name-2+ "Column 2")
+(def +test-column-name-1+ "Column 1")
+(def +test-column-name-2+ "Column 2")
+(def +test-column-name-3+ "Column 3")
 
 ;;; ---------------------------------------------------------------------
 ;;; setup and teardown
@@ -82,6 +83,21 @@
     (model/assert-list! test-list-1)
     (model/assert-list! test-list-2)
     (model/assert-list! test-list-3))
+  ;;; wait a moment to ensure lists were created
+  (Thread/sleep 250)
+  ;;; add some columns to list 1
+  (api/new-column +test-user-id-1+ +test-list-id-1+ +test-column-name-0+)
+  (Thread/sleep 250)
+  (api/new-column +test-user-id-1+ +test-list-id-1+ +test-column-name-1+)
+  (Thread/sleep 250)
+  (api/new-column +test-user-id-1+ +test-list-id-1+ +test-column-name-2+)
+  (Thread/sleep 250)
+  (api/new-column +test-user-id-1+ +test-list-id-1+ +test-column-name-3+)
+  (Thread/sleep 250)
+  ;;; add some items to list 1
+  (doseq [i (range 0 10)]
+    (api/new-list-item +test-user-id-1+ +test-list-id-1+)
+    (Thread/sleep 100))
   ;;; wait after setup to make sure DB's API returns consistent results
   (Thread/sleep 500))
 
@@ -352,7 +368,7 @@
       (is (empty? found-columns) "found-columns should be empty"))
     
     ;; add a column
-    (api/new-column +test-user-id-1+ +test-list-id-2+ +test-new-column-name-0+)
+    (api/new-column +test-user-id-1+ +test-list-id-2+ +test-column-name-0+)
     
     ;; wait a bit for it to settle
     (Thread/sleep 250)
@@ -363,7 +379,7 @@
       (is (= 1 (count found-keys)) "found-columns should contain one column"))
     
     ;; add another column
-    (api/new-column +test-user-id-1+ +test-list-id-2+ +test-new-column-name-1+)
+    (api/new-column +test-user-id-1+ +test-list-id-2+ +test-column-name-1+)
     
     ;; wait a bit for it to settle
     (Thread/sleep 250)
@@ -373,15 +389,15 @@
           found-keys (keys found-columns)]
       (is (= 2 (count found-keys)) "found-columns should contain two columns"))
     
-    ;; check that column "0" has name +test-new-column-name-0+
+    ;; check that column "0" has name +test-column-name-0+
     (let [found-column (api/column-with-id +test-user-id-1+ +test-list-id-2+ "0")]
       (is found-column "found-column should be non-nil")
       (let [found-name (api/column-name +test-user-id-1+ +test-list-id-2+ "0")]
-        (is found-name +test-new-column-name-0+)
-        (str "The name of found-column should be " +test-new-column-name-0+)))
+        (is found-name +test-column-name-0+)
+        (str "The name of found-column should be " +test-column-name-0+)))
     
-    ;; check that column named +test-new-column-name-1+ has ID "1"
-    (let [found-column (api/column-named +test-user-id-1+ +test-list-id-2+ +test-new-column-name-1+)]
+    ;; check that column named +test-column-name-1+ has ID "1"
+    (let [found-column (api/column-named +test-user-id-1+ +test-list-id-2+ +test-column-name-1+)]
       (is found-column "found-column should be non-nil")
       (let [found-id (get found-column +id-key+)]
         (is (= found-id "1")(str "The ID of found-column should be 1"))))
@@ -422,7 +438,12 @@
     ;; check that column "0" has name +test-column-alt-name-0+
     (let [found-name (api/column-name +test-user-id-1+ +test-list-id-2+ "0")]
       (is found-name +test-column-alt-name-0+)
-      (str "The name of found-column should be " +test-new-column-name-0+ ", not " found-name))))
+      (str "The name of found-column should be " +test-column-name-0+ ", not " found-name))))
 
 ;;; (model/next-column-id +test-list-id-2+)
 ;;; (model/get-list-columns +test-list-id-2+)
+
+(deftest list-items-test
+  (testing "/api/list/list_items"
+    (let [found-items (api/list-items +test-user-id-1+ +test-list-id-1+)]
+      (is (= 10 (count found-items)) "+test-list-id-1+ should contains 10 items"))))
