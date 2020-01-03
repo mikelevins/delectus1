@@ -396,15 +396,15 @@
                  :summary "Returns the value from the column of the item"
                  (handlers/item-column-value userid listid itemid columnid))
 
-            (POST "/set_item_column_value/:userid/:listid/:itemid/:columnid/:value" req
-                 :path-params [userid :- s/Str
-                               listid :- s/Str
-                               itemid :- s/Str
-                               columnid :- s/Int
-                               value :- s/Str]
-                 :return (s/maybe s/Str)
-                 :summary "Updates the value in the column of the item"
-                 (handlers/set-item-column-value! userid listid itemid columnid value))
+            (POST "/set_item_column_value" req
+                  :body-params [userid :- s/Str
+                                listid :- s/Str
+                                itemid :- s/Str
+                                columnid :- s/Int
+                                value :- s/Str]
+                  :return (s/maybe s/Str)
+                  :summary "Updates the value in the column of the item"
+                  (handlers/set-item-column-value! userid listid itemid columnid value))
             
             )))
 
