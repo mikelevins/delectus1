@@ -8,6 +8,6 @@
   (let [name (re-frame/subscribe [::subs/name])
         version (re-frame/subscribe [::subs/version])]
     [:div
-     [:h1 @name " "]
+     [:h1 @name]
      [:p.version "version " @version]]))
 

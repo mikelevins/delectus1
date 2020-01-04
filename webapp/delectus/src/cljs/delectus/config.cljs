@@ -1,4 +1,3 @@
 (ns delectus.config)
 
-(def debug?
-  ^boolean goog.DEBUG)
+(def debug? ^boolean goog.DEBUG)
