@@ -9,6 +9,6 @@ api-server/.lein-failures
 delectus-api/target
 
 webapp/delectus/.shadow-cljs/
-webapp/delectus/resources/public/js/
+webapp/delectus/resources/public/js/compiled
 webapp/delectus/target
 
