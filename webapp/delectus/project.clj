@@ -6,14 +6,14 @@
                  [hiccup "1.0.5"]
                  [ring-server "0.5.0"]]
   :plugins [[lein-ring "0.12.5"]]
-  :ring {:handler delectus.handler/app
+  :ring {:auto-reload? true
+         :reload-paths ["src/" "resources/"]
+         :handler delectus.handler/app
+         :nrepl {:start? true :port 33033}
          :adapter {:port 4000}
          :init delectus.handler/init
          :destroy delectus.handler/destroy}
-  :profiles
-  {:uberjar {:aot :all}
-   :production
-   {:ring
-    {:open-browser? false, :stacktraces? false, :auto-reload? false}}
-   :dev
-   {:dependencies [[ring/ring-mock "0.4.0"] [ring/ring-devel "1.7.1"]]}})
+  :profiles  {:uberjar {:aot :all}
+              :production {:ring
+                           {:open-browser? false, :stacktraces? false, :auto-reload? false}}
+              :dev {:dependencies [[ring/ring-mock "0.4.0"] [ring/ring-devel "1.7.1"]]}})

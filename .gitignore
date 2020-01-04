@@ -49,3 +49,4 @@ api-server/.lein-failures
 delectus-api/.nrepl-port
 delectus-api/target
 
+webapp/delectus/.nrepl-port
