@@ -1,5 +1,6 @@
 (ns delectus-api.handlers
   (:require
+   [clj-time.core :as t]
    [compojure.api.sweet :refer :all]
    [delectus-api.auth :as auth]
    [delectus-api.api :as api]
@@ -13,7 +14,6 @@
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
-   [tick.alpha.api :as t]
    )
   (:import
    (com.couchbase.client.java.datastructures.collections CouchbaseArrayList CouchbaseMap)

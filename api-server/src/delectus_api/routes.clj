@@ -1,5 +1,6 @@
 (ns delectus-api.routes
   (:require
+   [clj-time.core :as t]
    [compojure.api.sweet :refer :all]
    [delectus-api.handlers :as handlers]
    [delectus-api.configuration :as config]
@@ -10,7 +11,6 @@
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
-   [tick.alpha.api :as t]
    ))
 
 ;;; TODO:

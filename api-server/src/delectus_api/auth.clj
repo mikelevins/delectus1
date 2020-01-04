@@ -3,10 +3,11 @@
    [buddy.core.nonce :as nonce]
    [buddy.hashers :as hashers]
    [buddy.sign.jwt :as jwt]
+   [clj-time.core :as t]
+   [clj-time.local :as l]
    [delectus-api.constants :refer :all]
    [delectus-api.couchio :as couchio]
    [delectus-api.model :as model]
-   [tick.alpha.api :as t]
    ))
 
 
@@ -31,7 +32,7 @@
      ;; identifies the account the client thinks it's authenticating
      :email (.get user-record +email-key+)
      ;; designates when the authentication became valid
-     :timestamp (str (t/now))
+     :timestamp (str (l/local-now))
      ;; specifies how long it lasts; in seconds; default 1 hour
      :expiration 3600}))
 

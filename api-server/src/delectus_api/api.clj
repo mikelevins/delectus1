@@ -1,5 +1,6 @@
 (ns delectus-api.api
   (:require
+   [clj-time.core :as t]
    [clojure.pprint :as pp]
    [compojure.api.sweet :refer :all]
    [delectus-api.auth :as auth]
@@ -15,7 +16,6 @@
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
-   [tick.alpha.api :as t]
    )
   (:import
    (com.couchbase.client.core CouchbaseException)
