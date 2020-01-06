@@ -1,6 +1,7 @@
 (ns delectus-api.api
   (:require
    [clj-time.core :as t]
+   [clj-time.local :refer [local-now]]
    [clojure.pprint :as pp]
    [compojure.api.sweet :refer :all]
    [delectus-api.auth :as auth]
@@ -42,6 +43,13 @@
 ;;; (def $collid )
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (class (column-named $mikelid $listid "Costar"))
+
+;;; diagnostic
+;;; ---------------------------------------------------------------------
+
+(defn motd []
+  (let [timestr (str (local-now))]
+    (str "Delectus 2.0.1 " timestr)))
 
 ;;; users
 ;;; ---------------------------------------------------------------------
