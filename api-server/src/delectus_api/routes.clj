@@ -9,6 +9,7 @@
    [delectus-api.errors :as errors]
    [delectus-api.schema :as schema]
    [ring.handler.dump :refer [handle-dump]]
+   [ring.middleware.cors :refer [wrap-cors]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
    ))
@@ -22,7 +23,7 @@
 ;;; Review the API endpoints; some may be better expressed as
 ;;; different REST verbs
 
-(def app
+(def router
   (api
    {:swagger
     {:ui "/"
@@ -413,3 +414,7 @@
             
             )))
 
+(def app
+  (wrap-cors router
+             :access-control-allow-origin [#".*"]
+             :access-control-allow-methods [:get :put :post :delete]))

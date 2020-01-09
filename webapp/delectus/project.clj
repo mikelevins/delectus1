@@ -5,6 +5,7 @@
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
                  [thheller/shadow-cljs "2.8.83"]
+                 [cljs-ajax "0.8.0"]
                  [reagent "0.8.1"]
                  [re-frame "0.10.9"]
                  [compojure "1.6.1"]

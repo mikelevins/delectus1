@@ -14,6 +14,7 @@
                  [com.couchbase.client/java-client "2.7.9"]
                  ;; http server abstraction
                  [ring "1.8.0"]
+                 [ring-cors "0.1.13"]
                  [ring/ring-json "0.5.0"]
                  ;; time utilities
                  [clj-time "0.15.2"]
