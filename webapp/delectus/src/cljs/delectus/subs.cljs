@@ -7,3 +7,6 @@
 
 (re-frame/reg-sub
  ::version (fn [db] (:version db)))
+
+(re-frame/reg-sub
+ ::motd (fn [db] (:motd db)))
