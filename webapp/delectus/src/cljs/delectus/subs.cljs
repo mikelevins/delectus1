@@ -10,3 +10,6 @@
 
 (re-frame/reg-sub
  ::motd (fn [db] (:motd db)))
+
+(re-frame/reg-sub
+ ::auth (fn [db] (:auth db)))
