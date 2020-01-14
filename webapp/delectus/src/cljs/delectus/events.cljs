@@ -1,6 +1,6 @@
 (ns delectus.events
   (:require
-   [ajax.core :refer [GET]]
+   [ajax.core :refer [GET POST]]
    [re-frame.core :as re-frame]
    [delectus.db :as db]
    [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]
