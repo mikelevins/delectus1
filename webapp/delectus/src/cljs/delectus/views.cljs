@@ -24,6 +24,23 @@
 
 (def auth (reagent/atom {:token nil}))
 
+;; (defn login-form []
+;;   [:div.loginbox
+;;    [:p "auth: " (str @auth)]
+;;    [:form {:on-submit (fn [e](.preventDefault e))}
+;;     [:input {:type :text :name :email :id "email_input"}]
+;;     [:br]
+;;     [:input {:type :password :name :password :id "password_input"}]
+;;     [:br]
+;;     [:button {:on-click  (fn []
+;;                            (POST "http://mars.local:3000/api/user/login"
+;;                                  {:params
+;;                                   {:email (.-value (.getElementById js/document "email_input"))
+;;                                    :password (.-value (.getElementById js/document "password_input"))}
+;;                                   :handler (fn [resp] (swap! auth (fn [] (merge @auth {:token (:token resp)}))))}))}
+;;      "Log in"]]])
+
+
 (defn login-form []
   [:div.loginbox
    [:p "auth: " (str @auth)]
@@ -32,12 +49,9 @@
     [:br]
     [:input {:type :password :name :password :id "password_input"}]
     [:br]
-    [:button {:on-click  (fn []
-                           (POST "http://localhost:3000/api/user/login"
-                                 {:params
-                                  {:email (.-value (.getElementById js/document "email_input"))
-                                   :password (.-value (.getElementById js/document "password_input"))}
-                                  :handler (fn [resp] (swap! auth (fn [] (merge @auth {:token (:token resp)}))))}))}
+    [:button {:on-click  #(let [email (.-value (.getElementById js/document "email_input"))
+                                password (.-value (.getElementById js/document "password_input"))]
+                            (re-frame/dispatch [::events/post-login email password]))}
      "Log in"]]])
 
 ;;; ---------------------------------------------------------------------
