@@ -76,7 +76,7 @@
 (defn login [email password]
   (with-errors-handled
     (let [userid (api/userid email)]
-      (ok {:userid userid
+      (ok {:email email :userid userid
            :token (auth/make-auth-token (api/login email password))}))))
 
 (defn userid [email]
