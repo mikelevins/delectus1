@@ -9,4 +9,4 @@
  ::version (fn [db] (:version (:delectus db))))
 
 (re-frame/reg-sub
- ::motd (fn [db] (:motd db)))
+ ::auth (fn [db] (:auth (:delectus db))))

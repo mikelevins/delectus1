@@ -41,12 +41,7 @@
             (GET "/echo" req
                  :return s/Str
                  :summary "echoes the request"
-                 (handle-dump req))
-
-            (GET "/motd" req
-                 :return s/Str
-                 :summary "returns the API server's message of the day"
-                 (handlers/motd)))
+                 (handle-dump req)))
    
    (context "/api/user" [] :tags ["api/user"]
 

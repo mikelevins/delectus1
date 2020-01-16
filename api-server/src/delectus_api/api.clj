@@ -44,13 +44,6 @@
 ;;; (def $listid "12c8b02b-8bba-4179-b328-94010ede7f01")
 ;;; (class (column-named $mikelid $listid "Costar"))
 
-;;; diagnostic
-;;; ---------------------------------------------------------------------
-
-(defn motd []
-  (let [timestr (str (local-now))]
-    (str "Delectus 2.0.1 " timestr)))
-
 ;;; users
 ;;; ---------------------------------------------------------------------
 

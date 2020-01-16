@@ -66,11 +66,6 @@
 ;;; endpoint handlers
 ;;; ---------------------------------------------------------------------
 
-;;; /api/diagnostic
-(defn motd []
-  (with-errors-handled
-    (ok (api/motd))))
-
 ;;; /api/user
 
 (defn authenticate [userid password]
