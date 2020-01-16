@@ -20,8 +20,7 @@
 
 (re-frame/reg-event-db
  ::post-login
- (fn
-   [db [_ email password]]
+ (fn [db [_ email password]]
    (POST  "http://mars.local:3000/api/user/login"
           {:params {:email email :password password}
            :handler       #(re-frame/dispatch [::process-login %1])
@@ -30,6 +29,5 @@
 
 (re-frame/reg-event-db                   
  ::process-login             
- (fn
-   [db [_ response]]           ;; destructure the response from the event vector
-   (assoc db :auth {:processed? true})))
+ (fn [db [_ response]]           ;; destructure the response from the event vector
+   (assoc db :auth response)))

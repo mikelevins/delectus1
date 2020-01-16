@@ -36,7 +36,6 @@
            [:div {:class "container-fluid"}
             [:a {:class "navbar-brand" :href "#"} @name]
             [:span.version "version " @version]]]
-     [:div [:p "Auth: " (str @auth)]]
      (if (:token @auth)
        [:div ]
        [:div (login-form)])]))

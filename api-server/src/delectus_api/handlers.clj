@@ -70,11 +70,14 @@
 
 (defn authenticate [userid password]
   (with-errors-handled
-    (ok {:token (auth/make-auth-token (api/authenticate userid password))})))
+    (ok {:userid userid
+         :token (auth/make-auth-token (api/authenticate userid password))})))
 
 (defn login [email password]
   (with-errors-handled
-    (ok {:token (auth/make-auth-token (api/login email password))})))
+    (let [userid (api/userid email)]
+      (ok {:userid userid
+           :token (auth/make-auth-token (api/login email password))}))))
 
 (defn userid [email]
   (with-errors-handled

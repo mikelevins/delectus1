@@ -3,10 +3,10 @@
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub
- ::name (fn [db] (:name (:delectus db))))
+ ::name (fn [db] (:name db)))
 
 (re-frame/reg-sub
- ::version (fn [db] (:version (:delectus db))))
+ ::version (fn [db] (:version db)))
 
 (re-frame/reg-sub
- ::auth (fn [db] (:auth (:delectus db))))
+ ::auth (fn [db] (:auth db)))

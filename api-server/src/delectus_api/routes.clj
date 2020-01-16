@@ -53,7 +53,7 @@
 
             (POST "/login" req
                   :body [{:keys [email password]} schema/LoginRequest]
-                  :return {:token s/Str}
+                  :return {:userid s/Str :token s/Str}
                   :summary "Logs in a user by email address"
                   (handlers/login email password))
 
