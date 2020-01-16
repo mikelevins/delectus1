@@ -23,6 +23,12 @@
                             (re-frame/dispatch [::events/post-login email password]))}
      "Log in"]]])
 
+(defn logout-button []
+  [:button {:on-click  #(let [auth (re-frame/subscribe [::subs/auth])
+                              token (:token @auth)]
+                          (re-frame/dispatch [::events/post-logout token]))}
+   "Log out"])
+
 ;;; ---------------------------------------------------------------------
 ;;; main view
 ;;; ---------------------------------------------------------------------
@@ -37,6 +43,6 @@
             [:a {:class "navbar-brand" :href "#"} @name]
             [:span.version "version " @version]]]
      (if (:token @auth)
-       [:div ]
+       [:div (logout-button)]
        [:div (login-form)])]))
 

@@ -79,6 +79,10 @@
       (ok {:email email :userid userid
            :token (auth/make-auth-token (api/login email password))}))))
 
+(defn logout [token]
+  (with-errors-handled
+    (ok "Logged out")))
+
 (defn userid [email]
   (with-errors-handled
     (ok (api/userid email))))

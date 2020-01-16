@@ -57,6 +57,12 @@
                   :summary "Logs in a user by email address"
                   (handlers/login email password))
 
+            (POST "/logout" req
+                  :body [{:keys [token]} schema/LogoutRequest]
+                  :return s/Str
+                  :summary "Logs a user session out"
+                  (handlers/logout token))
+
             (GET "/userid/:email" req
                  :path-params [email :- s/Str]
                  :return s/Str

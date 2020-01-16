@@ -31,3 +31,18 @@
  ::process-login             
  (fn [db [_ response]]           ;; destructure the response from the event vector
    (assoc db :auth response)))
+
+
+(re-frame/reg-event-db
+ ::post-logout
+ (fn [db [_ token]]
+   (POST  "http://mars.local:3000/api/user/logout"
+          {:params {:token token}
+           :handler       #(re-frame/dispatch [::process-logout %1])
+           :error-handler #(re-frame/dispatch [::bad-logout-response %1])})
+   db))
+
+(re-frame/reg-event-db                   
+ ::process-logout             
+ (fn [db [_ response]]           ;; destructure the response from the event vector
+   (assoc db :auth {})))
