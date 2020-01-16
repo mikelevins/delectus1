@@ -41,8 +41,8 @@
     [:div [:nav {:class "navbar" "navbar-expand-md" "navbar-dark" "bg-dark" "fixed-top"}
            [:div {:class "container-fluid"}
             [:a {:class "navbar-brand" :href "#"} @name]
-            [:span.version "version " @version]]]
-     (if (:token @auth)
-       [:div (logout-button)]
+            [:span.version "version " @version]
+            (if (:token @auth) (logout-button))]]
+     (if (not (:token @auth))
        [:div (login-form)])]))
 
