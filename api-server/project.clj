@@ -12,6 +12,8 @@
                  [buddy/buddy-hashers "1.4.0"]
                  ;; Couchbase Java client
                  [com.couchbase.client/java-client "2.7.9"]
+                 ;; html generation
+                 [hiccup "1.0.5"]
                  ;; http server abstraction
                  [ring "1.8.0"]
                  [ring-cors "0.1.13"]

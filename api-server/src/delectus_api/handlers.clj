@@ -11,6 +11,7 @@
    [delectus-api.identifiers :refer [makeid]]
    [delectus-api.model :as model]
    [delectus-api.schema :as schema]
+   [hiccup.core :refer [html h]]
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
@@ -74,7 +75,8 @@
          :token (auth/make-auth-token (api/authenticate userid password))})))
 
 (defn get-login []
-  (ok "Login form goes here"))
+  (header (ok (html [:p "Login form here"]))
+          "Content-Type" "text/html"))
 
 (defn login [email password]
   (with-errors-handled
