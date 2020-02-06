@@ -48,7 +48,7 @@
 (defn decode-auth-token [token]
   (jwt/decrypt token +jwt-secret+))
 
-;;; (def $token (make-auth-token (couchio/email->user "mikel@evins.net") "127.0.0.1"))
+;;; (def $token (make-auth-token (model/email->user "mikel@evins.net")))
 ;;; (def $token-map (decode-auth-token $token))
 ;;; (decode-auth-token "foo")
 

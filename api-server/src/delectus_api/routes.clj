@@ -31,10 +31,18 @@
      :data {:info {:version "0.0.2"
                    :title "Delectus-api"
                    :description "The Delectus 2 Database API"}
-            :tags [{:name "api/diagnostic", :description "Information about the server"}
+            :tags [{:name "/", :description "API server root"}
+                   {:name "api/diagnostic", :description "Information about the server"}
                    {:name "api/user", :description "Operations on user accounts"}
                    {:name "api/collection", :description "Operations on collections"}
                    {:name "api/list", :description "Operations on lists"}]}}}
+
+   (context "/" [] :tags ["/"]
+
+            (GET "/login" req
+                 :return s/Str
+                 :summary "returns the login form"
+                 (handlers/get-login)))
 
    (context "/api/diagnostic" [] :tags ["api/diagnostic"]
 
@@ -50,7 +58,7 @@
                   :return {:token s/Str}
                   :summary "authenticates a Delectus user"
                   (handlers/authenticate userid password))
-
+            
             (POST "/login" req
                   :body [{:keys [email password]} schema/LoginRequest]
                   :return {:email s/Str :userid s/Str :token s/Str}

@@ -73,6 +73,9 @@
     (ok {:userid userid
          :token (auth/make-auth-token (api/authenticate userid password))})))
 
+(defn get-login []
+  (ok "Login form goes here"))
+
 (defn login [email password]
   (with-errors-handled
     (let [userid (api/userid email)]
