@@ -26,17 +26,22 @@
 (def router
   (api
    {:swagger
-    {:ui "/"
+    {:ui "/api"
      :spec "/swagger.json"
      :data {:info {:version "0.2.0"
                    :title "Delectus-api"
                    :description "The Delectus 2 Database API"}
-            :tags [{:name "/", :description "API server root"}
-                   {:name "api/diagnostic", :description "Information about the server"}
-                   {:name "api/user", :description "Operations on user accounts"}
+            :tags [{:name "api/user", :description "Operations on user accounts"}
                    {:name "api/collection", :description "Operations on collections"}
                    {:name "api/list", :description "Operations on lists"}]}}}
    
+   (context "/" [] :tags ["/"]
+
+            (GET "/" req
+                 :return s/Str
+                 :summary "The Delectus home page"
+                 (handlers/landing)))
+
    (context "/api/user" [] :tags ["api/user"]
 
             (POST "/authenticate" req
@@ -60,10 +65,10 @@
    (context "/api/collection" [] :tags ["api/collection"]
 
             (GET "/collections/:userid" req
-                  :path-params [userid :- s/Str]
-                  :return [schema/CollectionMap]
-                  :summary "Returns the user's collections"
-                  (handlers/collections userid []))
+                 :path-params [userid :- s/Str]
+                 :return [schema/CollectionMap]
+                 :summary "Returns the user's collections"
+                 (handlers/collections userid []))
 
             (POST "/collections" req
                   :body-params [userid :- s/Str
@@ -83,9 +88,9 @@
                   :body-params [userid :- s/Str
                                 collectionid :- s/Str
                                 {fields :- [s/Str] []}]
-                 :return schema/CollectionMap
-                 :summary "Returns selected fields of the identified collection"
-                 (handlers/collection-with-id userid collectionid fields))
+                  :return schema/CollectionMap
+                  :summary "Returns selected fields of the identified collection"
+                  (handlers/collection-with-id userid collectionid fields))
 
             (GET "/collection_name/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
@@ -149,9 +154,9 @@
                   :body-params [userid :- s/Str
                                 collectionid :- s/Str
                                 {fields :- [s/Str] []}]
-                 :return [schema/ListMap]
-                 :summary "Returns selected fields of the collection's lists"
-                 (handlers/collection-lists userid collectionid fields)))
+                  :return [schema/ListMap]
+                  :summary "Returns selected fields of the collection's lists"
+                  (handlers/collection-lists userid collectionid fields)))
 
    (context "/api/list" [] :tags ["api/list"]
 
@@ -353,20 +358,20 @@
 
             
             (POST "/delete_list_item/:userid/:listid/:itemid" req
-                 :path-params [userid :- s/Str
-                               listid :- s/Str
-                               itemid :- s/Str]
-                 :return s/Str
-                 :summary "Marks the identified item deleted"
-                 (handlers/delete-list-item userid listid itemid))
+                  :path-params [userid :- s/Str
+                                listid :- s/Str
+                                itemid :- s/Str]
+                  :return s/Str
+                  :summary "Marks the identified item deleted"
+                  (handlers/delete-list-item userid listid itemid))
             
             (POST "/undelete_list_item/:userid/:listid/:itemid" req
-                 :path-params [userid :- s/Str
-                               listid :- s/Str
-                               itemid :- s/Str]
-                 :return s/Str
-                 :summary "Marks the identified item not deleted"
-                 (handlers/undelete-list-item userid listid itemid))
+                  :path-params [userid :- s/Str
+                                listid :- s/Str
+                                itemid :- s/Str]
+                  :return s/Str
+                  :summary "Marks the identified item not deleted"
+                  (handlers/undelete-list-item userid listid itemid))
 
             (GET "/list_item_deleted/:userid/:listid/:itemid" req
                  :path-params [userid :- s/Str

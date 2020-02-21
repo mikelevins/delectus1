@@ -74,8 +74,8 @@
     (ok {:userid userid
          :token (auth/make-auth-token (api/authenticate userid password))})))
 
-(defn get-login []
-  (header (ok (html [:p "Login form here"]))
+(defn landing []
+  (header (ok (html [:p "Welcome to Delectus"]))
           "Content-Type" "text/html"))
 
 (defn login [email password]
