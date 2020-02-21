@@ -28,7 +28,7 @@
    {:swagger
     {:ui "/"
      :spec "/swagger.json"
-     :data {:info {:version "0.0.2"
+     :data {:info {:version "0.2.0"
                    :title "Delectus-api"
                    :description "The Delectus 2 Database API"}
             :tags [{:name "/", :description "API server root"}
@@ -36,41 +36,15 @@
                    {:name "api/user", :description "Operations on user accounts"}
                    {:name "api/collection", :description "Operations on collections"}
                    {:name "api/list", :description "Operations on lists"}]}}}
-
-   (context "/" [] :tags ["/"]
-
-            (GET "/login" req
-                 :return s/Str
-                 :summary "returns the login form"
-                 (handlers/get-login)))
-
-   (context "/api/diagnostic" [] :tags ["api/diagnostic"]
-
-            (GET "/echo" req
-                 :return s/Str
-                 :summary "echoes the request"
-                 (handle-dump req)))
    
    (context "/api/user" [] :tags ["api/user"]
 
             (POST "/authenticate" req
                   :body [{:keys [userid password]} schema/AuthenticationRequest]
-                  :return {:token s/Str}
+                  :return {:userid s/Str :token s/Str}
                   :summary "authenticates a Delectus user"
                   (handlers/authenticate userid password))
             
-            (POST "/login" req
-                  :body [{:keys [email password]} schema/LoginRequest]
-                  :return {:email s/Str :userid s/Str :token s/Str}
-                  :summary "Logs in a user by email address"
-                  (handlers/login email password))
-
-            (POST "/logout" req
-                  :body [{:keys [token]} schema/LogoutRequest]
-                  :return s/Str
-                  :summary "Logs a user session out"
-                  (handlers/logout token))
-
             (GET "/userid/:email" req
                  :path-params [email :- s/Str]
                  :return s/Str

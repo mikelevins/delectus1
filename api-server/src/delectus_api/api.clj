@@ -72,12 +72,9 @@
                       {:cause :user-not-found
                        :email email}))))
 
-;;; userdata [userid fields] => user-map
-(defn userdata [userid fields]
-  (if (empty? fields)
-    (into {} (.toMap (ensure/ensure-user userid)))
-    (select-keys (into {} (.toMap (ensure/ensure-user userid)))
-                 fields)))
+;;; userdata [userid] => user-map
+(defn userdata [userid]
+  (into {} (.toMap (ensure/ensure-user userid))))
 
 ;;; (userdata $mikelid)
 ;;; (userdata $mikelid [+name-key+ "id"])
