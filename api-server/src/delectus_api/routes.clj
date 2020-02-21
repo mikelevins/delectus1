@@ -35,6 +35,7 @@
                    {:name "api/collection", :description "Operations on collections"}
                    {:name "api/list", :description "Operations on lists"}]}}}
    
+   ;; the web interface pages
    (context "/" [] :tags ["/"]
 
             (GET "/" req
@@ -42,6 +43,7 @@
                  :summary "The Delectus home page"
                  (handlers/landing)))
 
+   ;; the REST API
    (context "/api/user" [] :tags ["api/user"]
 
             (POST "/authenticate" req
