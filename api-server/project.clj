@@ -12,12 +12,15 @@
                  [buddy/buddy-hashers "1.4.0"]
                  ;; Couchbase Java client
                  [com.couchbase.client/java-client "2.7.9"]
+                 ;; html generation
+                 [hiccup "1.0.5"]
                  ;; http server abstraction
                  [ring "1.8.0"]
+                 [ring-cors "0.1.13"]
                  [ring/ring-json "0.5.0"]
                  ;; time utilities
-                 [tick "0.4.21-alpha"]
-                 ;; route debuggin
+                 [clj-time "0.15.2"]
+                 ;; route debugging
                  [tupelo "0.9.175"]]
   :ring {:handler delectus-api.routes/app
          :nrepl {:start? true :port 22022}}

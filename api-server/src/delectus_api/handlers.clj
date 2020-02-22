@@ -1,5 +1,6 @@
 (ns delectus-api.handlers
   (:require
+   [clj-time.core :as t]
    [compojure.api.sweet :refer :all]
    [delectus-api.auth :as auth]
    [delectus-api.api :as api]
@@ -10,10 +11,10 @@
    [delectus-api.identifiers :refer [makeid]]
    [delectus-api.model :as model]
    [delectus-api.schema :as schema]
+   [hiccup.core :refer [html h]]
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
-   [tick.alpha.api :as t]
    )
   (:import
    (com.couchbase.client.java.datastructures.collections CouchbaseArrayList CouchbaseMap)
@@ -70,11 +71,22 @@
 
 (defn authenticate [userid password]
   (with-errors-handled
-    (ok {:token (auth/make-auth-token (api/authenticate userid password))})))
+    (ok {:userid userid
+         :token (auth/make-auth-token (api/authenticate userid password))})))
+
+(defn landing []
+  (header (ok (html [:p "Welcome to Delectus"]))
+          "Content-Type" "text/html"))
 
 (defn login [email password]
   (with-errors-handled
-    (ok {:token (auth/make-auth-token (api/login email password))})))
+    (let [userid (api/userid email)]
+      (ok {:email email :userid userid
+           :token (auth/make-auth-token (api/login email password))}))))
+
+(defn logout [token]
+  (with-errors-handled
+    (ok "Logged out")))
 
 (defn userid [email]
   (with-errors-handled

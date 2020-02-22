@@ -1,5 +1,6 @@
 (ns delectus-api.routes
   (:require
+   [clj-time.core :as t]
    [compojure.api.sweet :refer :all]
    [delectus-api.handlers :as handlers]
    [delectus-api.configuration :as config]
@@ -8,9 +9,9 @@
    [delectus-api.errors :as errors]
    [delectus-api.schema :as schema]
    [ring.handler.dump :refer [handle-dump]]
+   [ring.middleware.cors :refer [wrap-cors]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
-   [tick.alpha.api :as t]
    ))
 
 ;;; TODO:
@@ -22,40 +23,35 @@
 ;;; Review the API endpoints; some may be better expressed as
 ;;; different REST verbs
 
-(def app
+(def router
   (api
    {:swagger
-    {:ui "/"
+    {:ui "/api"
      :spec "/swagger.json"
-     :data {:info {:version "0.0.2"
+     :data {:info {:version "0.2.0"
                    :title "Delectus-api"
                    :description "The Delectus 2 Database API"}
-            :tags [{:name "api/diagnostic", :description "Information about the server"}
-                   {:name "api/user", :description "Operations on user accounts"}
+            :tags [{:name "api/user", :description "Operations on user accounts"}
                    {:name "api/collection", :description "Operations on collections"}
                    {:name "api/list", :description "Operations on lists"}]}}}
-
-   (context "/api/diagnostic" [] :tags ["api/diagnostic"]
-
-            (GET "/echo" req
-                 :return s/Str
-                 :summary "echoes the request"
-                 (handle-dump req)))
    
+   ;; the web interface pages
+   (context "/" [] :tags ["/"]
+
+            (GET "/" req
+                 :return s/Str
+                 :summary "The Delectus home page"
+                 (handlers/landing)))
+
+   ;; the REST API
    (context "/api/user" [] :tags ["api/user"]
 
             (POST "/authenticate" req
                   :body [{:keys [userid password]} schema/AuthenticationRequest]
-                  :return {:token s/Str}
+                  :return {:userid s/Str :token s/Str}
                   :summary "authenticates a Delectus user"
                   (handlers/authenticate userid password))
-
-            (POST "/login" req
-                  :body [{:keys [email password]} schema/LoginRequest]
-                  :return {:token s/Str}
-                  :summary "Logs in a user by email address"
-                  (handlers/login email password))
-
+            
             (GET "/userid/:email" req
                  :path-params [email :- s/Str]
                  :return s/Str
@@ -71,10 +67,10 @@
    (context "/api/collection" [] :tags ["api/collection"]
 
             (GET "/collections/:userid" req
-                  :path-params [userid :- s/Str]
-                  :return [schema/CollectionMap]
-                  :summary "Returns the user's collections"
-                  (handlers/collections userid []))
+                 :path-params [userid :- s/Str]
+                 :return [schema/CollectionMap]
+                 :summary "Returns the user's collections"
+                 (handlers/collections userid []))
 
             (POST "/collections" req
                   :body-params [userid :- s/Str
@@ -94,9 +90,9 @@
                   :body-params [userid :- s/Str
                                 collectionid :- s/Str
                                 {fields :- [s/Str] []}]
-                 :return schema/CollectionMap
-                 :summary "Returns selected fields of the identified collection"
-                 (handlers/collection-with-id userid collectionid fields))
+                  :return schema/CollectionMap
+                  :summary "Returns selected fields of the identified collection"
+                  (handlers/collection-with-id userid collectionid fields))
 
             (GET "/collection_name/:userid/:collectionid" req
                  :path-params [userid :- s/Str collectionid :- s/Str]
@@ -160,9 +156,9 @@
                   :body-params [userid :- s/Str
                                 collectionid :- s/Str
                                 {fields :- [s/Str] []}]
-                 :return [schema/ListMap]
-                 :summary "Returns selected fields of the collection's lists"
-                 (handlers/collection-lists userid collectionid fields)))
+                  :return [schema/ListMap]
+                  :summary "Returns selected fields of the collection's lists"
+                  (handlers/collection-lists userid collectionid fields)))
 
    (context "/api/list" [] :tags ["api/list"]
 
@@ -364,20 +360,20 @@
 
             
             (POST "/delete_list_item/:userid/:listid/:itemid" req
-                 :path-params [userid :- s/Str
-                               listid :- s/Str
-                               itemid :- s/Str]
-                 :return s/Str
-                 :summary "Marks the identified item deleted"
-                 (handlers/delete-list-item userid listid itemid))
+                  :path-params [userid :- s/Str
+                                listid :- s/Str
+                                itemid :- s/Str]
+                  :return s/Str
+                  :summary "Marks the identified item deleted"
+                  (handlers/delete-list-item userid listid itemid))
             
             (POST "/undelete_list_item/:userid/:listid/:itemid" req
-                 :path-params [userid :- s/Str
-                               listid :- s/Str
-                               itemid :- s/Str]
-                 :return s/Str
-                 :summary "Marks the identified item not deleted"
-                 (handlers/undelete-list-item userid listid itemid))
+                  :path-params [userid :- s/Str
+                                listid :- s/Str
+                                itemid :- s/Str]
+                  :return s/Str
+                  :summary "Marks the identified item not deleted"
+                  (handlers/undelete-list-item userid listid itemid))
 
             (GET "/list_item_deleted/:userid/:listid/:itemid" req
                  :path-params [userid :- s/Str
@@ -408,3 +404,7 @@
             
             )))
 
+(def app
+  (wrap-cors router
+             :access-control-allow-origin [#".*"]
+             :access-control-allow-methods [:get :put :post :delete]))

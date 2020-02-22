@@ -1,5 +1,7 @@
 (ns delectus-api.api
   (:require
+   [clj-time.core :as t]
+   [clj-time.local :refer [local-now]]
    [clojure.pprint :as pp]
    [compojure.api.sweet :refer :all]
    [delectus-api.auth :as auth]
@@ -15,7 +17,6 @@
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
-   [tick.alpha.api :as t]
    )
   (:import
    (com.couchbase.client.core CouchbaseException)
@@ -71,12 +72,9 @@
                       {:cause :user-not-found
                        :email email}))))
 
-;;; userdata [userid fields] => user-map
-(defn userdata [userid fields]
-  (if (empty? fields)
-    (into {} (.toMap (ensure/ensure-user userid)))
-    (select-keys (into {} (.toMap (ensure/ensure-user userid)))
-                 fields)))
+;;; userdata [userid] => user-map
+(defn userdata [userid]
+  (into {} (.toMap (ensure/ensure-user userid))))
 
 ;;; (userdata $mikelid)
 ;;; (userdata $mikelid [+name-key+ "id"])

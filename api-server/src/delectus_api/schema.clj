@@ -49,6 +49,9 @@
   {:email s/Str
    :password s/Str})
 
+(s/defschema LogoutRequest
+  {:token s/Str})
+
 (s/defschema NewCollectionRequest
   {:userid s/Str
    :name s/Str})
