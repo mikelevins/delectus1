@@ -41,7 +41,12 @@
             (GET "/" req
                  :return s/Str
                  :summary "The Delectus home page"
-                 (handlers/landing)))
+                 (handlers/landing))
+
+            (GET "/login" req
+                 :return s/Str
+                 :summary "The Delectus login page"
+                 (handlers/login)))
 
    ;; the REST API
    (context "/api/user" [] :tags ["api/user"]

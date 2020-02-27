@@ -2,8 +2,8 @@
   (:require
    [clj-time.core :as t]
    [compojure.api.sweet :refer :all]
-   [delectus.auth :as auth]
    [delectus.api :as api]
+   [delectus.auth :as auth]
    [delectus.configuration :as config]
    [delectus.constants :refer :all]
    [delectus.couchio :as couchio]
@@ -12,6 +12,8 @@
    [delectus.model :as model]
    [delectus.schema :as schema]
    [hiccup.core :refer [html h]]
+   [hiccup.element :only [link-to]]
+   [hiccup.form :refer :all]
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
    [schema.core :as s]
@@ -77,14 +79,28 @@
 (defn landing []
   (header (ok (html
                [:h1 "Delectus 2"]
-               [:a {:href "/api"} "Rest API"]))
+               [:p [:a {:href "/login"} "Log in"]]
+               [:p [:a {:href "/api"} "Rest API"]]))
           "Content-Type" "text/html"))
 
-(defn login [email password]
-  (with-errors-handled
-    (let [userid (api/userid email)]
-      (ok {:email email :userid userid
-           :token (auth/make-auth-token (api/login email password))}))))
+;; (defn login [email password]
+;;   (with-errors-handled
+;;     (let [userid (api/userid email)]
+;;       (ok {:email email :userid userid
+;;            :token (auth/make-auth-token (api/login email password))}))))
+
+(defn login []
+  (html
+   [:div {:class "well"}
+    [:form {:novalidate "" :role "form"}
+     [:div [:p "Log in to Delectus 2"]]
+     [:div {:class "form-group"}
+      (label {:class "control-label"} "email" "Email: ")
+      (email-field {:class "form-control" :placeholder "Email"} "user.email")]
+     [:div {:class "form-group"}
+      (label {:class "control-label"} "password" "Password: ")
+      (password-field {:class "form-control" :placeholder "Password"} "user.password")]]
+    [:p [:a {:href "/"} "Delectus Home"]]]))
 
 (defn logout [token]
   (with-errors-handled
