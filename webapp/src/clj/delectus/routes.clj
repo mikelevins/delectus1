@@ -1,13 +1,13 @@
-(ns delectus-api.routes
+(ns delectus.routes
   (:require
    [clj-time.core :as t]
    [compojure.api.sweet :refer :all]
-   [delectus-api.handlers :as handlers]
-   [delectus-api.configuration :as config]
-   [delectus-api.constants :refer :all]
-   [delectus-api.couchio :as couchio]
-   [delectus-api.errors :as errors]
-   [delectus-api.schema :as schema]
+   [delectus.handlers :as handlers]
+   [delectus.configuration :as config]
+   [delectus.constants :refer :all]
+   [delectus.couchio :as couchio]
+   [delectus.errors :as errors]
+   [delectus.schema :as schema]
    [ring.handler.dump :refer [handle-dump]]
    [ring.middleware.cors :refer [wrap-cors]]
    [ring.util.http-response :refer :all]
@@ -29,8 +29,8 @@
     {:ui "/api"
      :spec "/swagger.json"
      :data {:info {:version "0.2.0"
-                   :title "Delectus-api"
-                   :description "The Delectus 2 Database API"}
+                   :title "Delectus API"
+                   :description "Delectus 2 [Home](/#/)"}
             :tags [{:name "api/user", :description "Operations on user accounts"}
                    {:name "api/collection", :description "Operations on collections"}
                    {:name "api/list", :description "Operations on lists"}]}}}

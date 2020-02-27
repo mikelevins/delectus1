@@ -1,13 +1,13 @@
-(ns delectus-api.datatools
+(ns delectus.datatools
   (:require [clojure.data.csv :as csv]
             [clojure.java.io :as io]
-            [delectus-api.configuration :as config]
-            [delectus-api.constants :refer :all]
-            [delectus-api.couchio :as couchio]
-            [delectus-api.ensure :refer :all]
-            [delectus-api.errors :refer :all]
-            [delectus-api.identifiers :refer [makeid]]
-            [delectus-api.model :as model]))
+            [delectus.configuration :as config]
+            [delectus.constants :refer :all]
+            [delectus.couchio :as couchio]
+            [delectus.ensure :refer :all]
+            [delectus.errors :refer :all]
+            [delectus.identifiers :refer [makeid]]
+            [delectus.model :as model]))
 
 (defn canonicalize-csv-field [field]
   (if (= "#f" field)

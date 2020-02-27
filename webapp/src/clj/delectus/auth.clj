@@ -1,13 +1,13 @@
-(ns delectus-api.auth
+(ns delectus.auth
   (:require
    [buddy.core.nonce :as nonce]
    [buddy.hashers :as hashers]
    [buddy.sign.jwt :as jwt]
    [clj-time.core :as t]
    [clj-time.local :refer [local-now]]
-   [delectus-api.constants :refer :all]
-   [delectus-api.couchio :as couchio]
-   [delectus-api.model :as model]
+   [delectus.constants :refer :all]
+   [delectus.couchio :as couchio]
+   [delectus.model :as model]
    ))
 
 

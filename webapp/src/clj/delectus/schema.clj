@@ -1,6 +1,6 @@
-(ns delectus-api.schema
+(ns delectus.schema
   (:require
-   [delectus-api.constants :refer :all]
+   [delectus.constants :refer :all]
    [schema.core :as s]
    ))
 

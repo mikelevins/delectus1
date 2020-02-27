@@ -1,12 +1,12 @@
-(ns delectus-api.couchio
+(ns delectus.couchio
   (:require
    [clojure.data.json :as json]
    [clojure.edn :as edn]
    [clojure.pprint :refer [cl-format]]
-   [delectus-api.configuration :as config]
-   [delectus-api.constants :refer :all]
-   [delectus-api.errors :as errors]
-   [delectus-api.identifiers :refer [makeid]])
+   [delectus.configuration :as config]
+   [delectus.constants :refer :all]
+   [delectus.errors :as errors]
+   [delectus.identifiers :refer [makeid]])
   (:import
    (com.couchbase.client.core CouchbaseException)
    (com.couchbase.client.java CouchbaseBucket)

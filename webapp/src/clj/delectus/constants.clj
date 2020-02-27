@@ -1,4 +1,4 @@
-(ns delectus-api.constants)
+(ns delectus.constants)
 
 ;;; ---------------------------------------------------------------------
 ;;; bucket names

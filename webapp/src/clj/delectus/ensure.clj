@@ -1,8 +1,8 @@
-(ns delectus-api.ensure
+(ns delectus.ensure
   (:require
-   [delectus-api.configuration :as config]
-   [delectus-api.constants :refer :all]
-   [delectus-api.couchio :as couchio]
+   [delectus.configuration :as config]
+   [delectus.constants :refer :all]
+   [delectus.couchio :as couchio]
    )
   (:import
    (com.couchbase.client.java.document JsonDocument)))

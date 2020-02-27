@@ -1,4 +1,4 @@
-(ns delectus-api.utilities)
+(ns delectus.utilities)
 
 ;;; contains-value? [a-map pred] => Boolean
 ;;; ---------------------------------------------------------------------

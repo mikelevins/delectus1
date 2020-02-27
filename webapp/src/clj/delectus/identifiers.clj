@@ -1,4 +1,4 @@
-(ns delectus-api.identifiers
+(ns delectus.identifiers
   (:import
    (java.nio ByteBuffer)
    (java.util Base64 UUID)))

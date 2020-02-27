@@ -1,7 +1,7 @@
-(ns delectus-api.configuration
+(ns delectus.configuration
   (:require 
    [aero.core :as aero]
-   [delectus-api.constants :as constants])
+   [delectus.constants :as constants])
   (:import
    (java.lang System)
    (com.couchbase.client.java CouchbaseCluster)))

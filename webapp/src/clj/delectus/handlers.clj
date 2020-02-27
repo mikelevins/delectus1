@@ -1,16 +1,16 @@
-(ns delectus-api.handlers
+(ns delectus.handlers
   (:require
    [clj-time.core :as t]
    [compojure.api.sweet :refer :all]
-   [delectus-api.auth :as auth]
-   [delectus-api.api :as api]
-   [delectus-api.configuration :as config]
-   [delectus-api.constants :refer :all]
-   [delectus-api.couchio :as couchio]
-   [delectus-api.errors :as errors]
-   [delectus-api.identifiers :refer [makeid]]
-   [delectus-api.model :as model]
-   [delectus-api.schema :as schema]
+   [delectus.auth :as auth]
+   [delectus.api :as api]
+   [delectus.configuration :as config]
+   [delectus.constants :refer :all]
+   [delectus.couchio :as couchio]
+   [delectus.errors :as errors]
+   [delectus.identifiers :refer [makeid]]
+   [delectus.model :as model]
+   [delectus.schema :as schema]
    [hiccup.core :refer [html h]]
    [ring.handler.dump :refer [handle-dump]]
    [ring.util.http-response :refer :all]
@@ -75,7 +75,9 @@
          :token (auth/make-auth-token (api/authenticate userid password))})))
 
 (defn landing []
-  (header (ok (html [:p "Welcome to Delectus"]))
+  (header (ok (html
+               [:h1 "Delectus 2"]
+               [:a {:href "/api"} "Rest API"]))
           "Content-Type" "text/html"))
 
 (defn login [email password]

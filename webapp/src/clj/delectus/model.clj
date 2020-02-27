@@ -1,15 +1,15 @@
-(ns delectus-api.model
+(ns delectus.model
   (:require
    [buddy.hashers :as hashers]
    [clojure.pprint :refer [cl-format]]
-   [delectus-api.configuration :as config]
-   [delectus-api.constants :refer :all]
-   [delectus-api.couchio :as couchio]
-   [delectus-api.ensure :as ensure]
-   [delectus-api.errors :as errors]
-   [delectus-api.identifiers :refer [makeid]]
-   [delectus-api.couchio :as couchio]
-   [delectus-api.utilities :as utils])
+   [delectus.configuration :as config]
+   [delectus.constants :refer :all]
+   [delectus.couchio :as couchio]
+   [delectus.ensure :as ensure]
+   [delectus.errors :as errors]
+   [delectus.identifiers :refer [makeid]]
+   [delectus.couchio :as couchio]
+   [delectus.utilities :as utils])
   (:import
    (com.couchbase.client.java.document JsonDocument)
    (com.couchbase.client.java.query N1qlQuery)))

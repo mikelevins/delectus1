@@ -1,4 +1,4 @@
-(ns delectus-api.errors)
+(ns delectus.errors)
 
 ;;; ---------------------------------------------------------------------
 ;;; general errors
