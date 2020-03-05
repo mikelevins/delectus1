@@ -11,6 +11,7 @@
                  ;; password-hashing library
                  [buddy/buddy-hashers "1.4.0"]
                  ;; Couchbase Java client
+                 [ch.qos.logback/logback-classic "1.2.3"]
                  [com.couchbase.client/java-client "2.7.9"]
                  ;; html generation
                  [hiccup "1.0.5"]
