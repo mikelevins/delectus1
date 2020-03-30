@@ -1,3 +1,12 @@
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          sqlite.lisp
+;;;; Project:       delectus 2
+;;;; Purpose:       basic sqlite utilities for delectus
+;;;; Author:        mikel evins
+;;;; Copyright:     2010-2020 by mikel evins
+;;;;
+;;;; ***********************************************************************
 
 (in-package #:delectus)
 

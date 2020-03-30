@@ -1,12 +1,12 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          package.lisp
+;;;; Name:          delectus-file.lisp
 ;;;; Project:       delectus 2
-;;;; Purpose:       delectus package definitions
+;;;; Purpose:       model-specific operations on delectus sqlite files
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2010-2020 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(defpackage #:delectus
-  (:use #:cl #:sqlite))
+(in-package #:delectus)
+

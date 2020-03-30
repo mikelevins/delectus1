@@ -1,4 +1,12 @@
-;;;; delectus.lisp
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          csv.lisp
+;;;; Project:       delectus 2
+;;;; Purpose:       I/O operations on csv files
+;;;; Author:        mikel evins
+;;;; Copyright:     2010-2020 by mikel evins
+;;;;
+;;;; ***********************************************************************
 
 (in-package #:delectus)
 

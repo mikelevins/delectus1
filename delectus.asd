@@ -1,3 +1,13 @@
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          delectus.asd
+;;;; Project:       delectus 2
+;;;; Purpose:       delectus system definition
+;;;; Author:        mikel evins
+;;;; Copyright:     2010-2020 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
 ;;;; delectus.asd
 
 (asdf:defsystem #:delectus
@@ -11,8 +21,8 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "utils")
-                                     (:file "read-csv")
+                                     (:file "csv")
                                      (:file "sqlite")
-                                     (:file "delectus")))))
+                                     (:file "delectus-file")))))
 
 ;;; (asdf:load-system :delectus)
