@@ -54,7 +54,7 @@
 ;;; (op $columns (new-identifier) $nodeid1 (incf $revision-counter) nil nil nil $columns)
 ;;; (op $item (new-identifier) $nodeid1 (incf $revision-counter) (new-identifier) nil nil (fields 0 1 2))
 
-(defparameter $test-csv-file "/tmp/delectus-test.csv")
+(defparameter $test-csv-file "/Users/mikel/Workshop/data/delectus/delectus-test.csv")
 
 (defun newid ()(new-identifier))
 (defun increv ()(incf $revision-counter))
@@ -150,7 +150,7 @@ order by revision,origin asc;
 
 This query returns the correct values; that is, when there are two
 values with the same revision number, it returns the one with the
-higher-sorted origin. It's slow without indexes (7.5 sec on 387528 rows).
+higher-sorted origin. 
 
 SELECT a.itemorder,a.`ID8c2bf9bb_5baa_4848_9967_70800561ccea`, a.revision, a.origin
   FROM (SELECT itemid, itemorder, revision, `ID8c2bf9bb_5baa_4848_9967_70800561ccea`, origin,
@@ -158,5 +158,9 @@ SELECT a.itemorder,a.`ID8c2bf9bb_5baa_4848_9967_70800561ccea`, a.revision, a.ori
           FROM DelectusTest WHERE type="item") a
  WHERE a.rank = 1 order by a.itemorder;
 
+Timings:
+- 7.5 sec on 387528 rows
+- 2.1 sec on 100000 rows
+- 1.1 sec on 50000 rows
 
 |#
