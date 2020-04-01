@@ -1,0 +1,61 @@
+= Delectus 2 Storage in SQLite Files
+
+Delectus 2 stores lists one SQLite files, one list per file. This document explains how that data is organized and how Delectus operates on files to create , maintain, and synchronize data.
+
+== Storage concepts
+
+=== Lists
+
+The Delectus data design is fairly simple. It stores *lists*. A *list* is a named sequences of *items*. An *item* is a unique sequence of *fields*. Each *field* contains a *value*.
+
+All of the items in a given list have the same number of fields, organized in named *columns*. The combination of an item ID and a column ID uniquely identifies one field--and therefore one value--of the list.
+
+A *value* may be an instance of any of
+
+- `null`
+- `boolean`
+- `number`
+- `text`
+
+Users may create lists, items, and columns at any time. They may rename a list or a column at any time, and may delete any of these objects at any time.
+
+==== Columns
+
+A column stores more than
+
+==== Items
+==== Revisions
+==== Synchronization
+==== UUIDs
+
+== Ops
+
+Delectus files store data as an ordered sequence of *ops*. An *op* is a record that asserts that some specific data exists in the list. Delectus updates the state of a list by adding new ops to it; it never removes data from a list file. Delectus files are therefore structured as *append-only logs*. This means that a Delectus file can never lose data because of merge conflict or a user error.
+
+An op may create a new object, or it may update an existing one. An update does not affect the data previously stored for the affected object; it simply asserts new state for that object. The current state of the list document is therefore the combination of all the latest versions of each distinct object in the file.
+
+For example, suppose you delete the "Co-star" column from a Delectus list. t disappears from your view of the list document in the Delectus application, but not data is removed from the file. Instead, Delectus adds a new `columns` op to the log, with the "Co-star" column marked deleted. It disappears from the UI because Delectus determines the current state of the document by collecting the latest versions of all distinct objects. In the latest version of the `columns` object, the "Co-star" column is marked deleted, so it doesn't appear (unless you tell Delectus to display deleted items, or tell it to display all versions of an object).
+
+The next sections describe the four Delectus ops in greater detail.
+
+=== `listname`
+=== `columns`
+=== `item`
+=== `sync`
+
+== Concrete data layout
+=== Data types used
+==== text
+===== Sorting numerically
+==== uuid
+==== integer
+==== double
+==== JSON
+
+=== SQLite tables
+
+==== `delectus`
+==== `peers`
+==== `list`
+
+=== The sync process
