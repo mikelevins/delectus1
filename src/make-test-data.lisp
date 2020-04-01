@@ -1,11 +1,17 @@
 
 (in-package #:delectus)
 
-;;; some tools for generating data for SQLite
+;;; ---------------------------------------------------------------------
+;;; ABOUT
+;;; ---------------------------------------------------------------------
+;;; tools for generating data for SQLite
+;;;   for usage see: docs/howto-testdata.md
 ;;; the idea is to generate enough data to simulate an op log from two
 ;;; different nodes, write it out as CSV, import it into a SQLite
-;;; file, then do some SQL queries to see if I can get the desired
-;;; results
+;;; file for SQL-querytesting
+
+;;; test-data output path
+(defparameter $test-csv-file "/Users/mikel/Workshop/data/delectus/delectus-test.csv")
 
 ;;; nodes
 (defparameter $nodeid1 "IDa15870d5_cc96_4031_b33b_f83d382b455a")
@@ -27,14 +33,16 @@
 (defparameter $col1-2 (make-column "NODE ID" :id $colid1 :deleted t :order 20.0 :type "text" :sort nil))
 (defparameter $colid2 "ID8c2bf9bb_5baa_4848_9967_70800561ccea")
 (defparameter $col2 (make-column "Word" :id $colid2 :deleted nil :order 30.0 :type "text" :sort nil))
-(defparameter $columns1 (list $col0 $col1-1 $col2))
-(defparameter $columns2 (list $col0 $col1-2 $col2))
+(defparameter $colid3 "ID483536ef_a62f_420a_9f1d_36410967169e")
+(defparameter $col3 (make-column "Number" :id $colid3 :deleted nil :order 30.0 :type "text" :sort nil))
+(defparameter $columns1 (list $col0 $col1-1 $col2 $col3))
+(defparameter $columns2 (list $col0 $col1-2 $col2 $col3))
 
 ;;; words
 ;;; we'll build a list of words randomly chosen from /usr/share/dict
 (defparameter $words
   (let ((arr (make-array 235886)))
-    (with-open-file (in "/usr/share/dict/web2")
+    (with-open-file (in "/usr/share/dict/words")
       (loop for word = (read-line in nil nil nil) then (read-line in nil nil nil)
          counting word into i
          while word do (setf (elt arr (1- i)) word)))
@@ -48,13 +56,8 @@
   (append (list type opid origin revision itemid itemorder deleted name)
           columns))
 
-(defun fields (f0 f1 f2)
-  (list f0 f1 f2))
-
-;;; (op $columns (new-identifier) $nodeid1 (incf $revision-counter) nil nil nil $columns)
-;;; (op $item (new-identifier) $nodeid1 (incf $revision-counter) (new-identifier) nil nil (fields 0 1 2))
-
-(defparameter $test-csv-file "/Users/mikel/Workshop/data/delectus/delectus-test.csv")
+(defun fields (f0 f1 f2 f3)
+  (list f0 f1 f2 f3))
 
 (defun newid ()(new-identifier))
 (defun increv ()(incf $revision-counter))
@@ -111,56 +114,19 @@
                      (origin $nodeid1)
                      (revision (increv))
                      (itemid (new-identifier))
-                     (itemorder (float i))
+                     (itemorder (incitem))
                      (deleted nil)
                      (name nil)
-                     (vals (list itemid $nodeid1 word))
+                     (vals (list itemid $nodeid1 word itemorder))
                      (fields (op type opid origin revision itemid itemorder deleted name vals)))
                 (fare-csv:write-csv-line fields out)
                 ;; if i is odd, now write the node2 version
                 (when (oddp i)
                   (let* ((origin $nodeid2)
-                         (vals (list itemid $nodeid2 (string-upcase word)))
+                         (vals (list itemid $nodeid2 (string-upcase word) itemorder))
                          (fields (op type opid origin revision itemid itemorder deleted name vals)))
                     (fare-csv:write-csv-line fields out)))))
            'done))))
 
 ;;; (time (write-test-csv $test-csv-file))
 
-;;; Notes
-#|
-
-SQL to create the schema:
-
-create table DelectusTest (
-  `type`, opid, origin, revision INT, 
-   itemid, itemorder DOUBLE, deleted, name, 
-   `ID57a71a3d_9704_456c_aeeb_50b17c4658c2` text, 
-   `IDe37b7018_35d2_43c4_8159_e09c3ac9bb9c` text, 
-   `ID8c2bf9bb_5baa_4848_9967_70800561ccea` text);
-
-
-SQL that returns all items sorted by revision, then origin:
-
-select `ID8c2bf9bb_5baa_4848_9967_70800561ccea`, revision, origin 
-from DelectusTest 
-where `type`="item" 
-order by revision,origin asc;
-
-
-This query returns the correct values; that is, when there are two
-values with the same revision number, it returns the one with the
-higher-sorted origin. 
-
-SELECT a.itemorder,a.`ID8c2bf9bb_5baa_4848_9967_70800561ccea`, a.revision, a.origin
-  FROM (SELECT itemid, itemorder, revision, `ID8c2bf9bb_5baa_4848_9967_70800561ccea`, origin,
-               ROW_NUMBER() OVER (PARTITION BY itemid ORDER BY revision, origin DESC) rank
-          FROM DelectusTest WHERE type="item") a
- WHERE a.rank = 1 order by a.itemorder;
-
-Timings:
-- 7.5 sec on 387528 rows
-- 2.1 sec on 100000 rows
-- 1.1 sec on 50000 rows
-
-|#
