@@ -24,7 +24,9 @@
                          ;; the right way to check whether a file is a SQLite file,
                          ;; according to SQLite docs:
                          (execute-non-query db "pragma schema_version"))
-           (condition (c) nil))
+           (condition (c)
+             (declare (ignore c))
+             nil))
          path)))
 
 (defmethod valid-sqlite-file? ((path string))
