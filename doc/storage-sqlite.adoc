@@ -2,6 +2,20 @@
 
 Delectus 2 stores *lists* in SQLite files, one list per file. This document explains how Delectus organizes and stores its data.
 
+== Nodes
+
+Put simply, a *node* is one specific, identifiable place that your list data comes from.
+
+A Delectus *node* is an idetifier that stands for Delectus running on a specific *device* and *user account*. When you create or edit a Delectus list on your computer, the copy of Delectus running on your computer in your account is a node. When you edit the same list on your phone, it's still your list, but you're editing it with a different node.
+
+If someone else logs into your computer on their own account, and they use Delectus, they're working with yet another a different node. Even though it's the same computer and probably the same copy of Delectus, it's a different user account, and that makes it a different node, according to Delectus.
+
+The point of nodes is to enable Delectus to mark each edit with the user and device that it came from, so that it can correctly merge edits from different sources, especially in cases where the same user made two different edits to the same data on different devices.
+
+When you first start Delectus, it generates and records a *node UD* on the device you run it on. If you wipe the device clean and reinstall Delectus, it will install a new node ID. Everything will still work correctly, and you can still use your old Delectus files; Delectus will just think that your new edits are coming from a new node.
+
+A *node ID* is a UUID string in standard format. Delectus uses *time-first UUIDs* for all its IDs. Databases (like SQLite, which Delectus uses to store data) can index and sort time-first UUIDs efficiently, and they sort in order of the time they were created, which makes it easy for us to present list data in time order.
+
 == Ops
 
 === Overview
@@ -272,4 +286,37 @@ A Delectus data file is a SQLite 3 file that contains two tables:
 
 
 === The `*delectus*` table
+
+[cols="1,1,4", options="header"]
+|===
+|SQLite column | SQLite type affinity | description
+
+|`"id"` |`TEXT` | The unique `opid` of this list.
+|`"origin"` |`TEXT` | The unique `opid` of the node where this list was created.
+|`"format"` |`TEXT` | The current version of the Delectus data format used in this file.
+
+|===
+
+
 === The `*list_data*` table
+
+[cols="1,1,4", options="header"]
+|===
+|SQLite column | SQLite type affinity | description
+
+|`optype` | `TEXT` | The name of the op type.
+|`opid` | `TEXT` | The unique `opid` of this op.
+|`origin` | `TEXT` | The unique `opid` of the node that created this op
+|`revision` | `INTEGER` | The integer revision number of this op. Unique per origin, but may be duplicated by ops from different origins.
+|`timestamp` | `TEXT` | An ISO-8601 time string that records the time that the origin created the op (according the the origin's clock). This timestamp is not authoritative, and is used mainly for informative purposes, for the user's benefit.
+|`item` | `TEXT` | The unique `opid` of this item. May be duplicated within a list by updates to the item.
+|`name` | `TEXT` | The user-assigned name of this list. Used only in `listname` ops. The current name of the list is the value of this field in the latest `listname` op.
+|`deleted` | `INTEGER` | A Boolean value that is true if this item is marked deleted, and false if not. Used only in `item` ops.
+|`peer` | `TEXT` | The unique `opid` of a remote node with which this node has successfully completed a `sync` operation. Used only in `sync` ops.
+|`_columnid*_` | `TEXT` | Zero or more SQLite columns representing userdata columns in this list. The label of each SQLite column is in `*columnid*` format.
+
+In a `columns` op, the value in each field is of type `*columndata*`, and represents the attributes of the column in which it appears.
+
+In an `item` op, the value in each field is of type `*fielddata*`, and represents the value of the field in the column of the item in which it appears.
+
+|===
