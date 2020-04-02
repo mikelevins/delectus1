@@ -20,6 +20,7 @@
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
+                                     (:file "version")
                                      (:file "utils")
                                      (:file "identities")
                                      (:file "csv")

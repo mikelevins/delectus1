@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          node.lisp
+;;;; Name:          version.lisp
 ;;;; Project:       delectus 2
-;;;; Purpose:       node-specific parameters
+;;;; Purpose:       version numbers
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2010-2020 by mikel evins
 ;;;;
@@ -10,7 +10,5 @@
 
 (in-package #:delectus)
 
-;;; TODO: add a config subsystem and store this value in per-node
-;;; configuration
-
-(defparameter *origin* "I9447d300752b11ea8256d9dd744b5501")
+(defparameter +delectus-version+ "2.0.0d1")
+(defparameter +delectus-format-version+ "2.0")
