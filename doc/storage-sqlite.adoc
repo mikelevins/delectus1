@@ -1,25 +1,36 @@
-= Delectus 2 Storage in SQLite Files
+= Delectus 2 Storage
 
-Delectus 2 stores *lists* in SQLite files, one list per file. This document explains how Delectus organizes and stores list data in SQLite databases.
+Delectus 2 stores *lists* in SQLite files, one list per file. This document explains how Delectus organizes and stores its data.
 
 == Ops
 
 === Overview
 
-Delectus stores list data as an append-only log of *ops*. An *op* is a tuple of values in a specified format that represents both an instruction to update the state of a list, and a concrete representation of the list's new state. A Delectus file is a log of ops, plus some metadata that identifies the individual list and the version of the file format.
+There are four kinds of list data in a Delectus file:
+
+. `*field:*` A container for a single simple value: a `null`, `boolean`, `number`, or `text`
+. `*item:*` A row of fields
+. `*column:*` A named column of fields in items
+. `*list:*` A named collection of items and columns
+
+Delectus stores one list in each file.
+
+A Delectus file stores list data as an append-only log of *ops*. An *op* is a tuple of values in a specified format that represents both an instruction to update the state of a list, and a concrete representation of the list's new state. When you make a change to a list file, Delectus creates a corresponding op and checks its validity. If it checks out, Delectus adds it to the log of ops, which updates the state of the list.
+
+The Delectus user interface constructs the user's view of the list by querying the log of ops for the latest version of each distinct data element.
 
 === Op format
 
 There are four kinds of ops:
 
 . `*listname:*` Assert the name of the list
-. `*columns:*` Assert the lit's columns
+. `*columns:*` Assert the list's columns
 . `*item:*` Assert an item in the list
-. `*sync:*` Assert that we successfully synced with another device's copy of the list
+. `*sync:*` Assert that we successfully synced with another device's copy of the list. Delectus uses recorded `sync` ops to limit the data that it must exchange in order to bring two different copies of the same list into congruence.
 
-All four op type share a common format, shown here:
+All four op types share a common format, shown here:
 
-[cols="1,1,3", options="header"]
+[cols="1,2,4", options="header"]
 .The *op* data format
 |===
 |field | type | description
@@ -28,17 +39,44 @@ All four op type share a common format, shown here:
 |`*opid*` | `opid` | The unique ID of this op.
 |`*origin*` | `opid` | The device where this op originated.
 |`*revision*` | `integer` | The revision number of this op.
+|`*timestamp*` | `text` | An ISO-8601 time string recording the moment this op was created (according to its origin).
 |`*item*` | `opid` | In `item`, the unique ID of this item.
 |`*name*` | `text` | In `listname`, the new name of this list.
 |`*deleted*` | `boolean` | In `item`, whether this item is deleted.
 |`*peer*` | `opid` | In `sync`, the remote device with which we synced.
-|`*columnid**` | `[columnid]*` | Zero or more `column` objects. The number of `columnid` objects is equal to the number of columns in this list. In `columns`, each is a JSON object giving the attributes of one column. In `item`, each is a value, giving the value of the field in each column.
+|`*columnid**` | `[columndata \| fielddata]*` | Zero or more `columndata` or `value` objects. In a `columns` op,  each `columnid` field contains a `columndata` object. In `item`, it contains a `fielddata` value.
 
 |===
 
-Not all ops use all  fields. In fact, the only fields used by all ops are `optype`, `opid`, `origin`, and `revision`. All ops use the same data format, though, so that all can be asserted into the same SQLite table.
+Not all ops use all  fields. In fact, the only fields used by all ops are `optype`, `opid`, `origin`, `revision`, and `timestamp`. All ops use the same data format, though, so that all can be asserted into the same SQLite table. That means that certain fields are unused in some ops.
 
-*_columnid*_* here stands for any number of *userdata colums*. A user may create a new data column at any time. That column's label is a text string in `*columnid*` format. Users normally never see the `columnid` string; instead, they see only the `name` and other attributes of the column's `*columndata*` attributes.
+Ops store `null` in unused fields.
+
+The `*columnid**` field is different from the others. The other fields have the same labels and the same types in every op and in every list. Delectus uses them to maintain the consistency of data, to synchronize data between copies of a list, and to support user-interface features. We call these *metadata columns*. Users do not interact with them directly.
+
+The `*columnid**` field, on the other hand, represents a variable number of *userdata columns*, each with a different label. These columns are created by users to store their data. There may be any number of them in a list.
+
+The label of each userdata column is a string in `*columnid*` format. A `*columnid*` string starts as a type-first UUID string, but Delectus modifies it so that it can be used without escaping as a SQLite column label. It removes the hyphens from the UUID string, and adds an uppercase `C` to the start of the string.
+
+==== `*columnid*`
+
+A `*columnid*` string looks something like this:
+
+    "C9167655e627a4794a756953591ea1e0e"
+
+This is the type of string that Delectus uses for labels of userdata columns.
+
+Users can create as many columns as they like. That means that there may be any number of `*columnid*` fields in an op, each one with its own `*columnid*` label. The sole restriction is that the number of `*columnid*` fields in the op must be equal to the number of userdata columns in the file after the op is appended to the log.
+
+==== Motivation for `*columnid*` fields
+
+Why not simply name userdata columns the same way we name metadata columns?
+
+Because users may create any number of columns with any name you can imagine, and they may create them concurrently on two or more different devices. Delectus has to be able to ensure that it can merge op logs from any number of different devices in such a way that all the devices end up with the same consistent results. It has to be able to combine any number of columns, created independently of each other, and ensure that no data is ever lost because of naming collisions.
+
+Delectus therefore automatically generates column labels for userdata columns, using UUIDs to ensure that no two userdata columns ever have the same label. Meanwhile, the user normally never sees the `columnid` label. Instead, users see a name that they give to the column, and which is stored along with other column metadata in a `columndata` object stored in the column itself, in a `columns` op.
+
+Besides making it possible to support concurrent editing on different devices, managing userdata columns this way means that we don't have to impose any restrictions on the names users want to use for their columns--well, except for the restriction that each column within a list has a unique name. That restriction is for the sake of the user's sanity, though, not because of any technical limitation. Delectus could just as easily support multiple userdata columns with the same user-assigned name, but that would be a way for users to confuse themselves about their own data, so Delectus forbids it.
 
 === Format of data within ops
 
@@ -81,50 +119,35 @@ A `*columndata*` object is a JSON object that represents the attributes of a *us
 
 |`id`
 |`columnid`
-|The column's unique ID
+|The column's unique ID. This is the `columnid` string used as the SQLite column's label.
 
 |`name`
 |`string`
-|The user-defined name of the column; unique in a given list
+|The user-defined name of the column; unique per list.
 
 |`type`
 |`boolean`, `number`, or `text`
-|Used by Delectus to control sorting and presentation
+|The expected type of data in the column. Used by Delectus to control sorting and presentation.
 
 |`order`
 |`double`
-| User-defined order of appearance in the Delectus application; unique in a given list
+| User-defined order of appearance in the Delectus application; unique per list.
 
 |`sort`
 |`null` or one of the strings `asc` or `desc`
-|Whether the list's items are sorted on this column (`null` if not), and in which direction (`asc` or `desc`). Exactly one column in a list is the sort column.
+|`null` if Delectus should not sort the list on this column. `"ascending"` or `"asc"` if it should sort the list in ascending order by this column; `"descending"` or `"desc"` if it should sort in descending order. Exactly one column in each list has a non-null value on this attribute.
 
 |`title`
 |`boolean`
-|Whether this column is used as the *title field* of the item in the Delectus UI, Exactly one column in a list is the title column.
+|If true, then this column is the *title column* of the list. That means it gets special presentation in some views of the list data. Delectus presents the title column more prominently. In compact views (for example on phones), the title column may be the only column the user sees in the default view. At most one column in a list is the title column. If there is no designated title column then Delectus chooses one arbitrarily.
 
 |`subtitle`
 |`boolean`
-|Whether this column is used as the *subtitle field* of the item in the Delectus UI. At most one column in a list is the subtitle column.
+|If true, then this column is the *subtitle column* of the list. That means it gets special presentation in some views of the list data. Delectus uses the subtitle column to show supplemental information in some compact views. At most one column in a list is the subtitle column. If there is no designated subtitle column then Delectus does not present the subtitle view.
 
 |`deleted`
 |`boolean`
-|Whether this column is marked deleted.
-
-|===
-
-
-==== columnid
-
-[cols="1,3", options="header"]
-.*The `columnid` type
-|===
-|type name | description
-
-|`columnid`
-|A text string of the form `"Cxxxxxxxxxxxxxxxx"`. The characters after the 'C' are the text of a *time-first UUID string*, but with hyphens removed.
-
-Delectus uses this format so that `columnid` values may be used without escaping to label the SQLite columns that represent Delectus columns.
+|Whether this column is marked deleted. Columns marked deleted are not shown in the Delectus UI unless users specifically request it.
 
 |===
 
@@ -134,16 +157,16 @@ Delectus uses this format so that `columnid` values may be used without escaping
 Delectus defines four types of ops:
 
 . `*listname*` asserts the name of the current list
-. `*columns*` asserts the current values of all column attributes
-. `*item*` asserts the vaules of all fields of a specified list item
-. `*sync*` asserts that a successful *sync* operation was performed
+. `*columns*` asserts the attributes of the list's columns
+. `*item*` asserts the fields of a specific list item and whether it's currently marked deleted
+. `*sync*` asserts that a *sync* operation has been completed successfully
 
 This section describes each of these ops in greater detail.
 
 ==== listname
-===== *listname* _opid_ _origin_ _name_ _revision_
+===== *listname* _opid_ _origin_ _name_ _revision_ _timestamp_
 
-Asserts the name of the list. The current name of the list is the value of the `name` field in the latest `listname` op. The first op in any Delectus list is `listname`.
+Asserts the name of the list. The current name of the list is the value of the `name` field in the latest `listname` op. The first op in any Delectus list is a `listname`.
 
 
 [cols="1,1,3", options="header"]
@@ -154,6 +177,7 @@ Asserts the name of the list. The current name of the list is the value of the `
 |`*opid*` | `_opid_` | this op's unique ID
 |`*origin*` | `_opid_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
+|`*timestamp*` | `text` | the time of this op's creation
 |`item` | `null` | unused
 |`*name*` | `_text_` | the list's new name
 |`deleted` | `null` | unused
@@ -164,10 +188,13 @@ Asserts the name of the list. The current name of the list is the value of the `
 
 
 ==== columns
-===== *columns* _opid_ _origin_ _revision_ [_columnid_]*
+===== *columns* _opid_ _origin_ _revision_  _timestamp_ [_columnid_]*
 
-Asserts the list's current columns and their attributes. There may be any number of _columnid_ parameters, but their number and attributes must match the state of the Delectus file after the op is asserted. Delectus checks the _columnid_ parameters before asserting the op into its log. If there are fewer columns in the op than in the list file, or if there are other inconsistencies that prevent Delectus from updating the file to reflect the _columnid_ parameters in the op, then Delectus signals an error and rejects the op without changing the file.
+Asserts the list's current columns and their attributes. There may be any number of _columnid_ parameters, but their number and attributes must match the state of the Delectus file after the op is asserted.
 
+Delectus checks the _columnid_ parameters before asserting the op into its log. If there are any inconsistencies that prevent Delectus from updating the file to reflect the _columnid_ parameters in the op, then Delectus signals an error and rejects the op without changing the file.
+
+If there are columns specified in the op that do not exist in the local file then Delectus creates those columns before asserting the op into the log.
 
 [cols="1,1,3", options="header"]
 |===
@@ -177,6 +204,7 @@ Asserts the list's current columns and their attributes. There may be any number
 |`*opid*` | `_opid_` | this op's unique ID
 |`*origin*` | `_opid_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
+|`*timestamp*` | `text` | the time of this op's creation
 |`item` | `null` | unused
 |`name` | `null` | unused
 |`deleted` | `null` | unused
@@ -187,9 +215,9 @@ Asserts the list's current columns and their attributes. There may be any number
 
 
 ==== item
-===== *item* _opid_ _origin_ _item_ _deleted_ _revision_ [_columnvalue_]*
+===== *item* _opid_ _origin_ _revision_  _timestamp_ _item_ _deleted_ [_columnvalue_]*
 
-Asserts an item into the list. If the _item_ ID is equal to any existing _item_ ID in the list, then this op becomes the new value of that item, superseding the value of the previous one. If there is no existing item with this _item_ ID, then this op is a new item in the list.
+Asserts an item into the list. If the _item_ ID is equal to any existing _item_ ID in the list, then this op becomes the new value of that item, superseding the previous one. If there is no existing item with this _item_ ID then this op represents a new item.
 
 
 [cols="1,1,3", options="header"]
@@ -200,6 +228,7 @@ Asserts an item into the list. If the _item_ ID is equal to any existing _item_ 
 |`*opid*` | `_opid_` | this op's unique ID
 |`*origin*` | `_opid_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
+|`*timestamp*` | `text` | the time of this op's creation
 |`*item*` | `opid` | The unique ID of this item
 |`name` | `null` | unused
 |`*deleted*` | `boolean` | Whether this item is marked deleted
@@ -209,9 +238,11 @@ Asserts an item into the list. If the _item_ ID is equal to any existing _item_ 
 |===
 
 ==== sync
-===== *sync* _opid_ _origin_ _peer_ _revision_
+===== *sync* _opid_ _origin_ _revision_  _timestamp_ _peer_
 
-Asserts an item into the list. If the _item_ ID is equal to any existing _item_ ID in the list, then this op becomes the new value of that item, superseding the value of the previous one. If there is no existing item with this _item_ ID, then this op is a new item in the list.
+Asserts that Delectus has successfully completed a *sync* operation with a remote *peer*. The result of a successful sync is that the two copies of the list are now identical. Delectus reports sync failures as errors, but does not record them in the op log.
+
+Delectus refers to recorded sync ops when performing future sync operations. Because two logs are the same up to the point of the most recent sync, the two peers need exchange only the ops recorded since that sync.
 
 
 [cols="1,1,3", options="header"]
@@ -222,6 +253,7 @@ Asserts an item into the list. If the _item_ ID is equal to any existing _item_ 
 |`*opid*` | `_opid_` | this op's unique ID
 |`*origin*` | `_opid_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
+|`*timestamp*` | `text` | the time of this op's creation
 |`item` | `null` | unused
 |`name` | `null` | unused
 |`deleted` | `null` | unused
