@@ -25,10 +25,9 @@
   (concatenate 'string "I"
                (string-downcase
                 (with-output-to-string (out)
-                  (uuid:print-bytes out id)))))
+                  (uuid::print-bytes out id)))))
 
 (defmethod makeid ()
-  ;;; the UUID package prints v4 UUIDs in time-first format
-  (uuid->identity (uuid:make-v4-uuid)))
+  (uuid->identity (uuid:make-v1-uuid)))
 
 ;;; (time (makeid))

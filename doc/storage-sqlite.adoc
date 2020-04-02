@@ -84,7 +84,7 @@ An `*identity*` string looks something like this:
 
 This is the type of string that Delectus uses for labels of userdata columns and other `identity` values.
 
-An `identity` starts as a *time-first* UUID string--that is, a version 4 UUID in which the time fields are printed first. This arrangement enables databases--like SQLite--to index and sort these IDs efficiently, and to sort them in time order.
+An `identity` starts as a *time-first* UUID string--that is, a version 1 (time-based) UUID in which the time fields are printed first. This arrangement enables databases--like SQLite--to index and sort these IDs efficiently, and to sort them in time order.
 
 Because we use them as SQLite column labels, we strip out the hyphens that would normally be in a standard UUID string, and we prepend the letter `I` to the resulting string. These cosmetic changes enable us to avoid having to quote these string carefully when using them as SQLite column labels, and don't affect their use in Delectus in any other way.
 
