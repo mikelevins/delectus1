@@ -8,5 +8,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(defpackage #:delectus-ops
+  (:nicknames #:op)
+  (:use #:cl))
+
 (defpackage #:delectus
   (:use #:cl #:sqlite))
