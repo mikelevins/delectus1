@@ -12,9 +12,11 @@ If someone else logs into your computer on their own account, and they use Delec
 
 The point of nodes is to enable Delectus to mark each edit with the user and device that it came from, so that it can correctly merge edits from different sources, especially in cases where the same user made two different edits to the same data on different devices.
 
-When you first start Delectus, it generates and records a *node UD* on the device you run it on. If you wipe the device clean and reinstall Delectus, it will install a new node ID. Everything will still work correctly, and you can still use your old Delectus files; Delectus will just think that your new edits are coming from a new node.
+When you first start Delectus, it generates and records a *node ID* on the device you run it on. If you wipe the device clean and reinstall Delectus, it will install a new node ID. Everything will still work correctly, and you can still use your old Delectus files; Delectus will just think that your new edits are coming from a new node.
 
-A *node ID* is a UUID string in standard format. Delectus uses *time-first UUIDs* for all its IDs. Databases (like SQLite, which Delectus uses to store data) can index and sort time-first UUIDs efficiently, and they sort in order of the time they were created, which makes it easy for us to present list data in time order.
+A *node ID* is a Delectus *identity*. An *identity* is a string derived from a *time-first UUID*. Databases (like SQLite, which Delectus uses to store data) can index and sort time-first UUID strings efficiently, and they sort in order of the time they were created, which makes it easy for us to present list data in time order.
+
+The *identity* data type is described in greater detail below.
 
 == Ops
 
@@ -50,15 +52,17 @@ All four op types share a common format, shown here:
 |field | type | description
 
 |`*optype*` | `text` | The type of this op.
-|`*opid*` | `opid` | The unique ID of this op.
-|`*origin*` | `opid` | The device where this op originated.
+|`*opid*` | `identity` | The unique ID of this op.
+|`*origin*` | `identity` | The device where this op originated.
 |`*revision*` | `integer` | The revision number of this op.
 |`*timestamp*` | `text` | An ISO-8601 time string recording the moment this op was created (according to its origin).
-|`*item*` | `opid` | In `item`, the unique ID of this item.
+|`*item*` | `ident` | In `item`, the unique ID of this item.
 |`*name*` | `text` | In `listname`, the new name of this list.
 |`*deleted*` | `boolean` | In `item`, whether this item is deleted.
-|`*peer*` | `opid` | In `sync`, the remote device with which we synced.
-|`*columnid**` | `[columndata \| fielddata]*` | Zero or more `columndata` or `value` objects. In a `columns` op,  each `columnid` field contains a `columndata` object. In `item`, it contains a `fielddata` value.
+|`*peer*` | `identity` | In `sync`, the remote device with which we synced.
+|`*_columnid*_*` | `[columndata \| fielddata]*` | Zero or more `columndata` or `value` objects. In a `columns` op,  each `columnid` field contains a `columndata` object. In `item`, it contains a `fielddata` value.
+
+The name of the field is not literally `columnid*`; rather, the name of each column's field is a string in `identity` format.
 
 |===
 
@@ -70,17 +74,19 @@ The `*columnid**` field is different from the others. The other fields have the 
 
 The `*columnid**` field, on the other hand, represents a variable number of *userdata columns*, each with a different label. These columns are created by users to store their data. There may be any number of them in a list.
 
-The label of each userdata column is a string in `*columnid*` format. A `*columnid*` string starts as a type-first UUID string, but Delectus modifies it so that it can be used without escaping as a SQLite column label. It removes the hyphens from the UUID string, and adds an uppercase `C` to the start of the string.
+The label of each userdata column is a string in `*identity*` format.
 
-==== `*columnid*`
+==== `*identity*`
 
-A `*columnid*` string looks something like this:
+An `*identity*` string looks something like this:
 
-    "C9167655e627a4794a756953591ea1e0e"
+    "I9167655e627a4794a756953591ea1e0e"
 
-This is the type of string that Delectus uses for labels of userdata columns.
+This is the type of string that Delectus uses for labels of userdata columns and other `identity` values.
 
-Users can create as many columns as they like. That means that there may be any number of `*columnid*` fields in an op, each one with its own `*columnid*` label. The sole restriction is that the number of `*columnid*` fields in the op must be equal to the number of userdata columns in the file after the op is appended to the log.
+An `identity` starts as a *time-first* UUID string--that is, a version 4 UUID in which the time fields are printed first. This arrangement enables databases--like SQLite--to index and sort these IDs efficiently, and to sort them in time order.
+
+Because we use them as SQLite column labels, we strip out the hyphens that would normally be in a standard UUID string, and we prepend the letter `I` to the resulting string. These cosmetic changes enable us to avoid having to quote these string carefully when using them as SQLite column labels, and don't affect their use in Delectus in any other way.
 
 ==== Motivation for `*columnid*` fields
 
@@ -108,8 +114,8 @@ The data types used in the fields of an op are defined as follows:
 |`text`
 |A text string
 
-|`opid`
-|A garden-variety UUID string. Delectus uses *time-first UUIDs*.
+|`identity`
+|A string derived from a time-first UUID.
 
 |`boolean`
 |`true` or `false`
@@ -132,7 +138,7 @@ A `*columndata*` object is a JSON object that represents the attributes of a *us
 |attribute |type |description
 
 |`id`
-|`columnid`
+|`identity`
 |The column's unique ID. This is the `columnid` string used as the SQLite column's label.
 
 |`name`
@@ -188,15 +194,15 @@ Asserts the name of the list. The current name of the list is the value of the `
 |field | value | comments
 
 |`*optype*` | `"listname"` | this literal string
-|`*opid*` | `_opid_` | this op's unique ID
-|`*origin*` | `_opid_` | this device where this op originated
+|`*opid*` | `_identity_` | this op's unique ID
+|`*origin*` | `_identity_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
 |`*timestamp*` | `text` | the time of this op's creation
 |`item` | `null` | unused
 |`*name*` | `_text_` | the list's new name
 |`deleted` | `null` | unused
 |`peer` | `null` | unused
-|`columnid*` | `[null]*` | unused
+|`*_columnid*_*` | `[null]*` | unused
 
 |===
 
@@ -215,15 +221,15 @@ If there are columns specified in the op that do not exist in the local file the
 |field | value | comments
 
 |`*optype*` | `"columns"` | this literal string
-|`*opid*` | `_opid_` | this op's unique ID
-|`*origin*` | `_opid_` | this device where this op originated
+|`*opid*` | `_identity_` | this op's unique ID
+|`*origin*` | `_identity_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
 |`*timestamp*` | `text` | the time of this op's creation
 |`item` | `null` | unused
 |`name` | `null` | unused
 |`deleted` | `null` | unused
 |`peer` | `null` | unused
-|`*columnid**` | `[columndata]*` | column attributes for each column, as JSON strings (see `columndata`, above)
+|`*_columnid*_*` | `[columndata]*` | column attributes for each column, as JSON strings (see `columndata`, above)
 
 |===
 
@@ -239,15 +245,15 @@ Asserts an item into the list. If the _item_ ID is equal to any existing _item_ 
 |field | value | comments
 
 |`*optype*` | `"item"` | this literal string
-|`*opid*` | `_opid_` | this op's unique ID
-|`*origin*` | `_opid_` | this device where this op originated
+|`*opid*` | `_identity_` | this op's unique ID
+|`*origin*` | `_identity_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
 |`*timestamp*` | `text` | the time of this op's creation
-|`*item*` | `opid` | The unique ID of this item
+|`*item*` | `identity` | The unique ID of this item
 |`name` | `null` | unused
 |`*deleted*` | `boolean` | Whether this item is marked deleted
 |`peer` | `null` | unused
-|`*columnid**` | `[fielddata]*` | item's field values, one for each column
+|`*_columnid*_*` | `[fielddata]*` | item's field values, one for each column
 
 |===
 
@@ -264,15 +270,15 @@ Delectus refers to recorded sync ops when performing future sync operations. Bec
 |field | value | comments
 
 |`*optype*` | `"sync"` | this literal string
-|`*opid*` | `_opid_` | this op's unique ID
-|`*origin*` | `_opid_` | this device where this op originated
+|`*opid*` | `_identity_` | this op's unique ID
+|`*origin*` | `_identity_` | this device where this op originated
 |`*revision*` | `integer` | this op's revision number
 |`*timestamp*` | `text` | the time of this op's creation
 |`item` | `null` | unused
 |`name` | `null` | unused
 |`deleted` | `null` | unused
-|`*peer*` | `opid` | the remote device with which we synced
-|`columnid*` | `[null]*` | unused
+|`*peer*` | `identity` | the remote device with which we synced
+|`_columnid*_` | `[null]*` | unused
 
 |===
 
@@ -291,8 +297,8 @@ A Delectus data file is a SQLite 3 file that contains two tables:
 |===
 |SQLite column | SQLite type affinity | description
 
-|`"id"` |`TEXT` | The unique `opid` of this list.
-|`"origin"` |`TEXT` | The unique `opid` of the node where this list was created.
+|`"id"` |`TEXT` | The unique `identity` of this list.
+|`"origin"` |`TEXT` | The unique `identity` of the node where this list was created.
 |`"format"` |`TEXT` | The current version of the Delectus data format used in this file.
 
 |===
@@ -305,14 +311,14 @@ A Delectus data file is a SQLite 3 file that contains two tables:
 |SQLite column | SQLite type affinity | description
 
 |`optype` | `TEXT` | The name of the op type.
-|`opid` | `TEXT` | The unique `opid` of this op.
-|`origin` | `TEXT` | The unique `opid` of the node that created this op
+|`opid` | `TEXT` | The unique `identity` of this op.
+|`origin` | `TEXT` | The unique `identity` of the node that created this op
 |`revision` | `INTEGER` | The integer revision number of this op. Unique per origin, but may be duplicated by ops from different origins.
 |`timestamp` | `TEXT` | An ISO-8601 time string that records the time that the origin created the op (according the the origin's clock). This timestamp is not authoritative, and is used mainly for informative purposes, for the user's benefit.
-|`item` | `TEXT` | The unique `opid` of this item. May be duplicated within a list by updates to the item.
+|`item` | `TEXT` | The unique `identity` of this item. May be duplicated within a list by updates to the item.
 |`name` | `TEXT` | The user-assigned name of this list. Used only in `listname` ops. The current name of the list is the value of this field in the latest `listname` op.
 |`deleted` | `INTEGER` | A Boolean value that is true if this item is marked deleted, and false if not. Used only in `item` ops.
-|`peer` | `TEXT` | The unique `opid` of a remote node with which this node has successfully completed a `sync` operation. Used only in `sync` ops.
+|`peer` | `TEXT` | The unique `identity` of a remote node with which this node has successfully completed a `sync` operation. Used only in `sync` ops.
 |`_columnid*_` | `TEXT` | Zero or more SQLite columns representing userdata columns in this list. The label of each SQLite column is in `*columnid*` format.
 
 In a `columns` op, the value in each field is of type `*columndata*`, and represents the attributes of the column in which it appears.

@@ -21,7 +21,7 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "utils")
-                                     (:file "identifiers")
+                                     (:file "identities")
                                      (:file "csv")
                                      (:file "sqlite")
                                      (:file "node")
