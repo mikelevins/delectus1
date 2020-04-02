@@ -29,9 +29,11 @@
                (item :type 'text)
                (name :type 'text)
                (deleted :type 'integer)
-               (peer :type 'text)))))
+               (peer :type 'text))))
+         (create-list-table-sql (sxql:yield create-list-table-statement)))
     (with-open-database (db path)
-      (execute-to-list db create-delectus-table-sql))
+      (execute-to-list db create-delectus-table-sql)
+      (execute-to-list db create-list-table-sql))
     path))
 
 (defmethod create-delectus-file ((list-name string)(path string))
