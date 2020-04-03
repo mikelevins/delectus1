@@ -10,62 +10,10 @@
 
 (in-package #:delectus)
 
-(defmethod create-delectus-file ((list-name string)(path pathname))
-  (when (probe-file path)
-    (error "file exists: ~S" path))
-  (let* ((listid (makeid))
-         (origin *origin*)
-         (format +delectus-format-version+)
-         (default-column-id (makeid))
-         (default-column-data (op::columndata :id default-column-id :name "Item"
-                                              :type 'text :order 10.0 :sort "ASC"
-                                              :title t :subtitle nil :deleted nil))
-         (listname-op (op::listname :opid (makeid)
-                                    :origin *origin*
-                                    :name list-name
-                                    :revision 0
-                                    :timestamp (now-timestamp)))
-         (column-op (op::columns :opid (makeid)
-                                 :origin *origin*
-                                 :revision 1
-                                 :timestamp (now-timestamp)
-                                 :columns (list default-column-data)))
-         (create-delectus-table-statement
-          (create-table :delectus
-              ((id :type 'text)
-               (origin :type 'text)
-               (format :type 'text)
-               (next_revision :type 'integer))))
-         (create-delectus-table-sql (yield create-delectus-table-statement))
-         (insert-delectus-info-statement
-          (insert-into :delectus
-            (:id :origin :format :next_revision)
-            `(,listid ,*origin* ,format 2)))
-         (insert-delectus-info-sql (yield insert-delectus-info-statement))
-         (create-list-table-statement
-          (create-table :list_data
-              ((optype :type 'text)
-               (opid :type 'text)
-               (origin :type 'text)
-               (revision :type 'integer)
-               (timestamp :type 'text)
-               (item :type 'text)
-               (name :type 'text)
-               (deleted :type 'integer)
-               (peer :type 'text))))
-         (create-list-table-sql (yield create-list-table-statement))
-         (insert-listname-statement
-          (insert-into :delectus
-            (set= :optype "listname" :opid (makeid) :origin *origin* :revision 0
-                       :timestamp (now-timestamp) :item nil :name list-name
-                       :deleted nil :peer nil))))
-    (with-open-database (db path)
-      (execute-non-query db create-delectus-table-sql)
-      (execute-non-query db create-list-table-sql)
-      (execute-non-query db insert-delectus-info-sql))
-    
-    insert-delectus-info-sql))
-
+;;; TODO: use CREATE INDEX to make the common queries go fast
+;;; TODO: use CREATE VIEW to simplify the most common queries
+;;;       (get the latest listname; get the latest columns; get the
+;;;       latest version of each distinct item)
 (defmethod create-delectus-file ((list-name string)(path pathname))
   (when (probe-file path)
     (error "file exists: ~S" path))
@@ -156,3 +104,4 @@
   (create-delectus-file list-name (pathname path)))
 
 ;;; (create-delectus-file "Test List" "/Users/mikel/Desktop/testlist.delectus2")
+
