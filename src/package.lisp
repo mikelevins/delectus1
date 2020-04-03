@@ -13,4 +13,4 @@
   (:use #:cl))
 
 (defpackage #:delectus
-  (:use #:cl #:sqlite))
+  (:use #:cl #:sqlite #:sxql))

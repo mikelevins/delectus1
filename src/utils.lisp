@@ -27,3 +27,16 @@
       (when (or (not (member name '(nil :unspecific "") :test 'equal))
                 (not (member type '(nil :unspecific "") :test 'equal)))
         pathname))))
+
+;;; ---------------------------------------------------------------------
+;;;  time utilities
+;;; ---------------------------------------------------------------------
+
+
+;;; now-timestamp
+;;; ---------------------------------------------------------------------
+
+(defun now-timestamp ()
+  (local-time:format-timestring nil (local-time:now) :timezone local-time:+utc-zone+))
+
+;;; (now-timestamp)

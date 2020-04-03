@@ -25,13 +25,18 @@
 (defparameter *minimum-column-order* 10.0)
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
 
-;;; timestamps
+;;; constructing columndata
 ;;; ---------------------------------------------------------------------
 
-(defun now-timestamp ()
-  (local-time:format-timestring nil (local-time:now) :timezone local-time:+utc-zone+))
-
-;;; (now-timestamp)
+(defun columndata (&key id name type order sort title subtitle deleted)
+  (list :|id| (or id :false)
+        :|name| (or name :false)
+        :|type| (or type :false)
+        :|order| (or order :false)
+        :|sort| (or sort :false)
+        :|title| (or title :false)
+        :|subtitle| (or subtitle :false)
+        :|deleted| (or deleted :false)))
 
 ;;; constructing ops
 ;;; ---------------------------------------------------------------------
