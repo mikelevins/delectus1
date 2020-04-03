@@ -298,8 +298,11 @@ A Delectus data file is a SQLite 3 file that contains two tables:
 |SQLite column | SQLite type affinity | description
 
 |`"id"` |`TEXT` | The unique `identity` of this list.
-|`"origin"` |`TEXT` | The unique `identity` of the node where this list was created.
+|`"origin"` |`TEXT` | The unique `identity` of the node where this list was created. +
+
+Two different copies of the same list may have different `origin` values. The `origin` records the identity of the node that maintains this copy of the list, not the identity of the node where it was first created.
 |`"format"` |`TEXT` | The current version of the Delectus data format used in this file.
+|`"next_revision"` |`INTEGER` | The revision number that will be assigned to the next op
 
 |===
 
