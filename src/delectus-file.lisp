@@ -46,13 +46,15 @@
       ;; create the delectus table
       (bind ((sql vals (dsql::create-delectus-table)))
         (apply 'execute-non-query db sql vals))
-      ;; assert values into the delectus table
+      ;; assert values into it
       (bind ((sql vals (dsql::populate-delectus-table listid *origin* +delectus-format-version+ next-rev)))
         (apply 'execute-non-query db sql vals))
+
       ;; create the list_data table
       (bind ((sql vals (dsql::create-list_data-table)))
         (apply 'execute-non-query db sql vals))
-      ;; 0. initial listname
+
+      ;; 0. initial listname op
       (bind ((sql vals
                   (dsql::assert-op "listname" listname-opid *origin*
                                    listname-rev (now-timestamp) nil
@@ -61,12 +63,14 @@
       ;; create the initial userdata column
       (bind ((sql vals (dsql::add-userdata-column initial-column-id "TEXT")))
         (apply 'execute-non-query db sql vals))
+
       ;; 1. initial columns op
       (bind ((sql vals
                   (dsql::assert-op "columns" columns-opid *origin* columns-rev (now-timestamp)
                                    nil nil nil nil
                                    :column-data `((,initial-column-id . ,initial-column-attributes)))))
         (apply 'execute-non-query db sql vals))
+
       ;; 2. initial item op
       (bind ((sql vals (dsql::assert-op "item"
                                         item-opid *origin* item-rev (now-timestamp) initial-item-id nil nil nil

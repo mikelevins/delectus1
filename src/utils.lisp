@@ -21,6 +21,16 @@
                    strings))))
 
 ;;; (join-strings ", " (list "apple" "banana" "cherry"))
+;;; (join-strings "" (list "apple" "banana" "cherry"))
+
+(defun str (&rest vals)
+  (join-strings ""
+                (mapcar (lambda (v)(format nil "~A" v))
+                        vals)))
+
+;;; (str 1 2 3)
+;;; (str "1" "2" "3")
+;;; (str '("CREATE TABLE " "`list_data` " "(`optype` TEXT, `opid` TEXT, `origin` TEXT, `revision` INTEGER, `timestamp` TEXT, `item` TEXT, `name` TEXT, `deleted` TEXT, `peer` TEXT);"))
 
 ;;; ---------------------------------------------------------------------
 ;;;  file utilities

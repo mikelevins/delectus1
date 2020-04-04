@@ -14,14 +14,11 @@
 ;;; create-delectus-table
 ;;; ---------------------------------------------------------------------
 
-(defparameter +create-delectus-table-template+
-  "CREATE TABLE `delectus` (`id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` TEXT);")
-
-
-(register-emb "create-delectus-table" +create-delectus-table-template+)
-
 (defun create-delectus-table ()
-  (execute-emb "create-delectus-table"))
+  (delectus::str
+   "CREATE TABLE `delectus` ( "
+   "`id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` TEXT "
+   ");"))
 
 ;;; (create-delectus-table)
 
@@ -29,15 +26,12 @@
 ;;; populate-delectus-table
 ;;; ---------------------------------------------------------------------
 
-(defparameter +populate-delectus-table-template+
-  "INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?);")
-
-(register-emb "populate-delectus-table" +populate-delectus-table-template+)
-
 (defun populate-delectus-table (id origin format next-revision)
   (values
-   (execute-emb "populate-delectus-table"
-                :env `(:id ,id :origin ,origin :format ,format :next-revision ,next-revision))
+   (delectus::str
+    "INSERT INTO `delectus` "
+    "(`id`, `origin`, `format`, `next_revision`) "
+    "VALUES (?, ?, ?, ?);")
    (list id origin format next-revision)))
 
 ;;; (populate-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 3)
@@ -46,14 +40,12 @@
 ;;; create-list_data-table
 ;;; ---------------------------------------------------------------------
 
-(defparameter +create-list_data-table-template+
-  "CREATE TABLE `list_data` (`optype` TEXT, `opid` TEXT, `origin` TEXT, `revision` INTEGER, `timestamp` TEXT, `item` TEXT, `name` TEXT, `deleted` TEXT, `peer` TEXT);")
-
-
-(register-emb "create-list_data-table" +create-list_data-table-template+)
-
 (defun create-list_data-table ()
-  (execute-emb "create-list_data-table"))
+  (delectus::str
+   "CREATE TABLE `list_data` ( "
+   "`optype` TEXT, `opid` TEXT, `origin` TEXT, "
+   "`revision` INTEGER, `timestamp` TEXT, `item` TEXT, "
+   "`name` TEXT, `deleted` TEXT, `peer` TEXT );"))
 
 ;;; (create-list_data-table)
 
@@ -62,7 +54,9 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter +add-userdata-column-template+
-  "ALTER TABLE `list_data` ADD `<% @var column-label %>` <% @var column-type %>;")
+  (delectus::str
+   "ALTER TABLE `list_data` "
+   "ADD `<% @var column-label %>` <% @var column-type %>;"))
 
 (register-emb "add-userdata-column" +add-userdata-column-template+)
 
@@ -77,7 +71,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter +update-field-value-template+
-  "UPDATE `<% @var table-name %>` SET `<% @var column-label %>`=<% @var new-value %> WHERE `opid`=<% @var opid %>")
+  (delectus::str
+   "UPDATE `<% @var table-name %>` "
+   "SET `<% @var column-label %>`=<% @var new-value %> "
+   "WHERE `opid`=<% @var opid %>"))
 
 (register-emb "update-field-value" +update-field-value-template+)
 
@@ -89,7 +86,6 @@
                                   :opid ,opid)))
 
 ;;; (update-field-value "delectus" "next_revision" 3 (delectus::makeid))
-
 
 ;;; ---------------------------------------------------------------------
 ;;; assert-op
