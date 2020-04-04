@@ -45,32 +45,32 @@
     (with-open-database (db path)
       ;; create the delectus table
       (multiple-value-bind (sql vals)
-          (sql::create-delectus-table)
+          (dsql::create-delectus-table)
         (apply 'execute-non-query db sql vals))
       ;; assert values into the delectus table
       (multiple-value-bind (sql vals)
-          (sql::populate-delectus-table listid *origin* +delectus-format-version+ next-rev)
+          (dsql::populate-delectus-table listid *origin* +delectus-format-version+ next-rev)
         (apply 'execute-non-query db sql vals))
       ;; create the list_data table
       (multiple-value-bind (sql vals)
-          (sql::create-list_data-table)
+          (dsql::create-list_data-table)
         (apply 'execute-non-query db sql vals))
       ;; 0. initial listname
       (multiple-value-bind (sql vals)
-          (sql::assert-op "listname" listname-opid *origin* listname-rev (now-timestamp) nil list-name nil nil)
+          (dsql::assert-op "listname" listname-opid *origin* listname-rev (now-timestamp) nil list-name nil nil)
         (apply 'execute-non-query db sql vals))
       ;; create the initial userdata column
       (multiple-value-bind (sql vals)
-          (sql::add-userdata-column initial-column-id "TEXT")
+          (dsql::add-userdata-column initial-column-id "TEXT")
         (apply 'execute-non-query db sql vals))
       ;; 1. initial columns op
       (multiple-value-bind (sql vals)
-          (sql::assert-op "columns" columns-opid *origin* columns-rev (now-timestamp) nil nil nil nil
+          (dsql::assert-op "columns" columns-opid *origin* columns-rev (now-timestamp) nil nil nil nil
                           :column-data `((,initial-column-id . ,initial-column-attributes)))
         (apply 'execute-non-query db sql vals))
       ;; 2. initial item op
       (multiple-value-bind (sql vals)
-          (sql::assert-op "item"
+          (dsql::assert-op "item"
                           item-opid *origin* item-rev (now-timestamp) initial-item-id nil nil nil
                           :column-data `((,initial-column-id . ,initial-field-value)))
         (apply 'execute-non-query db sql vals)))))
