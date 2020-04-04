@@ -15,14 +15,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter +create-delectus-table-template+
-  "
-CREATE TABLE delectus (
-  id TEXT,
-  origin TEXT,
-  format TEXT,
-  next_revision TEXT
-);
-")
+  "CREATE TABLE `delectus` (`id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` TEXT);")
 
 
 (register-emb "create-delectus-table" +create-delectus-table-template+)
@@ -37,7 +30,7 @@ CREATE TABLE delectus (
 ;;; ---------------------------------------------------------------------
 
 (defparameter +populate-delectus-table-template+
-  "INSERT INTO delectus (id, origin, format, next_revision) VALUES (?, ?, ?, ?);")
+  "INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?);")
 
 (register-emb "populate-delectus-table" +populate-delectus-table-template+)
 
@@ -54,19 +47,7 @@ CREATE TABLE delectus (
 ;;; ---------------------------------------------------------------------
 
 (defparameter +create-list_data-table-template+
-  "
-CREATE TABLE list_data (
-  optype TEXT,
-  opid TEXT,
-  origin TEXT,
-  revision INTEGER,
-  timestamp TEXT,
-  item TEXT,
-  name TEXT,
-  deleted TEXT,
-  peer TEXT
-);
-")
+  "CREATE TABLE `list_data` (`optype` TEXT, `opid` TEXT, `origin` TEXT, `revision` INTEGER, `timestamp` TEXT, `item` TEXT, `name` TEXT, `deleted` TEXT, `peer` TEXT);")
 
 
 (register-emb "create-list_data-table" +create-list_data-table-template+)
@@ -81,7 +62,7 @@ CREATE TABLE list_data (
 ;;; ---------------------------------------------------------------------
 
 (defparameter +add-userdata-column-template+
-  "ALTER TABLE list_data ADD <% @var column-label %> <% @var column-type %>;")
+  "ALTER TABLE `list_data` ADD `<% @var column-label %>` <% @var column-type %>;")
 
 (register-emb "add-userdata-column" +add-userdata-column-template+)
 
@@ -96,10 +77,7 @@ CREATE TABLE list_data (
 ;;; ---------------------------------------------------------------------
 
 (defparameter +update-field-value-template+
-  "
-UPDATE <% @var table-name %> SET <% @var column-label %>=<% @var new-value %>
-WHERE opid=<% @var opid %>
-")
+  "UPDATE `<% @var table-name %>` SET `<% @var column-label %>`=<% @var new-value %> WHERE `opid`=<% @var opid %>")
 
 (register-emb "update-field-value" +update-field-value-template+)
 
@@ -117,14 +95,6 @@ WHERE opid=<% @var opid %>
 ;;; assert-op
 ;;; ---------------------------------------------------------------------
 
-(defparameter +assert-op-template+
-  "
-INSERT INTO list_data (optype, opid, origin, revision, timestamp, item, name, deleted, peer) 
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-")
-
-(register-emb "assert-op" +assert-op-template+)
-
 (defun assert-op (optype opid origin revision timestamp item name deleted peer)
   (values
    (execute-emb "assert-op"
@@ -139,11 +109,33 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
                                :peer ,peer))
    (list optype opid origin revision timestamp item name deleted peer)))
 
-;;; (defparameter $opid (delectus::makeid))
-;;; (defparameter $origin delectus::*origin*)
-;;; (defparameter $timestamp (delectus::now-timestamp))
-;;; (defparameter $item (delectus::makeid))
-;;; (assert-op "item" $opid $origin 3 $timestamp $item nil nil nil)
 
+(defun assert-op (optype opid origin revision timestamp item name deleted peer &key column-data)
+  (let* ((column-ids (mapcar #'car column-data))
+         (column-values (mapcar #'cdr column-data))
+         (insert-args (append (list "optype" "opid" "origin" "revision" "timestamp" "item" "name" "deleted" "peer")
+                              column-ids))
+         (insert-arg-strings (mapcar (lambda (a)(format nil "`~A`" a))
+                                     insert-args))
+         (insert-arg-placeholders (mapcar (constantly "?") insert-args))
+         (insert-args-text (delectus::join-strings ", " insert-arg-strings))
+         (insert-placeholders-text (delectus::join-strings ", " insert-arg-placeholders))
+         (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
+                      insert-args-text insert-placeholders-text)))
+    (values sql
+            (append (list optype opid origin revision timestamp item name deleted peer)
+                    column-values))))
 
+#|
 
+(defparameter $opid (delectus::makeid))
+(defparameter $origin delectus::*origin*)
+(defparameter $item-rev 42)
+(defparameter $timestamp (delectus::now-timestamp))
+(defparameter $item (delectus::makeid))
+
+(format t "~%~A~%"
+(assert-op "item" $opid $origin $item-rev $timestamp $item nil nil nil
+           :column-data '(("Ia189be00760e11ea8b7f930a927aa001" . 42))))
+
+|#

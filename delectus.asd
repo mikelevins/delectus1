@@ -27,6 +27,7 @@
                                      (:file "sqlite")
                                      (:file "node")
                                      (:file "op")
+                                     (:file "delectus-sql")
                                      (:file "delectus-file")))))
 
 ;;; (asdf:load-system :delectus)

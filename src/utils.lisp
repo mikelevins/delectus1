@@ -11,6 +11,18 @@
 (in-package #:delectus)
 
 ;;; ---------------------------------------------------------------------
+;;;  string utilities
+;;; ---------------------------------------------------------------------
+
+(defun join-strings (cupola strings)
+  (cond ((null strings) nil)
+        ((null (rest strings)) (first strings))
+        (t (reduce (lambda (left right)(concatenate 'string left cupola right))
+                   strings))))
+
+;;; (join-strings ", " (list "apple" "banana" "cherry"))
+
+;;; ---------------------------------------------------------------------
 ;;;  file utilities
 ;;; ---------------------------------------------------------------------
 
