@@ -44,40 +44,37 @@
 
     (with-open-database (db path)
       ;; create the delectus table
-      (multiple-value-bind (sql vals)
-          (dsql::create-delectus-table)
+      (bind ((sql vals (dsql::create-delectus-table)))
         (apply 'execute-non-query db sql vals))
       ;; assert values into the delectus table
-      (multiple-value-bind (sql vals)
-          (dsql::populate-delectus-table listid *origin* +delectus-format-version+ next-rev)
+      (bind ((sql vals (dsql::populate-delectus-table listid *origin* +delectus-format-version+ next-rev)))
         (apply 'execute-non-query db sql vals))
       ;; create the list_data table
-      (multiple-value-bind (sql vals)
-          (dsql::create-list_data-table)
+      (bind ((sql vals (dsql::create-list_data-table)))
         (apply 'execute-non-query db sql vals))
       ;; 0. initial listname
-      (multiple-value-bind (sql vals)
-          (dsql::assert-op "listname" listname-opid *origin* listname-rev (now-timestamp) nil list-name nil nil)
+      (bind ((sql vals
+                  (dsql::assert-op "listname" listname-opid *origin*
+                                   listname-rev (now-timestamp) nil
+                                   list-name nil nil)))
         (apply 'execute-non-query db sql vals))
       ;; create the initial userdata column
-      (multiple-value-bind (sql vals)
-          (dsql::add-userdata-column initial-column-id "TEXT")
+      (bind ((sql vals (dsql::add-userdata-column initial-column-id "TEXT")))
         (apply 'execute-non-query db sql vals))
       ;; 1. initial columns op
-      (multiple-value-bind (sql vals)
-          (dsql::assert-op "columns" columns-opid *origin* columns-rev (now-timestamp) nil nil nil nil
-                          :column-data `((,initial-column-id . ,initial-column-attributes)))
+      (bind ((sql vals
+                  (dsql::assert-op "columns" columns-opid *origin* columns-rev (now-timestamp)
+                                   nil nil nil nil
+                                   :column-data `((,initial-column-id . ,initial-column-attributes)))))
         (apply 'execute-non-query db sql vals))
       ;; 2. initial item op
-      (multiple-value-bind (sql vals)
-          (dsql::assert-op "item"
-                          item-opid *origin* item-rev (now-timestamp) initial-item-id nil nil nil
-                          :column-data `((,initial-column-id . ,initial-field-value)))
+      (bind ((sql vals (dsql::assert-op "item"
+                                        item-opid *origin* item-rev (now-timestamp) initial-item-id nil nil nil
+                                        :column-data `((,initial-column-id . ,initial-field-value)))))
         (apply 'execute-non-query db sql vals)))))
+
 
 (defmethod create-delectus-file ((list-name string)(path string))
   (create-delectus-file list-name (pathname path)))
 
 ;;; (create-delectus-file "Test List" "/Users/mikel/Desktop/testlist.delectus2")
-
-

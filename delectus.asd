@@ -21,6 +21,7 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
+                                     (:file "bind")
                                      (:file "utils")
                                      (:file "identities")
                                      (:file "csv")
