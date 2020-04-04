@@ -15,6 +15,10 @@
 ;;;       (get the latest listname; get the latest columns; get the
 ;;;       latest version of each distinct item)
 
+;;; ---------------------------------------------------------------------
+;;; create-delectus-file
+;;; ---------------------------------------------------------------------
+
 (defmethod create-delectus-file ((list-name string)(path pathname))
   (when (probe-file path)
     (error "file exists: ~S" path))
@@ -82,3 +86,14 @@
   (create-delectus-file list-name (pathname path)))
 
 ;;; (create-delectus-file "Test List" "/Users/mikel/Desktop/testlist.delectus2")
+
+;;; ---------------------------------------------------------------------
+;;; assert-op
+;;; ---------------------------------------------------------------------
+
+(defmethod assert-op ((path pathname) op)
+  (op::ensure-well-formed-op op)
+  )
+
+(defmethod assert-op ((path string) op)
+  (assert-op (pathname path) op))

@@ -31,3 +31,6 @@
   (uuid->identity (uuid:make-v1-uuid)))
 
 ;;; (time (makeid))
+
+(defparameter +delectus-identity-string-length+
+  (length (makeid)))
