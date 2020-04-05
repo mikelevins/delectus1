@@ -170,6 +170,10 @@
     ))
 
 (defun assert-columns (db-path &key opid origin revision timestamp columns)
+  ;;; 1. get the existing column info
+  ;;; 2. compute the new set of columns = old columns + new columns
+  ;;; 3. create any columns that don't already exist
+  ;;; 4. assert the new columns op
   (let ((optype "columns"))
     ))
 
