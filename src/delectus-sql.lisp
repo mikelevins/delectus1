@@ -65,21 +65,6 @@
 ;;; (sql-add-userdata-column (delectus::makeid) "TEXT")
 
 ;;; ---------------------------------------------------------------------
-;;; sql-update-field-value
-;;; ---------------------------------------------------------------------
-
-(defun sql-update-field-value (table-name column-label new-value opid)
-  (values
-   (process-template (sql-template-path "update-field-value.tmpl.sql")
-                     [:table-name table-name
-                                  :column-label column-label
-                                  :new-value new-value
-                                  :opid opid])
-   nil))
-
-;;; (sql-update-field-value "delectus" "next_revision" 3 (delectus::makeid))
-
-;;; ---------------------------------------------------------------------
 ;;; sql-assert-op
 ;;; ---------------------------------------------------------------------
 
