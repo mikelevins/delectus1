@@ -8,4 +8,4 @@ CREATE TABLE `list_data` (
   `name` TEXT,
   `deleted` TEXT,
   `peer` TEXT
-  );
+  )

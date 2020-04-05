@@ -70,16 +70,41 @@
       ;; 1. initial columns op
       (bind ((sql vals
                   (sql-assert-op "columns" columns-opid *origin* columns-rev (now-timestamp)
-                                   nil nil nil nil
-                                   :column-data `((,initial-column-id . ,initial-column-attributes)))))
+                                 nil nil nil nil
+                                 :column-data `((,initial-column-id . ,initial-column-attributes)))))
         (apply 'execute-non-query db sql vals))
 
       ;; 2. initial item op
       (bind ((sql vals
                   (sql-assert-op "item"
-                                   item-opid *origin* item-rev (now-timestamp) initial-item-id nil nil nil
-                                   :column-data `((,initial-column-id . ,initial-field-value)))))
-        (apply 'execute-non-query db sql vals)))))
+                                 item-opid *origin* item-rev (now-timestamp) initial-item-id nil nil nil
+                                 :column-data `((,initial-column-id . ,initial-field-value)))))
+        (apply 'execute-non-query db sql vals))
+      ;; temporary extra items for testing
+      ;; ---------------------------------------------------------------------
+      (bind ((sql vals
+                  (sql-assert-op "item"
+                                 (makeid) *origin* (+ item-rev 1) (now-timestamp) initial-item-id nil nil nil
+                                 :column-data `((,initial-column-id . "item 1 again")))))
+        (apply 'execute-non-query db sql vals))
+      (bind ((sql vals
+                  (sql-assert-op "item"
+                                 (makeid) *origin* (+ item-rev 2) (now-timestamp) initial-item-id nil nil nil
+                                 :column-data `((,initial-column-id . "item 1 a third time")))))
+        (apply 'execute-non-query db sql vals))
+      ;; different item ids
+      (let ((itemid2 (makeid)))
+        (bind ((sql vals
+                   (sql-assert-op "item"
+                                  (makeid) *origin* (+ item-rev 3) (now-timestamp) itemid2 nil nil nil
+                                  :column-data `((,initial-column-id . "item2")))))
+          (apply 'execute-non-query db sql vals))
+        (bind ((sql vals
+                   (sql-assert-op "item"
+                                  (makeid) *origin* (+ item-rev 4) (now-timestamp) itemid2 nil nil nil
+                                  :column-data `((,initial-column-id . "item2 a second time")))))
+          (apply 'execute-non-query db sql vals)))
+      )))
 
 
 (defmethod create-delectus-file ((list-name string)(path string))
@@ -106,10 +131,15 @@
 
 ;;; (get-latest-columns-op "/Users/mikel/Desktop/testlist.delectus2")
 
+;;; NOTE: get-latest-items.tmpl.sql returns the rank (1)
+;;;       of each matched row, so the cdr of the result is
+;;;       the actual latest row
 (defun get-latest-item-ops (db-path)
   (bind ((sql vals (sql-get-latest-item-ops)))
-    (with-open-database (db db-path)
-      (execute-to-list db sql))))
+    (let ((latest-item-results (with-open-database (db db-path)
+                                 (execute-to-list db sql))))
+      ;; discard the rank field from the returned result
+      (mapcar #'cdr latest-item-results))))
 
 ;;; (get-latest-item-ops "/Users/mikel/Desktop/testlist.delectus2")
 

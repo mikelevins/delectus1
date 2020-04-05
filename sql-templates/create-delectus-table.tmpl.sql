@@ -3,4 +3,4 @@ CREATE TABLE `delectus` (
   origin TEXT,
   format TEXT,
   next_revision TEXT
-);
+)
