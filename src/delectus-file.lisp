@@ -88,13 +88,86 @@
 
 ;;; (create-delectus-file "Test List" "/Users/mikel/Desktop/testlist.delectus2")
 
+
 ;;; ---------------------------------------------------------------------
-;;; assert-op
+;;; getting ops
 ;;; ---------------------------------------------------------------------
 
-(defmethod assert-op ((path pathname) op)
-  (op::ensure-well-formed-op op)
-  )
+(defun get-latest-listname-op (db-path)
+  (let ((sql (sql-get-latest-listname-op)))
+    (with-open-database (db db-path)
+      (first (execute-to-list db sql)))))
 
-(defmethod assert-op ((path string) op)
-  (assert-op (pathname path) op))
+;;; (get-latest-listname-op "/Users/mikel/Desktop/testlist.delectus2")
+
+(defun get-latest-columns-op (db-path)
+  (let ((sql (sql-get-latest-columns-op)))
+    (with-open-database (db db-path)
+      (first (execute-to-list db sql)))))
+
+;;; (get-latest-columns-op "/Users/mikel/Desktop/testlist.delectus2")
+
+
+;;; ---------------------------------------------------------------------
+;;; getting columns
+;;; ---------------------------------------------------------------------
+;;; columns asserts column attributes. item asserts column values.
+;;; even when these ops do not change anything, they must contain
+;;; the unchanged column values, because they become the authoritative
+;;; source of what those values are. we therefore need a function to
+;;; retrieve the current column info for columns, and one to retrieve
+;;; the current values for item.
+
+(defparameter +delectus-metadata-column-names+
+    '("optype" "opid" "origin" "revision" "timestamp" "item" "name" "deleted" "peer"))
+
+;;; make a list defstruct for accessors to use on column-info lists
+(defstruct (column-info (:type list))
+  cid name type notnull dflt_value pk)
+
+(defun get-sqlite-column-info (db-path)
+  (with-open-database (db db-path)
+    (bind ((sql vals (sql-get-column-attributes)))
+                     (apply 'execute-to-list db sql vals))))
+
+;;; (defparameter $colinfo (get-sqlite-column-info "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (column-info-name (first $colinfo))
+;;; (mapcar 'column-info-name $colinfo)
+
+;;; NOTE: not guaranteed to preserve the order of columns
+(defun get-userdata-column-labels (db-path)
+  (let* ((column-info (get-sqlite-column-info db-path))
+         (column-names (mapcar #'column-info-name column-info)))
+    (set-difference column-names +delectus-metadata-column-names+
+                    :test #'equal)))
+
+;;; (get-userdata-column-labels "/Users/mikel/Desktop/testlist.delectus2")
+
+(defun get-userdata-column-attributes (db-path)
+  (let* ((column-labels (get-userdata-column-labels db-path))
+         (latest-columns-op (get-latest-columns-op db-path)))
+    ))
+
+(defun get-column-values (db-path)
+  (bind ((sql vals (sql-get-column-values)))
+    (apply 'execute-to-list db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; asserting ops
+;;; ---------------------------------------------------------------------
+
+(defun assert-listname (db-path &key opid origin revision timestamp name)
+  (let ((optype "listname"))
+    ))
+
+(defun assert-columns (db-path &key opid origin revision timestamp columns)
+  (let ((optype "columns"))
+    ))
+
+(defun assert-item (db-path &key opid origin revision timestamp item deleted columns)
+  (let ((optype "item"))
+    ))
+
+(defun assert-sync (db-path &key opid origin revision timestamp peer)
+  (let ((optype "sync"))
+    ))

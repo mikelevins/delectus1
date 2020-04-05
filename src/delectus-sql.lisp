@@ -11,7 +11,7 @@
 (in-package #:delectus)
 
 ;;; ---------------------------------------------------------------------
-;;; create-delectus-table
+;;; sql-create-delectus-table
 ;;; ---------------------------------------------------------------------
 
 (defun sql-create-delectus-table ()
@@ -23,7 +23,7 @@
 ;;; (create-delectus-table)
 
 ;;; ---------------------------------------------------------------------
-;;; populate-delectus-table
+;;; sql-populate-delectus-table
 ;;; ---------------------------------------------------------------------
 
 (defun sql-populate-delectus-table (id origin format next-revision)
@@ -37,7 +37,7 @@
 ;;; (populate-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 3)
 
 ;;; ---------------------------------------------------------------------
-;;; create-list_data-table
+;;; sql-create-list_data-table
 ;;; ---------------------------------------------------------------------
 
 (defun sql-create-list_data-table ()
@@ -50,7 +50,7 @@
 ;;; (create-list_data-table)
 
 ;;; ---------------------------------------------------------------------
-;;; add-userdata-column
+;;; sql-add-userdata-column
 ;;; ---------------------------------------------------------------------
 
 (defparameter +add-userdata-column-template+
@@ -67,7 +67,7 @@
 ;;; (add-userdata-column (delectus::makeid) "TEXT")
 
 ;;; ---------------------------------------------------------------------
-;;; update-field-value
+;;; sql-update-field-value
 ;;; ---------------------------------------------------------------------
 
 (defparameter +update-field-value-template+
@@ -88,7 +88,7 @@
 ;;; (update-field-value "delectus" "next_revision" 3 (delectus::makeid))
 
 ;;; ---------------------------------------------------------------------
-;;; assert-op
+;;; sql-assert-op
 ;;; ---------------------------------------------------------------------
 
 (defun sql-assert-op (optype opid origin revision timestamp item name deleted peer)
@@ -135,3 +135,35 @@
            :column-data '(("Ia189be00760e11ea8b7f930a927aa001" . 42))))
 
 |#
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-column-attributes
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-column-attributes ()
+  "PRAGMA table_info(list_data);")
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-column-values
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-column-values ()
+  )
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-listname-op
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-latest-listname-op ()
+  "SELECT * FROM `list_data` WHERE `optype`=\"listname\" ORDER BY `revision` DESC, `origin` DESC LIMIT 1;")
+
+;;; (sql-get-latest-listname-op)
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-columns-op
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-latest-columns-op ()
+  "SELECT * FROM `list_data` WHERE `optype`=\"columns\" ORDER BY `revision` DESC, `origin` DESC LIMIT 1;")
+
+;;; (sql-get-latest-columns-op)
