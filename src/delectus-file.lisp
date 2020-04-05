@@ -100,14 +100,14 @@
 ;;; (get-latest-listname-op "/Users/mikel/Desktop/testlist.delectus2")
 
 (defun get-latest-columns-op (db-path)
-  (let ((sql (sql-get-latest-columns-op)))
+  (bind ((sql vals (sql-get-latest-columns-op)))
     (with-open-database (db db-path)
       (first (execute-to-list db sql)))))
 
 ;;; (get-latest-columns-op "/Users/mikel/Desktop/testlist.delectus2")
 
 (defun get-latest-item-ops (db-path)
-  (let ((sql (sql-get-latest-item-ops)))
+  (bind ((sql vals (sql-get-latest-item-ops)))
     (with-open-database (db db-path)
       (execute-to-list db sql))))
 
