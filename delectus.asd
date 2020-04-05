@@ -16,7 +16,7 @@
   :license  "Specify license here"
   :version "0.0.1"
   :serial t
-  :depends-on (:fset :fare-csv :uuid :sqlite :sxql :sxql-composer :cl-emb :jonathan :local-time)
+  :depends-on (:fset :fare-csv :uuid :sqlite :cl-emb :jonathan :local-time)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
@@ -26,10 +26,10 @@
                                      (:file "utils")
                                      (:file "identities")
                                      (:file "csv")
+                                     (:file "delectus-sql")
                                      (:file "sqlite")
                                      (:file "node")
                                      (:file "op")
-                                     (:file "delectus-sql")
                                      (:file "delectus-file")))))
 
 ;;; (asdf:load-system :delectus)
