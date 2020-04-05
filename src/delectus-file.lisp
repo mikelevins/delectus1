@@ -107,7 +107,6 @@
 
 ;;; (get-latest-columns-op "/Users/mikel/Desktop/testlist.delectus2")
 
-
 ;;; ---------------------------------------------------------------------
 ;;; getting columns
 ;;; ---------------------------------------------------------------------
@@ -143,10 +142,20 @@
 
 ;;; (get-userdata-column-labels "/Users/mikel/Desktop/testlist.delectus2")
 
+;;; returns an alist with this format:
+;;; (<columnid> . <column-sttributes-plist>)
+;;; the attributes are parsed from the JSON data stored in the column
+;;; and include the id, so the id appears twice
 (defun get-userdata-column-attributes (db-path)
-  (let* ((column-labels (get-userdata-column-labels db-path))
-         (latest-columns-op (get-latest-columns-op db-path)))
-    ))
+  (let* ((latest-columns-op (get-latest-columns-op db-path))
+         (json-strings (op::op-field latest-columns-op :columns))
+         (column-attrs (mapcar #'jonathan:parse json-strings)))
+    (mapcar (lambda (attrs)
+              (cons (getf attrs :|id|)
+                    attrs))
+            column-attrs)))
+
+;;; (get-userdata-column-attributes "/Users/mikel/Desktop/testlist.delectus2")
 
 (defun get-column-values (db-path)
   (bind ((sql vals (sql-get-column-values)))
