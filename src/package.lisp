@@ -12,9 +12,5 @@
   (:nicknames #:op)
   (:use #:cl))
 
-(defpackage #:delectus-sql
-  (:nicknames #:dsql)
-  (:use #:cl #:cl-emb))
-
 (defpackage #:delectus
-  (:use #:cl #:sqlite))
+  (:use #:cl #:sqlite #:cl-emb))

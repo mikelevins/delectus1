@@ -8,13 +8,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package #:dsql)
+(in-package #:delectus)
 
 ;;; ---------------------------------------------------------------------
 ;;; create-delectus-table
 ;;; ---------------------------------------------------------------------
 
-(defun create-delectus-table ()
+(defun sql-create-delectus-table ()
   (delectus::str
    "CREATE TABLE `delectus` ( "
    "`id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` TEXT "
@@ -26,7 +26,7 @@
 ;;; populate-delectus-table
 ;;; ---------------------------------------------------------------------
 
-(defun populate-delectus-table (id origin format next-revision)
+(defun sql-populate-delectus-table (id origin format next-revision)
   (values
    (delectus::str
     "INSERT INTO `delectus` "
@@ -40,7 +40,7 @@
 ;;; create-list_data-table
 ;;; ---------------------------------------------------------------------
 
-(defun create-list_data-table ()
+(defun sql-create-list_data-table ()
   (delectus::str
    "CREATE TABLE `list_data` ( "
    "`optype` TEXT, `opid` TEXT, `origin` TEXT, "
@@ -60,7 +60,7 @@
 
 (register-emb "add-userdata-column" +add-userdata-column-template+)
 
-(defun add-userdata-column (label type)
+(defun sql-add-userdata-column (label type)
   (execute-emb "add-userdata-column"
                :env `(:column-label ,label :column-type ,type)))
 
@@ -78,7 +78,7 @@
 
 (register-emb "update-field-value" +update-field-value-template+)
 
-(defun update-field-value (table-name column-label new-value opid)
+(defun sql-update-field-value (table-name column-label new-value opid)
   (execute-emb "update-field-value"
                :env `(:table-name ,table-name
                                   :column-label ,column-label
@@ -91,7 +91,7 @@
 ;;; assert-op
 ;;; ---------------------------------------------------------------------
 
-(defun assert-op (optype opid origin revision timestamp item name deleted peer)
+(defun sql-assert-op (optype opid origin revision timestamp item name deleted peer)
   (values
    (execute-emb "assert-op"
                 :env `(:optype ,optype
@@ -106,7 +106,7 @@
    (list optype opid origin revision timestamp item name deleted peer)))
 
 
-(defun assert-op (optype opid origin revision timestamp item name deleted peer &key column-data)
+(defun sql-assert-op (optype opid origin revision timestamp item name deleted peer &key column-data)
   (let* ((column-ids (mapcar #'car column-data))
          (column-values (mapcar #'cdr column-data))
          (insert-args (append (list "optype" "opid" "origin" "revision" "timestamp" "item" "name" "deleted" "peer")
