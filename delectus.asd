@@ -21,6 +21,7 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
+                                     (:file "system-parameters")
                                      (:file "literal-lists")
                                      (:file "bind")
                                      (:file "utils")
@@ -28,7 +29,6 @@
                                      (:file "csv")
                                      (:file "delectus-sql")
                                      (:file "sqlite")
-                                     (:file "node")
                                      (:file "op")
                                      (:file "delectus-file")))))
 

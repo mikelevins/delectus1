@@ -11,16 +11,24 @@
 (in-package #:delectus)
 
 ;;; ---------------------------------------------------------------------
+;;; the sql templates path
+;;; ---------------------------------------------------------------------
+
+(defun sql-template-path (subpath)
+  (merge-pathnames subpath *sql-templates-pathname*))
+
+;;; (sql-template-path "create-delectus-table.tmpl.sql")
+
+;;; ---------------------------------------------------------------------
 ;;; sql-create-delectus-table
 ;;; ---------------------------------------------------------------------
 
 (defun sql-create-delectus-table ()
-  (delectus::str
-   "CREATE TABLE `delectus` ( "
-   "`id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` TEXT "
-   ");"))
+  (values
+   (process-template (sql-template-path "create-delectus-table.tmpl.sql"))
+   nil))
 
-;;; (create-delectus-table)
+;;; (sql-create-delectus-table)
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-populate-delectus-table
@@ -28,89 +36,58 @@
 
 (defun sql-populate-delectus-table (id origin format next-revision)
   (values
-   (delectus::str
-    "INSERT INTO `delectus` "
-    "(`id`, `origin`, `format`, `next_revision`) "
-    "VALUES (?, ?, ?, ?);")
+   (process-template (sql-template-path "populate-delectus-table.tmpl.sql"))
    (list id origin format next-revision)))
 
-;;; (populate-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 3)
+;;; (sql-populate-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 3)
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-create-list_data-table
 ;;; ---------------------------------------------------------------------
 
 (defun sql-create-list_data-table ()
-  (delectus::str
-   "CREATE TABLE `list_data` ( "
-   "`optype` TEXT, `opid` TEXT, `origin` TEXT, "
-   "`revision` INTEGER, `timestamp` TEXT, `item` TEXT, "
-   "`name` TEXT, `deleted` TEXT, `peer` TEXT );"))
+  (values
+   (process-template (sql-template-path "create-list_data-table.tmpl.sql"))
+   nil))
 
-;;; (create-list_data-table)
+;;; (sql-create-list_data-table)
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-add-userdata-column
 ;;; ---------------------------------------------------------------------
 
-(defparameter +add-userdata-column-template+
-  (delectus::str
-   "ALTER TABLE `list_data` "
-   "ADD `<% @var column-label %>` <% @var column-type %>;"))
-
-(register-emb "add-userdata-column" +add-userdata-column-template+)
-
 (defun sql-add-userdata-column (label type)
-  (execute-emb "add-userdata-column"
-               :env `(:column-label ,label :column-type ,type)))
+  (values
+   (process-template (sql-template-path "add-userdata-column.tmpl.sql")
+                     [:column-label label :column-type type])
+   nil))
 
-;;; (add-userdata-column (delectus::makeid) "TEXT")
+;;; (sql-add-userdata-column (delectus::makeid) "TEXT")
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-update-field-value
 ;;; ---------------------------------------------------------------------
 
-(defparameter +update-field-value-template+
-  (delectus::str
-   "UPDATE `<% @var table-name %>` "
-   "SET `<% @var column-label %>`=<% @var new-value %> "
-   "WHERE `opid`=<% @var opid %>"))
-
-(register-emb "update-field-value" +update-field-value-template+)
-
 (defun sql-update-field-value (table-name column-label new-value opid)
-  (execute-emb "update-field-value"
-               :env `(:table-name ,table-name
-                                  :column-label ,column-label
-                                  :new-value ,new-value
-                                  :opid ,opid)))
+  (values
+   (process-template (sql-template-path "update-field-value.tmpl.sql")
+                     [:table-name table-name
+                                  :column-label column-label
+                                  :new-value new-value
+                                  :opid opid])
+   nil))
 
-;;; (update-field-value "delectus" "next_revision" 3 (delectus::makeid))
+;;; (sql-update-field-value "delectus" "next_revision" 3 (delectus::makeid))
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-assert-op
 ;;; ---------------------------------------------------------------------
 
-(defun sql-assert-op (optype opid origin revision timestamp item name deleted peer)
-  (values
-   (execute-emb "assert-op"
-                :env `(:optype ,optype
-                               :opid ,opid
-                               :origin ,origin
-                               :revision ,revision
-                               :timestamp ,timestamp
-                               :item ,item
-                               :name ,name
-                               :deleted ,deleted
-                               :peer ,peer))
-   (list optype opid origin revision timestamp item name deleted peer)))
-
-
 (defun sql-assert-op (optype opid origin revision timestamp item name deleted peer &key column-data)
   (let* ((column-ids (mapcar #'car column-data))
          (column-values (mapcar #'cdr column-data))
-         (insert-args (append (list "optype" "opid" "origin" "revision" "timestamp" "item" "name" "deleted" "peer")
-                              column-ids))
+         (insert-args (append `("optype" "opid" "origin" "revision" "timestamp"
+                                         "item" "name" "deleted" "peer" ,@column-ids)))
          (insert-arg-strings (mapcar (lambda (a)(format nil "`~A`" a))
                                      insert-args))
          (insert-arg-placeholders (mapcar (constantly "?") insert-args))
@@ -119,29 +96,17 @@
          (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
                       insert-args-text insert-placeholders-text)))
     (values sql
-            (append (list optype opid origin revision timestamp item name deleted peer)
-                    column-values))))
+            `(,optype ,opid ,origin ,revision ,timestamp ,item ,name ,deleted ,peer ,@column-values))))
 
-#|
-
-(defparameter $opid (delectus::makeid))
-(defparameter $origin delectus::*origin*)
-(defparameter $item-rev 42)
-(defparameter $timestamp (delectus::now-timestamp))
-(defparameter $item (delectus::makeid))
-
-(format t "~%~A~%"
-(assert-op "item" $opid $origin $item-rev $timestamp $item nil nil nil
-           :column-data '(("Ia189be00760e11ea8b7f930a927aa001" . 42))))
-
-|#
+;;; (sql-assert-op "item" (makeid) *origin* 2 (now-timestamp) (makeid) nil nil nil :column-data `((,(makeid) . 1)))
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-column-attributes
 ;;; ---------------------------------------------------------------------
 
 (defun sql-get-column-attributes ()
-  "PRAGMA table_info(list_data);")
+  (values "PRAGMA table_info(list_data);"
+          nil))
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-column-values
@@ -155,7 +120,9 @@
 ;;; ---------------------------------------------------------------------
 
 (defun sql-get-latest-listname-op ()
-  "SELECT * FROM `list_data` WHERE `optype`=\"listname\" ORDER BY `revision` DESC, `origin` DESC LIMIT 1;")
+  (values
+   (process-template (sql-template-path "get-latest-listname.tmpl.sql"))
+   nil))
 
 ;;; (sql-get-latest-listname-op)
 
@@ -164,6 +131,22 @@
 ;;; ---------------------------------------------------------------------
 
 (defun sql-get-latest-columns-op ()
-  "SELECT * FROM `list_data` WHERE `optype`=\"columns\" ORDER BY `revision` DESC, `origin` DESC LIMIT 1;")
+  (values
+   (process-template (sql-template-path "get-latest-columns.tmpl.sql"))
+   nil))
 
 ;;; (sql-get-latest-columns-op)
+
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-item-ops
+;;; ---------------------------------------------------------------------
+
+
+(defun sql-get-latest-item-ops ()
+  (values
+   (process-template (sql-template-path "get-latest-items.tmpl.sql"))
+   nil))
+
+;;; (sql-get-latest-item-ops)
+

@@ -60,9 +60,8 @@
 
       ;; 0. initial listname op
       (bind ((sql vals
-                  (sql-assert-op "listname" listname-opid *origin*
-                                   listname-rev (now-timestamp) nil
-                                   list-name nil nil)))
+                  (sql-assert-op "listname" listname-opid *origin* listname-rev
+                                 (now-timestamp) nil list-name nil nil)))
         (apply 'execute-non-query db sql vals))
       ;; create the initial userdata column
       (bind ((sql vals (sql-add-userdata-column initial-column-id "TEXT")))
@@ -94,7 +93,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defun get-latest-listname-op (db-path)
-  (let ((sql (sql-get-latest-listname-op)))
+  (bind ((sql vals (sql-get-latest-listname-op)))
     (with-open-database (db db-path)
       (first (execute-to-list db sql)))))
 
@@ -106,6 +105,14 @@
       (first (execute-to-list db sql)))))
 
 ;;; (get-latest-columns-op "/Users/mikel/Desktop/testlist.delectus2")
+
+(defun get-latest-item-ops (db-path)
+  (let ((sql (sql-get-latest-item-ops)))
+    (with-open-database (db db-path)
+      (execute-to-list db sql))))
+
+;;; (get-latest-item-ops "/Users/mikel/Desktop/testlist.delectus2")
+
 
 ;;; ---------------------------------------------------------------------
 ;;; getting columns
@@ -156,10 +163,6 @@
             column-attrs)))
 
 ;;; (get-userdata-column-attributes "/Users/mikel/Desktop/testlist.delectus2")
-
-(defun get-column-values (db-path)
-  (bind ((sql vals (sql-get-column-values)))
-    (apply 'execute-to-list db sql vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; asserting ops

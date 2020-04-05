@@ -52,8 +52,8 @@
 ;;; (elt $words 0)
 ;;; (elt $words 235885)
 
-(defun op (type opid origin revision itemid itemorder deleted name columns)
-  (append (list type opid origin revision itemid itemorder deleted name)
+(defun op (optype opid origin revision timestamp item name deleted peer columns)
+  (append (list optype opid origin revision timestamp item name deleted peer)
           columns))
 
 (defun fields (f0 f1 f2 f3)
@@ -70,8 +70,6 @@
     (jonathan:to-json plist)))
 
 ;;; (to-json-object $col0)
-
-(defun get-colid (col)(second col))
 
 (defun write-test-csv (path)
   (with-open-file (out path :direction :output
