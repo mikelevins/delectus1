@@ -198,7 +198,7 @@
                                  nil name nil nil)))
         (apply 'execute-non-query db sql vals)))))
 
-;;; (assert-listname "/Users/mikel/Desktop/testlist.delectus2" :name "Sample List")
+;;; (time (assert-listname "/Users/mikel/Desktop/testlist.delectus2" :name "Sample List"))
 ;;; (get-latest-listname-op "/Users/mikel/Desktop/testlist.delectus2")
 
 (defun assert-columns (db-path &key opid origin revision timestamp columns)
