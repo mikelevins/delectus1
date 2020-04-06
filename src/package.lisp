@@ -16,4 +16,4 @@
   (:use #:cl))
 
 (defpackage #:delectus
-  (:use #:cl #:sqlite #:cl-emb))
+  (:use #:cl #:sqlite #:cl-emb #:named-readtables))

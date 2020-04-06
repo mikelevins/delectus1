@@ -1,4 +1,5 @@
 (in-package :delectus)
+(in-readtable :sql)
 
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
@@ -37,7 +38,7 @@
 
 [:insert-into `delectus
               [`id `origin `format `next_revision]
-              :values [(makeid) *origin* +delectus-format-version+ 3]]
+              :values [(MAKEID) *ORIGIN* +DELECTUS-FORMAT-VERSION+ 3]]
 
 
 ;;; ---------------------------------------------------------------------
@@ -69,8 +70,8 @@
 ;;; as case-preserving
 
 [:insert-into `list_data
-              [`optype `opid `origin `revision `timestamp `item `name `deleted `peer [:columnid (makeid)]]
-              :values ["listname" (makeid) *origin* 3 (now-timestamp) nil nil nil "some column attributes"]]
+              [`optype `opid `origin `revision `timestamp `item `name `deleted `peer [:columnid (MAKEID)]]
+              :values ["listname" (MAKEID) *ORIGIN* 3 (NOW-TIMESTAMP) NIL NIL NIL "some column attributes"]]
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-column-attributes
@@ -116,5 +117,4 @@
          :where [`optype := "sync"]
          :order-by [`revision "DESC" `origin "DESC"]
          :limit 1]
-
 

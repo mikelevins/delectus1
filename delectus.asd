@@ -16,13 +16,13 @@
   :license  "Specify license here"
   :version "0.0.1"
   :serial t
-  :depends-on (:fset :fare-csv :uuid :sqlite :cl-emb :jonathan :local-time)
+  :depends-on (:fset :fare-csv :uuid :sqlite :cl-emb :jonathan :local-time :named-readtables)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
                                      (:file "system-parameters")
-                                     (:file "literal-lists")
+                                     (:file "syntax")
                                      (:file "bind")
                                      (:file "utils")
                                      (:file "identities")
