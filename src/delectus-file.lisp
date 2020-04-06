@@ -129,6 +129,13 @@
 
 ;;; (get-latest-item-ops "/Users/mikel/Desktop/testlist.delectus2")
 
+(defun get-latest-sync-op (db-path)
+  (bind ((sql vals (sql-get-latest-sync-op)))
+    (with-open-database (db db-path)
+      (first (execute-to-list db sql)))))
+
+;;; (get-latest-sync-op "/Users/mikel/Desktop/testlist.delectus2")
+
 
 ;;; ---------------------------------------------------------------------
 ;;; getting columns
@@ -192,7 +199,7 @@
         (timestamp (or timestamp (now-timestamp))))
     (with-open-database (db db-path)
       (bind ((sql vals
-                  (sql-assert-op "listname" opid origin
+                  (sql-assert-op optype opid origin
                                  revision
                                  (now-timestamp)
                                  nil name nil nil)))
@@ -214,5 +221,18 @@
     ))
 
 (defun assert-sync (db-path &key opid origin revision timestamp peer)
-  (let ((optype "sync"))
-    ))
+  (assert (stringp peer)() "The :PEER parameter must be a valid Delectus identity")
+  (let ((optype "sync")
+        (opid (or opid (makeid)))
+        (revision (or revision (next-revision db-path)))
+        (timestamp (or timestamp (now-timestamp))))
+    (with-open-database (db db-path)
+      (bind ((sql vals
+                  (sql-assert-op optype opid origin
+                                 revision
+                                 (now-timestamp)
+                                 nil nil nil peer)))
+        (apply 'execute-non-query db sql vals)))))
+
+;;; (time (assert-sync "/Users/mikel/Desktop/testlist.delectus2" :peer *origin*))
+;;; (get-latest-sync-op "/Users/mikel/Desktop/testlist.delectus2")

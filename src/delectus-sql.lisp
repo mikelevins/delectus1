@@ -148,4 +148,13 @@
 
 ;;; (sql-get-latest-item-ops)
 
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-sync-op
+;;; ---------------------------------------------------------------------
 
+(defun sql-get-latest-sync-op ()
+  (values
+   "SELECT * FROM `list_data` WHERE `optype`='sync' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
+   nil))
+
+;;; (sql-get-latest-sync-op)
