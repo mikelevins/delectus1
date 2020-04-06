@@ -215,10 +215,12 @@
   ;;; 3. create any columns that don't already exist
   ;;; 4. assert the new columns op
   (let ((optype "columns"))
+    ;; TODO: write it!
     ))
 
 (defun assert-item (db-path &key opid origin revision timestamp item deleted columns)
   (let ((optype "item"))
+    ;; TODO: write it!
     ))
 
 (defun assert-sync (db-path &key opid origin revision timestamp peer)

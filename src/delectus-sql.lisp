@@ -28,15 +28,13 @@
    "SELECT `next_revision` FROM `delectus` LIMIT 1"
    nil))
 
-;;; (sql-create-delectus-table)
-
 ;;; ---------------------------------------------------------------------
 ;;; sql-create-delectus-table
 ;;; ---------------------------------------------------------------------
 
 (defun sql-create-delectus-table ()
   (values
-   "CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` TEXT )"
+   "CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` INTEGER )"
    nil))
 
 ;;; (sql-create-delectus-table)
