@@ -157,7 +157,7 @@
 
 (defun get-sqlite-column-info (db-path)
   (with-open-database (db db-path)
-    (bind ((sql vals (sql-get-column-attributes)))
+    (bind ((sql vals (sql-get-column-info)))
                      (apply 'execute-to-list db sql vals))))
 
 ;;; (defparameter $colinfo (get-sqlite-column-info "/Users/mikel/Desktop/testlist.delectus2"))

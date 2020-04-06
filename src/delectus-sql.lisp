@@ -98,7 +98,7 @@
 ;;; sql-get-column-attributes
 ;;; ---------------------------------------------------------------------
 
-(defun sql-get-column-attributes ()
+(defun sql-get-column-info ()
   (values "PRAGMA table_info(list_data);"
           nil))
 
