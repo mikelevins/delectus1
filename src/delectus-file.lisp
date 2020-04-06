@@ -14,7 +14,8 @@
 ;;; TODO: use CREATE VIEW to simplify the most common queries
 ;;;       (get the latest listname; get the latest columns; get the
 ;;;       latest version of each distinct item)
-
+;;; TODO: check ops before they are asserted; it an op is identical
+;;;       to the latest op of its type, don't assert it
 
 (defun next-revision (db-path)
   (with-open-database (db db-path)
