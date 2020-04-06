@@ -11,21 +11,12 @@
 (in-package #:delectus)
 
 ;;; ---------------------------------------------------------------------
-;;; the sql templates path
-;;; ---------------------------------------------------------------------
-
-(defun sql-template-path (subpath)
-  (merge-pathnames subpath *sql-templates-pathname*))
-
-;;; (sql-template-path "create-delectus-table.tmpl.sql")
-
-;;; ---------------------------------------------------------------------
 ;;; sql-create-delectus-table
 ;;; ---------------------------------------------------------------------
 
 (defun sql-create-delectus-table ()
   (values
-   (process-template (sql-template-path "create-delectus-table.tmpl.sql"))
+   "CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` TEXT )"
    nil))
 
 ;;; (sql-create-delectus-table)
@@ -36,7 +27,7 @@
 
 (defun sql-populate-delectus-table (id origin format next-revision)
   (values
-   (process-template (sql-template-path "populate-delectus-table.tmpl.sql"))
+   "INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?)"
    (list id origin format next-revision)))
 
 ;;; (sql-populate-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 3)
@@ -47,7 +38,7 @@
 
 (defun sql-create-list_data-table ()
   (values
-   (process-template (sql-template-path "create-list_data-table.tmpl.sql"))
+   "CREATE TABLE `list_data` ( `optype` TEXT, `opid` TEXT, `origin` TEXT, `revision` INTEGER, `timestamp` TEXT, `item` TEXT, `name` TEXT, `deleted` TEXT, `peer` TEXT )"
    nil))
 
 ;;; (sql-create-list_data-table)
@@ -58,8 +49,8 @@
 
 (defun sql-add-userdata-column (label type)
   (values
-   (process-template (sql-template-path "add-userdata-column.tmpl.sql")
-                     [:column-label label :column-type type])
+   (format nil "ALTER TABLE `list_data` ADD `~A` ~A"
+           label type)
    nil))
 
 ;;; (sql-add-userdata-column (delectus::makeid) "TEXT")
@@ -106,7 +97,7 @@
 
 (defun sql-get-latest-listname-op ()
   (values
-   (process-template (sql-template-path "get-latest-listname.tmpl.sql"))
+   "SELECT * FROM `list_data` WHERE `optype`='listname' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
    nil))
 
 ;;; (sql-get-latest-listname-op)
@@ -117,7 +108,7 @@
 
 (defun sql-get-latest-columns-op ()
   (values
-   (process-template (sql-template-path "get-latest-columns.tmpl.sql"))
+   "SELECT * FROM `list_data` WHERE `optype`='columns' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
    nil))
 
 ;;; (sql-get-latest-columns-op)
@@ -127,11 +118,14 @@
 ;;; sql-get-latest-item-ops
 ;;; ---------------------------------------------------------------------
 
-
 (defun sql-get-latest-item-ops ()
   (values
-   (process-template (sql-template-path "get-latest-items.tmpl.sql"))
+   "SELECT a.*
+    FROM (SELECT ROW_NUMBER() OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
+          FROM `list_data` WHERE optype='item') a
+    WHERE a.rank = 1 order by a.revision"
    nil))
 
 ;;; (sql-get-latest-item-ops)
+
 

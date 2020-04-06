@@ -200,7 +200,8 @@
 
 (defun assert-listname (db-path &key opid origin revision timestamp name)
   (let ((optype "listname"))
-    ))
+    (with-open-database (db db-path)
+      )))
 
 (defun assert-columns (db-path &key opid origin revision timestamp columns)
   ;;; 1. get the existing column info
