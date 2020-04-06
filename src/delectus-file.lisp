@@ -79,32 +79,7 @@
                   (sql-assert-op "item"
                                  item-opid *origin* item-rev (now-timestamp) initial-item-id nil nil nil
                                  :column-data `((,initial-column-id . ,initial-field-value)))))
-        (apply 'execute-non-query db sql vals))
-      ;; temporary extra items for testing
-      ;; ---------------------------------------------------------------------
-      (bind ((sql vals
-                  (sql-assert-op "item"
-                                 (makeid) *origin* (+ item-rev 1) (now-timestamp) initial-item-id nil nil nil
-                                 :column-data `((,initial-column-id . "item 1 again")))))
-        (apply 'execute-non-query db sql vals))
-      (bind ((sql vals
-                  (sql-assert-op "item"
-                                 (makeid) *origin* (+ item-rev 2) (now-timestamp) initial-item-id nil nil nil
-                                 :column-data `((,initial-column-id . "item 1 a third time")))))
-        (apply 'execute-non-query db sql vals))
-      ;; different item ids
-      (let ((itemid2 (makeid)))
-        (bind ((sql vals
-                   (sql-assert-op "item"
-                                  (makeid) *origin* (+ item-rev 3) (now-timestamp) itemid2 nil nil nil
-                                  :column-data `((,initial-column-id . "item2")))))
-          (apply 'execute-non-query db sql vals))
-        (bind ((sql vals
-                   (sql-assert-op "item"
-                                  (makeid) *origin* (+ item-rev 4) (now-timestamp) itemid2 nil nil nil
-                                  :column-data `((,initial-column-id . "item2 a second time")))))
-          (apply 'execute-non-query db sql vals)))
-      )))
+        (apply 'execute-non-query db sql vals)))))
 
 
 (defmethod create-delectus-file ((list-name string)(path string))
