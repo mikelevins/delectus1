@@ -11,6 +11,26 @@
 (in-package #:delectus)
 
 ;;; ---------------------------------------------------------------------
+;;; sql-increment-next-revision
+;;; ---------------------------------------------------------------------
+
+(defun sql-increment-next-revision ()
+  (values
+   "UPDATE `delectus` SET `next_revision` = `next_revision` + 1"
+   nil))
+
+;;; ---------------------------------------------------------------------
+;;; sql-next-revision
+;;; ---------------------------------------------------------------------
+
+(defun sql-next-revision ()
+  (values
+   "SELECT `next_revision` FROM `delectus` LIMIT 1"
+   nil))
+
+;;; (sql-create-delectus-table)
+
+;;; ---------------------------------------------------------------------
 ;;; sql-create-delectus-table
 ;;; ---------------------------------------------------------------------
 

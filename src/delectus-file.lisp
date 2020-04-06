@@ -15,6 +15,17 @@
 ;;;       (get the latest listname; get the latest columns; get the
 ;;;       latest version of each distinct item)
 
+
+(defun next-revision (db-path)
+  (with-open-database (db db-path)
+    (with-transaction db
+      (bind ((sqlupdate ignore-vals (sql-increment-next-revision))
+             (sqlget ignore-vals (sql-next-revision)))
+        (apply 'execute-non-query db sqlupdate ignore-vals)
+        (apply 'execute-single db sqlget ignore-vals)))))
+
+;;; (next-revision "/Users/mikel/Desktop/testlist.delectus2")
+
 ;;; ---------------------------------------------------------------------
 ;;; create-delectus-file
 ;;; ---------------------------------------------------------------------
@@ -173,10 +184,22 @@
 ;;; asserting ops
 ;;; ---------------------------------------------------------------------
 
-(defun assert-listname (db-path &key opid origin revision timestamp name)
-  (let ((optype "listname"))
+(defun assert-listname (db-path &key opid (origin *origin*) revision timestamp name)
+  (assert (stringp name)() "The :NAME parameter must be a text string")
+  (let ((optype "listname")
+        (opid (or opid (makeid)))
+        (revision (or revision (next-revision db-path)))
+        (timestamp (or timestamp (now-timestamp))))
     (with-open-database (db db-path)
-      )))
+      (bind ((sql vals
+                  (sql-assert-op "listname" opid origin
+                                 revision
+                                 (now-timestamp)
+                                 nil name nil nil)))
+        (apply 'execute-non-query db sql vals)))))
+
+;;; (assert-listname "/Users/mikel/Desktop/testlist.delectus2" :name "Sample List")
+;;; (get-latest-listname-op "/Users/mikel/Desktop/testlist.delectus2")
 
 (defun assert-columns (db-path &key opid origin revision timestamp columns)
   ;;; 1. get the existing column info
