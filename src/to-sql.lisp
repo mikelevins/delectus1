@@ -11,6 +11,13 @@
 (in-package #:delectus)
 (in-readtable :sql)
 
+;;; ---------------------------------------------------------------------
+;;; ABOUT
+;;; ---------------------------------------------------------------------
+;;; experimenting with compiling an s-expression-based syntax to SQL.
+;;; not yet ready for prime time
+
+
 (DEFUN >> (SQL-SEXPR) 
   (COND
     ((NULL SQL-SEXPR) "NULL")
