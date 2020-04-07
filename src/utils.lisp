@@ -28,6 +28,17 @@
                 (not (member type '(nil :unspecific "") :test 'equal)))
         pathname))))
 
+
+;;; ---------------------------------------------------------------------
+;;;  map utilities
+;;; ---------------------------------------------------------------------
+
+(defun plist->map (plist)
+  (fset:convert 'fset:wb-map
+                (loop for tail on plist by #'cddr
+                   collect (cons (first tail)
+                                 (second tail)))))
+
 ;;; ---------------------------------------------------------------------
 ;;;  string utilities
 ;;; ---------------------------------------------------------------------
