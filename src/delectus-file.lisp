@@ -209,16 +209,41 @@
 ;;; (time (assert-listname "/Users/mikel/Desktop/testlist.delectus2" :name "Sample List"))
 ;;; (get-latest-listname-op "/Users/mikel/Desktop/testlist.delectus2")
 
+(defun get-column-attributes (db-path)
+  )
+
+(defun column-missing? (col existing-column-attributes)
+  )
+
+(defun add-missing-column (db-path column-attributes)
+  )
+
+(defun merge-column-attributes (existing-column-attributes new-column-attributes)
+  )
+
 (defun assert-columns (db-path &key opid origin revision timestamp columns)
-  ;;; 1. get the existing column info
-  ;;; 2. compute the new set of columns = old columns + new columns
-  ;;; 3. create any columns that don't already exist
-  ;;; 4. assert the new columns op
-  (let ((optype "columns"))
-    ;; TODO: write it!
-    ))
+  (let* ((optype "columns")
+         (existing-column-attributes (get-column-attributes db-path))
+         (columns-to-add (filter (lambda (col) (column-missing? col existing-column-attributes))
+                                 columns)))
+    ;; add the missing columns
+    (loop for col in columns-to-add
+       do (add-missing-column db-path col))
+    ;; construct and post the columns op
+    (let* ((column-opid (makeid))
+           (columns-rev (next-revision db-path))
+           (columns-data (merge-column-attributes existing-column-attributes columns)))
+      (bind ((sql vals
+                  (sql-assert-op "columns" columns-opid *origin* columns-rev (now-timestamp)
+                                 nil nil nil nil
+                                 :column-data column-data)))
+        (apply 'execute-non-query db sql vals)))))
 
 (defun assert-item (db-path &key opid origin revision timestamp item deleted columns)
+  ;;; 1. check that the columns in the op match the columns in the
+  ;;;    file; if not, it's an error (we need a "columns" op to
+  ;;;    reconcile them first
+  ;;; 2. assert the op!
   (let ((optype "item"))
     ;; TODO: write it!
     ))

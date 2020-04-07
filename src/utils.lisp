@@ -11,6 +11,24 @@
 (in-package #:delectus)
 
 ;;; ---------------------------------------------------------------------
+;;;  file utilities
+;;; ---------------------------------------------------------------------
+
+;;;  file-pathname-p (pathname)
+;;; ---------------------------------------------------------------------
+;;; returns true if the pathname's name or type part is nonempty
+;;; does not check whether the named file actually exists
+
+(defun file-pathname-p (pathname)
+  (when pathname
+    (let* ((pathname (pathname pathname))
+           (name (pathname-name pathname))
+           (type (pathname-type pathname)))
+      (when (or (not (member name '(nil :unspecific "") :test 'equal))
+                (not (member type '(nil :unspecific "") :test 'equal)))
+        pathname))))
+
+;;; ---------------------------------------------------------------------
 ;;;  string utilities
 ;;; ---------------------------------------------------------------------
 
@@ -31,24 +49,6 @@
 ;;; (str 1 2 3)
 ;;; (str "1" "2" "3")
 ;;; (str '("CREATE TABLE " "`list_data` " "(`optype` TEXT, `opid` TEXT, `origin` TEXT, `revision` INTEGER, `timestamp` TEXT, `item` TEXT, `name` TEXT, `deleted` TEXT, `peer` TEXT);"))
-
-;;; ---------------------------------------------------------------------
-;;;  file utilities
-;;; ---------------------------------------------------------------------
-
-;;;  file-pathname-p (pathname)
-;;; ---------------------------------------------------------------------
-;;; returns true if the pathname's name or type part is nonempty
-;;; does not check whether the named file actually exists
-
-(defun file-pathname-p (pathname)
-  (when pathname
-    (let* ((pathname (pathname pathname))
-           (name (pathname-name pathname))
-           (type (pathname-type pathname)))
-      (when (or (not (member name '(nil :unspecific "") :test 'equal))
-                (not (member type '(nil :unspecific "") :test 'equal)))
-        pathname))))
 
 ;;; ---------------------------------------------------------------------
 ;;;  time utilities
