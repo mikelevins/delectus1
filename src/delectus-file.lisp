@@ -10,12 +10,23 @@
 
 (in-package #:delectus)
 
+;;; =====================================================================
+;;; ABOUT
+;;; =====================================================================
+;;; This file provides functions for working with Delectus model
+;;; objects (lists, columns, items, and so on) that are stored in
+;;; SQLite files.
+
 ;;; TODO: use CREATE INDEX to make the common queries go fast
 ;;; TODO: use CREATE VIEW to simplify the most common queries
 ;;;       (get the latest listname; get the latest columns; get the
 ;;;       latest version of each distinct item)
-;;; TODO: check ops before they are asserted; it an op is identical
+;;; TODO: check ops before they are asserted; if an op is identical
 ;;;       to the latest op of its type, don't assert it
+
+;;; ---------------------------------------------------------------------
+;;; utility functions
+;;; ---------------------------------------------------------------------
 
 (defun next-revision (db-path)
   (with-open-database (db db-path)
@@ -27,9 +38,15 @@
 
 ;;; (next-revision "/Users/mikel/Desktop/testlist.delectus2")
 
+;;; requires an open db reference
+(defun add-userdata-column (db column-id)
+  (bind ((sql vals (sql-add-userdata-column column-id "TEXT")))
+    (apply 'execute-non-query db sql vals)))
+
 ;;; ---------------------------------------------------------------------
 ;;; create-delectus-file
 ;;; ---------------------------------------------------------------------
+;;; creates a list file and sets up the SQLite tables for its data
 
 (defmethod create-delectus-file ((list-name string)(path pathname))
   (when (probe-file path)
@@ -76,8 +93,7 @@
                                  (now-timestamp) nil list-name nil nil)))
         (apply 'execute-non-query db sql vals))
       ;; create the initial userdata column
-      (bind ((sql vals (sql-add-userdata-column initial-column-id "TEXT")))
-        (apply 'execute-non-query db sql vals))
+      (add-userdata-column db initial-column-id)
 
       ;; 1. initial columns op
       (bind ((sql vals
@@ -99,10 +115,10 @@
 
 ;;; (create-delectus-file "Test List" "/Users/mikel/Desktop/testlist.delectus2")
 
-
 ;;; ---------------------------------------------------------------------
 ;;; getting ops
 ;;; ---------------------------------------------------------------------
+;;; functions for retrieving op records.
 
 (defun get-latest-listname-op (db-path)
   (bind ((sql vals (sql-get-latest-listname-op)))
@@ -141,9 +157,9 @@
 ;;; ---------------------------------------------------------------------
 ;;; getting columns
 ;;; ---------------------------------------------------------------------
-;;; columns asserts column attributes. item asserts column values.
-;;; even when these ops do not change anything, they must contain
-;;; the unchanged column values, because they become the authoritative
+;;; "columns" asserts column attributes. "item" asserts column values.
+;;; even when these ops do not change anything, they must contain the
+;;; unchanged column values, because they become the authoritative
 ;;; source of what those values are. we therefore need a function to
 ;;; retrieve the current column info for columns, and one to retrieve
 ;;; the current values for item.
@@ -173,18 +189,14 @@
 
 ;;; (get-userdata-column-labels "/Users/mikel/Desktop/testlist.delectus2")
 
-;;; returns an alist with this format:
-;;; (<columnid> . <column-attributes>)
-;;; the attributes are parsed from the JSON data stored in the column
-;;; and include the id, so the id appears twice
+;;; returns an list of <column-attributes>
+;;; <column-attributes> is an FSET:WB-MAP parsed from the JSON string
+;;; stored on the column. the :|id| field of each attributes object is
+;;; also the column's SQLite label
 (defun get-userdata-column-attributes (db-path)
   (let* ((latest-columns-op (get-latest-columns-op db-path))
-         (json-strings (op::op-field latest-columns-op :columns))
-         (column-attrs (mapcar #'from-json json-strings)))
-    (mapcar (lambda (attrs)
-              (cons (fset:@ attrs :|id|)
-                    attrs))
-            column-attrs)))
+         (json-strings (op::op-field latest-columns-op :columns)))
+    (mapcar #'from-json json-strings)))
 
 ;;; (get-userdata-column-attributes "/Users/mikel/Desktop/testlist.delectus2")
 
@@ -209,12 +221,6 @@
 ;;; (time (assert-listname "/Users/mikel/Desktop/testlist.delectus2" :name "Sample List"))
 ;;; (get-latest-listname-op "/Users/mikel/Desktop/testlist.delectus2")
 
-(defun get-column-attributes (db-path)
-  )
-
-(defun column-missing? (col existing-column-attributes)
-  )
-
 (defun add-missing-column (db-path column-attributes)
   )
 
@@ -223,21 +229,29 @@
 
 (defun assert-columns (db-path &key opid origin revision timestamp columns)
   (let* ((optype "columns")
-         (existing-column-attributes (get-column-attributes db-path))
-         (columns-to-add (filter (lambda (col) (column-missing? col existing-column-attributes))
-                                 columns)))
-    ;; add the missing columns
-    (loop for col in columns-to-add
-       do (add-missing-column db-path col))
-    ;; construct and post the columns op
-    (let* ((column-opid (makeid))
-           (columns-rev (next-revision db-path))
-           (columns-data (merge-column-attributes existing-column-attributes columns)))
-      (bind ((sql vals
-                  (sql-assert-op "columns" columns-opid *origin* columns-rev (now-timestamp)
-                                 nil nil nil nil
-                                 :column-data column-data)))
-        (apply 'execute-non-query db sql vals)))))
+         (existing-columns (get-userdata-column-attributes db-path))
+         (columns-to-add (set-difference columns existing-columns
+                                         :key (lambda (c)(fset:@ c :|id|))
+                                         :test #'equal)))
+    (with-open-database (db db-path)
+      ;; add the missing columns
+      (loop for col in columns-to-add
+         do (let ((col-label (fset:@ col :|id|))
+                  (col-json (to-json col)))
+              (add-userdata-column db col-label)))
+      ;; construct and post the columns op
+      ;; we have to ensure that newly-added columns end up with valid attributes
+      ;; that means we have to check the data provided in the op and, if it doesn't contain
+      ;; attributes JSON, we have to construct a default JSON string, using the new column's ID
+      ;; for the name, and assigning an order that doesn't conflict with exiting solumns
+      (let* ((columns-opid (makeid))
+             (columns-rev (next-revision db-path))
+             (columns-data (merge-column-attributes existing-column-attributes columns)))
+        (bind ((sql vals
+                    (sql-assert-op "columns" columns-opid *origin* columns-rev (now-timestamp)
+                                   nil nil nil nil
+                                   :column-data column-data)))
+          (apply 'execute-non-query db sql vals))))))
 
 (defun assert-item (db-path &key opid origin revision timestamp item deleted columns)
   ;;; 1. check that the columns in the op match the columns in the
