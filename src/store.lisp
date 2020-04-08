@@ -2,7 +2,7 @@
 ;;;;
 ;;;; Name:          store.lisp
 ;;;; Project:       delectus 2
-;;;; Purpose:       operations on Delectus model objects in SQLite files
+;;;; Purpose:       operations on Delectus model objects stored in SQLite files
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2020 by mikel evins
 ;;;;
@@ -21,6 +21,13 @@
 ;;; the corresponding functions whose names omit the "db-" prefix
 ;;; operate on strings or pathnames, and automatically open and
 ;;; close the database connection
+;;;
+;;; an OP is a database row that specifies one of four operations:
+;;; - listname: to update the user-defined name of the list
+;;; - columns: to update the list's userdata columns and their attributes
+;;; - item: to add or update an item in the list
+;;; - sync: to record a successful synchronization with another copy
+;;;   of the list
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
