@@ -29,10 +29,12 @@
                                      (:file "columns")
                                      (:file "csv")
                                      (:file "json")
-                                     (:file "delectus-sql")
+                                     ;;(:file "delectus-sql")
+                                     (:file "sqlgen")
                                      (:file "sqlite")
-                                     (:file "op")
-                                     (:file "delectus-file")))))
+                                     ;;(:file "op")
+                                     ;;(:file "delectus-file")
+                                     (:file "store")
+                                     ))))
 
 ;;; (asdf:load-system :delectus)
-
