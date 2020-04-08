@@ -28,3 +28,43 @@
   (values
    "SELECT `next_revision` FROM `delectus` LIMIT 1"
    nil))
+
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-listname
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-latest-listname ()
+  (values
+   "SELECT * FROM `list_data` WHERE `optype`='listname' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
+   nil))
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-columns
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-latest-columns ()
+  (values
+   "SELECT * FROM `list_data` WHERE `optype`='columns' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
+   nil))
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-items
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-latest-items ()
+  (values
+   "SELECT a.*
+    FROM (SELECT ROW_NUMBER() OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
+          FROM `list_data` WHERE optype='item') a
+    WHERE a.rank = 1 order by a.revision"
+   nil))
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-sync
+;;; ---------------------------------------------------------------------
+
+(defun sql-get-latest-sync ()
+  (values
+   "SELECT * FROM `list_data` WHERE `optype`='sync' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
+   nil))

@@ -84,7 +84,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-listname ((db sqlite-handle))
-  )
+  (bind ((sql vals (sql-get-latest-listname)))
+    (first (execute-to-list db sql))))
 
 (defmethod get-latest-listname ((db-path pathname))
   (with-open-database (db db-path)
@@ -94,12 +95,15 @@
 (defmethod get-latest-listname ((db-path string))
   (get-latest-listname (pathname db-path)))
 
+;;; (get-latest-listname "/Users/mikel/Desktop/testlist.delectus2")
+
 
 ;;; columns ops
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-columns ((db sqlite-handle))
-  )
+  (bind ((sql vals (sql-get-latest-columns)))
+    (first (execute-to-list db sql))))
 
 (defmethod get-latest-columns ((db-path pathname))
   (with-open-database (db db-path)
@@ -109,12 +113,20 @@
 (defmethod get-latest-columns ((db-path string))
   (get-latest-columns (pathname db-path)))
 
+;;; (get-latest-columns "/Users/mikel/Desktop/testlist.delectus2")
 
 ;;; item ops
 ;;; ---------------------------------------------------------------------
 
+;;; NOTE: the query returns a list of (1 . row), because it's
+;;; partitioning by id, then sorting descending by revision, then
+;;; returning all rows whose rank is 1; so the CDR of each item is the
+;;; actual result
 (defmethod db-get-latest-items ((db sqlite-handle))
-  )
+  (bind ((sql vals (sql-get-latest-items)))
+    (let ((latest-item-results (execute-to-list db sql)))
+      ;; discard the rank field from the returned result
+      (mapcar #'cdr latest-item-results))))
 
 (defmethod get-latest-items ((db-path pathname))
   (with-open-database (db db-path)
@@ -124,12 +136,15 @@
 (defmethod get-latest-items ((db-path string))
   (get-latest-items (pathname db-path)))
 
+;;; (get-latest-items "/Users/mikel/Desktop/testlist.delectus2")
+
 
 ;;; sync ops
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-sync ((db sqlite-handle))
-  )
+  (bind ((sql vals (sql-get-latest-sync)))
+    (first (execute-to-list db sql))))
 
 (defmethod get-latest-sync ((db-path pathname))
   (with-open-database (db db-path)
@@ -138,6 +153,8 @@
 
 (defmethod get-latest-sync ((db-path string))
   (get-latest-sync (pathname db-path)))
+
+;;; (get-latest-sync "/Users/mikel/Desktop/testlist.delectus2")
 
 ;;; ---------------------------------------------------------------------
 ;;; asserting ops
