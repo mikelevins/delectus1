@@ -35,3 +35,4 @@
                                      (:file "delectus-file")))))
 
 ;;; (asdf:load-system :delectus)
+

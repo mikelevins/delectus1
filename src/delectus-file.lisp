@@ -118,9 +118,9 @@
 
 ;;; (get-latest-columns-op "/Users/mikel/Desktop/testlist.delectus2")
 
-;;; NOTE: get-latest-items.tmpl.sql returns the rank (1)
-;;;       of each matched row, so the cdr of the result is
-;;;       the actual latest row
+;;; NOTE: returns a list of (1 . row), because it's partitioning by
+;;; id, then sorting descending by revision, then returning the rows
+;;; whose rank is 1; so the CDR of each item is the actual result
 (defun get-latest-item-ops (db-path)
   (bind ((sql vals (sql-get-latest-item-ops)))
     (let ((latest-item-results (with-open-database (db db-path)
@@ -174,15 +174,15 @@
 ;;; (get-userdata-column-labels "/Users/mikel/Desktop/testlist.delectus2")
 
 ;;; returns an alist with this format:
-;;; (<columnid> . <column-sttributes-plist>)
+;;; (<columnid> . <column-attributes>)
 ;;; the attributes are parsed from the JSON data stored in the column
 ;;; and include the id, so the id appears twice
 (defun get-userdata-column-attributes (db-path)
   (let* ((latest-columns-op (get-latest-columns-op db-path))
          (json-strings (op::op-field latest-columns-op :columns))
-         (column-attrs (mapcar #'jonathan:parse json-strings)))
+         (column-attrs (mapcar #'from-json json-strings)))
     (mapcar (lambda (attrs)
-              (cons (getf attrs :|id|)
+              (cons (fset:@ attrs :|id|)
                     attrs))
             column-attrs)))
 

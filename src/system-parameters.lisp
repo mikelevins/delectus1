@@ -18,4 +18,3 @@
 ;;; TODO: add logic for initializing parameters appropriately in a delivered app
 
 (defparameter *delectus-root-pathname* (asdf:system-relative-pathname :delectus "./"))
-(defparameter *sql-templates-pathname* (merge-pathnames "sql-templates/" *delectus-root-pathname*))
