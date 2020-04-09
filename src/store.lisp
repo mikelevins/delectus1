@@ -48,13 +48,23 @@
 ;;; =====================================================================
 ;;; checking columns
 ;;; =====================================================================
-;;; this code identifies column data in an op that references
-;;; nonexistent columns. We use that in asserting a columns op to
-;;; ensure that all columns exist before asserting the op; we use it
-;;; in asserting an item op to signal an error if the item op mentions
-;;; columns that don't exist
+;;; returns a list of column-data objects that describe columns that
+;;; don't exist in the SQLite file.
+;;;
+;;; In the columns op we use it to identify columns that must be
+;;; created before the op can be asserted. In the item op we use it to
+;;; idenfity situations where we must signal an error because the op
+;;; references columns that don't exist.
 
+(defmethod db-missing-columns ((db sqlite-handle) (column-data-list list))
+  )
 
+(defmethod missing-columns ((db-path pathname) (column-data-list list))
+  (with-open-database (db db-path)
+    (db-missing-columns db column-data-list)))
+
+(defmethod missing-columns ((db-path string) (column-data-list list))
+  (missing-columns (pathname db-path) column-data-list))
 
 ;;; =====================================================================
 ;;; creating the list file
@@ -302,9 +312,7 @@
 
 ;;; columns ops
 ;;; ---------------------------------------------------------------------
-;;; TODO: check the columns op against the existing columns to see if
-;;; any need to be added; if so, add the missing columns before
-;;; asserting the op
+;;; column-data is a list of column-data objects
 
 (defmethod db-assert-columns ((db sqlite-handle)
                               &key opid origin revision timestamp column-data)
@@ -328,10 +336,8 @@
 
 ;;; item ops
 ;;; ---------------------------------------------------------------------
-;;; TODO: check the item op against the existing columns to see if any
-;;; are missing; if so, signal an error. if an item op requires
-;;; nonexistent columns, then a columns op is missing somewhere.
-
+;;; column-data is a list of column-data objects. column-values is a
+;;; list of field values, one for each column
 
 (defmethod db-assert-item ((db sqlite-handle)
                            &key opid origin revision timestamp item deleted column-data column-values)

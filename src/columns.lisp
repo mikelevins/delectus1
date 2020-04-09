@@ -19,10 +19,13 @@
 (defparameter *minimum-column-order* 10.0)
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
 
-;;; constructing columndata
+;;; constructing column-data
 ;;; ---------------------------------------------------------------------
 
-(defun columndata (&key id name type order sort title subtitle deleted)
+(defparameter +column-data-keys+
+  (fset:set :|id| :|name| :|sort| :|type| :|order| :|title| :|deleted| :|subtitle|))
+
+(defun column-data (&key id name type order sort title subtitle deleted)
   {:|id| (or id :false)
     :|name| (or name :false)
     :|type| (or type :false)
@@ -32,4 +35,16 @@
     :|subtitle| (or subtitle :false)
     :|deleted| (or deleted :false)})
 
-;;; (columndata :id (makeid))
+;;; (column-data :id (makeid))
+
+(defmethod column-data? (thing)
+  (declare (ignore thing))
+  nil)
+
+(defmethod column-data? ((thing fset:wb-map))
+  (eq :equal
+      (fset:compare (fset:domain thing)
+                    +column-data-keys+)))
+
+(deftype column-data ()
+  '(satisfies column-data?))
