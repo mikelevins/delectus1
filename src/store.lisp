@@ -57,7 +57,8 @@
 ;;; references columns that don't exist.
 
 (defmethod db-missing-columns ((db sqlite-handle) (column-data-list list))
-  )
+  (let ()
+    ))
 
 (defmethod missing-columns ((db-path pathname) (column-data-list list))
   (with-open-database (db db-path)
@@ -136,6 +137,23 @@
 ;;; =====================================================================
 ;;; fetching data
 ;;; =====================================================================
+
+;;; column-info
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-column-info ((db sqlite-handle))
+  (bind ((sqlget vals (sql-get-column-info)))
+    (apply 'execute-to-list db sqlget vals)))
+
+(defmethod get-column-info ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-column-info db)))
+
+(defmethod get-column-info ((path string))
+  (get-column-info (pathname path)))
+
+;;; (get-column-info "/Users/mikel/Desktop/testlist.delectus2")
+
 
 ;;; list-id
 ;;; ---------------------------------------------------------------------
