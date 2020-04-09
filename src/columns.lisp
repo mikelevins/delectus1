@@ -19,7 +19,17 @@
 (defparameter *minimum-column-order* 10.0)
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
 
-;;; constructing column-data
+;;; SQLite column-info
+;;; ---------------------------------------------------------------------
+
+;;; the labels for the predefined metadata columns that every list has
+(defparameter +metadata-column-labels+
+  '("optype" "opid" "origin" "revision" "timestamp" "item" "name" "deleted" "peer"))
+
+(defstruct (column-info (:constructor column-info (cid name type notnull dflt_value pk)))
+  cid name type notnull dflt_value pk)
+
+;;; Delectus column-data
 ;;; ---------------------------------------------------------------------
 
 (defparameter +column-data-keys+

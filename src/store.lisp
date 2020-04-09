@@ -57,8 +57,15 @@
 ;;; references columns that don't exist.
 
 (defmethod db-missing-columns ((db sqlite-handle) (column-data-list list))
-  (let ()
-    ))
+  (let ((userdata-info (db-get-userdata-column-info db)))
+    (if userdata-info
+        (let ((userdata-labels (mapcar #'column-info-name userdata-info)))
+          (remove-if (lambda (column-data)
+                       (member (fset:@ column-data :|id|)
+                               userdata-labels
+                               :test #'equal))
+                     column-data-list))
+        column-data-list)))
 
 (defmethod missing-columns ((db-path pathname) (column-data-list list))
   (with-open-database (db db-path)
@@ -66,6 +73,10 @@
 
 (defmethod missing-columns ((db-path string) (column-data-list list))
   (missing-columns (pathname db-path) column-data-list))
+
+;;; (setf $existing (column-data :id "Ibe8f18857a7611ea909e38c9864ebde0" :name "Existing column"))
+;;; (setf $nonexistent (column-data :id "BOGUS" :name "Nonexistent column"))
+;;; (missing-columns "/Users/mikel/Desktop/testlist.delectus2" (list $existing $nonexistent))
 
 ;;; =====================================================================
 ;;; creating the list file
@@ -143,7 +154,8 @@
 
 (defmethod db-get-column-info ((db sqlite-handle))
   (bind ((sqlget vals (sql-get-column-info)))
-    (apply 'execute-to-list db sqlget vals)))
+    (mapcar (lambda (info)(apply 'column-info info))
+            (apply 'execute-to-list db sqlget vals))))
 
 (defmethod get-column-info ((db-path pathname))
   (with-open-database (db db-path)
@@ -153,6 +165,28 @@
   (get-column-info (pathname path)))
 
 ;;; (get-column-info "/Users/mikel/Desktop/testlist.delectus2")
+
+;;; userdata-column-info
+;;; ---------------------------------------------------------------------
+;;; returns the column-info only for userdata columns
+
+(defmethod db-get-userdata-column-info ((db sqlite-handle))
+  (let ((all-info (db-get-column-info db)))
+    ;; remove the metadata columns
+    (remove-if (lambda (info)
+                 (find (column-info-name info)
+                       +metadata-column-labels+
+                       :test #'equal))
+               all-info)))
+
+(defmethod get-userdata-column-info ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-userdata-column-info db)))
+
+(defmethod get-userdata-column-info ((path string))
+  (get-userdata-column-info (pathname path)))
+
+;;; (get-userdata-column-info "/Users/mikel/Desktop/testlist.delectus2")
 
 
 ;;; list-id
@@ -334,9 +368,13 @@
 
 (defmethod db-assert-columns ((db sqlite-handle)
                               &key opid origin revision timestamp column-data)
-  (let ((opid (or opid (makeid)))
-        (revision (or revision (db-get-next-revision db)))
-        (timestamp (or timestamp (now-timestamp))))
+  (let* ((missing-columns (missing-columns db column-data))
+         (opid (or opid (makeid)))
+         (revision (or revision (db-get-next-revision db)))
+         (timestamp (or timestamp (now-timestamp))))
+    (when missing-columns
+      ;; TODO: add the missing columns before asserting the columns op
+      )
     (bind ((sql vals
                 (sql-assert-columns opid origin revision timestamp nil nil nil nil :column-data column-data)))
       (apply 'execute-non-query db sql vals))))
