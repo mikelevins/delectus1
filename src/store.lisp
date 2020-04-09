@@ -101,15 +101,15 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-add-userdata-column ((db sqlite-handle) (column-id string))
-  (bind ((sql _ignore (sql-add-userdata-column column-id "TEXT")))
-    (execute-non-query db sql)))
+  (bind ((sql vals (sql-add-userdata-column column-id "TEXT")))
+    (apply 'execute-non-query db sql vals)))
 
-(defun add-userdata-column ((db-path pathname) (column-id string))
+(defmethod add-userdata-column ((db-path pathname) (column-id string))
   (with-open-database (db db-path)
     (with-transaction db
       (db-add-userdata-column db column-id))))
 
-(defun add-userdata-column ((db-path string) (column-id string))
+(defmethod add-userdata-column ((db-path string) (column-id string))
   (add-userdata-column (pathname db-path) column-id))
 
 ;;; ---------------------------------------------------------------------
@@ -120,8 +120,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-list-id ((db sqlite-handle))
-  (bind ((sqlget _ignore (sql-list-id)))
-    (execute-single db sqlget)))
+  (bind ((sqlget vals (sql-list-id)))
+    (apply 'execute-single db sqlget vals)))
 
 (defmethod get-list-id ((db-path pathname))
   (with-open-database (db db-path)
@@ -136,8 +136,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-list-origin ((db sqlite-handle))
-  (bind ((sqlget _ignore (sql-list-origin)))
-    (execute-single db sqlget)))
+  (bind ((sqlget vals (sql-list-origin)))
+    (apply 'execute-single db sqlget vals)))
 
 (defmethod get-list-origin ((db-path pathname))
   (with-open-database (db db-path)
@@ -152,8 +152,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-list-format ((db sqlite-handle))
-  (bind ((sqlget _ignore (sql-list-format)))
-    (execute-single db sqlget)))
+  (bind ((sqlget vals (sql-list-format)))
+    (apply 'execute-single db sqlget vals)))
 
 (defmethod get-list-format ((db-path pathname))
   (with-open-database (db db-path)
@@ -168,10 +168,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-next-revision ((db sqlite-handle))
-  (bind ((sqlupdate _ignore (sql-increment-next-revision))
-         (sqlget _ignore (sql-next-revision)))
-    (execute-non-query db sqlupdate)
-    (execute-single db sqlget)))
+  (bind ((sqlupdate upvals (sql-increment-next-revision))
+         (sqlget getvals (sql-next-revision)))
+    (apply 'execute-non-query db sqlupdate upvals)
+    (apply 'execute-single db sqlget getvals)))
 
 (defmethod get-next-revision ((db-path pathname))
   (with-open-database (db db-path)
@@ -189,7 +189,7 @@
 
 (defmethod db-get-latest-listname ((db sqlite-handle))
   (bind ((sql vals (sql-get-latest-listname)))
-    (first (execute-to-list db sql))))
+    (first (apply 'execute-to-list db sql vals))))
 
 (defmethod get-latest-listname ((db-path pathname))
   (with-open-database (db db-path)
@@ -206,7 +206,7 @@
 
 (defmethod db-get-latest-columns ((db sqlite-handle))
   (bind ((sql vals (sql-get-latest-columns)))
-    (first (execute-to-list db sql))))
+    (first (apply 'execute-to-list db sql vals))))
 
 (defmethod get-latest-columns ((db-path pathname))
   (with-open-database (db db-path)
@@ -226,7 +226,7 @@
 ;;; actual result
 (defmethod db-get-latest-items ((db sqlite-handle))
   (bind ((sql vals (sql-get-latest-items)))
-    (let ((latest-item-results (execute-to-list db sql)))
+    (let ((latest-item-results (apply 'execute-to-list db sql vals)))
       ;; discard the rank field from the returned result
       (mapcar #'cdr latest-item-results))))
 
@@ -245,7 +245,7 @@
 
 (defmethod db-get-latest-sync ((db sqlite-handle))
   (bind ((sql vals (sql-get-latest-sync)))
-    (first (execute-to-list db sql))))
+    (first (apply 'execute-to-list db sql vals))))
 
 (defmethod get-latest-sync ((db-path pathname))
   (with-open-database (db db-path)
@@ -255,7 +255,6 @@
   (get-latest-sync (pathname db-path)))
 
 ;;; (get-latest-sync "/Users/mikel/Desktop/testlist.delectus2")
-
 
 
 ;;; ---------------------------------------------------------------------
@@ -304,7 +303,7 @@
       (apply 'execute-non-query db sql vals))))
 
 (defmethod assert-columns ((db-path pathname)
-                           &key opid origin revision timestamp columns)
+                           &key opid origin revision timestamp column-data)
   (with-open-database (db db-path)
     (with-transaction db
       (db-assert-columns db :opid opid :origin origin :revision revision :timestamp timestamp :column-data column-data))))
@@ -324,7 +323,7 @@
         (revision (or revision (db-get-next-revision db)))
         (timestamp (or timestamp (now-timestamp))))
     (bind ((sql vals
-                (sql-assert-item opid origin revision timestamp nil nil nil nil
+                (sql-assert-item opid origin revision timestamp item deleted nil nil
                                  :column-data column-data :column-values column-values)))
       (apply 'execute-non-query db sql vals))))
 
@@ -332,13 +331,15 @@
                         &key opid origin revision timestamp item deleted column-data column-values)
   (with-open-database (db db-path)
     (with-transaction db
-      (db-assert-item db :opid opid :origin origin :revision revision :timestamp timestamp
+      (db-assert-item db :opid opid :origin origin :revision revision
+                      :timestamp timestamp :item item :deleted deleted
                       :column-data column-data :column-values column-values))))
 
 (defmethod assert-item ((db-path string)
                         &key opid origin revision timestamp item deleted column-data column-values)
   (assert-item (pathname db-path)
-               :opid opid :origin origin :revision revision :timestamp timestamp
+               :opid opid :origin origin :revision revision
+               :timestamp timestamp :item item :deleted deleted
                :column-data column-data :column-values column-values))
 
 
@@ -357,7 +358,7 @@
 
 (defmethod assert-sync ((db-path pathname)
                         &key opid origin revision timestamp peer)
-  (assert (stringp name)() "The :PEER parameter must be an identity")
+  (assert (stringp peer)() "The :PEER parameter must be an identity")
   (with-open-database (db db-path)
     (with-transaction db
       (db-assert-sync db :opid opid :origin origin :revision revision :timestamp timestamp :peer peer))))
