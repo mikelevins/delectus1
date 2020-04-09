@@ -11,9 +11,9 @@
 (in-package #:delectus)
 (in-readtable :delectus)
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; ABOUT
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; functions whose names start with "db-" require a valid open
 ;;; SQLITE-HANDLE; in other words, they operate within transactions on
 ;;; open SQLite databases.
@@ -29,9 +29,9 @@
 ;;; - sync: to record a successful synchronization with another copy
 ;;;   of the list
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; initial data
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (defparameter +default-initial-column-attributes+
   {:|name| "Item"
@@ -45,9 +45,20 @@
 ;;; (to-json +default-initial-column-attributes+)
 ;;; (fset:with +default-initial-column-attributes+ :|id| (makeid))
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
+;;; checking columns
+;;; =====================================================================
+;;; this code identifies column data in an op that references
+;;; nonexistent columns. We use that in asserting a columns op to
+;;; ensure that all columns exist before asserting the op; we use it
+;;; in asserting an item op to signal an error if the item op mentions
+;;; columns that don't exist
+
+
+
+;;; =====================================================================
 ;;; creating the list file
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (defmethod db-create-delectus-table ((db sqlite-handle)(listid string))
   (let* ((next-rev 3)) ; 0 is initial listname; 1 is initial columns; 2 is initial item
@@ -112,9 +123,9 @@
 (defmethod add-userdata-column ((db-path string) (column-id string))
   (add-userdata-column (pathname db-path) column-id))
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; fetching data
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 ;;; list-id
 ;;; ---------------------------------------------------------------------
@@ -257,9 +268,9 @@
 ;;; (get-latest-sync "/Users/mikel/Desktop/testlist.delectus2")
 
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; asserting ops
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; the general model for assertions is:
 ;;; 1. compute the mutations we're going to make, signaling an error
 ;;;    if any prerequisite is not met
@@ -291,7 +302,9 @@
 
 ;;; columns ops
 ;;; ---------------------------------------------------------------------
-
+;;; TODO: check the columns op against the existing columns to see if
+;;; any need to be added; if so, add the missing columns before
+;;; asserting the op
 
 (defmethod db-assert-columns ((db sqlite-handle)
                               &key opid origin revision timestamp column-data)
@@ -315,6 +328,9 @@
 
 ;;; item ops
 ;;; ---------------------------------------------------------------------
+;;; TODO: check the item op against the existing columns to see if any
+;;; are missing; if so, signal an error. if an item op requires
+;;; nonexistent columns, then a columns op is missing somewhere.
 
 
 (defmethod db-assert-item ((db sqlite-handle)
