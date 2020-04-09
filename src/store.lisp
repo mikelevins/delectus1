@@ -30,15 +30,27 @@
 ;;;   of the list
 
 ;;; ---------------------------------------------------------------------
+;;; initial data
+;;; ---------------------------------------------------------------------
+
+(defparameter +default-initial-column-attributes+
+  {:|name| "Item"
+    :|type| "TEXT"
+    :|order| 10.0
+    :|sort| "ASC"
+    :|title| t
+    :|subtitle| :false
+    :|deleted| :false})
+
+;;; (to-json +default-initial-column-attributes+)
+;;; (fset:with +default-initial-column-attributes+ :|id| (makeid))
+
+;;; ---------------------------------------------------------------------
 ;;; creating the list file
 ;;; ---------------------------------------------------------------------
 
-(defmethod db-create-delectus-table ((db sqlite-handle) &key listid)
-  (let* ((listid (or listid (makeid)))
-         (listname-rev 0)
-         (columns-rev 1)
-         (item-rev 2)
-         (next-rev (1+ item-rev)))
+(defmethod db-create-delectus-table ((db sqlite-handle)(listid string))
+  (let* ((next-rev 3)) ; 0 is initial listname; 1 is initial columns; 2 is initial item
     ;; create the delectus table
     (bind ((sql vals (sql-create-delectus-table)))
       (apply 'execute-non-query db sql vals))
@@ -46,28 +58,51 @@
     (bind ((sql vals (sql-populate-delectus-table listid *origin* +delectus-format-version+ next-rev)))
       (apply 'execute-non-query db sql vals))))
 
-(defmethod db-create-listdata-table ((db sqlite-handle))
-  )
+(defmethod db-create-listdata-table ((db sqlite-handle)(list-name string)(listid string)
+                                     &key origin)
+  (let* ((listname-opid (makeid))
+         (columns-opid (makeid))
+         (item-opid (makeid))
+         (origin (or origin (makeid)))
+         (listname-rev 0)
+         (columns-rev 1)
+         (item-rev 2)
+         (userdata-column-id (makeid))
+         (userdata-column-data (fset:with +default-initial-column-attributes+ :|id| userdata-column-id)))
+    ;; create the table
+    (bind ((sql vals (sql-create-listdata-table)))
+      (apply 'execute-non-query db sql vals))
+    ;; assert the initial listname op
+    (bind ((sql vals (sql-assert-listname listname-opid origin listname-rev (now-timestamp) nil list-name nil nil)))
+      (apply 'execute-non-query db sql vals))
+    ;; add the initial userdata column
+    (db-add-userdata-column db userdata-column-id)
+    ;; assert the initial columns op
+    (db-assert-columns db :opid columns-opid :origin origin :revision columns-rev :timestamp (now-timestamp)
+                       :column-data (list userdata-column-data))
+    ;; assert the initial item op
+    (db-assert-item db :opid item-opid :origin origin :revision item-rev :timestamp (now-timestamp)
+                    :column-data (list userdata-column-data) :column-values (list nil))))
 
-(defmethod create-delectus-file ((list-name string)(db-path pathname))
+(defmethod create-delectus-file ((db-path pathname)(list-name string)(listid string))
   (assert (not (probe-file db-path)) () "file exists: ~S" db-path)
   (with-open-database (db db-path)
     (with-transaction db
-      (db-create-delectus-table db)
-      (db-create-listdata-table db))))
+      (db-create-delectus-table db listid)
+      (db-create-listdata-table db list-name listid))))
 
-(defmethod create-delectus-file ((list-name string)(db-path string))
-  (create-delectus-file list-name (pathname db-path)))
+(defmethod create-delectus-file ((db-path string)(list-name string)(listid string))
+  (create-delectus-file (pathname db-path) list-name listid))
 
-;;; (create-delectus-file "Test List" "/Users/mikel/Desktop/testlist.delectus2")
+;;; (create-delectus-file "/Users/mikel/Desktop/testlist.delectus2" "Test List" (makeid))
 
 ;;; ---------------------------------------------------------------------
 ;;; adding userdata columns
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-add-userdata-column ((db sqlite-handle) (column-id string))
-  (bind ((add-column-sql _ignore (sql-add-userdata-column column-id "TEXT")))
-    (apply 'execute-non-query db sql vals)))
+  (bind ((sql _ignore (sql-add-userdata-column column-id "TEXT")))
+    (execute-non-query db sql)))
 
 (defun add-userdata-column ((db-path pathname) (column-id string))
   (with-open-database (db db-path)
