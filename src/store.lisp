@@ -48,6 +48,9 @@
 ;;; =====================================================================
 ;;; checking columns
 ;;; =====================================================================
+
+;;; columns-missing-from-file
+;;; ---------------------------------------------------------------------
 ;;; returns a list of column-data objects that describe columns that
 ;;; don't exist in the SQLite file.
 ;;;
@@ -56,27 +59,53 @@
 ;;; idenfity situations where we must signal an error because the op
 ;;; references columns that don't exist.
 
-(defmethod db-missing-columns ((db sqlite-handle) (column-data-list list))
-  (let ((userdata-info (db-get-userdata-column-info db)))
-    (if userdata-info
-        (let ((userdata-labels (mapcar #'column-info-name userdata-info)))
-          (remove-if (lambda (column-data)
-                       (member (fset:@ column-data :|id|)
-                               userdata-labels
-                               :test #'equal))
-                     column-data-list))
-        column-data-list)))
+(defmethod db-columns-missing-from-file ((db sqlite-handle) (column-data-list list))
+  (let* ((found-userdata-info (db-get-userdata-column-info db))
+         (found-userdata-labels (mapcar #'column-info-name found-userdata-info)))
+    (remove-if (lambda (column-data)
+                 (member (fset:@ column-data :|id|)
+                         found-userdata-labels
+                         :test #'equal))
+               column-data-list)))
 
-(defmethod missing-columns ((db-path pathname) (column-data-list list))
+(defmethod columns-missing-from-file ((db-path pathname) (column-data-list list))
   (with-open-database (db db-path)
-    (db-missing-columns db column-data-list)))
+    (db-columns-missing-from-file db column-data-list)))
 
-(defmethod missing-columns ((db-path string) (column-data-list list))
-  (missing-columns (pathname db-path) column-data-list))
+(defmethod columns-missing-from-file ((db-path string) (column-data-list list))
+  (columns-missing-from-file (pathname db-path) column-data-list))
 
 ;;; (setf $existing (column-data :id "Ibe8f18857a7611ea909e38c9864ebde0" :name "Existing column"))
 ;;; (setf $nonexistent (column-data :id "BOGUS" :name "Nonexistent column"))
-;;; (missing-columns "/Users/mikel/Desktop/testlist.delectus2" (list $existing $nonexistent))
+;;; (columns-missing-from-file "/Users/mikel/Desktop/testlist.delectus2" (list $existing $nonexistent))
+
+;;; columns-missing-from-input
+;;; ---------------------------------------------------------------------
+;;; returns a list of column IDs that are found in the list file but
+;;; not in the input column-data list. If this list isn't empty in
+;;; columns or item ops, then one or more userdata columns was added
+;;; after the op was constructed, but before it was asserted. This is
+;;; an error.
+
+(defmethod db-columns-missing-from-input ((db sqlite-handle) (column-data-list list))
+  (let* ((found-userdata-info (db-get-userdata-column-info db))
+         (found-userdata-labels (mapcar #'column-info-name found-userdata-info))
+         (column-data-labels (mapcar (lambda (cdl)(fset:@ cdl :|id|))
+                                     column-data-list)))
+    (remove-if (lambda (ful)(member ful column-data-labels :test #'equal))
+               found-userdata-labels)))
+
+(defmethod columns-missing-from-input ((db-path pathname) (column-data-list list))
+  (with-open-database (db db-path)
+    (db-columns-missing-from-input db column-data-list)))
+
+(defmethod columns-missing-from-input ((db-path string) (column-data-list list))
+  (columns-missing-from-input (pathname db-path) column-data-list))
+
+;;; (setf $existing (column-data :id "Ia56197057b5e11ea909e38c9864ebde0" :name "Existing column"))
+;;; (setf $nonexistent (column-data :id "BOGUS" :name "Nonexistent column"))
+;;; (columns-missing-from-input "/Users/mikel/Desktop/testlist.delectus2" (list $existing $nonexistent))
+;;; (columns-missing-from-input "/Users/mikel/Desktop/testlist.delectus2" (list $nonexistent))
 
 ;;; =====================================================================
 ;;; creating the list file
@@ -366,12 +395,16 @@
 
 (defmethod db-assert-columns ((db sqlite-handle)
                               &key opid origin revision timestamp column-data)
-  (let* ((missing-columns (db-missing-columns db column-data))
-         (opid (or opid (makeid)))
-         (revision (or revision (db-get-next-revision db)))
-         (timestamp (or timestamp (now-timestamp))))
-    (when missing-columns
-      (loop for cd in missing-columns
+  (let ((missing-input (db-columns-missing-from-input db column-data)))
+    (assert (null missing-input)()
+            "Userdata columns in the list file are missing from the column data in the op: ~S"
+            missing-input))
+  (let ((columns-missing-from-file (db-columns-missing-from-file db column-data))
+        (opid (or opid (makeid)))
+        (revision (or revision (db-get-next-revision db)))
+        (timestamp (or timestamp (now-timestamp))))
+    (when columns-missing-from-file
+      (loop for cd in columns-missing-from-file
          do (let ((colid (fset:@ cd :|id|)))
               (db-add-userdata-column db colid))))
     (bind ((sql vals
@@ -389,6 +422,10 @@
   (assert-columns (pathname db-path)
                   :opid opid :origin origin :revision revision :timestamp timestamp :column-data column-data))
 
+;;; should fail because there is a column already defined in the file and we don't mention it
+;;; (setf $cdata (fset:with +default-initial-column-attributes+ :|id| (makeid)))
+;;; (assert-columns "/Users/mikel/Desktop/testlist.delectus2" :opid (makeid) :origin *origin* :revision (get-next-revision "/Users/mikel/Desktop/testlist.delectus2") :timestamp (now-timestamp) :column-data (list $cdata))
+
 ;;; item ops
 ;;; ---------------------------------------------------------------------
 ;;; column-data is a list of column-data objects. column-values is a
@@ -396,6 +433,10 @@
 
 (defmethod db-assert-item ((db sqlite-handle)
                            &key opid origin revision timestamp item deleted column-data column-values)
+  (let ((missing-input (db-columns-missing-from-input db column-data)))
+    (assert (null missing-input)()
+            "Userdata columns in the list file are missing from the column data in the op: ~S"
+            missing-input))
   (let ((opid (or opid (makeid)))
         (revision (or revision (db-get-next-revision db)))
         (timestamp (or timestamp (now-timestamp))))
@@ -419,10 +460,12 @@
                :timestamp timestamp :item item :deleted deleted
                :column-data column-data :column-values column-values))
 
+;;; should fail because there is a column already defined in the file and we don't mention it
+;;; (setf $cdata (fset:with +default-initial-column-attributes+ :|id| (makeid)))
+;;; (assert-item "/Users/mikel/Desktop/testlist.delectus2" :opid (makeid) :origin *origin* :revision (get-next-revision "/Users/mikel/Desktop/testlist.delectus2") :timestamp (now-timestamp) :item (makeid) :column-data (list $cdata) :column-values '(nil))
 
 ;;; sync ops
 ;;; ---------------------------------------------------------------------
-
 
 (defmethod db-assert-sync ((db sqlite-handle)
                            &key opid origin revision timestamp peer)
