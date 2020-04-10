@@ -108,8 +108,6 @@
     ;; assert the initial listname op
     (bind ((sql vals (sql-assert-listname listname-opid origin listname-rev (now-timestamp) nil list-name nil nil)))
       (apply 'execute-non-query db sql vals))
-    ;; add the initial userdata column
-    (db-add-userdata-column db userdata-column-id)
     ;; assert the initial columns op
     (db-assert-columns db :opid columns-opid :origin origin :revision columns-rev :timestamp (now-timestamp)
                        :column-data (list userdata-column-data))
@@ -368,13 +366,14 @@
 
 (defmethod db-assert-columns ((db sqlite-handle)
                               &key opid origin revision timestamp column-data)
-  (let* ((missing-columns (missing-columns db column-data))
+  (let* ((missing-columns (db-missing-columns db column-data))
          (opid (or opid (makeid)))
          (revision (or revision (db-get-next-revision db)))
          (timestamp (or timestamp (now-timestamp))))
     (when missing-columns
-      ;; TODO: add the missing columns before asserting the columns op
-      )
+      (loop for cd in missing-columns
+         do (let ((colid (fset:@ cd :|id|)))
+              (db-add-userdata-column db colid))))
     (bind ((sql vals
                 (sql-assert-columns opid origin revision timestamp nil nil nil nil :column-data column-data)))
       (apply 'execute-non-query db sql vals))))
