@@ -93,8 +93,20 @@
 ;;; and yields a Delectus db 8.5 MB in size
 ;;; (time (import-csv $csvpath $zippath "Zipcodes"))
 
+
+;;; (time (get-latest-columns $zippath))
+;;; (time (progn (setf $items (get-latest-items $zippath)) 'done))
+;;; (length $items)
+;;; (elt $items 43190)
+
+
 ;;; (defparameter $csv-movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; this takes 1.5sec
 ;;; and yields a Delectus db 295k in size 
 ;;; (time (import-csv $csv-movies-path $moviespath "Movies"))
+
+;;; (time (get-latest-columns $moviespath))
+;;; (time (progn (setf $items (get-latest-items $moviespath)) 'done))
+;;; (length $items)
+;;; (elt $items 1251)
