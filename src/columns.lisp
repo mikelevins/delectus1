@@ -58,3 +58,16 @@
 
 (deftype column-data ()
   '(satisfies column-data?))
+
+
+(defparameter +default-initial-column-attributes+
+  {:|name| "Item"
+    :|type| "TEXT"
+    :|order| 10.0
+    :|sort| "ASC"
+    :|title| t
+    :|subtitle| :false
+    :|deleted| :false})
+
+;;; (to-json +default-initial-column-attributes+)
+;;; (fset:with +default-initial-column-attributes+ :|id| (makeid))
