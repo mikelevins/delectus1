@@ -93,3 +93,8 @@
 ;;; and yields a Delectus db 8.5 MB in size
 ;;; (time (import-csv $csvpath $zippath "Zipcodes"))
 
+;;; (defparameter $csv-movies-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")
+;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
+;;; this takes 1.5sec
+;;; and yields a Delectus db 295k in size 
+;;; (time (import-csv $csv-movies-path $moviespath "Movies"))
