@@ -110,7 +110,7 @@
   (let* ((listname-opid (makeid))
          (columns-opid (makeid))
          (item-opid (makeid))
-         (origin (or origin (makeid)))
+         (origin (or origin *origin*))
          (listname-rev 0)
          (columns-rev 1)
          (item-rev 2)
@@ -203,7 +203,11 @@
 ;;; (get-userdata-column-info "/Users/mikel/Desktop/testlist.delectus2")
 
 
-;;; list-id
+;;; ---------------------------------------------------------------------
+;;; getting list metadata
+;;; ---------------------------------------------------------------------
+
+;; list-id
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-list-id ((db sqlite-handle))
@@ -270,6 +274,23 @@
 
 ;;; (get-next-revision "/Users/mikel/Desktop/testlist.delectus2")
 
+;;; ---------------------------------------------------------------------
+;;; getting list ops
+;;; ---------------------------------------------------------------------
+
+;;; op fields
+;;; ---------------------------------------------------------------------
+
+(defun op-type (op)(elt op 0))
+(defun op-id (op)(elt op 1))
+(defun op-origin (op)(elt op 2))
+(defun op-revision (op)(elt op 3))
+(defun op-timestamp (op)(elt op 4))
+(defun op-item (op)(elt op 5))
+(defun op-name (op)(elt op 6))
+(defun op-deleted (op)(elt op 7))
+(defun op-peer (op)(elt op 8))
+(defun op-userdata-ids (op)(nthcdr 9 op))
 
 ;;; listname ops
 ;;; ---------------------------------------------------------------------
@@ -345,12 +366,16 @@
 
 
 ;;; =====================================================================
-;;; asserting ops
+;;; ops
 ;;; =====================================================================
 ;;; the general model for assertions is:
 ;;; 1. compute the mutations we're going to make, signaling an error
 ;;;    if any prerequisite is not met
 ;;; 2. execute the computed mutations
+
+;;; ---------------------------------------------------------------------
+;;; asserting ops
+;;; ---------------------------------------------------------------------
 
 ;;; listname ops
 ;;; ---------------------------------------------------------------------

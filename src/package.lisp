@@ -8,12 +8,12 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(defpackage #:delectus-ops
-  (:nicknames #:op)
-  (:use #:cl))
-
 (defpackage #:to-sql
   (:use #:cl))
 
 (defpackage #:delectus
   (:use #:cl #:sqlite #:cl-emb #:named-readtables))
+
+(defpackage #:delectus-ui
+  (:nicknames #:ui)
+  (:use #:cl #:sqlite #:cl-emb #:named-readtables #:delectus #:capi))

@@ -32,6 +32,8 @@
                                      (:file "sqlgen")
                                      (:file "sqlite")
                                      (:file "store")
+                                     ;; CAPI UI
+                                     (:file "views")
                                      ))))
 
 ;;; (asdf:load-system :delectus)
