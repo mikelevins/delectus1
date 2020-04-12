@@ -18,7 +18,7 @@
 
   ;; -- panes ---------------------------------------------
   (:panes
-   (rows-pane multi-column-list-panel :reader rows-pane
+   (items-pane multi-column-list-panel :reader items-pane
               :alternating-background t
               :items nil
               :columns '((:title "Item"))
@@ -27,7 +27,7 @@
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (main-layout column-layout '(rows-pane)
+   (main-layout column-layout '(items-pane)
                 :reader main-layout :border 4))
   
   ;; -- defaults ---------------------------------------------
@@ -35,11 +35,17 @@
     :width 600 :height 400
     :title "Delectus"))
 
-(defmethod initialize-instance :after ((browser list-items-pane) &rest initargs &key &allow-other-keys)
-  (let* ((list-name-op (delectus::get-latest-listname (dbpath browser)))
-         (listname ))
-    (format t "~%~s~%" list-name-op)
-    ))
+(defmethod initialize-instance :after ((pane list-items-pane) &rest initargs &key &allow-other-keys)
+  (let* ((column-info (delectus::get-column-info (dbpath pane)))
+         (column-names (mapcar #'delectus::column-info-name column-info))
+         (column-specs (mapcar (lambda (cname) `(:title ,cname))
+                               column-names))
+         (list-name-op (delectus::get-latest-listname (dbpath pane)))
+         (listname (or (delectus::op-name list-name-op)
+                       "Untitled list")))
+    (setf (interface-title pane) listname)
+    (modify-multi-column-list-panel-columns (items-pane pane)
+                                            :columns column-specs)))
 
 (defun handle-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"
