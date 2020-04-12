@@ -359,18 +359,18 @@
 ;;; partitioning by id, then sorting descending by revision, then
 ;;; returning all rows whose rank is 1; so the CDR of each item is the
 ;;; actual result
-(defmethod db-get-latest-items ((db sqlite-handle))
-  (bind ((sql vals (sql-get-latest-items)))
+(defmethod db-get-latest-items ((db sqlite-handle) &key (offset 0)(limit nil))
+  (bind ((sql vals (sql-get-latest-items :offset offset :limit limit)))
     (let ((latest-item-results (apply 'execute-to-list db sql vals)))
       ;; discard the rank field from the returned result
       (mapcar #'cdr latest-item-results))))
 
-(defmethod get-latest-items ((db-path pathname))
+(defmethod get-latest-items ((db-path pathname) &key (offset 0)(limit nil))
   (with-open-database (db db-path)
-    (db-get-latest-items db)))
+    (db-get-latest-items db :offset offset :limit limit)))
 
-(defmethod get-latest-items ((db-path string))
-  (get-latest-items (pathname db-path)))
+(defmethod get-latest-items ((db-path string) &key (offset 0)(limit nil))
+  (get-latest-items (pathname db-path) :offset offset :limit limit))
 
 ;;; (time (get-latest-items "/Users/mikel/Desktop/testlist.delectus2"))
 

@@ -154,13 +154,21 @@
 ;;; sql-get-latest-items
 ;;; ---------------------------------------------------------------------
 
-(defun sql-get-latest-items ()
-  (values
-   "SELECT a.*
+(defun sql-get-latest-items (&key (offset 0)(limit nil))
+  (let ((offset-clause (if offset
+                           (format nil "OFFSET ~D " offset)
+                         ""))
+        (limit-clause (if limit
+                          (format nil "LIMIT ~D " limit)
+                        "")))
+    (values
+     (format nil
+             "SELECT a.*
     FROM (SELECT ROW_NUMBER() OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
           FROM `list_data` WHERE optype='item') a
-    WHERE a.rank = 1 order by a.revision"
-   nil))
+    WHERE a.rank = 1 order by a.revision ~A ~A"
+             limit-clause offset-clause)
+     nil)))
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-latest-sync

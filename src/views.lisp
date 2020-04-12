@@ -55,7 +55,7 @@
          (list-name-op (delectus::get-latest-listname (dbpath pane)))
          (listname (or (delectus::op-name list-name-op)
                        "Untitled list"))
-         (latest-items (delectus::get-latest-items (dbpath pane)))
+         (latest-items (delectus::get-latest-items (dbpath pane) :offset 0 :limit 20))
          (itemdata (if show-metadata
                        latest-items
                      (mapcar #'delectus::op-userdata
