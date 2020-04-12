@@ -19,23 +19,26 @@
   ;; -- panes ---------------------------------------------
   (:panes
    (items-pane multi-column-list-panel :reader items-pane
-              :alternating-background t
-              :items nil
-              :columns '((:title "Item"))
-              :callback-type :item-interface
-              :selection-callback 'handle-item-selection))
+               :alternating-background t
+               :items nil
+               :columns '((:title "Item"))
+               :callback-type :item-interface
+               :selection-callback 'handle-item-selection)
+   (item-count-pane title-pane :reader item-count-pane))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (main-layout column-layout '(items-pane)
+   (pager-layout row-layout '(nil item-count-pane nil))
+   (main-layout column-layout '(items-pane pager-layout)
                 :reader main-layout :border 4))
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout
-    :width 600 :height 400
-    :title "Delectus"))
+   :width 600 :height 400
+   :title "Delectus"))
 
-(defmethod initialize-instance :after ((pane list-items-pane) &rest initargs &key &allow-other-keys)
+(defmethod initialize-instance :after ((pane list-items-pane) &rest initargs 
+                                       &key (show-metadata nil) &allow-other-keys)
   (let* ((metadata-column-info (delectus::get-metadata-column-info (dbpath pane)))
          (metadata-column-names (mapcar #'delectus::column-info-name metadata-column-info))
          (userdata-column-info (delectus::get-userdata-column-info (dbpath pane)))
@@ -44,19 +47,30 @@
                                   (delectus::op-userdata latest-column-data)))
          (userdata-column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-userdata))
          (column-info (delectus::get-column-info (dbpath pane)))
-         (column-names (append metadata-column-names userdata-column-names))
+         (column-names (if show-metadata
+                           (append metadata-column-names userdata-column-names)
+                         userdata-column-names))
          (column-specs (mapcar (lambda (cname) `(:title ,cname :default-width 96))
                                column-names))
          (list-name-op (delectus::get-latest-listname (dbpath pane)))
          (listname (or (delectus::op-name list-name-op)
-                       "Untitled list")))
+                       "Untitled list"))
+         (latest-items (delectus::get-latest-items (dbpath pane)))
+         (itemdata (if show-metadata
+                       latest-items
+                     (mapcar #'delectus::op-userdata
+                             latest-items))))
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane)
-                                            :columns column-specs)))
+                                            :columns column-specs)
+    (setf (title-pane-text (item-count-pane pane)) 
+          (format nil "~D items" (length latest-items)))
+    (setf (collection-items (items-pane pane))
+          itemdata)))
 
 (defun handle-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"
           item interface))
 
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
-;;; (setf $win (contain (make-instance 'list-items-pane :dbpath $zippath)))
+;;; (time (setf $win (contain (make-instance 'list-items-pane :dbpath $zippath))))
