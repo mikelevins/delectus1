@@ -180,6 +180,30 @@
 
 ;;; (get-column-info "/Users/mikel/Desktop/testlist.delectus2")
 
+;;; metadata-column-info
+;;; ---------------------------------------------------------------------
+;;; returns the column-info only for metadata columns
+
+(defmethod db-get-metadata-column-info ((db sqlite-handle))
+  (let ((all-info (db-get-column-info db)))
+    ;; remove the non-metadata columns
+    (remove-if-not (lambda (info)
+                     (find (column-info-name info)
+                           +metadata-column-labels+
+                           :test #'equal))
+                   all-info)))
+
+(defmethod get-metadata-column-info ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-metadata-column-info db)))
+
+(defmethod get-metadata-column-info ((path string))
+  (get-metadata-column-info (pathname path)))
+
+;;; (get-metadata-column-info "/Users/mikel/Desktop/testlist.delectus2")
+
+
+
 ;;; userdata-column-info
 ;;; ---------------------------------------------------------------------
 ;;; returns the column-info only for userdata columns
@@ -290,7 +314,11 @@
 (defun op-name (op)(elt op 6))
 (defun op-deleted (op)(elt op 7))
 (defun op-peer (op)(elt op 8))
-(defun op-userdata-ids (op)(nthcdr 9 op))
+(defun op-metadata (op)(subseq op 0 9))
+(defun op-userdata (op)(nthcdr 9 op))
+
+;;; (op-metadata (get-latest-listname "/Users/mikel/Desktop/Zipcodes.delectus2"))
+;;; (op-userdata (get-latest-listname "/Users/mikel/Desktop/Zipcodes.delectus2"))
 
 ;;; listname ops
 ;;; ---------------------------------------------------------------------

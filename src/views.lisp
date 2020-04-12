@@ -38,7 +38,7 @@
 (defmethod initialize-instance :after ((pane list-items-pane) &rest initargs &key &allow-other-keys)
   (let* ((column-info (delectus::get-column-info (dbpath pane)))
          (column-names (mapcar #'delectus::column-info-name column-info))
-         (column-specs (mapcar (lambda (cname) `(:title ,cname))
+         (column-specs (mapcar (lambda (cname) `(:title ,cname :default-width 96))
                                column-names))
          (list-name-op (delectus::get-latest-listname (dbpath pane)))
          (listname (or (delectus::op-name list-name-op)

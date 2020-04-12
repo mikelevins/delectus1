@@ -60,6 +60,7 @@
   '(satisfies column-data?))
 
 
+
 (defparameter +default-initial-column-attributes+
   {:|name| "Item"
     :|type| "TEXT"
