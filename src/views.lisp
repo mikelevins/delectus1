@@ -36,8 +36,15 @@
     :title "Delectus"))
 
 (defmethod initialize-instance :after ((pane list-items-pane) &rest initargs &key &allow-other-keys)
-  (let* ((column-info (delectus::get-column-info (dbpath pane)))
-         (column-names (mapcar #'delectus::column-info-name column-info))
+  (let* ((metadata-column-info (delectus::get-metadata-column-info (dbpath pane)))
+         (metadata-column-names (mapcar #'delectus::column-info-name metadata-column-info))
+         (userdata-column-info (delectus::get-userdata-column-info (dbpath pane)))
+         (latest-column-data (delectus::get-latest-columns (dbpath pane)))
+         (latest-userdata (mapcar #'delectus::from-json
+                                  (delectus::op-userdata latest-column-data)))
+         (userdata-column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-userdata))
+         (column-info (delectus::get-column-info (dbpath pane)))
+         (column-names (append metadata-column-names userdata-column-names))
          (column-specs (mapcar (lambda (cname) `(:title ,cname :default-width 96))
                                column-names))
          (list-name-op (delectus::get-latest-listname (dbpath pane)))

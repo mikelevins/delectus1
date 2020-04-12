@@ -203,7 +203,6 @@
 ;;; (get-metadata-column-info "/Users/mikel/Desktop/testlist.delectus2")
 
 
-
 ;;; userdata-column-info
 ;;; ---------------------------------------------------------------------
 ;;; returns the column-info only for userdata columns
@@ -318,7 +317,7 @@
 (defun op-userdata (op)(nthcdr 9 op))
 
 ;;; (op-metadata (get-latest-listname "/Users/mikel/Desktop/Zipcodes.delectus2"))
-;;; (op-userdata (get-latest-listname "/Users/mikel/Desktop/Zipcodes.delectus2"))
+;;; (op-userdata (get-latest-columns "/Users/mikel/Desktop/Zipcodes.delectus2"))
 
 ;;; listname ops
 ;;; ---------------------------------------------------------------------
