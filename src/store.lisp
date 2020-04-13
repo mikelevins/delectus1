@@ -372,8 +372,21 @@
 (defmethod get-latest-items ((db-path string) &key (offset 0)(limit nil))
   (get-latest-items (pathname db-path) :offset offset :limit limit))
 
-;;; (time (get-latest-items "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (time (progn (setf $items (get-latest-items "/Users/mikel/Desktop/Zipcodes.delectus2")) 'done))
+;;; (length $items)
 
+(defmethod db-count-latest-items ((db sqlite-handle))
+  (bind ((sql vals (sql-count-latest-items)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod count-latest-items ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-count-latest-items db)))
+
+(defmethod count-latest-items ((db-path string))
+  (count-latest-items (pathname db-path)))
+
+;; (time (count-latest-items "/Users/mikel/Desktop/Zipcodes.delectus2"))
 
 ;;; sync ops
 ;;; ---------------------------------------------------------------------

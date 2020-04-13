@@ -59,7 +59,15 @@
 (deftype column-data ()
   '(satisfies column-data?))
 
-
+(defun make-column (&key id name type order sort title subtitle deleted)
+  {:|id| (or id :false)
+  :|name| (or name :false)
+  :|type| (or type :false)
+  :|order| (or order :false)
+  :|sort| (or sort :false)
+  :|title| (or title :false)
+  :|subtitle| (or subtitle :false)
+  :|deleted| (or deleted :false)})
 
 (defparameter +default-initial-column-attributes+
   {:|name| "Item"

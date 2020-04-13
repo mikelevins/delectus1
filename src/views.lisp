@@ -64,7 +64,7 @@
     (modify-multi-column-list-panel-columns (items-pane pane)
                                             :columns column-specs)
     (setf (title-pane-text (item-count-pane pane)) 
-          (format nil "~D items" (length latest-items)))
+          (format nil "~D-~D of ~D items" 1 20 (length latest-items)))
     (setf (collection-items (items-pane pane))
           itemdata)))
 

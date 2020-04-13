@@ -110,3 +110,7 @@
 ;;; (time (progn (setf $items (get-latest-items $moviespath)) 'done))
 ;;; (length $items)
 ;;; (elt $items 1251)
+
+;;; (defparameter $words-csv-path "/Users/mikel/Workshop/src/delectus/test-data/words.csv")
+;;; (defparameter $words-path "/Users/mikel/Desktop/words.delectus2")
+;;; (time (import-csv $words-csv-path $words-path "Words"))
