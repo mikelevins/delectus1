@@ -20,6 +20,8 @@
   (:panes
    (items-pane multi-column-list-panel :reader items-pane
                :alternating-background t
+               :item-print-function (lambda (it)
+                                      (if (null it) "" it))
                :items nil
                :columns '((:title "Item"))
                :callback-type :item-interface
@@ -114,4 +116,3 @@
 
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'list-items-pane :dbpath $moviespath))))
-;;; (update-list-display $win :show-metadata nil)
