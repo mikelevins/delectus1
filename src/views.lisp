@@ -13,7 +13,7 @@
 (define-interface list-items-pane ()
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
-   (items-per-page :accessor items-per-page :initform 100 :initarg :items-per-page)
+   (items-per-page :accessor items-per-page :initform 50 :initarg :items-per-page)
    (current-page :accessor current-page :initform 0 :initarg :current-page))
 
   ;; -- panes ---------------------------------------------
@@ -44,34 +44,31 @@
 
 (defmethod update-list-display ((pane list-items-pane) &rest initargs 
                                 &key (show-metadata nil) &allow-other-keys)
-  (let* ((metadata-column-info (delectus::get-metadata-column-info (dbpath pane)))
-         (metadata-column-names (mapcar #'delectus::column-info-name metadata-column-info))
-         (userdata-column-info (delectus::get-userdata-column-info (dbpath pane)))
-         (latest-column-data (delectus::get-latest-columns (dbpath pane)))
-         (latest-userdata (mapcar #'delectus::from-json
-                                  (delectus::op-userdata latest-column-data)))
-         (userdata-column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-userdata))
+  (let* ((metadata-column-count (length delectus::+metadata-column-labels+))
          (column-info (delectus::get-column-info (dbpath pane)))
+         (metadata-column-info (subseq column-info 0 metadata-column-count))
+         (metadata-column-names (mapcar #'delectus::column-info-name metadata-column-info))
+         (userdata-column-info (subseq column-info metadata-column-count))
+         (latest-column-data (delectus::get-latest-columns (dbpath pane)))
+         (latest-userdata (mapcar #'delectus::from-json (delectus::op-userdata latest-column-data)))
+         (userdata-column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-userdata))
          (column-names (if show-metadata
                            (append metadata-column-names userdata-column-names)
                          userdata-column-names))
          (column-specs (mapcar (lambda (cname) `(:title ,cname :default-width 96))
                                column-names))
          (list-name-op (delectus::get-latest-listname (dbpath pane)))
-         (listname (or (delectus::op-name list-name-op)
-                       "Untitled list"))
+         (listname (or (delectus::op-name list-name-op) "Untitled list"))
          (latest-items (delectus::get-latest-items (dbpath pane) 
                                                    :offset (* (items-per-page pane)
                                                               (current-page pane))
                                                    :limit (items-per-page pane)))
          (itemdata (if show-metadata
                        latest-items
-                     (mapcar #'delectus::op-userdata
-                             latest-items)))
+                     (mapcar #'delectus::op-userdata latest-items)))
          (itemcount (delectus::count-latest-items (dbpath pane))))
     (setf (interface-title pane) listname)
-    (modify-multi-column-list-panel-columns (items-pane pane)
-                                            :columns column-specs)
+    (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (let ((items-per-page (items-per-page pane))
           (current-page (current-page pane)))
       (setf (title-pane-text (item-range-pane pane)) 
@@ -82,7 +79,7 @@
     (setf (title-pane-text (item-count-pane pane)) 
           (format nil " of ~D items" itemcount))
     (setf (collection-items (items-pane pane))
-          itemdata)))
+           itemdata)))
 
 (defmethod initialize-instance :after ((pane list-items-pane) &rest initargs 
                                        &key (show-metadata nil) &allow-other-keys)
@@ -117,3 +114,4 @@
 
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'list-items-pane :dbpath $moviespath))))
+;;; (update-list-display $win :show-metadata nil)
