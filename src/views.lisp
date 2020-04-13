@@ -59,12 +59,13 @@
          (itemdata (if show-metadata
                        latest-items
                      (mapcar #'delectus::op-userdata
-                             latest-items))))
+                             latest-items)))
+         (itemcount (delectus::count-latest-items (dbpath pane))))
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane)
                                             :columns column-specs)
     (setf (title-pane-text (item-count-pane pane)) 
-          (format nil "~D-~D of ~D items" 1 20 (length latest-items)))
+          (format nil "~D-~D of ~D items" 1 20 itemcount))
     (setf (collection-items (items-pane pane))
           itemdata)))
 
