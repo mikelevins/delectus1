@@ -13,6 +13,7 @@
 (define-interface list-items-pane ()
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
+   (total-items :accessor total-items :initform 0 :initarg :total-items)
    (items-per-page :accessor items-per-page :initform 50 :initarg :items-per-page)
    (current-page :accessor current-page :initform 0 :initarg :current-page))
 
@@ -67,8 +68,7 @@
                                                    :limit (items-per-page pane)))
          (itemdata (if show-metadata
                        latest-items
-                     (mapcar #'delectus::op-userdata latest-items)))
-         (itemcount (delectus::count-latest-items (dbpath pane))))
+                     (mapcar #'delectus::op-userdata latest-items))))
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (let ((items-per-page (items-per-page pane))
@@ -79,12 +79,14 @@
                     (+ (* current-page items-per-page)
                        items-per-page))))
     (setf (title-pane-text (item-count-pane pane)) 
-          (format nil " of ~D items" itemcount))
+          (format nil " of ~D items" (total-items pane)))
     (setf (collection-items (items-pane pane))
            itemdata)))
 
 (defmethod initialize-instance :after ((pane list-items-pane) &rest initargs 
                                        &key (show-metadata nil) &allow-other-keys)
+  (setf (total-items pane)
+        (delectus::count-latest-items (dbpath pane)))
   (update-list-display pane :show-metadata show-metadata))
 
 (defun dec-list-page (list-items-pane)
@@ -94,7 +96,7 @@
   (update-list-display list-items-pane :show-metadata nil))
 
 (defun inc-list-page (list-items-pane)
-  (let* ((itemcount (delectus::count-latest-items (dbpath list-items-pane)))
+  (let* ((itemcount (total-items list-items-pane))
          (next-start-index (* (items-per-page list-items-pane)
                               (1+ (current-page list-items-pane)))))
     (when (< next-start-index itemcount)
