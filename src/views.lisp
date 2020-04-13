@@ -13,7 +13,7 @@
 (define-interface list-items-pane ()
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
-   (items-per-page :accessor items-per-page :initform 50 :initarg :items-per-page)
+   (items-per-page :accessor items-per-page :initform 100 :initarg :items-per-page)
    (current-page :accessor current-page :initform 0 :initarg :current-page))
 
   ;; -- panes ---------------------------------------------

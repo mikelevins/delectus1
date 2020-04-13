@@ -66,6 +66,18 @@
 
 ;;; (sql-create-listdata-table)
 
+
+;;; ---------------------------------------------------------------------
+;;; sql-create-item-revision-origin-index
+;;; ---------------------------------------------------------------------
+
+(defun sql-create-item-revision-origin-index ()
+  (values
+   "CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `origin`)"
+   nil))
+
+;;; (sql-create-itemid-revision-origin-index)
+
 ;;; ---------------------------------------------------------------------
 ;;; sql-add-userdata-column
 ;;; ---------------------------------------------------------------------

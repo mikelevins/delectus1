@@ -131,12 +131,17 @@
       (db-assert-item db :opid item-opid :origin origin :revision item-rev :timestamp (now-timestamp)
                       :column-data (list userdata-column-data) :column-values (list nil)))))
 
+(defun db-create-item-revision-origin-index (db)
+  (bind ((sql vals (sql-create-item-revision-origin-index)))
+    (apply 'execute-non-query db sql vals)))
+
 (defmethod create-delectus-file ((db-path pathname)(list-name string)(listid string) &key (create-default-userdata t))
   (assert (not (probe-file db-path)) () "file exists: ~S" db-path)
   (with-open-database (db db-path)
     (with-transaction db
       (db-create-delectus-table db listid)
-      (db-create-listdata-table db list-name listid :create-default-userdata create-default-userdata))))
+      (db-create-listdata-table db list-name listid :create-default-userdata create-default-userdata)
+      (db-create-item-revision-origin-index db))))
 
 (defmethod create-delectus-file ((db-path string)(list-name string)(listid string) &key (create-default-userdata t))
   (create-delectus-file (pathname db-path) list-name listid :create-default-userdata create-default-userdata))

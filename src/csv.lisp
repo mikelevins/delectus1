@@ -87,13 +87,9 @@
                                         :column-data coldata-with-title-flags
                                         :column-values item-values))))))))))
 
-;;; (defparameter $csvpath "/Users/mikel/Workshop/src/delectus/test-data/zipcode.csv")
+;;; (defparameter $zipcodes-csv-path "/Users/mikel/Workshop/src/delectus/test-data/zipcode.csv")
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
-;;; this takes a minute and a half
-;;; and yields a Delectus db 8.5 MB in size
-;;; (time (import-csv $csvpath $zippath "Zipcodes"))
-
-
+;;; (time (import-csv $zipcodes-csv-path $zippath "Zipcodes"))
 ;;; (time (get-latest-columns $zippath))
 ;;; (time (progn (setf $items (get-latest-items $zippath)) 'done))
 ;;; (length $items)
