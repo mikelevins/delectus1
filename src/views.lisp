@@ -45,6 +45,16 @@
    :width 600 :height 400
    :title "Delectus"))
 
+(defmethod initialize-instance :after ((pane list-items-pane) &rest initargs 
+                                       &key (show-metadata nil) &allow-other-keys)
+  (setf (total-items pane)
+        (delectus::count-latest-items (dbpath pane)))
+  (update-list-display pane :show-metadata show-metadata))
+
+(defmethod total-pages ((pane list-items-pane))
+  (ceiling (total-items pane)
+           (items-per-page pane)))
+
 (defmethod update-list-display ((pane list-items-pane) &rest initargs 
                                 &key (show-metadata nil) &allow-other-keys)
   (let* ((metadata-column-count (length delectus::+metadata-column-labels+))
@@ -71,23 +81,12 @@
                      (mapcar #'delectus::op-userdata latest-items))))
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
-    (let ((items-per-page (items-per-page pane))
-          (current-page (current-page pane)))
-      (setf (title-pane-text (item-range-pane pane)) 
-            (format nil "~D-~D" 
-                    (1+ (* current-page items-per-page)) 
-                    (+ (* current-page items-per-page)
-                       items-per-page))))
+    (setf (title-pane-text (item-range-pane pane)) 
+            (format nil "Page ~D" (1+ (current-page pane))))
     (setf (title-pane-text (item-count-pane pane)) 
-          (format nil " of ~D items" (total-items pane)))
+          (format nil " of ~D" (total-pages pane)))
     (setf (collection-items (items-pane pane))
            itemdata)))
-
-(defmethod initialize-instance :after ((pane list-items-pane) &rest initargs 
-                                       &key (show-metadata nil) &allow-other-keys)
-  (setf (total-items pane)
-        (delectus::count-latest-items (dbpath pane)))
-  (update-list-display pane :show-metadata show-metadata))
 
 (defun dec-list-page (list-items-pane)
   (let ((next-page (1- (current-page list-items-pane))))
@@ -118,3 +117,6 @@
 
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'list-items-pane :dbpath $moviespath))))
+
+;;; (setf $screen (convert-to-screen))
+;;; (describe $screen)
