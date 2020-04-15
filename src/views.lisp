@@ -120,3 +120,18 @@
 
 ;;; (setf $screen (convert-to-screen))
 ;;; (describe $screen)
+
+;;; opening test data
+;;; (defparameter $words1k-path "/Users/mikel/Desktop/wordtest1k.delectus2")
+;;; ~0.07sec to open, paging is instant
+;;; (time (setf $win (contain (make-instance 'list-items-pane :dbpath $words1k-path))))
+
+;;; (defparameter $words10k-path "/Users/mikel/Desktop/wordtest10k.delectus2")
+;;; ~0.14sec to open, paging is instant
+;;; (time (setf $win (contain (make-instance 'list-items-pane :dbpath $words10k-path))))
+
+;;; (defparameter $words100k-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; ~0.8sec to open, paging is instant
+;;; (time (setf $win (contain (make-instance 'list-items-pane :dbpath $words100k-path))))
+;;; ~0.4 sec to page
+;;; (time (inc-list-page $win))

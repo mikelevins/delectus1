@@ -34,6 +34,7 @@
                                      (:file "store")
                                      ;; CAPI UI
                                      (:file "views")
-                                     ))))
+                                     ;; Test data
+                                     (:file "testdata")))))
 
 ;;; (asdf:load-system :delectus)

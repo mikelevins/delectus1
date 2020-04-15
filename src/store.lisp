@@ -141,10 +141,12 @@
     (with-transaction db
       (db-create-delectus-table db listid)
       (db-create-listdata-table db list-name listid :create-default-userdata create-default-userdata)
-      (db-create-item-revision-origin-index db))))
+      (db-create-item-revision-origin-index db)))
+  db-path)
 
 (defmethod create-delectus-file ((db-path string)(list-name string)(listid string) &key (create-default-userdata t))
-  (create-delectus-file (pathname db-path) list-name listid :create-default-userdata create-default-userdata))
+  (create-delectus-file (pathname db-path) list-name listid :create-default-userdata create-default-userdata)
+  db-path)
 
 ;;; (create-delectus-file "/Users/mikel/Desktop/testlist.delectus2" "Test List" (makeid))
 
