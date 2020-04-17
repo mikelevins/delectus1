@@ -73,8 +73,8 @@
   {:|name| "Item"
     :|type| "TEXT"
     :|order| 10.0
-    :|sort| "ASC"
-    :|title| t
+    :|sort| :false
+    :|title| :false
     :|subtitle| :false
     :|deleted| :false})
 

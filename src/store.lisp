@@ -359,6 +359,21 @@
 
 ;;; (time (get-latest-columns "/Users/mikel/Desktop/testlist.delectus2"))
 
+(defmethod db-get-latest-userdata-columns-data ((db sqlite-handle))
+  (let ((data (db-get-latest-columns db)))
+    (when data
+      (mapcar 'jonathan:parse
+              (op-userdata data)))))
+
+(defmethod get-latest-userdata-columns-data ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-latest-userdata-columns-data db)))
+
+(defmethod get-latest-userdata-columns-data ((db-path string))
+  (get-latest-userdata-columns-data (pathname db-path)))
+
+;;; (time (get-latest-userdata-columns-data "/Users/mikel/Desktop/Zipcodes.delectus2"))
+
 ;;; item ops
 ;;; ---------------------------------------------------------------------
 
