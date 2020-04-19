@@ -397,6 +397,21 @@
 ;;; (time (progn (setf $items (get-latest-items "/Users/mikel/Desktop/Zipcodes.delectus2")) 'done))
 ;;; (length $items)
 
+(defmethod db-get-latest-items-userdata ((db sqlite-handle) &key (offset 0)(limit nil))
+  (let ((results (db-get-latest-items db :offset offset :limit limit)))
+    (mapcar #'op-userdata results)))
+
+(defmethod get-latest-items-userdata ((db-path pathname) &key (offset 0)(limit nil))
+  (with-open-database (db db-path)
+    (db-get-latest-items-userdata db :offset offset :limit limit)))
+
+(defmethod get-latest-items-userdata ((db-path string) &key (offset 0)(limit nil))
+  (get-latest-items-userdata (pathname db-path) :offset offset :limit limit))
+
+;;; (time (progn (setf $items (get-latest-items-userdata "/Users/mikel/Desktop/Zipcodes.delectus2")) 'done))
+;;; (length $items)
+;;; (elt $items 100)
+
 (defmethod db-count-latest-items ((db sqlite-handle))
   (bind ((sql vals (sql-count-latest-items)))
     (apply 'execute-single db sql vals)))

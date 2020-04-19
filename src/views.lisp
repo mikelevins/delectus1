@@ -156,7 +156,9 @@
   ;; -- layouts ---------------------------------------------
   (:layouts
    (main-layout column-layout '()
-                :reader main-layout :border 4))
+                :reader main-layout
+                :border 8
+                :gap 8))
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout
@@ -175,9 +177,16 @@
                                 (let* ((coldata (car it))
                                        (colname (getf coldata :|name|))
                                        (colvalue (cdr it))
-                                       (label (make-instance 'title-pane :text colname))
-                                       (valpane (make-instance 'title-pane :text (format nil "~A" colvalue)))
-                                       (entrypane (make-instance 'row-layout :description (list label valpane))))
+                                       (entrypane (make-instance 'title-pane
+                                                                 :title-position :left
+                                                                 :title (format nil "~A" colname)
+                                                                 :title-font (gp:make-font-description 
+                                                                              :size 12
+                                                                              :slant :italic)
+                                                                 :text (format nil "~A" colvalue)
+                                                                 :font (gp:make-font-description 
+                                                                        :size 16
+                                                                        :slant :roman))))
                                   entrypane))
                               sorted-pairs)))
     (setf (layout-description (main-layout card))
@@ -188,3 +197,15 @@
 ;;; (time (progn (setf $items (mapcar #'delectus::op-userdata (delectus::get-latest-items $zippath))) 'done))
 ;;; (length $items)
 ;;; (setf $win (contain (make-instance 'list-item-card :columns-data $columns :item-data (elt $items 0))))
+
+;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
+;;; (time (progn (setf $columns (delectus::get-latest-userdata-columns-data $moviespath)) 'done))
+;;; (time (progn (setf $items (delectus::get-latest-items-userdata $moviespath)) 'done))
+;;; (length $items)
+;;; (setf $win (contain (make-instance 'list-item-card :columns-data $columns :item-data (elt $items 0))))
+
+
+;;; ---------------------------------------------------------------------
+;;; card-list
+;;; ---------------------------------------------------------------------
+
