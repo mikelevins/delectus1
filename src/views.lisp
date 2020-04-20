@@ -406,34 +406,26 @@
   (ceiling (total-items pane)
            (items-per-page pane)))
 
-(defun compute-column-specs (column-names items)
-  (mapcar (lambda (cname)
-            `(:title ,cname :default-width 128))
-          column-names))
-
 (defmethod update-list-display ((pane list-items-pane) &rest initargs 
                                 &key (show-metadata nil) &allow-other-keys)
   (let* ((metadata-column-count (length delectus::+metadata-column-labels+))
          (column-info (delectus::get-column-info (dbpath pane)))
-         (metadata-column-info (subseq column-info 0 metadata-column-count))
-         (metadata-column-names (mapcar #'delectus::column-info-name metadata-column-info))
          (userdata-column-info (subseq column-info metadata-column-count))
          (latest-column-data (delectus::get-latest-columns (dbpath pane)))
          (latest-userdata (mapcar #'delectus::from-json (delectus::op-userdata latest-column-data)))
-         (userdata-column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-userdata))
-         (column-names (if show-metadata
-                           (append metadata-column-names userdata-column-names)
-                           userdata-column-names))
          (list-name-op (delectus::get-latest-listname (dbpath pane)))
          (listname (or (delectus::op-name list-name-op) "Untitled list"))
          (latest-items (delectus::get-latest-items (dbpath pane) 
                                                    :offset (* (items-per-page pane)
                                                               (current-page pane))
                                                    :limit (items-per-page pane)))
-         (itemdata (if show-metadata
-                       latest-items
-                       (mapcar #'delectus::op-userdata latest-items)))
-         (column-specs (compute-column-specs column-names itemdata)))
+         (itemdata (mapcar #'delectus::op-userdata latest-items))
+         (column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-userdata))
+         ;; allow plenty of room for strings in columns
+         (column-widths (mapcar #'(lambda (x)(+ 4 x))
+                                (delectus::get-userdata-column-widths (dbpath pane))))
+         (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
+                               column-names column-widths)))
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (setf (title-pane-text (item-count-pane pane)) 

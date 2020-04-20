@@ -435,6 +435,32 @@
 
 ;; (time (count-latest-items "/Users/mikel/Desktop/Zipcodes.delectus2"))
 
+
+;;; get userdata column-widths
+;;; ------------------
+
+(defmethod db-get-userdata-column-widths ((db sqlite-handle))
+  (let* ((coldata (db-get-latest-userdata-columns-data db))
+         (colnames (mapcar (lambda (cdata)(getf cdata :|name|)) coldata))
+         (name-widths (mapcar #'length colnames))
+         (colids (mapcar (lambda (cdata)(getf cdata :|id|)) coldata))
+         (val-widths (loop for id in colids
+                        collect (let ((sql (format nil "SELECT MAX(LENGTH(`~A`)) FROM `list_data` WHERE `optype` = 'item'"
+                                                   id)))
+                                  (sqlite:execute-single db sql)))))
+    (mapcar (lambda (nw vw)(max nw vw))
+            name-widths val-widths)))
+
+(defmethod get-userdata-column-widths ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-userdata-column-widths db)))
+
+(defmethod get-userdata-column-widths ((db-path string))
+  (get-userdata-column-widths (pathname db-path)))
+
+;; (time (get-userdata-column-widths "/Users/mikel/Desktop/Zipcodes.delectus2"))
+
+
 ;;; sync ops
 ;;; ---------------------------------------------------------------------
 
