@@ -40,8 +40,11 @@
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (page-controls-layout row-layout '(nil filter-pane nil previous-button item-range-pane next-button nil) :adjust :center)
-   (main-layout column-layout '(items-pane page-controls-layout)
+   (pager-layout row-layout '(previous-button item-range-pane next-button) :adjust :center)
+   (controls-layout row-layout '(nil filter-pane nil pager-layout)
+                    :ratios '(1 3 1 2)
+                    :adjust :center)
+   (main-layout column-layout '(items-pane controls-layout)
                 :reader main-layout :border 4))
   
   ;; -- defaults ---------------------------------------------
