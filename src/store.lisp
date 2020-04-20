@@ -377,6 +377,9 @@
 ;;; item ops
 ;;; ---------------------------------------------------------------------
 
+;;; get latest items
+;;; ----------------
+
 ;;; NOTE: the query returns a list of (1 . row), because it's
 ;;; partitioning by id, then sorting descending by revision, then
 ;;; returning all rows whose rank is 1; so the CDR of each item is the
@@ -397,6 +400,10 @@
 ;;; (time (progn (setf $items (get-latest-items "/Users/mikel/Desktop/Zipcodes.delectus2")) 'done))
 ;;; (length $items)
 
+
+;;; get latest items (but only the userdata)
+;;; ----------------------------------------
+
 (defmethod db-get-latest-items-userdata ((db sqlite-handle) &key (offset 0)(limit nil))
   (let ((results (db-get-latest-items db :offset offset :limit limit)))
     (mapcar #'op-userdata results)))
@@ -411,6 +418,9 @@
 ;;; (time (progn (setf $items (get-latest-items-userdata "/Users/mikel/Desktop/Zipcodes.delectus2")) 'done))
 ;;; (length $items)
 ;;; (elt $items 100)
+
+;;; count latest items
+;;; ------------------
 
 (defmethod db-count-latest-items ((db sqlite-handle))
   (bind ((sql vals (sql-count-latest-items)))

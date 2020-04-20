@@ -165,14 +165,23 @@
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-latest-items
 ;;; ---------------------------------------------------------------------
+;;; ORDER BY revision DESC means the rows are sorted in descending
+;;; order of revision
+;;; PARTITION BY item means results rows are next sorted so that all rows
+;;; with the same item are together
+;;; ROW_NUMBER() assigns a row number to each row in a result
+;;; ROW_NUMBER() OVER restarts the numbering for each partition in the argument to OVER()
+;;;
+;;; the outer SELECT a.* FROM ... WHERE a.rank - 1 ORDER BY a.revision
+;;; then selects all of the rows with rank 1 in the inner SELECT ROW_NUMBER()
 
 (defun sql-get-latest-items (&key (offset 0)(limit nil))
   (let ((offset-clause (if (and limit offset)
                            (format nil "OFFSET ~D " offset)
-                         ""))
+                           ""))
         (limit-clause (if limit
                           (format nil "LIMIT ~D " limit)
-                        "")))
+                          "")))
     (values
      (format nil
              "SELECT a.*
