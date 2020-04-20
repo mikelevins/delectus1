@@ -371,7 +371,7 @@
   (:layouts
    (pager-layout row-layout '(previous-button item-range-pane next-button) :adjust :center)
    (controls-layout row-layout '(item-count-pane nil filter-pane nil pager-layout)
-                    :ratios '(1 1 3 1 2)
+                    :ratios '(1 1 4 1 2)
                     :adjust :center)
    (main-layout column-layout '(items-pane controls-layout)
                 :reader main-layout :border 4))
@@ -403,9 +403,7 @@
          (userdata-column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-userdata))
          (column-names (if show-metadata
                            (append metadata-column-names userdata-column-names)
-                         userdata-column-names))
-         (column-specs (mapcar (lambda (cname) `(:title ,cname :default-width 96))
-                               column-names))
+                           userdata-column-names))
          (list-name-op (delectus::get-latest-listname (dbpath pane)))
          (listname (or (delectus::op-name list-name-op) "Untitled list"))
          (latest-items (delectus::get-latest-items (dbpath pane) 
@@ -414,17 +412,19 @@
                                                    :limit (items-per-page pane)))
          (itemdata (if show-metadata
                        latest-items
-                     (mapcar #'delectus::op-userdata latest-items))))
+                       (mapcar #'delectus::op-userdata latest-items)))
+         (column-specs (mapcar (lambda (cname) `(:title ,cname :default-width 96))
+                               column-names)))
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (setf (title-pane-text (item-count-pane pane)) 
-          (format nil "~:D items" (total-items pane)))
+          (format nil " ~:D items" (total-items pane)))
     (setf (title-pane-text (item-range-pane pane)) 
           (format nil "Page ~D of ~D"
                   (1+ (current-page pane))
                   (total-pages pane)))
     (setf (collection-items (items-pane pane))
-           itemdata)))
+          itemdata)))
 
 (defun dec-list-page (list-items-pane)
   (let ((next-page (1- (current-page list-items-pane))))
