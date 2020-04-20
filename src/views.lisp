@@ -31,6 +31,7 @@
                :columns '((:title "Item"))
                :callback-type :item-interface
                :selection-callback 'handle-item-selection)
+   (filter-pane text-input-pane :search-field "Filter")
    (previous-button push-button :reader previous-button :text "<"
                     :callback #'handle-previous-button-click)
    (next-button push-button :reader next-button :text ">"
@@ -39,8 +40,8 @@
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (pager-layout row-layout '(nil previous-button item-range-pane next-button nil) :adjust :center)
-   (main-layout column-layout '(items-pane pager-layout)
+   (page-controls-layout row-layout '(nil filter-pane nil previous-button item-range-pane next-button nil) :adjust :center)
+   (main-layout column-layout '(items-pane page-controls-layout)
                 :reader main-layout :border 4))
   
   ;; -- defaults ---------------------------------------------
