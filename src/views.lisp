@@ -374,8 +374,8 @@
   ;; -- layouts ---------------------------------------------
   (:layouts
    (pager-layout row-layout '(previous-button item-range-pane next-button) :adjust :center)
-   (controls-layout row-layout '(nil item-count-pane nil filter-pane nil pager-layout)
-                    :ratios '(1 3 3 18 3 6)
+   (controls-layout row-layout '(item-count-pane nil filter-pane nil pager-layout)
+                    :ratios '(3 3 18 3 6)
                     :adjust :center)
    (main-layout column-layout '(items-pane controls-layout)
                 :reader main-layout :border 4))
@@ -433,11 +433,11 @@
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (setf (title-pane-text (item-count-pane pane)) 
-          (format nil "~:D items" (total-items pane)))
+          (format nil " ~:D pages (~:D items)"
+                  (total-pages pane) (total-items pane)))
     (setf (title-pane-text (item-range-pane pane)) 
-          (format nil "Page ~D of ~D"
-                  (1+ (current-page pane))
-                  (total-pages pane)))
+          (format nil "Page ~D"
+                  (1+ (current-page pane))))
     (setf (collection-items (items-pane pane))
           itemdata)))
 
