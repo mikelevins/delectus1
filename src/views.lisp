@@ -406,6 +406,11 @@
   (ceiling (total-items pane)
            (items-per-page pane)))
 
+(defun compute-column-specs (column-names items)
+  (mapcar (lambda (cname)
+            `(:title ,cname :default-width 128))
+          column-names))
+
 (defmethod update-list-display ((pane list-items-pane) &rest initargs 
                                 &key (show-metadata nil) &allow-other-keys)
   (let* ((metadata-column-count (length delectus::+metadata-column-labels+))
@@ -428,8 +433,7 @@
          (itemdata (if show-metadata
                        latest-items
                        (mapcar #'delectus::op-userdata latest-items)))
-         (column-specs (mapcar (lambda (cname) `(:title ,cname :default-width 96))
-                               column-names)))
+         (column-specs (compute-column-specs column-names itemdata)))
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (setf (title-pane-text (item-count-pane pane)) 
