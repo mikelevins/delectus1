@@ -325,18 +325,18 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod set-mac-button-style ((button push-button)(style integer))
-  (let* ((rep (cc-lib::representation-main-view (capi-internals::representation button))))
+  (let* ((rep (capi-cocoa-library::representation-main-view (capi::find-representation-for-pane button))))
     (objc:invoke rep "setBezelStyle:" style)))
 
 (defmethod set-mac-button-image ((button push-button)(image-name string))
-  (let* ((rep (cc-lib::representation-main-view (capi-internals::representation button))))
+  (let* ((rep (capi-cocoa-library::representation-main-view (capi::find-representation-for-pane button))))
     (objc:invoke rep "setImage:" (objc:invoke "NSImage" "imageNamed:" image-name))))
 
 ;;; ---------------------------------------------------------------------
 ;;; Delectus style
 ;;; ---------------------------------------------------------------------
 
-(defparameter *delectus-application-button-style* +NSBezelStyleTexturedRounded+)
+(defparameter *delectus-application-button-style* +NSBezelStyleTexturedSquare+)
 
 ;;; ---------------------------------------------------------------------
 ;;; list-items-pane
@@ -360,9 +360,13 @@
                :callback-type :item-interface
                :selection-callback 'handle-item-selection)
    (filter-pane text-input-pane :search-field "Filter")
-   (previous-button push-button :reader previous-button :text "<"
+   (previous-button push-button :reader previous-button :text ""
+                    :external-min-width 28 :external-max-width 28
+                    :external-min-height 32 :external-max-height 32
                     :callback #'handle-previous-button-click)
-   (next-button push-button :reader next-button :text ">"
+   (next-button push-button :reader next-button :text ""
+                :external-min-width 28 :external-max-width 28
+                :external-min-height 32 :external-max-height 32
                 :callback #'handle-next-button-click)
    (item-count-pane title-pane :reader item-count-pane)
    (item-range-pane title-pane :reader item-range-pane))
@@ -370,8 +374,8 @@
   ;; -- layouts ---------------------------------------------
   (:layouts
    (pager-layout row-layout '(previous-button item-range-pane next-button) :adjust :center)
-   (controls-layout row-layout '(item-count-pane nil filter-pane nil pager-layout)
-                    :ratios '(1 1 4 1 2)
+   (controls-layout row-layout '(nil item-count-pane nil filter-pane nil pager-layout)
+                    :ratios '(1 3 3 18 3 6)
                     :adjust :center)
    (main-layout column-layout '(items-pane controls-layout)
                 :reader main-layout :border 4))
@@ -386,6 +390,17 @@
   (setf (total-items pane)
         (delectus::count-latest-items (dbpath pane)))
   (update-list-display pane :show-metadata show-metadata))
+
+;;; fix up the widget styles
+(defmethod capi:interface-display :before ((pane list-items-pane))
+  (set-mac-button-style (previous-button pane)
+                        *delectus-application-button-style*)
+  (set-mac-button-image (previous-button pane)
+                        +NSImageNameGoLeftTemplate+)
+  (set-mac-button-style (next-button pane)
+                        *delectus-application-button-style*)
+  (set-mac-button-image (next-button pane)
+                        +NSImageNameGoRightTemplate+))
 
 (defmethod total-pages ((pane list-items-pane))
   (ceiling (total-items pane)
@@ -418,7 +433,7 @@
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (setf (title-pane-text (item-count-pane pane)) 
-          (format nil " ~:D items" (total-items pane)))
+          (format nil "~:D items" (total-items pane)))
     (setf (title-pane-text (item-range-pane pane)) 
           (format nil "Page ~D of ~D"
                   (1+ (current-page pane))
