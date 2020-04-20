@@ -35,12 +35,11 @@
                     :callback #'handle-previous-button-click)
    (next-button push-button :reader next-button :text ">"
                 :callback #'handle-next-button-click)
-   (item-range-pane title-pane :reader item-range-pane)
-   (item-count-pane title-pane :reader item-count-pane))
+   (item-range-pane title-pane :reader item-range-pane))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (pager-layout row-layout '(nil previous-button item-range-pane next-button item-count-pane nil) :adjust :center)
+   (pager-layout row-layout '(nil previous-button item-range-pane next-button nil) :adjust :center)
    (main-layout column-layout '(items-pane pager-layout)
                 :reader main-layout :border 4))
   
@@ -86,9 +85,9 @@
     (setf (interface-title pane) listname)
     (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
     (setf (title-pane-text (item-range-pane pane)) 
-            (format nil "Page ~D" (1+ (current-page pane))))
-    (setf (title-pane-text (item-count-pane pane)) 
-          (format nil " of ~D" (total-pages pane)))
+          (format nil "Page ~D of ~D"
+                  (1+ (current-page pane))
+                  (total-pages pane)))
     (setf (collection-items (items-pane pane))
            itemdata)))
 
