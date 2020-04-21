@@ -441,6 +441,7 @@
          (column-ids (mapcar (lambda (cdata)(getf cdata :|id|))
                              column-data)))
     (bind ((sql vals (sql-get-latest-userdata :column-ids column-ids :like like :offset offset :limit limit)))
+      (format t "~%items-userdata sql:~%~A~%~%" sql)
       (let ((latest-item-results (apply 'execute-to-list db sql vals)))
         latest-item-results))))
 

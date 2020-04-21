@@ -31,7 +31,8 @@
                :columns '((:title "Item"))
                :callback-type :item-interface
                :selection-callback 'handle-item-selection)
-   (filter-pane text-input-pane :search-field "Filter")
+   (filter-pane text-input-pane :search-field "Filter"
+                :change-callback 'update-items-sheet-for-changed-filter)
    (previous-button push-button :reader previous-button :text ""
                     :external-min-width 28 :external-max-width 28
                     :external-min-height 32 :external-max-height 32
@@ -62,10 +63,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((pane items-sheet) &rest initargs 
-                                       &key (show-metadata nil) &allow-other-keys)
+                                       &key &allow-other-keys)
   (setf (total-items pane)
         (delectus::count-latest-items (dbpath pane)))
-  (update-list-display pane :show-metadata show-metadata))
+  (update-list-display pane))
 
 ;;; ---------------------------------------------------------------------
 ;;; handlers and helpers
@@ -87,7 +88,7 @@
            (items-per-page pane)))
 
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
-                                &key (show-metadata nil) &allow-other-keys)
+                                &key &allow-other-keys)
   (let* ((metadata-column-count (length delectus::+metadata-column-labels+))
          (column-info (delectus::get-column-info (dbpath pane)))
          (userdata-column-info (subseq column-info metadata-column-count))
@@ -118,7 +119,7 @@
           itemdata)))
 
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
-                                &key (show-metadata nil) &allow-other-keys)
+                                &key &allow-other-keys)
   (let* ((list-name-op (delectus::get-latest-listname (dbpath pane)))
          (listname (or (delectus::op-name list-name-op) "Untitled list"))
          (latest-column-data (delectus::get-latest-columns (dbpath pane)))
@@ -145,11 +146,25 @@
     (setf (collection-items (items-pane pane))
           itemdata)))
 
+(defun update-items-sheet-for-changed-filter (text filter-pane sheet-pane caret-position)
+  (let* ((latest-column-data (delectus::get-latest-columns (dbpath sheet-pane)))
+         (latest-column-userdata (mapcar #'delectus::from-json (delectus::op-userdata latest-column-data)))
+         (column-ids (mapcar (lambda (ud)(fset:@ ud :|id|)) latest-column-userdata))
+         (itemdata (delectus::get-latest-items-userdata
+                    (dbpath sheet-pane)
+                    :column-ids column-ids
+                    :like text
+                    :offset (* (items-per-page sheet-pane)
+                               (current-page sheet-pane))
+                    :limit (items-per-page sheet-pane))))
+    (setf (collection-items (items-pane sheet-pane))
+          itemdata)))
+
 (defun dec-list-page (items-sheet)
   (let ((next-page (1- (current-page items-sheet))))
     (when (>= next-page 0)
       (decf (current-page items-sheet))))
-  (update-list-display items-sheet :show-metadata nil))
+  (update-list-display items-sheet))
 
 (defun inc-list-page (items-sheet)
   (let* ((itemcount (total-items items-sheet))
@@ -157,7 +172,7 @@
                               (1+ (current-page items-sheet)))))
     (when (< next-start-index itemcount)
       (incf (current-page items-sheet))))
-  (update-list-display items-sheet :show-metadata nil))
+  (update-list-display items-sheet))
 
 (defun handle-previous-button-click (data interface)
   (dec-list-page interface))

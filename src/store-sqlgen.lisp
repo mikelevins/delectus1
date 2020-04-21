@@ -218,11 +218,13 @@
                                                     column-ids))))
          (like-clauses (if (null like)
                            nil
-                           (join-strings " OR "
-                                         (mapcar (lambda (cid)
-                                                   (format nil "`~A` LIKE '%~A%'"
-                                                           cid like))
-                                                 column-ids))))
+                           (concatenate 'string "( "
+                                        (join-strings " OR "
+                                                      (mapcar (lambda (cid)
+                                                                (format nil "`~A` LIKE '%~A%'"
+                                                                        cid like))
+                                                              column-ids))
+                                        " ) ")))
          (where-clause (if (null like-clauses)
                            " WHERE `optype` = 'item' "
                            (format nil " WHERE `optype` = 'item' AND ~A" like-clauses)))
