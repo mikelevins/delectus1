@@ -14,24 +14,37 @@
 ;;; =====================================================================
 ;;; ABOUT
 ;;; =====================================================================
-;;; functions whose names start with "db-" require a valid open
-;;; SQLITE-HANDLE; in other words, they operate within transactions on
-;;; open SQLite databases.
+;;; naming conventions:
 ;;;
-;;; the corresponding functions whose names omit the "db-" prefix
-;;; operate on strings or pathnames, and automatically open and
-;;; close the database connection
+;;; - db-foo:
+;;;   A function whose name starts with "db-" operates on a SQLite
+;;;   database handle. It must be called within a WITH-TRANSACTION
+;;;   form that is, in turn, within a WITH-OPEN-DATABASE form.
 ;;;
-;;; an OP is a database row that specifies one of four operations:
-;;; - listname: to update the user-defined name of the list
-;;; - columns: to update the list's userdata columns and their attributes
-;;; - item: to add or update an item in the list
-;;; - sync: to record a successful synchronization with another copy
+;;; - foo:
+;;;   A generic function that operates on a database, and whose name
+;;;   does not start with "db-", instead takes as its first argument a
+;;;   pathname or string that identifies a SQLite database. The method
+;;;   specialized on STRING converts the string to a pathname and
+;;;   called the method that is specialized on PATHNAME; the method
+;;;   specialized on PATHNAME calls the "db-foo" function within
+;;;   a WITH-TRANSACTION, within a WITH-OPEN-DATABASE.
+;;;
+;;; Ops:
+;;;
+;;; an op is a database row that specifies one of four operations:
+;;;
+;;; - listname: updates the user-defined name of the list
+;;; - columns: updates the list's userdata columns and their attributes
+;;; - item: adds or update an item in the list
+;;; - sync: records a successful synchronization with another copy
 ;;;   of the list
 
+
 ;;; =====================================================================
-;;; checking columns
+;;; validating columns
 ;;; =====================================================================
+
 
 ;;; columns-missing-from-file
 ;;; ---------------------------------------------------------------------
@@ -91,9 +104,16 @@
 ;;; (columns-missing-from-input "/Users/mikel/Desktop/testlist.delectus2" (list $existing $nonexistent))
 ;;; (columns-missing-from-input "/Users/mikel/Desktop/testlist.delectus2" (list $nonexistent))
 
+
+
 ;;; =====================================================================
-;;; creating the list file
+;;; list files
 ;;; =====================================================================
+
+
+;;; ---------------------------------------------------------------------
+;;; creating standard tables
+;;; ---------------------------------------------------------------------
 
 (defmethod db-create-delectus-table ((db sqlite-handle)(listid string))
   (let* ((listid (or listid (makeid)))
@@ -131,9 +151,17 @@
       (db-assert-item db :opid item-opid :origin origin :revision item-rev :timestamp (now-timestamp)
                       :column-data (list userdata-column-data) :column-values (list nil)))))
 
+;;; ---------------------------------------------------------------------
+;;; creating the standard index
+;;; ---------------------------------------------------------------------
+
 (defun db-create-item-revision-origin-index (db)
   (bind ((sql vals (sql-create-item-revision-origin-index)))
     (apply 'execute-non-query db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; creating the list file
+;;; ---------------------------------------------------------------------
 
 (defmethod create-delectus-file ((db-path pathname)(list-name string)(listid string) &key (create-default-userdata t))
   (assert (not (probe-file db-path)) () "file exists: ~S" db-path)
@@ -166,10 +194,14 @@
 (defmethod add-userdata-column ((db-path string) (column-id string))
   (add-userdata-column (pathname db-path) column-id))
 
+
+
 ;;; =====================================================================
-;;; fetching data
+;;; fetching list data
 ;;; =====================================================================
 
+
+;;; ---------------------------------------------------------------------
 ;;; column-info
 ;;; ---------------------------------------------------------------------
 
@@ -234,7 +266,7 @@
 
 
 ;;; ---------------------------------------------------------------------
-;;; getting list metadata
+;;; list metadata
 ;;; ---------------------------------------------------------------------
 
 ;; list-id
@@ -305,7 +337,7 @@
 ;;; (get-next-revision "/Users/mikel/Desktop/testlist.delectus2")
 
 ;;; ---------------------------------------------------------------------
-;;; getting list ops
+;;; list ops
 ;;; ---------------------------------------------------------------------
 
 ;;; op fields
@@ -326,7 +358,7 @@
 ;;; (op-metadata (get-latest-listname "/Users/mikel/Desktop/Zipcodes.delectus2"))
 ;;; (op-userdata (get-latest-columns "/Users/mikel/Desktop/Zipcodes.delectus2"))
 
-;;; listname ops
+;;; listname
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-listname ((db sqlite-handle))
@@ -343,7 +375,7 @@
 ;;; (time (get-latest-listname "/Users/mikel/Desktop/testlist.delectus2"))
 
 
-;;; columns ops
+;;; columns
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-columns ((db sqlite-handle))
@@ -374,7 +406,7 @@
 
 ;;; (time (get-latest-userdata-columns-data "/Users/mikel/Desktop/Zipcodes.delectus2"))
 
-;;; item ops
+;;; item
 ;;; ---------------------------------------------------------------------
 
 ;;; get latest items
@@ -437,7 +469,7 @@
 
 
 ;;; get userdata column-widths
-;;; ------------------
+;;; --------------------------
 
 (defmethod db-get-userdata-column-widths ((db sqlite-handle))
   (let* ((coldata (db-get-latest-userdata-columns-data db))
@@ -479,18 +511,20 @@
 
 
 ;;; =====================================================================
-;;; ops
+;;; updating data
 ;;; =====================================================================
+
+
+;;; ---------------------------------------------------------------------
+;;; asserting ops
+;;; ---------------------------------------------------------------------
 ;;; the general model for assertions is:
 ;;; 1. compute the mutations we're going to make, signaling an error
 ;;;    if any prerequisite is not met
 ;;; 2. execute the computed mutations
 
 ;;; ---------------------------------------------------------------------
-;;; asserting ops
-;;; ---------------------------------------------------------------------
-
-;;; listname ops
+;;; listname
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-assert-listname ((db sqlite-handle)
@@ -514,7 +548,8 @@
   (assert-listname (pathname db-path)
                    :opid opid :origin origin :revision revision :timestamp timestamp :name name))
 
-;;; columns ops
+;;; ---------------------------------------------------------------------
+;;; columns
 ;;; ---------------------------------------------------------------------
 ;;; column-data is a list of column-data objects
 
@@ -551,7 +586,8 @@
 ;;; (setf $cdata (fset:with +default-initial-column-attributes+ :|id| (makeid)))
 ;;; (assert-columns "/Users/mikel/Desktop/testlist.delectus2" :opid (makeid) :origin *origin* :revision (get-next-revision "/Users/mikel/Desktop/testlist.delectus2") :timestamp (now-timestamp) :column-data (list $cdata))
 
-;;; item ops
+;;; ---------------------------------------------------------------------
+;;; item
 ;;; ---------------------------------------------------------------------
 ;;; column-data is a list of column-data objects. column-values is a
 ;;; list of field values, one for each column
@@ -589,7 +625,8 @@
 ;;; (setf $cdata (fset:with +default-initial-column-attributes+ :|id| (makeid)))
 ;;; (assert-item "/Users/mikel/Desktop/testlist.delectus2" :opid (makeid) :origin *origin* :revision (get-next-revision "/Users/mikel/Desktop/testlist.delectus2") :timestamp (now-timestamp) :item (makeid) :column-data (list $cdata) :column-values '(nil))
 
-;;; sync ops
+;;; ---------------------------------------------------------------------
+;;; sync
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-assert-sync ((db sqlite-handle)
