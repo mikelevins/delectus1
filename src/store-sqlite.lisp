@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          sqlite.lisp
+;;;; Name:          store-sqlite.lisp
 ;;;; Project:       delectus 2
-;;;; Purpose:       basic sqlite utilities for delectus
+;;;; Purpose:       basic operations on sqlite files
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2010-2020 by mikel evins
 ;;;;

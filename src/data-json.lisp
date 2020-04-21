@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          json.lisp
+;;;; Name:          data-json.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       converting to and from JSON
 ;;;; Author:        mikel evins

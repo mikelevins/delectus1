@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          bind.lisp
+;;;; Name:          system-bind.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       the BIND macro
 ;;;; Author:        mikel evins
@@ -14,13 +14,11 @@
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
 
-;;; a more compact alternative to MUTLTIPLE-VALUE-BIND BIND works like
-;;; LET*, but can bind multiple variables to the values returned from
-;;; an expression it works to use it exactly like LET*, with bindings
-;;; like this:
-;;;    (x (+ 2 3))
-;;; but can also bind multiple return values, like this:
-;;;    (x y z (values 1 2 3))
+;;; a more compact alternative to MUTLTIPLE-VALUE-BIND. BIND works
+;;; like LET*, but can bind multiple variables to the values returned
+;;; from an expression it works to use it exactly like LET*, with
+;;; bindings like this: (x (+ 2 3)) but can also bind multiple return
+;;; values, like this: (x y z (values 1 2 3))
 
 (defmacro bind (bindings &body body)
   (if (null bindings)

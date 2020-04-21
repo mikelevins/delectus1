@@ -21,23 +21,23 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     (:file "system-parameters")
-                                     (:file "syntax")
-                                     (:file "bind")
-                                     (:file "utils")
-                                     (:file "identities")
-                                     (:file "columns")
-                                     (:file "csv")
-                                     (:file "json")
-                                     (:file "sqlgen")
-                                     (:file "sqlite")
-                                     (:file "store")
+                                     (:file "system-parameters") ; application globals
+                                     (:file "system-syntax")     ; syntax for list and map literals
+                                     (:file "system-bind")       ; more compact binding of multiple values
+                                     (:file "system-utils")      ; general-purpose helpers
+                                     (:file "data-identities")   ; Delectus-specific UUID format
+                                     (:file "data-csv")          ; reading and writing CSV files
+                                     (:file "data-json")         ; reading and writing JSON data
+                                     (:file "store-columns")     ; modeling Delectus columns
+                                     (:file "store-sqlgen")      ; generating SQL for the Dlectus store
+                                     (:file "store-sqlite")      ; operating on SQLite files
+                                     (:file "store-model")       ; store operations on Delectus model objects
                                      ;; CAPI UI
-                                     (:file "macos-constants")
-                                     (:file "macos-view-utils")
-                                     (:file "items-sheet-pane")
-                                     (:file "card-list-pane")
+                                     (:file "macos-constants")   ; constants to control macOS UI appearance
+                                     (:file "macos-view-utils")  ; operations on native macOS widgets
+                                     (:file "views-items-sheet") ; spreadsheet-like view
+                                     (:file "views-card-list")   ; list-of-cards view
                                      ;; Test data
-                                     (:file "testdata")))))
+                                     (:file "test-data")))))
 
 ;;; (asdf:load-system :delectus)

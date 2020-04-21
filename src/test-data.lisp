@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          testdata.lisp
+;;;; Name:          test-data.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       test databases for testing
 ;;;; Author:        mikel evins

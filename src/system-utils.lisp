@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          utils.lisp
+;;;; Name:          system-utils.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       general-purpose utility functions
 ;;;; Author:        mikel evins

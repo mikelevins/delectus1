@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          card-list-pane.lisp
+;;;; Name:          views-card-list.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       UI: a view of items as a list of cards
 ;;;; Author:        mikel evins
@@ -76,6 +76,6 @@
 
 
 ;;; ---------------------------------------------------------------------
-;;; card-list-pane
+;;; card-list
 ;;; ---------------------------------------------------------------------
 

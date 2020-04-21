@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          identities.lisp
+;;;; Name:          data-identities.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       functions for working with delectus identities
 ;;;; Author:        mikel evins

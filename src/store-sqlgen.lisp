@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          sqlgen.lisp
+;;;; Name:          store-sqlgen.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       generating SQL for Delectus store operations
 ;;;; Author:        mikel evins

@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          store.lisp
+;;;; Name:          store-model.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       operations on Delectus model objects stored in SQLite files
 ;;;; Author:        mikel evins

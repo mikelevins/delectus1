@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          syntax.lisp
+;;;; Name:          system-syntax.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       syntax extensions
 ;;;; Author:        mikel evins

@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          columns.lisp
+;;;; Name:          store-columns.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       representing column attributes
 ;;;; Author:        mikel evins

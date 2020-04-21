@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          items-sheet-pane.lisp
+;;;; Name:          views-items-sheet.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       UI: a spreadsheet-like view of list items
 ;;;; Author:        mikel evins
@@ -11,10 +11,10 @@
 (in-package #:ui)
 
 ;;; ---------------------------------------------------------------------
-;;; items-sheet-pane
+;;; items-sheet
 ;;; ---------------------------------------------------------------------
 
-(define-interface items-sheet-pane ()
+(define-interface items-sheet ()
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
    (total-items :accessor total-items :initform 0 :initarg :total-items)
@@ -61,7 +61,7 @@
 ;;; initialize-instance
 ;;; ---------------------------------------------------------------------
 
-(defmethod initialize-instance :after ((pane items-sheet-pane) &rest initargs 
+(defmethod initialize-instance :after ((pane items-sheet) &rest initargs 
                                        &key (show-metadata nil) &allow-other-keys)
   (setf (total-items pane)
         (delectus::count-latest-items (dbpath pane)))
@@ -72,7 +72,7 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; fix up the widget styles
-(defmethod capi:interface-display :before ((pane items-sheet-pane))
+(defmethod capi:interface-display :before ((pane items-sheet))
   (set-mac-button-style (previous-button pane)
                         *delectus-application-button-style*)
   (set-mac-button-image (previous-button pane)
@@ -82,11 +82,11 @@
   (set-mac-button-image (next-button pane)
                         +NSImageNameGoRightTemplate+))
 
-(defmethod total-pages ((pane items-sheet-pane))
+(defmethod total-pages ((pane items-sheet))
   (ceiling (total-items pane)
            (items-per-page pane)))
 
-(defmethod update-list-display ((pane items-sheet-pane) &rest initargs 
+(defmethod update-list-display ((pane items-sheet) &rest initargs 
                                 &key (show-metadata nil) &allow-other-keys)
   (let* ((metadata-column-count (length delectus::+metadata-column-labels+))
          (column-info (delectus::get-column-info (dbpath pane)))
@@ -117,19 +117,19 @@
     (setf (collection-items (items-pane pane))
           itemdata)))
 
-(defun dec-list-page (items-sheet-pane)
-  (let ((next-page (1- (current-page items-sheet-pane))))
+(defun dec-list-page (items-sheet)
+  (let ((next-page (1- (current-page items-sheet))))
     (when (>= next-page 0)
-      (decf (current-page items-sheet-pane))))
-  (update-list-display items-sheet-pane :show-metadata nil))
+      (decf (current-page items-sheet))))
+  (update-list-display items-sheet :show-metadata nil))
 
-(defun inc-list-page (items-sheet-pane)
-  (let* ((itemcount (total-items items-sheet-pane))
-         (next-start-index (* (items-per-page items-sheet-pane)
-                              (1+ (current-page items-sheet-pane)))))
+(defun inc-list-page (items-sheet)
+  (let* ((itemcount (total-items items-sheet))
+         (next-start-index (* (items-per-page items-sheet)
+                              (1+ (current-page items-sheet)))))
     (when (< next-start-index itemcount)
-      (incf (current-page items-sheet-pane))))
-  (update-list-display items-sheet-pane :show-metadata nil))
+      (incf (current-page items-sheet))))
+  (update-list-display items-sheet :show-metadata nil))
 
 (defun handle-previous-button-click (data interface)
   (dec-list-page interface))
@@ -142,10 +142,10 @@
           item interface))
 
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
-;;; (time (setf $win (contain (make-instance 'items-sheet-pane :dbpath $zippath))))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $zippath))))
 
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
-;;; (time (setf $win (contain (make-instance 'items-sheet-pane :dbpath $moviespath))))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $moviespath))))
 
 ;;; (setf $screen (convert-to-screen))
 ;;; (describe $screen)
@@ -153,15 +153,15 @@
 ;;; opening test data
 ;;; (defparameter $words1k-path "/Users/mikel/Desktop/wordtest1k.delectus2")
 ;;; ~0.07sec to open, paging is instant
-;;; (time (setf $win (contain (make-instance 'items-sheet-pane :dbpath $words1k-path))))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words1k-path))))
 
 ;;; (defparameter $words10k-path "/Users/mikel/Desktop/wordtest10k.delectus2")
 ;;; ~0.14sec to open, paging is instant
-;;; (time (setf $win (contain (make-instance 'items-sheet-pane :dbpath $words10k-path))))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words10k-path))))
 
 ;;; (defparameter $words100k-path "/Users/mikel/Desktop/wordtest100k.delectus2")
 ;;; ~1.0sec to open
-;;; (time (setf $win (contain (make-instance 'items-sheet-pane :dbpath $words100k-path))))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words100k-path))))
 ;;; ~0.5 sec to page
 ;;; (time (inc-list-page $win))
 
