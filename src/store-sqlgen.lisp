@@ -172,7 +172,7 @@
 ;;; ROW_NUMBER() assigns a row number to each row in a result
 ;;; ROW_NUMBER() OVER restarts the numbering for each partition in the argument to OVER()
 ;;;
-;;; the outer SELECT a.* FROM ... WHERE a.rank - 1 ORDER BY a.revision
+;;; the outer SELECT a.* FROM ... WHERE a.rank = 1 ORDER BY a.revision
 ;;; then selects all of the rows with rank 1 in the inner SELECT ROW_NUMBER()
 
 (defun sql-get-latest-items (&key (offset 0)(limit nil))
@@ -205,6 +205,43 @@
           FROM `list_data` WHERE optype='item') a
     WHERE a.rank = 1 order by a.revision")
    nil))
+
+
+;;; ---------------------------------------------------------------------
+;;; sql-get-latest-userdata
+
+(defun sql-get-latest-userdata (&key (column-ids nil)(like nil)(offset 0)(limit nil))
+  (let* ((column-selector (if (null column-ids)
+                              "a.*"
+                              (join-strings ", "
+                                            (mapcar (lambda (cid) (format nil "a.~A" cid))
+                                                    column-ids))))
+         (like-clauses (if (null like)
+                           nil
+                           (join-strings " OR "
+                                         (mapcar (lambda (cid)
+                                                   (format nil "`~A` LIKE '%~A%'"
+                                                           cid like))
+                                                 column-ids))))
+         (where-clause (if (null like-clauses)
+                           " WHERE `optype` = 'item' "
+                           (format nil " WHERE `optype` = 'item' AND ~A" like-clauses)))
+         (offset-clause (if (and limit offset)
+                            (format nil "OFFSET ~D " offset)
+                            ""))
+         (limit-clause (if limit
+                           (format nil "LIMIT ~D " limit)
+                           "")))
+    (values
+     (format nil
+             "SELECT ~A
+    FROM (SELECT ROW_NUMBER() OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
+          FROM `list_data` ~A) a
+    WHERE a.rank = 1 order by a.revision ~A ~A"
+             column-selector where-clause limit-clause offset-clause)
+     nil)))
+
+;;; (sql-get-latest-items)
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-latest-sync
