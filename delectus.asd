@@ -33,7 +33,10 @@
                                      (:file "sqlite")
                                      (:file "store")
                                      ;; CAPI UI
-                                     (:file "views")
+                                     (:file "macos-constants")
+                                     (:file "macos-view-utils")
+                                     (:file "items-sheet-pane")
+                                     (:file "card-list-pane")
                                      ;; Test data
                                      (:file "testdata")))))
 
