@@ -117,6 +117,34 @@
     (setf (collection-items (items-pane pane))
           itemdata)))
 
+(defmethod update-list-display ((pane items-sheet) &rest initargs 
+                                &key (show-metadata nil) &allow-other-keys)
+  (let* ((list-name-op (delectus::get-latest-listname (dbpath pane)))
+         (listname (or (delectus::op-name list-name-op) "Untitled list"))
+         (latest-column-data (delectus::get-latest-columns (dbpath pane)))
+         (latest-column-userdata (mapcar #'delectus::from-json (delectus::op-userdata latest-column-data)))
+         (column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-column-userdata))
+         (column-ids (mapcar (lambda (ud)(fset:@ ud :|id|)) latest-column-userdata))
+         (column-widths (mapcar #'(lambda (x)(+ 4 x))
+                                (delectus::get-userdata-column-widths (dbpath pane))))
+         (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
+                               column-names column-widths))
+         (itemdata (delectus::get-latest-items-userdata (dbpath pane)
+                                                        :column-ids column-ids
+                                                        :offset (* (items-per-page pane)
+                                                                   (current-page pane))
+                                                        :limit (items-per-page pane))))
+    (setf (interface-title pane) listname)
+    (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
+    (setf (title-pane-text (item-count-pane pane)) 
+          (format nil " ~:D pages (~:D items)"
+                  (total-pages pane) (total-items pane)))
+    (setf (title-pane-text (item-range-pane pane)) 
+          (format nil "Page ~D"
+                  (1+ (current-page pane))))
+    (setf (collection-items (items-pane pane))
+          itemdata)))
+
 (defun dec-list-page (items-sheet)
   (let ((next-page (1- (current-page items-sheet))))
     (when (>= next-page 0)

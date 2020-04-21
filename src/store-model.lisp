@@ -442,8 +442,7 @@
                              column-data)))
     (bind ((sql vals (sql-get-latest-userdata :column-ids column-ids :like like :offset offset :limit limit)))
       (let ((latest-item-results (apply 'execute-to-list db sql vals)))
-        ;; discard the rank field from the returned result
-        (mapcar #'cdr latest-item-results)))))
+        latest-item-results))))
 
 (defmethod get-latest-items-userdata ((db-path pathname) &key (column-ids nil)(like nil)(offset 0)(limit nil))
   (with-open-database (db db-path)
