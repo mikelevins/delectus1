@@ -8,9 +8,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(defpackage #:to-sql
-  (:use #:cl))
-
 (defpackage #:delectus
   (:use #:cl #:sqlite #:cl-emb #:named-readtables))
 
