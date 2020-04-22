@@ -484,6 +484,23 @@
 ;; (time (count-latest-items "/Users/mikel/Desktop/Zipcodes.delectus2"))
 
 
+;;; count latest items matching a filter text
+;;; -----------------------------------------
+
+(defmethod db-count-latest-filtered-items ((db sqlite-handle) &key (column-ids nil)(filter-text nil))
+  (bind ((sql vals (sqlgen::count-latest-userdata :column-ids column-ids :like filter-text)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod count-latest-filtered-items ((db-path pathname) &key (column-ids nil)(filter-text nil))
+  (with-open-database (db db-path)
+    (db-count-latest-filtered-items db :column-ids column-ids :filter-text filter-text)))
+
+(defmethod count-latest-filtered-items ((db-path string) &key (column-ids nil)(filter-text nil))
+  (count-latest-filtered-items (pathname db-path) :column-ids column-ids :filter-text filter-text))
+
+;; (time (count-latest-filtered-items "/Users/mikel/Desktop/Zipcodes.delectus2"))
+;; (time (count-latest-filtered-items "/Users/mikel/Desktop/Zipcodes.delectus2" :column-ids '("Iaf364d8180bc11ea915638c9864ebde0") :filter-text "Springd"))
+
 ;;; get userdata column-widths
 ;;; --------------------------
 

@@ -32,7 +32,7 @@
                :columns '((:title "Item"))
                :callback-type :item-interface
                :selection-callback 'handle-item-selection)
-   (filter-pane text-input-pane :search-field "Filter"
+   (filter-pane text-input-pane :search-field "Filter" :reader filter-pane
                 :change-callback 'update-items-sheet-for-changed-filter)
    (previous-button push-button :reader previous-button :text ""
                     :external-min-width 28 :external-max-width 28
@@ -93,14 +93,16 @@
   (with-open-database (db (dbpath pane))
     (let* ((list-name-op (db-get-latest-listname db))
            (listname (or (op-name list-name-op) "Untitled list"))
-           (latest-column-data (db-get-latest-columns db))
-           (latest-column-userdata (mapcar #'from-json (op-userdata latest-column-data)))
+           (latest-column-userdata (mapcar #'from-json (op-userdata (db-get-latest-columns db))))
            (column-names (mapcar (lambda (ud)(get-key ud :|name| nil)) latest-column-userdata))
            (column-ids (mapcar (lambda (ud)(get-key ud :|id| nil)) latest-column-userdata))
-           (column-widths (mapcar #'(lambda (x)(+ 4 x))
-                                  (db-get-userdata-column-widths db)))
+           (column-widths (db-get-userdata-column-widths db))
+           (adjusted-column-widths (mapcar #'(lambda (x)(+ 4 x)) column-widths))
            (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
-                                 column-names column-widths))
+                                 column-names adjusted-column-widths))
+           (item-count (db-count-latest-filtered-items db
+                                                       :column-ids column-ids
+                                                       :filter-text (text-input-pane-text (filter-pane pane))))
            (itemdata (db-get-latest-items-userdata db
                                                    :column-ids column-ids
                                                    :like filter-text
@@ -108,6 +110,7 @@
                                                               (current-page pane))
                                                    :limit (items-per-page pane))))
       (setf (interface-title pane) listname)
+      (setf (total-items pane) item-count)
       (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
       (setf (title-pane-text (item-count-pane pane)) 
             (format nil " ~:D pages (~:D items)"

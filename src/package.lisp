@@ -17,7 +17,9 @@
                 #:compare #:convert #:do-map #:domain
                 #:lookup #:wb-map #:with)
   (:export #:bind
+           #:count-latest-filtered-items
            #:from-json
+           #:db-count-latest-filtered-items
            #:db-get-latest-columns
            #:db-get-latest-items-userdata
            #:db-get-latest-listname

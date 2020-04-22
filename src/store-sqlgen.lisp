@@ -345,6 +345,39 @@ WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 ;;; (sqlgen::get-latest-userdata)
 
+;;; ---------------------------------------------------------------------
+;;; sqlgen::count-latest-userdata
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::count-latest-userdata (&key (column-ids nil)(like nil))
+  (let* ((like-clauses
+          (if (null like)
+              ""
+              (concatenate 'string " AND ( "
+                           (delectus::join-strings " OR "
+                                                   (mapcar (lambda (cid)
+                                                             (format nil "`~A` LIKE '%~A%'"
+                                                                     cid like))
+                                                           column-ids))
+                           " ) ")))
+         (where-clause (if (null like-clauses)
+                           " WHERE `optype` = 'item' "
+                           (format nil " WHERE `optype` = 'item' AND ~A" like-clauses))))
+    (values
+     (SQL #?|
+
+SELECT COUNT(*)
+FROM (SELECT ROW_NUMBER() 
+      OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
+      FROM `list_data` 
+      WHERE optype='item' ${like-clauses}) a
+WHERE a.rank = 1 order by a.revision
+
+|)
+     nil)))
+
+;;; (sqlgen::count-latest-userdata)
+;;; (sqlgen::count-latest-userdata :column-ids (list (delectus::makeid)) :like "Foo")
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen::get-latest-sync
