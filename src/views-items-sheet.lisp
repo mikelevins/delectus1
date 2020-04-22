@@ -122,6 +122,7 @@
             itemdata))))
 
 (defun update-items-sheet-for-changed-filter (text filter-pane sheet-pane caret-position)
+  (setf (current-page sheet-pane) 0)
   (update-list-display sheet-pane :filter-text text))
 
 (defun dec-list-page (items-sheet)
