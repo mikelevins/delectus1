@@ -30,7 +30,8 @@
   (values (mapcar (lambda (c)(fset:@ c :|id|)) column-data)
           vals))
 
-
+(defun sql (s)
+  (trim s))
 
 ;;; =====================================================================
 ;;; SQL constructors
@@ -52,7 +53,7 @@
 
 (defun sql-create-delectus-table ()
   (values
-   (trim #?|
+   (sql #?|
 
 CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` INTEGER )
 
@@ -69,7 +70,7 @@ CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revisio
 
 (defun sql-populate-delectus-table (id origin format next-revision)
   (values
-   (trim #?|
+   (sql #?|
 
 INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?)
 
@@ -85,7 +86,7 @@ INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?,
 
 (defun sql-create-listdata-table ()
   (values
-   (trim #?|
+   (sql #?|
 
 CREATE TABLE `list_data` ( 
   `optype` TEXT, 
@@ -110,7 +111,7 @@ CREATE TABLE `list_data` (
 
 (defun sql-create-item-revision-origin-index ()
   (values
-   (trim #?|
+   (sql #?|
 
 CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `origin`)
 
@@ -126,7 +127,7 @@ CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `ori
 
 (defun sql-add-userdata-column (label type)
   (values
-   (trim #?|
+   (sql #?|
 
 ALTER TABLE `list_data` ADD `${label}` ${type}
 
@@ -153,7 +154,7 @@ ALTER TABLE `list_data` ADD `${label}` ${type}
 
 (defun sql-list-id ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT `id` FROM `delectus` LIMIT 1
 
@@ -169,7 +170,7 @@ SELECT `id` FROM `delectus` LIMIT 1
 
 (defun sql-list-origin ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT `origin` FROM `delectus` LIMIT 1
 
@@ -185,7 +186,7 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-list-format ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT `format` FROM `delectus` LIMIT 1
 
@@ -201,7 +202,7 @@ SELECT `format` FROM `delectus` LIMIT 1
 
 (defun sql-increment-next-revision ()
   (values
-   (trim #?|
+   (sql #?|
 
 UPDATE `delectus` SET `next_revision` = `next_revision` + 1
 
@@ -216,7 +217,7 @@ UPDATE `delectus` SET `next_revision` = `next_revision` + 1
 
 (defun sql-next-revision ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT `next_revision` FROM `delectus` LIMIT 1
 
@@ -231,7 +232,7 @@ SELECT `next_revision` FROM `delectus` LIMIT 1
 
 (defun sql-get-latest-listname ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT * FROM `list_data` 
 WHERE `optype`='listname' 
@@ -255,7 +256,7 @@ LIMIT 1
 
 (defun sql-get-latest-columns ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT * FROM `list_data` 
 WHERE `optype`='columns' 
@@ -287,7 +288,7 @@ LIMIT 1
                           (format nil "LIMIT ~D " limit)
                           "")))
     (values
-     (trim #?|
+     (sql #?|
 
 SELECT a.* 
 FROM (SELECT ROW_NUMBER() 
@@ -309,7 +310,7 @@ WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 (defun sql-count-latest-items ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT COUNT(*)
 FROM (SELECT ROW_NUMBER() 
@@ -353,7 +354,7 @@ WHERE a.rank = 1 order by a.revision
                            "")))
     (values
      ;; ---------------------------------------------------
-     (trim #?|
+     (sql #?|
 
 SELECT ${column-selector}
 FROM (SELECT ROW_NUMBER() 
@@ -362,6 +363,7 @@ FROM (SELECT ROW_NUMBER()
 WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 |)
+     ;; END
      ;; ---------------------------------------------------
      nil)))
 
@@ -374,7 +376,7 @@ WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 (defun sql-get-latest-sync ()
   (values
-   (trim #?|
+   (sql #?|
 
 SELECT * FROM `list_data` 
 WHERE `optype`='sync' 
@@ -397,7 +399,7 @@ LIMIT 1
          (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
                       params-string placeholders-string)))
     (values
-     (trim #?|
+     (sql #?|
 
 INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
 
@@ -419,11 +421,14 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
          (vals (append meta-vals column-vals))
          (placeholders (mapcar (constantly "?") params))
          (params-string (join-strings ", " params))
-         (placeholders-string (join-strings ", " placeholders))
-         (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
-                      params-string placeholders-string)))
-    (values sql vals)))
+         (placeholders-string (join-strings ", " placeholders)))
+    (values
+     (sql #?|
 
+INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+
+|)
+     vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-assert-item
@@ -437,11 +442,14 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
          (vals (append meta-vals item-vals))
          (placeholders (mapcar (constantly "?") params))
          (params-string (join-strings ", " params))
-         (placeholders-string (join-strings ", " placeholders))
-         (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
-                      params-string placeholders-string)))
-    (values sql vals)))
+         (placeholders-string (join-strings ", " placeholders)))
+    (values
+     (sql #?|
 
+INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+
+|)
+     vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-assert-sync
@@ -452,9 +460,12 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
          (params vals (make-metadata-params optype opid origin revision timestamp item name deleted peer))
          (placeholders (mapcar (constantly "?") params))
          (params-string (join-strings ", " params))
-         (placeholders-string (join-strings ", " placeholders))
-         (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
-                      params-string placeholders-string)))
-    (values sql vals)))
+         (placeholders-string (join-strings ", " placeholders)))
+    (values (sql #?|
+
+INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+
+|)
+            vals)))
 
 ;;; (sql-assert-sync (makeid)(makeid) 3 (now-timestamp) nil nil nil (makeid))
