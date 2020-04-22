@@ -61,6 +61,9 @@
 ;;; (str "1" "2" "3")
 ;;; (str '("CREATE TABLE " "`list_data` " "(`optype` TEXT, `opid` TEXT, `origin` TEXT, `revision` INTEGER, `timestamp` TEXT, `item` TEXT, `name` TEXT, `deleted` TEXT, `peer` TEXT);"))
 
+(defun trim (s)
+  (string-trim '(#\Space #\Newline #\Backspace #\Tab #\Linefeed #\Page #\Return #\Rubout) s))
+
 ;;; ---------------------------------------------------------------------
 ;;;  time utilities
 ;;; ---------------------------------------------------------------------

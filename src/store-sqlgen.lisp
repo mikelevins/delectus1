@@ -9,7 +9,8 @@
 ;;;; ***********************************************************************
 
 (in-package :delectus)
-(in-readtable :delectus)
+(in-readtable :interpol-syntax)
+
 
 ;;; =====================================================================
 ;;; helper functions
@@ -29,9 +30,21 @@
   (values (mapcar (lambda (c)(fset:@ c :|id|)) column-data)
           vals))
 
+
+
 ;;; =====================================================================
-;;; SQL constructor functions
+;;; SQL constructors
 ;;; =====================================================================
+;;; each sql-constructor function returns two values: a SQL string, and
+;;; a list of values to be bound to any '?' placeholders in the SQL
+;;; string. If there are no placeholder variables in the SQL, then
+;;; the second returned value is NIL.
+;;;
+;;; The function definitions look a bit unorthodox because they use
+;;; interpolation syntax from cl-interpol to enable us to write the
+;;; SQL code as clearly and readably as possible. This tends to make
+;;; Lisp code wrapped around the SQL look a little awkward.
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-create-delectus-table
@@ -39,10 +52,16 @@
 
 (defun sql-create-delectus-table ()
   (values
-   "CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` INTEGER )"
+   (trim #?|
+
+CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` INTEGER )
+
+|)
    nil))
 
+
 ;;; (sql-create-delectus-table)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-populate-delectus-table
@@ -50,10 +69,15 @@
 
 (defun sql-populate-delectus-table (id origin format next-revision)
   (values
-   "INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?)"
+   (trim #?|
+
+INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?)
+
+|)
    (list id origin format next-revision)))
 
 ;;; (sql-populate-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 3)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-create-listdata-table
@@ -61,7 +85,20 @@
 
 (defun sql-create-listdata-table ()
   (values
-   "CREATE TABLE `list_data` ( `optype` TEXT, `opid` TEXT, `origin` TEXT, `revision` INTEGER, `timestamp` TEXT, `item` TEXT, `name` TEXT, `deleted` TEXT, `peer` TEXT )"
+   (trim #?|
+
+CREATE TABLE `list_data` ( 
+  `optype` TEXT, 
+  `opid` TEXT, 
+  `origin` TEXT, 
+  `revision` INTEGER, 
+  `timestamp` TEXT, 
+  `item` TEXT, 
+  `name` TEXT, 
+  `deleted` TEXT, 
+  `peer` TEXT )
+
+|)
    nil))
 
 ;;; (sql-create-listdata-table)
@@ -73,10 +110,15 @@
 
 (defun sql-create-item-revision-origin-index ()
   (values
-   "CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `origin`)"
+   (trim #?|
+
+CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `origin`)
+
+|)
    nil))
 
-;;; (sql-create-itemid-revision-origin-index)
+;;; (sql-create-item-revision-origin-index)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-add-userdata-column
@@ -84,11 +126,15 @@
 
 (defun sql-add-userdata-column (label type)
   (values
-   (format nil "ALTER TABLE `list_data` ADD `~A` ~A"
-           label type)
+   (trim #?|
+
+ALTER TABLE `list_data` ADD `${label}` ${type}
+
+|)
    nil))
 
 ;;; (sql-add-userdata-column (makeid) "TEXT")
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-column-info
@@ -98,14 +144,24 @@
   (values "PRAGMA table_info(list_data);"
           nil))
 
+;;; (sql-get-column-info)
+
+
 ;;; ---------------------------------------------------------------------
 ;;; sql-list-id
 ;;; ---------------------------------------------------------------------
 
 (defun sql-list-id ()
   (values
-   "SELECT `id` FROM `delectus` LIMIT 1"
+   (trim #?|
+
+SELECT `id` FROM `delectus` LIMIT 1
+
+|)
    nil))
+
+;;; (sql-list-id)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-list-origin
@@ -113,8 +169,15 @@
 
 (defun sql-list-origin ()
   (values
-   "SELECT `origin` FROM `delectus` LIMIT 1"
+   (trim #?|
+
+SELECT `origin` FROM `delectus` LIMIT 1
+
+|)
    nil))
+
+;;; (sql-list-origin)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-list-format
@@ -125,6 +188,7 @@
    "SELECT `format` FROM `delectus` LIMIT 1"
    nil))
 
+
 ;;; ---------------------------------------------------------------------
 ;;; sql-increment-next-revision
 ;;; ---------------------------------------------------------------------
@@ -133,6 +197,7 @@
   (values
    "UPDATE `delectus` SET `next_revision` = `next_revision` + 1"
    nil))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-next-revision
@@ -153,6 +218,7 @@
    "SELECT * FROM `list_data` WHERE `optype`='listname' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
    nil))
 
+
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-latest-columns
 ;;; ---------------------------------------------------------------------
@@ -161,6 +227,7 @@
   (values
    "SELECT * FROM `list_data` WHERE `optype`='columns' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
    nil))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-latest-items
@@ -192,6 +259,7 @@
      nil)))
 
 ;;; (sql-get-latest-items)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-count-latest-items
@@ -245,6 +313,7 @@
 
 ;;; (sql-get-latest-items)
 
+
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-latest-sync
 ;;; ---------------------------------------------------------------------
@@ -253,6 +322,7 @@
   (values
    "SELECT * FROM `list_data` WHERE `optype`='sync' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
    nil))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-assert-listname
@@ -269,6 +339,7 @@
     (values sql vals)))
 
 ;;; (sql-assert-listname (makeid)(makeid) 3 (now-timestamp) nil "A List" nil nil)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-assert-columns
@@ -287,11 +358,6 @@
                       params-string placeholders-string)))
     (values sql vals)))
 
-;;; (setf $col0 {:|id| (makeid) :|name| "Column 0" :|type| :false :|order| 10.0 :|sort| "ASC" :|title| :true :|subtitle| :false :|deleted| :false})
-;;; (setf $col1 {:|id| (makeid) :|name| "Column 1" :|type| :false :|order| 20.0 :|sort| :false :|title| :false :|subtitle| :false :|deleted| :false})
-;;; (setf $col2 {:|id| (makeid) :|name| "Column 2" :|type| :false :|order| 30.0 :|sort| :false :|title| :false :|subtitle| :false :|deleted| :false})
-;;; (sql-assert-columns (makeid)(makeid) 3 (now-timestamp) nil nil nil nil :column-data (list $col0 $col1 $col2))
-
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-assert-item
@@ -309,11 +375,6 @@
          (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
                       params-string placeholders-string)))
     (values sql vals)))
-
-;;; (setf $col0 {:|id| (makeid) :|name| "Column 0" :|type| :false :|order| 10.0 :|sort| "ASC" :|title| :true :|subtitle| :false :|deleted| :false})
-;;; (setf $col1 {:|id| (makeid) :|name| "Column 1" :|type| :false :|order| 20.0 :|sort| :false :|title| :false :|subtitle| :false :|deleted| :false})
-;;; (setf $col2 {:|id| (makeid) :|name| "Column 2" :|type| :false :|order| 30.0 :|sort| :false :|title| :false :|subtitle| :false :|deleted| :false})
-;;; (sql-assert-item (makeid)(makeid) 3 (now-timestamp) (makeid) nil nil nil :column-data (list $col0 $col1 $col2) :column-values [0 1 2])
 
 
 ;;; ---------------------------------------------------------------------

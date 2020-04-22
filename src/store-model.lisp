@@ -177,6 +177,7 @@
   db-path)
 
 ;;; (create-delectus-file "/Users/mikel/Desktop/testlist.delectus2" "Test List" (makeid))
+;;; (delete-file "/Users/mikel/Desktop/testlist.delectus2")
 
 ;;; ---------------------------------------------------------------------
 ;;; adding userdata columns
