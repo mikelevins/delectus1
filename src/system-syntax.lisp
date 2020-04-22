@@ -23,7 +23,7 @@
   (:macro-char #\{ #'(lambda (stream char)
                        (declare (ignore char))
                        (let* ((elts (read-delimited-list #\} stream t)))
-                         `(fset:convert 'fset:wb-map (loop for tail on (cl:list ,@elts) by #'cddr
+                         `(fset:convert 'wb-map (loop for tail on (cl:list ,@elts) by #'cddr
                                                         collect (cons (first tail)
                                                                       (second tail)))))))
   (:macro-char #\} (get-macro-character #\))))

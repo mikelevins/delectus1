@@ -28,7 +28,7 @@
       (let* ((column-info (db-get-userdata-column-info db))
              (item-column-info (first column-info))
              (item-column-id (column-info-name item-column-info))
-             (userdata-column-data (list (fset:with +default-initial-column-attributes+ :|id| item-column-id))))
+             (userdata-column-data (list (with +default-initial-column-attributes+ :|id| item-column-id))))
         (loop for i from 0 below count
               do (let* ((itemid (makeid))
                         (line (read-line in nil nil nil))

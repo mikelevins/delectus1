@@ -371,9 +371,7 @@ LIMIT 1
                    (params vals (make-metadata-params optype opid origin revision timestamp item name deleted peer))
                    (placeholders (mapcar (constantly "?") params))
                    (params-string (delectus::join-strings ", " params))
-                   (placeholders-string (delectus::join-strings ", " placeholders))
-                   (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
-                                params-string placeholders-string)))
+                   (placeholders-string (delectus::join-strings ", " placeholders)))
     (values
      (SQL #?|
 

@@ -51,7 +51,7 @@
   (declare (ignore thing))
   nil)
 
-(defmethod column-data? ((thing fset:wb-map))
+(defmethod column-data? ((thing wb-map))
   (eq :equal
       (fset:compare (fset:domain thing)
                     +column-data-keys+)))
@@ -79,4 +79,4 @@
     :|deleted| :false})
 
 ;;; (to-json +default-initial-column-attributes+)
-;;; (fset:with +default-initial-column-attributes+ :|id| (makeid))
+;;; (with +default-initial-column-attributes+ :|id| (makeid))

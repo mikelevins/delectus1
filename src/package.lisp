@@ -13,6 +13,7 @@
 
 (defpackage #:delectus
   (:use #:cl #:sqlite #:cl-emb #:named-readtables)
+  (:import-from #:fset #:wb-map #:with)
   (:export #:bind
            #:from-json
            #:get-latest-columns

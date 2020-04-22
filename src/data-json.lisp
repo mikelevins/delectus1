@@ -11,7 +11,7 @@
 (in-package #:delectus)
 (in-readtable :delectus)
 
-(defmethod to-json ((obj fset:wb-map))
+(defmethod to-json ((obj wb-map))
   (let ((result nil))
     (fset:do-map (k v obj)
       (setf result

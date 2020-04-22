@@ -45,7 +45,7 @@
 
 
 (defun plist->map (plist)
-  (fset:convert 'fset:wb-map
+  (fset:convert 'wb-map
                 (loop for tail on plist by #'cddr
                    collect (cons (first tail)
                                  (second tail)))))

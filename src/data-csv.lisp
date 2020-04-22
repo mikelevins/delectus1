@@ -57,24 +57,24 @@
         ;; populate it from the csv data:
         ;; first, give them each an ID
         (let* ((coldata-with-ids (loop for cid in column-ids
-                                       collect (fset:with +default-initial-column-attributes+
+                                       collect (with +default-initial-column-attributes+
                                                           :|id| cid)))
                ;; next, give each on a name
                (coldata-with-names (loop
                                     for cdata in coldata-with-ids
                                     and nm in column-names
-                                    collect (fset:with cdata
+                                    collect (with cdata
                                                        :|name| nm)))
                ;; next, give each one a distinct order
                (coldata-with-orders (loop
                                      for i from 1 upto (length coldata-with-names)
                                      and cdata in coldata-with-names
-                                     collect (fset:with cdata :|order| (* 10.0 i))))
+                                     collect (with cdata :|order| (* 10.0 i))))
                ;; next, ensure that exactly one is marked as the title column
-               (coldata-with-title-flags (cons (fset:with (first coldata-with-orders)
+               (coldata-with-title-flags (cons (with (first coldata-with-orders)
                                                           :|title| t)
                                                (loop for cdata in (rest coldata-with-orders)
-                                                     collect (fset:with cdata :|title| :false)))))
+                                                     collect (with cdata :|title| :false)))))
           (with-open-database (db list-path)
             (with-transaction db
               ;; - first, add the userdata columns

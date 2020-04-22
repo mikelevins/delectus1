@@ -142,7 +142,7 @@
          (columns-rev 1)
          (item-rev 2)
          (userdata-column-id (makeid))
-         (userdata-column-data (fset:with +default-initial-column-attributes+ :|id| userdata-column-id)))
+         (userdata-column-data (with +default-initial-column-attributes+ :|id| userdata-column-id)))
     ;; create the table
     (bind ((sql vals (sqlgen::create-listdata-table)))
       (apply 'execute-non-query db sql vals))
@@ -448,8 +448,9 @@
 
 (defmethod db-get-latest-items-userdata ((db sqlite-handle) &key (column-ids nil)(like nil)(offset 0)(limit nil))
   (let* ((column-data (db-get-latest-userdata-columns-data db))
-         (column-ids (mapcar (lambda (cdata)(getf cdata :|id|))
-                             column-data)))
+         (column-ids (or column-ids
+                         (mapcar (lambda (cdata)(getf cdata :|id|))
+                                 column-data))))
     (bind ((sql vals (sqlgen::get-latest-userdata :column-ids column-ids :like like :offset offset :limit limit)))
       (let ((latest-item-results (apply 'execute-to-list db sql vals)))
         latest-item-results))))
@@ -601,7 +602,7 @@
                   :opid opid :origin origin :revision revision :timestamp timestamp :column-data column-data))
 
 ;;; should fail because there is a column already defined in the file and we don't mention it
-;;; (setf $cdata (fset:with +default-initial-column-attributes+ :|id| (makeid)))
+;;; (setf $cdata (with +default-initial-column-attributes+ :|id| (makeid)))
 ;;; (assert-columns "/Users/mikel/Desktop/testlist.delectus2" :opid (makeid) :origin *origin* :revision (get-next-revision "/Users/mikel/Desktop/testlist.delectus2") :timestamp (now-timestamp) :column-data (list $cdata))
 
 ;;; ---------------------------------------------------------------------
@@ -640,7 +641,7 @@
                :column-data column-data :column-values column-values))
 
 ;;; should fail because there is a column already defined in the file and we don't mention it
-;;; (setf $cdata (fset:with +default-initial-column-attributes+ :|id| (makeid)))
+;;; (setf $cdata (with +default-initial-column-attributes+ :|id| (makeid)))
 ;;; (assert-item "/Users/mikel/Desktop/testlist.delectus2" :opid (makeid) :origin *origin* :revision (get-next-revision "/Users/mikel/Desktop/testlist.delectus2") :timestamp (now-timestamp) :item (makeid) :column-data (list $cdata) :column-values '(nil))
 
 ;;; ---------------------------------------------------------------------
