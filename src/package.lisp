@@ -18,8 +18,15 @@
                 #:lookup #:wb-map #:with)
   (:export #:bind
            #:from-json
+           #:db-get-latest-columns
+           #:db-get-latest-items-userdata
+           #:db-get-latest-listname
+           #:db-get-userdata-column-widths
+           #:get-key
            #:get-latest-columns
+           #:get-latest-items-userdata
            #:get-latest-listname
+           #:get-userdata-column-widths
            #:join-strings
            #:op-name
            #:op-userdata

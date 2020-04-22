@@ -91,22 +91,22 @@
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
                                 &key (filter-text nil) &allow-other-keys)
   (with-open-database (db (dbpath pane))
-    (let* ((list-name-op (get-latest-listname (dbpath pane)))
+    (let* ((list-name-op (db-get-latest-listname db))
            (listname (or (op-name list-name-op) "Untitled list"))
-           (latest-column-data (get-latest-columns (dbpath pane)))
+           (latest-column-data (db-get-latest-columns db))
            (latest-column-userdata (mapcar #'from-json (op-userdata latest-column-data)))
-           (column-names (mapcar (lambda (ud)(delectus::get-key ud :|name| nil)) latest-column-userdata))
-           (column-ids (mapcar (lambda (ud)(delectus::get-key ud :|id| nil)) latest-column-userdata))
+           (column-names (mapcar (lambda (ud)(get-key ud :|name| nil)) latest-column-userdata))
+           (column-ids (mapcar (lambda (ud)(get-key ud :|id| nil)) latest-column-userdata))
            (column-widths (mapcar #'(lambda (x)(+ 4 x))
-                                  (delectus::get-userdata-column-widths (dbpath pane))))
+                                  (db-get-userdata-column-widths db)))
            (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
                                  column-names column-widths))
-           (itemdata (delectus::get-latest-items-userdata (dbpath pane)
-                                                          :column-ids column-ids
-                                                          :like filter-text
-                                                          :offset (* (items-per-page pane)
-                                                                     (current-page pane))
-                                                          :limit (items-per-page pane))))
+           (itemdata (db-get-latest-items-userdata db
+                                                   :column-ids column-ids
+                                                   :like filter-text
+                                                   :offset (* (items-per-page pane)
+                                                              (current-page pane))
+                                                   :limit (items-per-page pane))))
       (setf (interface-title pane) listname)
       (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
       (setf (title-pane-text (item-count-pane pane)) 
