@@ -89,7 +89,7 @@
            (items-per-page pane)))
 
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
-                                &key (filter-text nil) &allow-other-keys)
+                                &key  &allow-other-keys)
   (with-open-database (db (dbpath pane))
     (let* ((list-name-op (db-get-latest-listname db))
            (listname (or (op-name list-name-op) "Untitled list"))
@@ -105,7 +105,7 @@
                                                        :filter-text (text-input-pane-text (filter-pane pane))))
            (itemdata (db-get-latest-items-userdata db
                                                    :column-ids column-ids
-                                                   :like filter-text
+                                                   :like (text-input-pane-text (filter-pane pane))
                                                    :offset (* (items-per-page pane)
                                                               (current-page pane))
                                                    :limit (items-per-page pane))))
