@@ -8,8 +8,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :delectus)
-
+(in-package :sqlgen)
+(in-readtable :interpol-syntax)
 
 ;;; =====================================================================
 ;;; helper functions
@@ -21,7 +21,7 @@
 
 (defun make-column-params (column-data)
   (values (mapcar (lambda (c)(fset:@ c :|id|)) column-data)
-          (mapcar #'to-json column-data)))
+          (mapcar #'delectus::to-json column-data)))
 
 (defun make-item-params (column-data vals)
   (assert (= (length column-data)(length vals))()
@@ -30,4 +30,4 @@
           vals))
 
 ;;; to help mark out SQL code visually below
-(defun SQL (s)(trim s))
+(defun SQL (s)(delectus::trim s))

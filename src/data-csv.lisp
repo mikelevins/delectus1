@@ -9,6 +9,7 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
+(in-readtable :delectus)
 
 (defun read-csv (path)
   (fare-csv:with-rfc4180-csv-syntax ()

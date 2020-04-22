@@ -9,6 +9,7 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
+(in-readtable :delectus)
 
 ;;; ---------------------------------------------------------------------
 ;;;  file utilities
@@ -32,6 +33,16 @@
 ;;; ---------------------------------------------------------------------
 ;;;  map utilities
 ;;; ---------------------------------------------------------------------
+
+(defmethod get-key ((map fset:map) key &optional (default nil))
+  (bind ((val found? (fset:lookup map key)))
+    (if found?
+        val
+        default)))
+
+;;; (get-key { :a 1 :b 3} :name 'nope)
+;;; (get-key { :a 1 :b 3 :name "Fred"} :name 'nope)
+
 
 (defun plist->map (plist)
   (fset:convert 'fset:wb-map

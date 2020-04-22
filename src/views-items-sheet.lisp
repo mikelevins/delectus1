@@ -9,6 +9,7 @@
 ;;;; ***********************************************************************
 
 (in-package #:ui)
+(in-readtable :delectus)
 
 ;;; ---------------------------------------------------------------------
 ;;; items-sheet
@@ -89,47 +90,33 @@
 
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
                                 &key (filter-text nil) &allow-other-keys)
-  (let* ((list-name-op (delectus::get-latest-listname (dbpath pane)))
-         (listname (or (delectus::op-name list-name-op) "Untitled list"))
-         (latest-column-data (delectus::get-latest-columns (dbpath pane)))
-         (latest-column-userdata (mapcar #'delectus::from-json (delectus::op-userdata latest-column-data)))
-         (column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-column-userdata))
-         (column-ids (mapcar (lambda (ud)(fset:@ ud :|id|)) latest-column-userdata))
-         (column-widths (mapcar #'(lambda (x)(+ 4 x))
-                                (delectus::get-userdata-column-widths (dbpath pane))))
-         (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
-                               column-names column-widths))
-         (itemdata (delectus::get-latest-items-userdata (dbpath pane)
-                                                        :column-ids column-ids
-                                                        :like filter-text
-                                                        :offset (* (items-per-page pane)
-                                                                   (current-page pane))
-                                                        :limit (items-per-page pane))))
-    (setf (interface-title pane) listname)
-    (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
-    (setf (title-pane-text (item-count-pane pane)) 
-          (format nil " ~:D pages (~:D items)"
-                  (total-pages pane) (total-items pane)))
-    (setf (title-pane-text (item-range-pane pane)) 
-          (format nil "Page ~D"
-                  (1+ (current-page pane))))
-    (setf (collection-items (items-pane pane))
-          itemdata)))
-
-(defun update-items-sheet-for-changed-filter (text filter-pane sheet-pane caret-position)
-  (let* ((latest-column-data (delectus::get-latest-columns (dbpath sheet-pane)))
-         (latest-column-userdata (mapcar #'delectus::from-json (delectus::op-userdata latest-column-data)))
-         (column-ids (mapcar (lambda (ud)(fset:@ ud :|id|)) latest-column-userdata))
-         (itemdata (delectus::get-latest-items-userdata
-                    (dbpath sheet-pane)
-                    :column-ids column-ids
-                    :like text
-                    :offset (* (items-per-page sheet-pane)
-                               (current-page sheet-pane))
-                    :limit (items-per-page sheet-pane))))
-    (setf (collection-items (items-pane sheet-pane))
-          itemdata)))
-
+  (with-open-database (db (dbpath pane))
+    (let* ((list-name-op (get-latest-listname (dbpath pane)))
+           (listname (or (op-name list-name-op) "Untitled list"))
+           (latest-column-data (get-latest-columns (dbpath pane)))
+           (latest-column-userdata (mapcar #'from-json (op-userdata latest-column-data)))
+           (column-names (mapcar (lambda (ud)(fset:@ ud :|name|)) latest-column-userdata))
+           (column-ids (mapcar (lambda (ud)(fset:@ ud :|id|)) latest-column-userdata))
+           (column-widths (mapcar #'(lambda (x)(+ 4 x))
+                                  (delectus::get-userdata-column-widths (dbpath pane))))
+           (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
+                                 column-names column-widths))
+           (itemdata (delectus::get-latest-items-userdata (dbpath pane)
+                                                          :column-ids column-ids
+                                                          :like filter-text
+                                                          :offset (* (items-per-page pane)
+                                                                     (current-page pane))
+                                                          :limit (items-per-page pane))))
+      (setf (interface-title pane) listname)
+      (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
+      (setf (title-pane-text (item-count-pane pane)) 
+            (format nil " ~:D pages (~:D items)"
+                    (total-pages pane) (total-items pane)))
+      (setf (title-pane-text (item-range-pane pane)) 
+            (format nil "Page ~D"
+                    (1+ (current-page pane))))
+      (setf (collection-items (items-pane pane))
+            itemdata))))
 
 (defun update-items-sheet-for-changed-filter (text filter-pane sheet-pane caret-position)
   (update-list-display sheet-pane :filter-text text))

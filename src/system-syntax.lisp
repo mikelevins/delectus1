@@ -28,10 +28,6 @@
                                                                       (second tail)))))))
   (:macro-char #\} (get-macro-character #\))))
 
-(defreadtable :sql
-  (:merge :delectus)
-  (:case :preserve))
-
 
 (in-package :fset)
 

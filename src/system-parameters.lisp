@@ -9,6 +9,7 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
+(in-readtable :standard)
 
 ;;; TODO: add a config subsystem and store this value in per-node
 ;;; configuration

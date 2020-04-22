@@ -126,10 +126,10 @@
   (let* ((listid (or listid (makeid)))
          (next-rev 3)) ; 0 is initial listname; 1 is initial columns; 2 is initial item
     ;; create the delectus table
-    (bind ((sql vals (sql-create-delectus-table)))
+    (bind ((sql vals (sqlgen::create-delectus-table)))
       (apply 'execute-non-query db sql vals))
     ;; populate it
-    (bind ((sql vals (sql-populate-delectus-table listid *origin* +delectus-format-version+ next-rev)))
+    (bind ((sql vals (sqlgen::populate-delectus-table listid *origin* +delectus-format-version+ next-rev)))
       (apply 'execute-non-query db sql vals))))
 
 (defmethod db-create-listdata-table ((db sqlite-handle)(list-name string)(listid string)
@@ -144,10 +144,10 @@
          (userdata-column-id (makeid))
          (userdata-column-data (fset:with +default-initial-column-attributes+ :|id| userdata-column-id)))
     ;; create the table
-    (bind ((sql vals (sql-create-listdata-table)))
+    (bind ((sql vals (sqlgen::create-listdata-table)))
       (apply 'execute-non-query db sql vals))
     ;; assert the initial listname op
-    (bind ((sql vals (sql-assert-listname listname-opid origin listname-rev (now-timestamp) nil list-name nil nil)))
+    (bind ((sql vals (sqlgen::assert-listname listname-opid origin listname-rev (now-timestamp) nil list-name nil nil)))
       (apply 'execute-non-query db sql vals))
     ;; create the default userdata, if it's requested
     (when create-default-userdata
@@ -163,7 +163,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defun db-create-item-revision-origin-index (db)
-  (bind ((sql vals (sql-create-item-revision-origin-index)))
+  (bind ((sql vals (sqlgen::create-item-revision-origin-index)))
     (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -191,7 +191,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-add-userdata-column ((db sqlite-handle) (column-id string))
-  (bind ((sql vals (sql-add-userdata-column column-id "TEXT")))
+  (bind ((sql vals (sqlgen::add-userdata-column column-id "TEXT")))
     (apply 'execute-non-query db sql vals)))
 
 (defmethod add-userdata-column ((db-path pathname) (column-id string))
@@ -216,7 +216,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-column-info ((db sqlite-handle))
-  (bind ((sqlget vals (sql-get-column-info)))
+  (bind ((sqlget vals (sqlgen::get-column-info)))
     (mapcar (lambda (info)(apply 'column-info info))
             (apply 'execute-to-list db sqlget vals))))
 
@@ -283,7 +283,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-list-id ((db sqlite-handle))
-  (bind ((sqlget vals (sql-list-id)))
+  (bind ((sqlget vals (sqlgen::list-id)))
     (apply 'execute-single db sqlget vals)))
 
 (defmethod get-list-id ((db-path pathname))
@@ -299,7 +299,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-list-origin ((db sqlite-handle))
-  (bind ((sqlget vals (sql-list-origin)))
+  (bind ((sqlget vals (sqlgen::list-origin)))
     (apply 'execute-single db sqlget vals)))
 
 (defmethod get-list-origin ((db-path pathname))
@@ -315,7 +315,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-list-format ((db sqlite-handle))
-  (bind ((sqlget vals (sql-list-format)))
+  (bind ((sqlget vals (sqlgen::list-format)))
     (apply 'execute-single db sqlget vals)))
 
 (defmethod get-list-format ((db-path pathname))
@@ -331,8 +331,8 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-next-revision ((db sqlite-handle))
-  (bind ((sqlupdate upvals (sql-increment-next-revision))
-         (sqlget getvals (sql-next-revision)))
+  (bind ((sqlupdate upvals (sqlgen::increment-next-revision))
+         (sqlget getvals (sqlgen::next-revision)))
     (apply 'execute-non-query db sqlupdate upvals)
     (apply 'execute-single db sqlget getvals)))
 
@@ -372,7 +372,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-listname ((db sqlite-handle))
-  (bind ((sql vals (sql-get-latest-listname)))
+  (bind ((sql vals (sqlgen::get-latest-listname)))
     (first (apply 'execute-to-list db sql vals))))
 
 (defmethod get-latest-listname ((db-path pathname))
@@ -389,7 +389,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-columns ((db sqlite-handle))
-  (bind ((sql vals (sql-get-latest-columns)))
+  (bind ((sql vals (sqlgen::get-latest-columns)))
     (first (apply 'execute-to-list db sql vals))))
 
 (defmethod get-latest-columns ((db-path pathname))
@@ -427,7 +427,7 @@
 ;;; returning all rows whose rank is 1; so the CDR of each item is the
 ;;; actual result
 (defmethod db-get-latest-items ((db sqlite-handle) &key (offset 0)(limit nil))
-  (bind ((sql vals (sql-get-latest-items :offset offset :limit limit)))
+  (bind ((sql vals (sqlgen::get-latest-items :offset offset :limit limit)))
     (let ((latest-item-results (apply 'execute-to-list db sql vals)))
       ;; discard the rank field from the returned result
       (mapcar #'cdr latest-item-results))))
@@ -450,7 +450,7 @@
   (let* ((column-data (db-get-latest-userdata-columns-data db))
          (column-ids (mapcar (lambda (cdata)(getf cdata :|id|))
                              column-data)))
-    (bind ((sql vals (sql-get-latest-userdata :column-ids column-ids :like like :offset offset :limit limit)))
+    (bind ((sql vals (sqlgen::get-latest-userdata :column-ids column-ids :like like :offset offset :limit limit)))
       (let ((latest-item-results (apply 'execute-to-list db sql vals)))
         latest-item-results))))
 
@@ -470,7 +470,7 @@
 ;;; ------------------
 
 (defmethod db-count-latest-items ((db sqlite-handle))
-  (bind ((sql vals (sql-count-latest-items)))
+  (bind ((sql vals (sqlgen::count-latest-items)))
     (apply 'execute-single db sql vals)))
 
 (defmethod count-latest-items ((db-path pathname))
@@ -512,7 +512,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-sync ((db sqlite-handle))
-  (bind ((sql vals (sql-get-latest-sync)))
+  (bind ((sql vals (sqlgen::get-latest-sync)))
     (first (apply 'execute-to-list db sql vals))))
 
 (defmethod get-latest-sync ((db-path pathname))
@@ -551,7 +551,7 @@
         (revision (or revision (db-get-next-revision db)))
         (timestamp (or timestamp (now-timestamp))))
     (bind ((sql vals
-                (sql-assert-listname opid origin revision timestamp nil name nil nil)))
+                (sqlgen::assert-listname opid origin revision timestamp nil name nil nil)))
       (apply 'execute-non-query db sql vals))))
 
 (defmethod assert-listname ((db-path pathname)
@@ -586,7 +586,7 @@
          do (let ((colid (fset:@ cd :|id|)))
               (db-add-userdata-column db colid))))
     (bind ((sql vals
-                (sql-assert-columns opid origin revision timestamp nil nil nil nil :column-data column-data)))
+                (sqlgen::assert-columns opid origin revision timestamp nil nil nil nil :column-data column-data)))
       (apply 'execute-non-query db sql vals))))
 
 (defmethod assert-columns ((db-path pathname)
@@ -620,7 +620,7 @@
         (revision (or revision (db-get-next-revision db)))
         (timestamp (or timestamp (now-timestamp))))
     (bind ((sql vals
-                (sql-assert-item opid origin revision timestamp item deleted nil nil
+                (sqlgen::assert-item opid origin revision timestamp item deleted nil nil
                                  :column-data column-data :column-values column-values)))
       (apply 'execute-non-query db sql vals))))
 
@@ -653,7 +653,7 @@
         (revision (or revision (db-get-next-revision db)))
         (timestamp (or timestamp (now-timestamp))))
     (bind ((sql vals
-                (sql-assert-sync opid origin revision timestamp nil nil nil peer)))
+                (sqlgen::assert-sync opid origin revision timestamp nil nil nil peer)))
       (apply 'execute-non-query db sql vals))))
 
 (defmethod assert-sync ((db-path pathname)
