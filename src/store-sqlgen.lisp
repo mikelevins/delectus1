@@ -30,8 +30,8 @@
   (values (mapcar (lambda (c)(fset:@ c :|id|)) column-data)
           vals))
 
-(defun sql (s)
-  (trim s))
+;;; to help mark out SQL code visually below
+(defun SQL (s)(trim s))
 
 ;;; =====================================================================
 ;;; SQL constructors
@@ -53,11 +53,13 @@
 
 (defun sql-create-delectus-table ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` INTEGER )
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 
@@ -70,11 +72,14 @@ CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revisio
 
 (defun sql-populate-delectus-table (id origin format next-revision)
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?)
 
 |)
+   ;; ---------------------------------------------------
+
    (list id origin format next-revision)))
 
 ;;; (sql-populate-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 3)
@@ -86,7 +91,8 @@ INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?,
 
 (defun sql-create-listdata-table ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 CREATE TABLE `list_data` ( 
   `optype` TEXT, 
@@ -100,6 +106,7 @@ CREATE TABLE `list_data` (
   `peer` TEXT )
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-create-listdata-table)
@@ -111,11 +118,13 @@ CREATE TABLE `list_data` (
 
 (defun sql-create-item-revision-origin-index ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `origin`)
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-create-item-revision-origin-index)
@@ -127,11 +136,13 @@ CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `ori
 
 (defun sql-add-userdata-column (label type)
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 ALTER TABLE `list_data` ADD `${label}` ${type}
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-add-userdata-column (makeid) "TEXT")
@@ -154,27 +165,31 @@ ALTER TABLE `list_data` ADD `${label}` ${type}
 
 (defun sql-list-id ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT `id` FROM `delectus` LIMIT 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-list-id)
 
 
 ;;; ---------------------------------------------------------------------
-;;; sql-list-origin
+;;; SQL-list-origin
 ;;; ---------------------------------------------------------------------
 
 (defun sql-list-origin ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT `origin` FROM `delectus` LIMIT 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-list-origin)
@@ -186,11 +201,13 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-list-format ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT `format` FROM `delectus` LIMIT 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-list-format)
@@ -202,11 +219,13 @@ SELECT `format` FROM `delectus` LIMIT 1
 
 (defun sql-increment-next-revision ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 UPDATE `delectus` SET `next_revision` = `next_revision` + 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-increment-next-revision)
@@ -217,11 +236,13 @@ UPDATE `delectus` SET `next_revision` = `next_revision` + 1
 
 (defun sql-next-revision ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT `next_revision` FROM `delectus` LIMIT 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-next-revision)
@@ -232,7 +253,8 @@ SELECT `next_revision` FROM `delectus` LIMIT 1
 
 (defun sql-get-latest-listname ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT * FROM `list_data` 
 WHERE `optype`='listname' 
@@ -240,6 +262,7 @@ ORDER BY `revision` DESC, `origin` DESC
 LIMIT 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; (sql-get-latest-listname)
@@ -251,12 +274,8 @@ LIMIT 1
 
 (defun sql-get-latest-columns ()
   (values
-   "SELECT * FROM `list_data` WHERE `optype`='columns' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
-   nil))
-
-(defun sql-get-latest-columns ()
-  (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT * FROM `list_data` 
 WHERE `optype`='columns' 
@@ -264,6 +283,7 @@ ORDER BY `revision` DESC, `origin` DESC
 LIMIT 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 
@@ -288,7 +308,8 @@ LIMIT 1
                           (format nil "LIMIT ~D " limit)
                           "")))
     (values
-     (sql #?|
+     ;; ---------------------------------------------------
+     (SQL #?|
 
 SELECT a.* 
 FROM (SELECT ROW_NUMBER() 
@@ -298,6 +319,7 @@ FROM (SELECT ROW_NUMBER()
 WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 |)
+     ;; ---------------------------------------------------
      nil)))
 
 ;;; (sql-get-latest-items)
@@ -310,7 +332,8 @@ WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 (defun sql-count-latest-items ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT COUNT(*)
 FROM (SELECT ROW_NUMBER() 
@@ -320,6 +343,7 @@ FROM (SELECT ROW_NUMBER()
 WHERE a.rank = 1 order by a.revision
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 
@@ -354,7 +378,7 @@ WHERE a.rank = 1 order by a.revision
                            "")))
     (values
      ;; ---------------------------------------------------
-     (sql #?|
+     (SQL #?|
 
 SELECT ${column-selector}
 FROM (SELECT ROW_NUMBER() 
@@ -363,7 +387,6 @@ FROM (SELECT ROW_NUMBER()
 WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 |)
-     ;; END
      ;; ---------------------------------------------------
      nil)))
 
@@ -376,7 +399,8 @@ WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
 
 (defun sql-get-latest-sync ()
   (values
-   (sql #?|
+   ;; ---------------------------------------------------
+   (SQL #?|
 
 SELECT * FROM `list_data` 
 WHERE `optype`='sync' 
@@ -384,6 +408,7 @@ ORDER BY `revision` DESC, `origin` DESC
 LIMIT 1
 
 |)
+   ;; ---------------------------------------------------
    nil))
 
 ;;; ---------------------------------------------------------------------
@@ -399,11 +424,13 @@ LIMIT 1
          (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
                       params-string placeholders-string)))
     (values
-     (sql #?|
+     ;; ---------------------------------------------------
+     (SQL #?|
 
 INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
 
 |)
+     ;; ---------------------------------------------------
      vals)))
 
 ;;; (sql-assert-listname (makeid)(makeid) 3 (now-timestamp) nil "A List" nil nil)
@@ -423,11 +450,13 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
          (params-string (join-strings ", " params))
          (placeholders-string (join-strings ", " placeholders)))
     (values
-     (sql #?|
+     ;; ---------------------------------------------------
+     (SQL #?|
 
 INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
 
 |)
+     ;; ---------------------------------------------------
      vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -444,11 +473,13 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
          (params-string (join-strings ", " params))
          (placeholders-string (join-strings ", " placeholders)))
     (values
-     (sql #?|
+     ;; ---------------------------------------------------
+     (SQL #?|
 
 INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
 
 |)
+     ;; ---------------------------------------------------
      vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -461,11 +492,14 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
          (placeholders (mapcar (constantly "?") params))
          (params-string (join-strings ", " params))
          (placeholders-string (join-strings ", " placeholders)))
-    (values (sql #?|
+    (values
+     ;; ---------------------------------------------------
+     (SQL #?|
 
 INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
 
 |)
-            vals)))
+     ;; ---------------------------------------------------
+     vals)))
 
 ;;; (sql-assert-sync (makeid)(makeid) 3 (now-timestamp) nil nil nil (makeid))
