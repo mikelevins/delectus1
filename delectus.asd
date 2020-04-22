@@ -29,6 +29,7 @@
                                      (:file "data-csv")          ; reading and writing CSV files
                                      (:file "data-json")         ; reading and writing JSON data
                                      (:file "store-columns")     ; modeling Delectus columns
+                                     (:file "store-sql-utils")   ; helpers for sqlgen
                                      (:file "store-sqlgen")      ; generating SQL for the Dlectus store
                                      (:file "store-sqlite")      ; operating on SQLite files
                                      (:file "store-model")       ; store operations on Delectus model objects
