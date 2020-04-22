@@ -65,7 +65,7 @@
   (let* ((found-userdata-info (db-get-userdata-column-info db))
          (found-userdata-labels (mapcar #'column-info-name found-userdata-info)))
     (remove-if (lambda (column-data)
-                 (member (fset:@ column-data :|id|)
+                 (member (get-key column-data :|id| nil)
                          found-userdata-labels
                          :test #'equal))
                column-data-list)))
@@ -92,7 +92,7 @@
 (defmethod db-columns-missing-from-input ((db sqlite-handle) (column-data-list list))
   (let* ((found-userdata-info (db-get-userdata-column-info db))
          (found-userdata-labels (mapcar #'column-info-name found-userdata-info))
-         (column-data-labels (mapcar (lambda (cdl)(fset:@ cdl :|id|))
+         (column-data-labels (mapcar (lambda (cdl)(get-key cdl :|id| nil))
                                      column-data-list)))
     (remove-if (lambda (ful)(member ful column-data-labels :test #'equal))
                found-userdata-labels)))
@@ -584,7 +584,7 @@
         (timestamp (or timestamp (now-timestamp))))
     (when columns-missing-from-file
       (loop for cd in columns-missing-from-file
-         do (let ((colid (fset:@ cd :|id|)))
+         do (let ((colid (get-key cd :|id| nil)))
               (db-add-userdata-column db colid))))
     (bind ((sql vals
                 (sqlgen::assert-columns opid origin revision timestamp nil nil nil nil :column-data column-data)))

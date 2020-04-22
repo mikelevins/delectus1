@@ -13,7 +13,7 @@
 
 (defmethod to-json ((obj wb-map))
   (let ((result nil))
-    (fset:do-map (k v obj)
+    (do-map (k v obj)
       (setf result
             (cons v (cons k result))))
     (jonathan:to-json (reverse result))))

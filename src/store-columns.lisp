@@ -53,8 +53,8 @@
 
 (defmethod column-data? ((thing wb-map))
   (eq :equal
-      (fset:compare (fset:domain thing)
-                    +column-data-keys+)))
+      (compare (domain thing)
+               +column-data-keys+)))
 
 (deftype column-data ()
   '(satisfies column-data?))

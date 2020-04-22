@@ -35,7 +35,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod get-key ((map fset:map) key &optional (default nil))
-  (bind ((val found? (fset:lookup map key)))
+  (bind ((val found? (lookup map key)))
     (if found?
         val
         default)))
@@ -45,10 +45,10 @@
 
 
 (defun plist->map (plist)
-  (fset:convert 'wb-map
-                (loop for tail on plist by #'cddr
-                   collect (cons (first tail)
-                                 (second tail)))))
+  (convert 'wb-map
+           (loop for tail on plist by #'cddr
+              collect (cons (first tail)
+                            (second tail)))))
 
 ;;; ---------------------------------------------------------------------
 ;;;  string utilities

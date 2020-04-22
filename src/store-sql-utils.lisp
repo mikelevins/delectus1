@@ -20,13 +20,13 @@
           (list optype opid origin revision timestamp item name deleted peer)))
 
 (defun make-column-params (column-data)
-  (values (mapcar (lambda (c)(fset:@ c :|id|)) column-data)
+  (values (mapcar (lambda (c)(delectus::get-key c :|id| nil)) column-data)
           (mapcar #'delectus::to-json column-data)))
 
 (defun make-item-params (column-data vals)
   (assert (= (length column-data)(length vals))()
           "The number of values must equal the number of columns")
-  (values (mapcar (lambda (c)(fset:@ c :|id|)) column-data)
+  (values (mapcar (lambda (c)(delectus::get-key c :|id| nil)) column-data)
           vals))
 
 ;;; to help mark out SQL code visually below
