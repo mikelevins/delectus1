@@ -185,8 +185,14 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-list-format ()
   (values
-   "SELECT `format` FROM `delectus` LIMIT 1"
+   (trim #?|
+
+SELECT `format` FROM `delectus` LIMIT 1
+
+|)
    nil))
+
+;;; (sql-list-format)
 
 
 ;;; ---------------------------------------------------------------------
@@ -195,9 +201,14 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-increment-next-revision ()
   (values
-   "UPDATE `delectus` SET `next_revision` = `next_revision` + 1"
+   (trim #?|
+
+UPDATE `delectus` SET `next_revision` = `next_revision` + 1
+
+|)
    nil))
 
+;;; (sql-increment-next-revision)
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-next-revision
@@ -205,9 +216,14 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-next-revision ()
   (values
-   "SELECT `next_revision` FROM `delectus` LIMIT 1"
+   (trim #?|
+
+SELECT `next_revision` FROM `delectus` LIMIT 1
+
+|)
    nil))
 
+;;; (sql-next-revision)
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-get-latest-listname
@@ -215,8 +231,17 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-get-latest-listname ()
   (values
-   "SELECT * FROM `list_data` WHERE `optype`='listname' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
+   (trim #?|
+
+SELECT * FROM `list_data` 
+WHERE `optype`='listname' 
+ORDER BY `revision` DESC, `origin` DESC 
+LIMIT 1
+
+|)
    nil))
+
+;;; (sql-get-latest-listname)
 
 
 ;;; ---------------------------------------------------------------------
@@ -226,6 +251,18 @@ SELECT `origin` FROM `delectus` LIMIT 1
 (defun sql-get-latest-columns ()
   (values
    "SELECT * FROM `list_data` WHERE `optype`='columns' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
+   nil))
+
+(defun sql-get-latest-columns ()
+  (values
+   (trim #?|
+
+SELECT * FROM `list_data` 
+WHERE `optype`='columns' 
+ORDER BY `revision` DESC, `origin` DESC 
+LIMIT 1
+
+|)
    nil))
 
 
@@ -250,15 +287,20 @@ SELECT `origin` FROM `delectus` LIMIT 1
                           (format nil "LIMIT ~D " limit)
                           "")))
     (values
-     (format nil
-             "SELECT a.*
-    FROM (SELECT ROW_NUMBER() OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
-          FROM `list_data` WHERE optype='item') a
-    WHERE a.rank = 1 order by a.revision ~A ~A"
-             limit-clause offset-clause)
+     (trim #?|
+
+SELECT a.* 
+FROM (SELECT ROW_NUMBER() 
+      OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, * 
+      FROM `list_data` 
+      WHERE optype='item') a 
+WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
+
+|)
      nil)))
 
 ;;; (sql-get-latest-items)
+;;; (sql-get-latest-items :offset 100 :limit 10)
 
 
 ;;; ---------------------------------------------------------------------
@@ -267,11 +309,16 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-count-latest-items ()
   (values
-   (format nil
-           "SELECT COUNT(*)
-    FROM (SELECT ROW_NUMBER() OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
-          FROM `list_data` WHERE optype='item') a
-    WHERE a.rank = 1 order by a.revision")
+   (trim #?|
+
+SELECT COUNT(*)
+FROM (SELECT ROW_NUMBER() 
+      OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
+      FROM `list_data` 
+      WHERE optype='item') a
+WHERE a.rank = 1 order by a.revision
+
+|)
    nil))
 
 
@@ -279,20 +326,22 @@ SELECT `origin` FROM `delectus` LIMIT 1
 ;;; sql-get-latest-userdata
 
 (defun sql-get-latest-userdata (&key (column-ids nil)(like nil)(offset 0)(limit nil))
-  (let* ((column-selector (if (null column-ids)
-                              "a.*"
-                              (join-strings ", "
-                                            (mapcar (lambda (cid) (format nil "a.~A" cid))
-                                                    column-ids))))
-         (like-clauses (if (null like)
-                           nil
-                           (concatenate 'string "( "
-                                        (join-strings " OR "
-                                                      (mapcar (lambda (cid)
-                                                                (format nil "`~A` LIKE '%~A%'"
-                                                                        cid like))
-                                                              column-ids))
-                                        " ) ")))
+  (let* ((column-selector
+          (if (null column-ids)
+              "a.*"
+              (join-strings ", "
+                            (mapcar (lambda (cid) (format nil "a.~A" cid))
+                                    column-ids))))
+         (like-clauses
+          (if (null like)
+              nil
+              (concatenate 'string "( "
+                           (join-strings " OR "
+                                         (mapcar (lambda (cid)
+                                                   (format nil "`~A` LIKE '%~A%'"
+                                                           cid like))
+                                                 column-ids))
+                           " ) ")))
          (where-clause (if (null like-clauses)
                            " WHERE `optype` = 'item' "
                            (format nil " WHERE `optype` = 'item' AND ~A" like-clauses)))
@@ -303,15 +352,20 @@ SELECT `origin` FROM `delectus` LIMIT 1
                            (format nil "LIMIT ~D " limit)
                            "")))
     (values
-     (format nil
-             "SELECT ~A
-    FROM (SELECT ROW_NUMBER() OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
-          FROM `list_data` ~A) a
-    WHERE a.rank = 1 order by a.revision ~A ~A"
-             column-selector where-clause limit-clause offset-clause)
+     ;; ---------------------------------------------------
+     (trim #?|
+
+SELECT ${column-selector}
+FROM (SELECT ROW_NUMBER() 
+      OVER (PARTITION BY item ORDER BY revision DESC, origin DESC) rank, *
+      FROM `list_data` ${where-clause}) a
+WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
+
+|)
+     ;; ---------------------------------------------------
      nil)))
 
-;;; (sql-get-latest-items)
+;;; (sql-get-latest-userdata)
 
 
 ;;; ---------------------------------------------------------------------
@@ -320,9 +374,15 @@ SELECT `origin` FROM `delectus` LIMIT 1
 
 (defun sql-get-latest-sync ()
   (values
-   "SELECT * FROM `list_data` WHERE `optype`='sync' ORDER BY `revision` DESC, `origin` DESC LIMIT 1"
-   nil))
+   (trim #?|
 
+SELECT * FROM `list_data` 
+WHERE `optype`='sync' 
+ORDER BY `revision` DESC, `origin` DESC 
+LIMIT 1
+
+|)
+   nil))
 
 ;;; ---------------------------------------------------------------------
 ;;; sql-assert-listname
@@ -336,7 +396,13 @@ SELECT `origin` FROM `delectus` LIMIT 1
          (placeholders-string (join-strings ", " placeholders))
          (sql (format nil "INSERT INTO `list_data` (~A) VALUES (~A)"
                       params-string placeholders-string)))
-    (values sql vals)))
+    (values
+     (trim #?|
+
+INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+
+|)
+     vals)))
 
 ;;; (sql-assert-listname (makeid)(makeid) 3 (now-timestamp) nil "A List" nil nil)
 
