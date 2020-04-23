@@ -10,6 +10,8 @@
 
 ;;;; delectus.asd
 
+(ql:quickload :cffi)
+
 (asdf:defsystem #:delectus
   :description "Describe delectus here"
   :author "Your Name <your.name@example.com>"
@@ -41,4 +43,16 @@
                                      ;; Test data
                                      (:file "test-data")))))
 
-;;; (asdf:load-system :delectus)
+(defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
+
+;;; push the project lib directory onto cffi:*foreign-library-directories*
+;;; before loading, so we get the project-specific version of SQLite
+(defun load-delectus ()
+  (let ((project-libdir (merge-pathnames "delivery/macos/lib/" $project-root)))
+    (pushnew project-libdir
+             cffi:*foreign-library-directories*
+             :test #'equal)
+    (asdf:load-system :delectus)))
+
+
+;;; (load-delectus)

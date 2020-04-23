@@ -21,6 +21,7 @@
 
 ;;; (fli:convert-from-foreign-string (sqlite3-libversion))
 ;;; currently reports 3.28.0 for the SQLite included with macOS Catalina
+;;; (mapcar #'cffi:foreign-library-pathname (cffi:list-foreign-libraries :loaded-only t))
 
 ;;; GENERIC FUNCTION valid-sqlite-file? (path)
 ;;; ---------------------------------------------------------------------
