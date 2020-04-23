@@ -249,7 +249,8 @@
 (defmethod get-metadata-column-info ((path string))
   (get-metadata-column-info (pathname path)))
 
-;;; (get-metadata-column-info "/Users/mikel/Desktop/testlist.delectus2")
+;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
+;;; (get-metadata-column-info $moviespath)
 
 
 ;;; userdata-column-info
@@ -272,7 +273,8 @@
 (defmethod get-userdata-column-info ((path string))
   (get-userdata-column-info (pathname path)))
 
-;;; (get-userdata-column-info "/Users/mikel/Desktop/testlist.delectus2")
+;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
+;;; (get-userdata-column-info $moviespath)
 
 
 ;;; ---------------------------------------------------------------------
@@ -404,8 +406,7 @@
 (defmethod db-get-latest-userdata-columns-data ((db sqlite-handle))
   (let ((data (db-get-latest-columns db)))
     (when data
-      (mapcar 'jonathan:parse
-              (op-userdata data)))))
+      (mapcar 'delectus:from-json (op-userdata data)))))
 
 (defmethod get-latest-userdata-columns-data ((db-path pathname))
   (with-open-database (db db-path)
@@ -414,7 +415,12 @@
 (defmethod get-latest-userdata-columns-data ((db-path string))
   (get-latest-userdata-columns-data (pathname db-path)))
 
-;;; (time (get-latest-userdata-columns-data "/Users/mikel/Desktop/Zipcodes.delectus2"))
+;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
+;;; (time (get-latest-userdata-columns-data $moviespath))
+
+;;; (defparameter $zippath "/Users/mikel/Desktop/Zipcodes.delectus2")
+;;; (time (get-latest-userdata-columns-data $zippath))
+
 
 ;;; item
 ;;; ---------------------------------------------------------------------
@@ -449,7 +455,7 @@
 (defmethod db-get-latest-items-userdata ((db sqlite-handle) &key (column-ids nil)(like nil)(offset 0)(limit nil))
   (let* ((column-data (db-get-latest-userdata-columns-data db))
          (column-ids (or column-ids
-                         (mapcar (lambda (cdata)(getf cdata :|id|))
+                         (mapcar (lambda (cdata)(get-key cdata :|id| nil))
                                  column-data))))
     (bind ((sql vals (sqlgen::get-latest-userdata :column-ids column-ids :like like :offset offset :limit limit)))
       (let ((latest-item-results (apply 'execute-to-list db sql vals)))
@@ -506,9 +512,9 @@
 
 (defmethod db-get-userdata-column-widths ((db sqlite-handle))
   (let* ((coldata (db-get-latest-userdata-columns-data db))
-         (colnames (mapcar (lambda (cdata)(getf cdata :|name|)) coldata))
+         (colnames (mapcar (lambda (cdata)(get-key cdata :|name| nil)) coldata))
          (name-widths (mapcar #'length colnames))
-         (colids (mapcar (lambda (cdata)(getf cdata :|id|)) coldata))
+         (colids (mapcar (lambda (cdata)(get-key cdata :|id| nil)) coldata))
          (val-widths (loop for id in colids
                         collect (let ((sql (format nil "SELECT MAX(LENGTH(`~A`)) FROM `list_data` WHERE `optype` = 'item'"
                                                    id)))

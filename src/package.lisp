@@ -23,11 +23,13 @@
            #:db-get-latest-columns
            #:db-get-latest-items-userdata
            #:db-get-latest-listname
+           #:db-get-latest-userdata-columns-data
            #:db-get-userdata-column-widths
            #:get-key
            #:get-latest-columns
            #:get-latest-items-userdata
            #:get-latest-listname
+           #:get-latest-userdata-columns-data
            #:get-userdata-column-widths
            #:join-strings
            #:op-name

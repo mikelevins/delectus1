@@ -11,7 +11,6 @@
 (in-package #:ui)
 (in-readtable :delectus)
 
-
 ;;; ---------------------------------------------------------------------
 ;;; item-card
 ;;; ---------------------------------------------------------------------
@@ -42,11 +41,11 @@
                                      (item-data card)))
          (sorted-pairs (sort column-value-pairs
                              (lambda (left right)
-                               (< (getf (car left) :|order|)
-                                  (getf (car right) :|order|)))))
+                               (< (get-key (car left) :|order| 0.0)
+                                  (get-key (car right) :|order| 0.0)))))
          (entry-views (mapcar (lambda (it)
                                 (let* ((coldata (car it))
-                                       (colname (getf coldata :|name|))
+                                       (colname (get-key coldata :|name| "Untitled"))
                                        (colvalue (cdr it))
                                        (entrypane (make-instance 'title-pane
                                                                  :title-position :left

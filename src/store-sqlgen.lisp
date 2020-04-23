@@ -353,16 +353,12 @@ WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
   (let* ((like-clauses
           (if (null like)
               ""
-              (concatenate 'string " AND ( "
-                           (delectus::join-strings " OR "
-                                                   (mapcar (lambda (cid)
-                                                             (format nil "`~A` LIKE '%~A%'"
-                                                                     cid like))
-                                                           column-ids))
-                           " ) ")))
-         (where-clause (if (null like-clauses)
-                           " WHERE `optype` = 'item' "
-                           (format nil " WHERE `optype` = 'item' AND ~A" like-clauses))))
+              (let ((like-columns-string
+                     (delectus::join-strings " OR "
+                                             (mapcar
+                                              (lambda (cid) (format nil "`~A` LIKE '%~A%'" cid like))
+                                              column-ids))))
+                (concatenate 'string " AND ( " like-columns-string " ) ")))))
     (values
      (SQL #?|
 

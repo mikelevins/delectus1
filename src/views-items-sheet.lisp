@@ -122,6 +122,7 @@
       nil)))
 
 (defun update-items-sheet-for-changed-filter (text filter-pane sheet-pane caret-position)
+  (declare (ignore filter-pane caret-position))
   (setf (current-page sheet-pane) 0)
   (update-list-display sheet-pane :filter-text text))
 
@@ -140,9 +141,11 @@
   (update-list-display items-sheet))
 
 (defun handle-previous-button-click (data interface)
+  (declare (ignore data))
   (dec-list-page interface))
 
 (defun handle-next-button-click (data interface)
+  (declare (ignore data))
   (inc-list-page interface))
 
 (defun handle-item-selection (item interface)
@@ -151,13 +154,13 @@
 
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $zippath))))
+
 ;;; this may crash because it's not in apply-in-pane-process:
 ;;; (time (inc-list-page $win))
 
 
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $moviespath))))
-;;; (time (inc-list-page $win))
 
 ;;; (setf $screen (convert-to-screen))
 ;;; (describe $screen)
@@ -175,5 +178,4 @@
 ;;; ~1.0sec to open
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words100k-path))))
 ;;; ~0.5 sec to page
-;;; (time (inc-list-page $win))
 
