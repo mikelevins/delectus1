@@ -113,11 +113,10 @@
       (setf (total-items pane) item-count)
       (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
       (setf (title-pane-text (item-count-pane pane)) 
-            (format nil " ~:D pages (~:D items)"
-                    (total-pages pane) (total-items pane)))
+            (format nil " ~:D items" (total-items pane)))
       (setf (title-pane-text (item-range-pane pane)) 
-            (format nil "Page ~D"
-                    (1+ (current-page pane))))
+            (format nil "Page ~D of ~D"
+                    (1+ (current-page pane)) (total-pages pane)))
       (setf (collection-items (items-pane pane))
             itemdata)
       nil)))
