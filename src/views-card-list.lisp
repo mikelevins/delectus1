@@ -36,31 +36,31 @@
 
 (defmethod initialize-instance :after ((card item-card) &rest initargs 
                                        &key &allow-other-keys)
-  (let* ((column-value-pairs (mapcar #'cons
+  (bind ((column-value-pairs (mapcar #'cons
                                      (columns-data card)
                                      (item-data card)))
          (sorted-pairs (sort column-value-pairs
                              (lambda (left right)
                                (< (get-key (car left) :|order| 0.0)
                                   (get-key (car right) :|order| 0.0)))))
-         (entry-views (mapcar (lambda (it)
-                                (let* ((coldata (car it))
-                                       (colname (get-key coldata :|name| "Untitled"))
-                                       (colvalue (cdr it))
-                                       (entrypane (make-instance 'title-pane
-                                                                 :title-position :left
-                                                                 :title (format nil "~A" colname)
-                                                                 :title-font (gp:make-font-description 
-                                                                              :size 12
-                                                                              :slant :italic)
-                                                                 :text (format nil "~A" colvalue)
-                                                                 :font (gp:make-font-description 
-                                                                        :size 16
-                                                                        :slant :roman))))
-                                  entrypane))
-                              sorted-pairs)))
+         (attribute-views (mapcar (lambda (it)
+                                    (let* ((coldata (car it))
+                                           (colname (get-key coldata :|name| "Untitled"))
+                                           (colvalue (cdr it))
+                                           (entrypane (make-instance 'title-pane
+                                                                     :title-position :left
+                                                                     :title (format nil "~A" colname)
+                                                                     :title-font (gp:make-font-description 
+                                                                                  :size 12
+                                                                                  :slant :italic)
+                                                                     :text (format nil "~A" colvalue)
+                                                                     :font (gp:make-font-description 
+                                                                            :size 16
+                                                                            :slant :roman))))
+                                      entrypane))
+                                  sorted-pairs)))
     (setf (layout-description (main-layout card))
-          entry-views)))
+          attribute-views)))
 
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
 ;;; (time (progn (setf $columns (delectus::get-latest-userdata-columns-data $zippath)) 'done))
@@ -72,7 +72,7 @@
 ;;; (time (progn (setf $columns (delectus::get-latest-userdata-columns-data $moviespath)) 'done))
 ;;; (time (progn (setf $items (delectus::get-latest-items-userdata $moviespath)) 'done))
 ;;; (length $items)
-;;; (setf $win (contain (make-instance 'item-card :columns-data $columns :item-data (elt $items 0))))
+;;; (setf $win (contain (make-instance 'item-card :columns-data $columns :item-data (elt $items 100))))
 
 
 ;;; ---------------------------------------------------------------------
