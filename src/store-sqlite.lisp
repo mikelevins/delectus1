@@ -11,6 +11,17 @@
 (in-package #:delectus)
 (in-readtable :delectus)
 
+;;; check the SQLite library version
+
+(fli:define-foreign-function 
+    (sqlite3-libversion "sqlite3_libversion" :source)
+    ()
+  :result-type (:pointer :char)
+  :language :ansi-c)
+
+;;; (fli:convert-from-foreign-string (sqlite3-libversion))
+;;; currently reports 3.28.0 for the SQLite included with macOS Catalina
+
 ;;; GENERIC FUNCTION valid-sqlite-file? (path)
 ;;; ---------------------------------------------------------------------
 ;;; returns PATH if it's a valid SQLite file; returns NIL if it isn't
