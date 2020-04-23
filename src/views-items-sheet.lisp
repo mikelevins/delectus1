@@ -158,7 +158,6 @@
 ;;; this may crash because it's not in apply-in-pane-process:
 ;;; (time (inc-list-page $win))
 
-
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $moviespath))))
 
