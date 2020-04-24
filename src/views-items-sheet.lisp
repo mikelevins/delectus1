@@ -32,12 +32,12 @@
   (:panes
    (items-pane multi-column-list-panel :reader items-pane
                :alternating-background t
-               :item-print-function (lambda (it)
-                                      (if (null it) "" it))
+               :item-print-function (lambda (it)(if (null it) "" it))
                :items nil
                :columns '((:title "Item"))
                :callback-type :item-interface
-               :selection-callback 'handle-item-selection)
+               :selection-callback 'handle-item-selection
+               :header-args `(:font ,(gp:make-font-description :size 14 :slant :italic)))
    (filter-pane text-input-pane :search-field "Filter" :reader filter-pane
                 :change-callback 'update-items-sheet-for-changed-filter)
    (previous-button push-button :reader previous-button :text ""
