@@ -473,4 +473,5 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
 |)
      vals)))
 
-;;; (sqlgen::assert-sync (makeid)(makeid) 3 (now-timestamp) nil nil nil (makeid))
+;;; (sqlgen::assert-sync (delectus::makeid)(delectus::makeid) 3 (delectus::now-timestamp) nil nil nil (delectus::makeid))
+
