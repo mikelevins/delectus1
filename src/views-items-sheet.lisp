@@ -49,11 +49,14 @@
                 :external-min-height 32 :external-max-height 32
                 :callback #'handle-next-button-click)
    (item-count-pane title-pane :reader item-count-pane)
-   (item-range-pane title-pane :reader item-range-pane))
+   (current-page-pane text-input-pane :reader current-page-pane
+                      :max-characters 9
+                      :external-min-width 48 :external-max-width 48)
+   (page-range-pane title-pane :reader page-range-pane))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (pager-layout row-layout '(previous-button item-range-pane next-button) :adjust :center)
+   (pager-layout row-layout '(previous-button current-page-pane page-range-pane next-button) :adjust :center)
    (controls-layout row-layout '(item-count-pane nil filter-pane nil pager-layout)
                     :ratios '(3 3 18 3 6)
                     :adjust :center)
@@ -120,9 +123,11 @@
       (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
       (setf (title-pane-text (item-count-pane pane)) 
             (format nil " ~:D items" (total-items pane)))
-      (setf (title-pane-text (item-range-pane pane)) 
-            (format nil "Page ~D of ~D"
-                    (1+ (current-page pane)) (total-pages pane)))
+      (setf (text-input-pane-text (current-page-pane pane)) 
+            (format nil "~A" (1+ (current-page pane))))
+      (setf (title-pane-text (page-range-pane pane)) 
+            (format nil " of ~D"
+                    (total-pages pane) ))
       (setf (collection-items (items-pane pane))
             itemdata)
       nil)))
