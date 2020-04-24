@@ -344,6 +344,7 @@ WHERE a.rank = 1 order by a.revision ${limit-clause} ${offset-clause}
      nil)))
 
 ;;; (sqlgen::get-latest-userdata)
+;;; (sqlgen::get-latest-userdata :column-ids '("1" "2" "3"))
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen::count-latest-userdata
