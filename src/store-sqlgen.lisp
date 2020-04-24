@@ -31,6 +31,8 @@
 ;;; that gives literal SQL code, optionally with
 ;;; interpolation expressions referring to variables
 ;;; from the enclosing environment.
+
+
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen::create-delectus-table
 ;;; ---------------------------------------------------------------------
@@ -39,7 +41,11 @@
   (values
    (SQL #?|
 
-CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revision` INTEGER )
+CREATE TABLE `delectus` ( 
+  `id` TEXT, 
+  `origin` TEXT, 
+  `format` TEXT, 
+  `next_revision` INTEGER )
 
 |)
    nil))
@@ -56,7 +62,8 @@ CREATE TABLE `delectus` ( `id` TEXT, `origin` TEXT, `format` TEXT, `next_revisio
   (values
    (SQL #?|
 
-INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) VALUES (?, ?, ?, ?)
+INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`) 
+VALUES (?, ?, ?, ?)
 
 |)
    (list id origin format next-revision)))
@@ -97,7 +104,8 @@ CREATE TABLE `list_data` (
   (values
    (SQL #?|
 
-CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `origin`)
+CREATE INDEX `idx_item_revision_origin` 
+ON `list_data` (`item`, `revision`, `origin`)
 
 |)
    nil))
@@ -113,7 +121,8 @@ CREATE INDEX `idx_item_revision_origin` ON `list_data` (`item`, `revision`, `ori
   (values
    (SQL #?|
 
-ALTER TABLE `list_data` ADD `${label}` ${type}
+ALTER TABLE `list_data` 
+ADD `${label}` ${type}
 
 |)
    nil))
@@ -405,7 +414,8 @@ LIMIT 1
     (values
      (SQL #?|
 
-INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+INSERT INTO `list_data` (${params-string}) 
+VALUES (${placeholders-string})
 
 |)
      vals)))
@@ -429,7 +439,8 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
     (values
      (SQL #?|
 
-INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+INSERT INTO `list_data` (${params-string}) 
+VALUES (${placeholders-string})
 
 |)
      vals)))
@@ -450,7 +461,8 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
     (values
      (SQL #?|
 
-INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+INSERT INTO `list_data` (${params-string}) 
+VALUES (${placeholders-string})
 
 |)
      vals)))
@@ -468,7 +480,8 @@ INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
     (values
      (SQL #?|
 
-INSERT INTO `list_data` (${params-string}) VALUES (${placeholders-string})
+INSERT INTO `list_data` (${params-string}) 
+VALUES (${placeholders-string})
 
 |)
      vals)))
