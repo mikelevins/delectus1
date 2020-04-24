@@ -29,5 +29,5 @@
   (values (mapcar (lambda (c)(delectus::get-key c :|id| nil)) column-data)
           vals))
 
-;;; to help mark out SQL code visually below
+;;; to help mark out SQL code visually in sqlgen
 (defun SQL (s)(delectus::trim s))
