@@ -13,12 +13,6 @@
 
 (defreadtable :delectus
   (:merge :standard)
-  ;; list literals
-  (:macro-char #\[ #'(lambda (stream char)
-                       (declare (ignore char))
-                       (let ((elts (read-delimited-list #\] stream t)))
-                         `(cl:list ,@elts))))
-  (:macro-char #\] (get-macro-character #\)))
   ;; map literals
   (:macro-char #\{ #'(lambda (stream char)
                        (declare (ignore char))

@@ -12,6 +12,12 @@
 (in-readtable :delectus)
 
 ;;; ---------------------------------------------------------------------
+;;; parameters
+;;; ---------------------------------------------------------------------
+
+(defparameter *default-items-per-page* 25)
+
+;;; ---------------------------------------------------------------------
 ;;; items-sheet
 ;;; ---------------------------------------------------------------------
 
@@ -19,7 +25,7 @@
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
    (total-items :accessor total-items :initform 0 :initarg :total-items)
-   (items-per-page :accessor items-per-page :initform 50 :initarg :items-per-page)
+   (items-per-page :accessor items-per-page :initform *default-items-per-page* :initarg :items-per-page)
    (current-page :accessor current-page :initform 0 :initarg :current-page))
 
   ;; -- panes ---------------------------------------------

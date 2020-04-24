@@ -1,3 +1,4 @@
+
 ;;;; ***********************************************************************
 ;;;;
 ;;;; Name:          delectus.asd
@@ -55,4 +56,4 @@
     (asdf:load-system :delectus)))
 
 
-;;; (load-delectus)
+;;; (cl-user::load-delectus)
