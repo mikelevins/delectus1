@@ -49,6 +49,7 @@
                 :external-min-height 32 :external-max-height 32
                 :callback #'handle-next-button-click)
    (item-count-pane title-pane :reader item-count-pane)
+   (current-page-label title-pane :reader current-page-label :text "Page ")
    (current-page-pane text-input-pane :reader current-page-pane
                       :max-characters 9
                       :external-min-width 48 :external-max-width 48)
@@ -56,7 +57,8 @@
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (pager-layout row-layout '(previous-button current-page-pane page-range-pane next-button) :adjust :center)
+   (pager-layout row-layout '(previous-button current-page-label current-page-pane
+                              page-range-pane next-button) :adjust :center)
    (controls-layout row-layout '(item-count-pane nil filter-pane nil pager-layout)
                     :ratios '(3 3 18 3 6)
                     :adjust :center)
