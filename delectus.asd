@@ -25,7 +25,7 @@
                         :components ((:file "package")
                                      (:file "version")
                                      (:file "system-parameters") ; application globals
-                                     (:file "system-syntax")     ; syntax for list and map literals
+                                     (:file "system-syntax")     ; syntax for map literals
                                      (:file "system-bind")       ; more compact binding of multiple values
                                      (:file "system-utils")      ; general-purpose helpers
                                      (:file "data-identities")   ; Delectus-specific UUID format
