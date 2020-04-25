@@ -1,0 +1,79 @@
+= JSON in SQLite Storage
+
+== Ops
+
+=== listname
+
+[cols="1,1,1,1,2,4", options="header"]
+|===
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_` | `_data_`
+|`'listname'` | `<origin>` | `<revision>` | `<timestamp>` | `NULL` | `{name: <string>}`
+
+|===
+
+=== columns
+
+[cols="1,1,1,1,2,4", options="header"]
+|===
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_` | `_data_`
+|`'columns'` | `<origin>` | `<revision>` | `<timestamp>` | `NULL` | `{[<column-identity>: <column-description>,]* }`
+
+|===
+
+=== item
+[cols="1,1,1,1,2,4", options="header"]
+|===
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_`|`_data_`
+|`'item'` | `<origin>` | `<revision>` | `<timestamp>` | `<item-identity>` |`{[<column-identity>: <value>,]* }`
+
+|===
+
+=== sync
+
+[cols="1,1,1,1,2,4", options="header"]
+|===
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_` | `_data_`
+|`'sync'` | `<origin>` | `<revision>` | `<timestamp>` | `NULL` | `{peer: <origin>}}`
+
+|===
+
+== Datatypes
+
+[cols="2,1,4", options="header"]
+.Types used in Delectus ops
+|===
+|Op-field type | SQLite affinity | description
+
+|`<column-description>` | `TEXT` | A JSON object giving a column's metadata; see the `<column-description>` table
+|`<column-identity>` | `TEXT` | An `<identity>` that identifies a column
+|`<identity>` | `TEXT` | A unique Delectus `identity` string
+|`<item-identity>` | `TEXT` | An `<identity>` that identifies an item
+|`<origin>` | `TEXT` | An `<identity>` that identifies a Delectus node
+|`<revision>` | `INTEGER` | An integer assigned to an op when it's inserted in a list.
+|`<timestamp>` | `TEXT` | An ISO-8601 time string
+|`<value>` | `TEXT` | A value that appears in a list item. Valid types are NULL, NUMBER, and TEXT.
+|`<values-map>` | `TEXT` | A JSON object whose keys are of type `<identity>` and whose values are of type `<value>`
+
+|===
+
+[cols="1,1,4", options="header"]
+.Delectus `<column-description>` objects
+|===
+|key | permitted values | description
+
+|`id` | `<identity>` | The colun's unique `identity` string
+|`name` | `TEXT` | The user-assigned name of the column
+|`type` | `'NULL'`, +
+`'TEXT'`, +
+`'NUMBER'`, +
+or +
+`'Boolean'` | How values in the column should be interpreted
+|`sort` | `'NULL'`, +
+`'ASC'`, +
+or +
+`'DESC'` | Whether the list should be sorted by this column, and in which direction
+|`title` | `NULL` or `0` or `1` | Whether this is the title column
+|`subtitle` | `NULL` or `0` or `1` | Whether this is the subtitle column
+|`deleted` | `NULL` or `0` or `1` | Whether this column has been marked deleted
+
+|===

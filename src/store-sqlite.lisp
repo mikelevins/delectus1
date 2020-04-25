@@ -23,6 +23,30 @@
 ;;; currently reports 3.28.0 for the SQLite included with macOS Catalina
 ;;; (mapcar #'cffi:foreign-library-pathname (cffi:list-foreign-libraries :loaded-only t))
 
+
+
+;;; GENERIC FUNCTION sqlite-compile-options (path)
+;;; ---------------------------------------------------------------------
+;;; check the SQLite library's compile-time options
+
+(defmethod sqlite-compile-options ((path pathname))
+  (let ((path (probe-file path)))
+    (and path
+         (file-pathname-p path)
+         (handler-case (with-open-database (db path)
+                         ;; the right way to check whether a file is a SQLite file,
+                         ;; according to SQLite docs:
+                         (execute-to-list db "pragma compile_options"))
+           (condition (c)
+             (declare (ignore c))
+             nil)))))
+
+(defmethod sqlite-compile-options ((path string))
+  (sqlite-compile-options (pathname path)))
+
+;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
+;;; (sqlite-compile-options $zippath)
+
 ;;; GENERIC FUNCTION valid-sqlite-file? (path)
 ;;; ---------------------------------------------------------------------
 ;;; returns PATH if it's a valid SQLite file; returns NIL if it isn't
