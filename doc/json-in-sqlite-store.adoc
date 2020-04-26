@@ -82,7 +82,8 @@ Following is an example of a `<columns-map>` that defines a single column named 
 
 ----
 { 'I46aa3900876c11ea8dbe38c9864ebde0':
-   { id: 'I46aa3900876c11ea8dbe38c9864ebde0',
+   { type: 'column',
+     id: 'I46aa3900876c11ea8dbe38c9864ebde0',
      name: 'Item',
      type: 'TEXT',
      sort: null,
@@ -102,3 +103,13 @@ Following is an example of a `<columns-map>` that defines a single column named 
 |`'item'` | `_<origin>_` | `_<revision>_` | `_<timestamp>_` | `_<item-map>_`
 
 |===
+
+Following is an example of an `<item-map>` that contains a single value in the 'Item' column defined above:
+
+----
+{ type: 'item',
+  id: "I0781e500877811ea8dbe38c9864ebde0",
+  deleted: false,
+  'values': { I46aa3900876c11ea8dbe38c9864ebde0: 'A sample item' }
+}
+----
