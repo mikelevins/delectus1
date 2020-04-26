@@ -2,78 +2,103 @@
 
 == Ops
 
-=== listname
+Delectus stores data in table named `'list_data'`. Each row in the table is an object called an *op*. An op consists of a defined sequenceof *fields*, each of which contains a *value*.
 
-[cols="1,1,1,1,2,4", options="header"]
+Delectus stores ops in a table named `list_data`, with one column for each op field.
+
+There are four types of op:
+
+. *listname* ops define and update the name of the list.
+. *columns* ops define and update the list's columns.
+. *item* ops define and update the state of a single specific item in the list.
+. *sync* ops record successful synchronization with another copy of the list.
+
+==== Columns and items
+
+Each `item` op can assert values for each column that exists in the list, but not for columns that don't exist. Inserting an `item` op that contains columns not already in the list signals an error.
+
+An `item` op to be inserted must specify a value for each column that is defined when the `item` is inserted. If columns exist that the `item` op does not mention, an error is signaled.
+
+A `columns` op to be inserted must contain each of the columns mentioned in the latest existing `item` or `columns` op (whichever is more recent). If existing ops contain columns not in the new op, an error is signaled.
+
+A `columns` op to be inserted may contain columns that are not already in the list. In that case, assuming that the new op mentions all existing columns as well, Delectus creates the new columns before inserting the op.
+
+These rules ensure that there's always a value defined for each column, and a column for each value.
+
+=== Op structure
+
+==== listname
+
+[cols="1,1,1,1,2", options="header"]
 |===
-|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_` | `_data_`
-|`'listname'` | `<origin>` | `<revision>` | `<timestamp>` | `NULL` | `{name: <string>}`
-
-|===
-
-=== columns
-
-[cols="1,1,1,1,2,4", options="header"]
-|===
-|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_` | `_data_`
-|`'columns'` | `<origin>` | `<revision>` | `<timestamp>` | `NULL` | `{[<column-identity>: <column-description>,]* }`
-
-|===
-
-=== item
-[cols="1,1,1,1,2,4", options="header"]
-|===
-|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_`|`_data_`
-|`'item'` | `<origin>` | `<revision>` | `<timestamp>` | `<item-identity>` |`{[<column-identity>: <value>,]* }`
-
-|===
-
-=== sync
-
-[cols="1,1,1,1,2,4", options="header"]
-|===
-|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_item_` | `_data_`
-|`'sync'` | `<origin>` | `<revision>` | `<timestamp>` | `NULL` | `{peer: <origin>}}`
-
-|===
-
-== Datatypes
-
-[cols="2,1,4", options="header"]
-.Types used in Delectus ops
-|===
-|Op-field type | SQLite affinity | description
-
-|`<column-description>` | `TEXT` | A JSON object giving a column's metadata; see the `<column-description>` table
-|`<column-identity>` | `TEXT` | An `<identity>` that identifies a column
-|`<identity>` | `TEXT` | A unique Delectus `identity` string
-|`<item-identity>` | `TEXT` | An `<identity>` that identifies an item
-|`<origin>` | `TEXT` | An `<identity>` that identifies a Delectus node
-|`<revision>` | `INTEGER` | An integer assigned to an op when it's inserted in a list.
-|`<timestamp>` | `TEXT` | An ISO-8601 time string
-|`<value>` | `TEXT` | A value that appears in a list item. Valid types are NULL, NUMBER, and TEXT.
-|`<values-map>` | `TEXT` | A JSON object whose keys are of type `<identity>` and whose values are of type `<value>`
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` |  `_data_`
+|`'listname'` | `_<identity>_` | `_<revision>_` | `_<timestamp>_` |  `_<string>_`
 
 |===
 
-[cols="1,1,4", options="header"]
-.Delectus `<column-description>` objects
-|===
-|key | permitted values | description
+In a `listname` op, the `data` field contains the string that becomes the new name of the list.
 
-|`id` | `<identity>` | The colun's unique `identity` string
-|`name` | `TEXT` | The user-assigned name of the column
-|`type` | `'NULL'`, +
-`'TEXT'`, +
-`'NUMBER'`, +
-or +
-`'Boolean'` | How values in the column should be interpreted
-|`sort` | `'NULL'`, +
-`'ASC'`, +
-or +
-`'DESC'` | Whether the list should be sorted by this column, and in which direction
-|`title` | `NULL` or `0` or `1` | Whether this is the title column
-|`subtitle` | `NULL` or `0` or `1` | Whether this is the subtitle column
-|`deleted` | `NULL` or `0` or `1` | Whether this column has been marked deleted
+==== sync
+
+[cols="1,1,1,1,2", options="header"]
+|===
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_data_`
+|`'sync'` | `_<identity>_` | `_<revision>_` | `_<timestamp>_` | `_<identity>_`
+
+|===
+
+In a `sync` op, the `data` field contains the `identity` string of the remote peer with which we have completed a successful synch.
+
+
+==== columns
+
+[cols="1,1,1,1,2", options="header"]
+|===
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_data_`
+|`'columns'` | `_<identity>_` | `_<revision>_` | `_<timestamp>_` | `_<columns-map>_`
+|===
+
+A `<columns-map>` is a JSON object that defines the list's columns. The object maps `identity` strings to `<column>` objects.
+
+An `identity` is a string that looks like this: `"I46aa3900876c11ea8dbe38c9864ebde0"`. Delectus uses them as unique identifiers for several things, including columns.
+
+A `<column>` object has the following structure:
+
+[cols="1,1,2", options="header"]
+|===
+| Key | Value type | Description
+| `id:` | `<identity>` | The column's unique ID
+| `name:` | `<string>` | The user-assigned name of the column
+| `type:` | `<value>` | The type the user expects the column to contain
+| `sort:` | `null`, `'ASC'`, or `'DESC'` | Whether and which direction to sort the list by this column
+| `title:` | `null`, `false`, or `true` | Whether this is the title column
+| `subtitle:` | `null`, `false`, or `true` | Whether this is the title column
+| `deleted:` | `null`, `false`, or `true` | Whether this column is deleted
+|===
+
+`<value>` is either `NULL`, `NUMBER`, or `TEXT`.
+
+Following is an example of a `<columns-map>` that defines a single column named `"Item"`:
+
+----
+{ 'I46aa3900876c11ea8dbe38c9864ebde0':
+   { id: 'I46aa3900876c11ea8dbe38c9864ebde0',
+     name: 'Item',
+     type: 'TEXT',
+     sort: null,
+     title: false,
+     subtitle: false,
+     deleted: false,
+   }
+}
+----
+
+
+==== item
+
+[cols="1,1,1,1,2", options="header"]
+|===
+|`_type_` | `_origin_` | `_revision_` | `_timestamp_` | `_data_`
+|`'item'` | `_<origin>_` | `_<revision>_` | `_<timestamp>_` | `_<item-map>_`
 
 |===
