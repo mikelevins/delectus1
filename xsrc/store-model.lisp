@@ -78,7 +78,7 @@
                                        (id nil)
                                        (origin *origin*)
                                        (format-version +delectus-format-version+))
-  (let* ((listid (or listid (makeid))))
+  (let* ((id (or id (makeid))))
     ;; create the delectus table
     (bind ((sql vals (sqlgen::create-delectus-table)))
       (apply 'execute-non-query db sql vals))
@@ -144,7 +144,7 @@
   (let ((list-id (or list-id (makeid))))
     (with-open-database (db db-path)
       (with-transaction db
-        (db-create-delectus-table db :id list-id :origin origin :format-version format-version)
+        (db-create-delectus-table db :id list-id :origin local-origin :format-version format-version)
         (db-create-identities-table db :local-origin local-origin)
         (db-create-listdata-table db)
         (db-create-item-revision-origin-index db)
@@ -152,11 +152,18 @@
           (db-insert-default-listdata-ops db)))))
   db-path)
 
-(defmethod create-delectus-file ((db-path string)(list-name string)(listid string) &key (create-default-userdata t))
-  (create-delectus-file (pathname db-path) list-name listid :create-default-userdata create-default-userdata)
+(defmethod create-delectus-file ((db-path string)
+                                 &key
+                                   (list-name nil)
+                                   (list-id nil)
+                                   (local-origin *origin*)
+                                   (format-version +delectus-format-version+)
+                                   (create-default-userdata t))
+  (create-delectus-file (pathname db-path) :list-name list-name :list-id list-id :local-origin local-origin
+                        :format-version format-version :create-default-userdata create-default-userdata)
   db-path)
 
-;;; (create-delectus-file "/Users/mikel/Desktop/testlist.delectus2" "Test List" (makeid))
+;;; (create-delectus-file "/Users/mikel/Desktop/testlist.delectus2" :list-name "Test List")
 ;;; (delete-file "/Users/mikel/Desktop/testlist.delectus2")
 
 ;;; ---------------------------------------------------------------------
