@@ -53,17 +53,18 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-allocate-next-revision ((db sqlite-handle))
-  (let ((rev (execute-single db "SELECT `next_revision` FROM `delectus`")))
-    (execute-single db "UPDATE `delectus` SET `next_revision` = `next_revision` + 1")
+  (let ((rev (execute-single db (sqlgen::get-next-revision))))
+    (execute-single db (sqlgen::increment-next-revision))
     rev))
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-allocate-next-revision db))
 
 (defmethod db-allocate-next-iref ((db sqlite-handle))
-  (let ((iref (execute-single db "SELECT `next_iref` FROM `delectus`")))
-    (execute-single db "UPDATE `delectus` SET `next_iref` = `next_iref` + 1")
-    ;; allocating an iref is a change in the list file; we must therefore also increment the revision counter
-    (execute-single db "UPDATE `delectus` SET `next_revision` = `next_revision` + 1")
+  (let ((iref (execute-single db (sqlgen::get-next-iref))))
+    (execute-single db (sqlgen::increment-next-iref))
+    ;; allocating an iref is a change in the list file; we must
+    ;; therefore also increment the revision counter
+    (execute-single db (sqlgen::increment-next-revision))
     iref))
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-allocate-next-iref db))

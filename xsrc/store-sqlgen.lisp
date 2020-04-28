@@ -8,25 +8,68 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :sqlgen)
+(in-package :delectus)
 
-;;; =====================================================================
-;;; SQL constructors
-;;; =====================================================================
-;;; each sqlgen::constructor function returns two values: a SQL string, and
-;;; a list of values to be bound to any '?' placeholders in the SQL
-;;; string. If there are no placeholder variables in the SQL, then
-;;; the second returned value is NIL.
-;;;
-;;; Each function definition is structured like this:
-;;; (defun sqlgen::FUNCTION-NAME (arg0 arg1 ... argN)
-;;;   (let (BINDING* ...)
-;;;     (values
-;;;       (delectus::trim " ... some SQL code ... ")
-;;;       (value-expression* ...))))
-;;;
-;;; The LET bindings are optional. The argument to TRIM may be a
-;;; string construcor, such as a (FORMAT NIL ...) expression
+;;; ---------------------------------------------------------------------
+;;; sqlgen::get-next-revision
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::get-next-revision ()
+  (values
+   (delectus::trim "
+
+SELECT `next_revision` FROM `delectus`
+
+")
+   nil))
+
+;;; (sqlgen::get-next-revision)
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen::increment-next-revision
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::increment-next-revision ()
+  (values
+   (delectus::trim "
+
+UPDATE `delectus` SET `next_revision` = `next_revision` + 1
+
+")
+   nil))
+
+;;; (sqlgen::increment-next-revision)
+
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen::get-next-iref
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::get-next-iref ()
+  (values
+   (delectus::trim "
+
+SELECT `next_iref` FROM `delectus`
+
+")
+   nil))
+
+;;; (sqlgen::get-next-iref)
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen::increment-next-iref
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::increment-next-iref ()
+  (values
+   (delectus::trim "
+
+UPDATE `delectus` SET `next_iref` = `next_iref` + 1
+
+")
+   nil))
+
+;;; (sqlgen::increment-next-iref)
 
 
 ;;; ---------------------------------------------------------------------

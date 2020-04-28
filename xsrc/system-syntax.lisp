@@ -15,10 +15,12 @@
 (set-syntax-from-char #\} #\))
 
 (set-macro-character #\{
-                (lambda (stream char)
-                  (declare (ignore char))
-                  (let ((elts (read-delimited-list #\} stream t)))
-                    ` (as 'wb-map (cl:list ,@elts)))))
+                     (lambda (stream char)
+                       (declare (ignore char))
+                       (let ((elts (read-delimited-list #\} stream t)))
+                         `(convert 'wb-map (loop for tail on (cl:list ,@elts) by #'cddr
+                                              collect (cons (first tail)
+                                                            (second tail)))))))
 
 (in-package :fset)
 
