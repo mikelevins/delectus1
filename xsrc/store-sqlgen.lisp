@@ -144,6 +144,36 @@ INSERT INTO `identities` (`iref`, `identity`) VALUES (?, ?)
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen::create-listdata-table
 ;;; ---------------------------------------------------------------------
+;;; type: "listname", "sync", "columns", or "item"
+;;; opid: an iref that points to the identity of the op
+;;; origin: an iref that points to the identity of the origin node
+;;; timestamp: an ISO-8601 string that gives the time the op was
+;;;            created, according to its origin node
+;;; name: [TEXT, used by "listname"] the name of the list
+;;; item: [INTEGER, used by "item"] a reference to the item's identity
+;;; deleted: [INTEGER, used by "item"] whether this item is marked deleted
+;;; peer: [INTEGER, used by "sync"] a reference to the identity of the
+;;; node we synced with
+
+(defun sqlgen::create-listdata-table ()
+  (values
+   (delectus::trim "
+
+CREATE TABLE `listdata` ( 
+  `type` TEXT, 
+  `opid` INTEGER, 
+  `origin` INTEGER, 
+  `timestamp` TEXT, 
+  `name` TEXT, 
+  `item` INTEGER, 
+  `deleted` INTEGER, 
+  `peer` INTEGER )
+
+")
+   nil))
+
+;;; (sqlgen::create-listdata-table)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen::create-item-revision-origin-index
@@ -160,3 +190,24 @@ ON `list_data` (`item`, `revision`, `origin`)
    nil))
 
 ;;; (sqlgen::create-item-revision-origin-index)
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen::insert-listname
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::insert-listname (list-name opid origin timestamp)
+  (assert (stringp list-name)() "You must supply a string list-name parameter; found ~S" list-name)
+  (assert (integerp opid)() "You must supply an iref opid parameter; found ~S" opid)
+  (assert (integerp origin)() "You must supply an iref origin parameter; found ~S" origin)
+  (assert (stringp timestamp)() "You must supply a string timestamp parameter; found ~S" timestamp)
+  (let ()
+    (values
+     (delectus::trim "
+
+INSERT INTO `listdata` (`type`, `opid`, `origin`, `timestamp`, `name`, `item`, `deleted`, `peer`) 
+VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
+
+")
+     (list "listname" opid origin timestamp list-name nil nil nil))))
+
+;;; (sqlgen::insert-listname "Test" 1 0 (now-timestamp))

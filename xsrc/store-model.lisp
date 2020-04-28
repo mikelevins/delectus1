@@ -69,6 +69,12 @@
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-allocate-next-iref db))
 
+(defmethod db-register-identity ((db sqlite-handle)(identity string))
+  (bind ((iref (db-allocate-next-iref db))
+         (id-sql id-vals (sqlgen::insert-identity iref identity)))
+    (apply 'execute-non-query db id-sql id-vals)
+    iref))
+
 (defmethod db-iref-to-identity ((db sqlite-handle)(iref integer))
   (execute-single db (format nil "SELECT `identity` FROM `identities` WHERE `iref`='~A'" iref)))
 
@@ -168,8 +174,17 @@
 ;;; ---------------------------------------------------------------------
 ;;; optional; when importing an existing list, we do not add these
 
-(defmethod db-insert-default-listdata-ops ((db sqlite-handle))
-  )
+(defmethod db-insert-default-listdata-ops ((db sqlite-handle) &key (list-name nil))
+  (let* ((op-identity (makeid))
+         (op-iref (db-register-identity db op-identity))
+         (origin-iref (db-identity-to-iref db *origin*))
+         (list-name-timestamp (now-timestamp)))
+    ;; insert listname
+    (bind ((sql vals (sqlgen::insert-listname list-name op-iref origin-iref list-name-timestamp)))
+      (apply 'execute-non-query db sql vals))
+    ;; insert columns with default column
+    ;; insert default item
+    ))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
@@ -189,10 +204,10 @@
       (with-transaction db
         (db-create-delectus-table db :list-id list-id :origin local-origin :format-version format-version)
         (db-create-identities-table db :local-origin local-origin :list-id list-id)
-        ;;(db-create-listdata-table db)
+        (db-create-listdata-table db)
+        (when create-default-userdata
+          (db-insert-default-listdata-ops db :list-name list-name))
         ;;(db-create-item-revision-origin-index db)
-        ;; (when create-default-userdata
-        ;;   (db-insert-default-listdata-ops db))
         )))
   db-path)
 
