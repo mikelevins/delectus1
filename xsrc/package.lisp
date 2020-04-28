@@ -9,7 +9,6 @@
 ;;;; ***********************************************************************
 
 (in-package :cl-user)
-(named-readtables:in-readtable :standard)
 
 (defpackage #:delectus
   (:use #:cl #:sqlite #:cl-emb #:named-readtables)

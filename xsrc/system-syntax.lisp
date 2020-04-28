@@ -9,19 +9,16 @@
 ;;;; ***********************************************************************
 
 (in-package :delectus)
-(in-readtable :standard)
 
-(defreadtable :delectus
-  (:merge :standard)
-  ;; map literals
-  (:macro-char #\{ #'(lambda (stream char)
-                       (declare (ignore char))
-                       (let* ((elts (read-delimited-list #\} stream t)))
-                         `(convert 'wb-map (loop for tail on (cl:list ,@elts) by #'cddr
-                                              collect (cons (first tail)
-                                                            (second tail)))))))
-  (:macro-char #\} (get-macro-character #\))))
 
+(set-syntax-from-char #\{ #\()
+(set-syntax-from-char #\} #\))
+
+(set-macro-character #\{
+                (lambda (stream char)
+                  (declare (ignore char))
+                  (let ((elts (read-delimited-list #\} stream t)))
+                    ` (as 'wb-map (cl:list ,@elts)))))
 
 (in-package :fset)
 

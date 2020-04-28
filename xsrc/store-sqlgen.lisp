@@ -9,7 +9,6 @@
 ;;;; ***********************************************************************
 
 (in-package :sqlgen)
-(in-readtable :interpol-syntax)
 
 ;;; =====================================================================
 ;;; SQL constructors
@@ -23,14 +22,11 @@
 ;;; (defun sqlgen::FUNCTION-NAME (arg0 arg1 ... argN)
 ;;;   (let (BINDING* ...)
 ;;;     (values
-;;;       (SQL #?| ... some SQL code ... |)
+;;;       (delectus::trim " ... some SQL code ... ")
 ;;;       (value-expression* ...))))
 ;;;
-;;; The LET bindings are optional
-;;; The SQL expression contains a CL-INTERPOL string
-;;; that gives literal SQL code, optionally with
-;;; interpolation expressions referring to variables
-;;; from the enclosing environment.
+;;; The LET bindings are optional. The argument to TRIM may be a
+;;; string construcor, such as a (FORMAT NIL ...) expression
 
 
 ;;; ---------------------------------------------------------------------
@@ -39,7 +35,7 @@
 
 (defun sqlgen::create-delectus-table ()
   (values
-   (SQL #?|
+   (delectus::trim "
 
 CREATE TABLE `delectus` ( 
   `id` TEXT, 
@@ -48,15 +44,59 @@ CREATE TABLE `delectus` (
   `next_revision` INTEGER,
   `next_iref` INTEGER )
 
-|)
+")
    nil))
 
-
 ;;; (sqlgen::create-delectus-table)
+
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen::init-delectus-table
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::init-delectus-table (list-id list-origin format-version revision iref)
+  (values
+   (delectus::trim "
+
+INSERT INTO `delectus` (`id`, `origin`, `format`, `next_revision`, `next_iref`) VALUES (?, ?, ?, ?, ?) 
+
+")
+   (list list-id list-origin format-version revision iref)))
+
+;;; (sqlgen::init-delectus-table (delectus::makeid) delectus::*origin* delectus::+delectus-format-version+ 0 0)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen::create-identities-table
 ;;; ---------------------------------------------------------------------
+
+(defun sqlgen::create-identities-table ()
+  (values
+   (delectus::trim "
+
+CREATE TABLE `identities` ( 
+  `iref` INTEGER, 
+  `identity` TEXT )
+
+")
+   nil))
+
+;;; (sqlgen::create-identities-table)
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen::insert-identity
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen::insert-identity (iref identity)
+  (values
+   (delectus::trim "
+
+INSERT INTO `identities` (`iref`, `identity`) VALUES (?, ?) 
+
+")
+   (list iref identity)))
+
+;;; (sqlgen::insert-identity 0 delectus::*origin*)
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen::create-listdata-table
@@ -68,12 +108,12 @@ CREATE TABLE `delectus` (
 
 (defun sqlgen::create-item-revision-origin-index ()
   (values
-   (SQL #?|
+   (delectus::trim "
 
 CREATE INDEX `idx_item_revision_origin` 
 ON `list_data` (`item`, `revision`, `origin`)
 
-|)
+")
    nil))
 
 ;;; (sqlgen::create-item-revision-origin-index)

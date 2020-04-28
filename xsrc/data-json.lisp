@@ -9,7 +9,6 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
-(in-readtable :delectus)
 
 (defmethod to-json ((obj wb-map))
   (let ((result nil))

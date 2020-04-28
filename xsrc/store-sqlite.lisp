@@ -9,7 +9,6 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
-(in-readtable :delectus)
 
 ;;; check the SQLite library version
 

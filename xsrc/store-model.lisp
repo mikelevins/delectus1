@@ -9,7 +9,6 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
-(in-readtable :delectus)
 
 ;;; =====================================================================
 ;;;
@@ -49,6 +48,38 @@
 ;;;
 ;;; =====================================================================
 
+;;; ---------------------------------------------------------------------
+;;; list-metadata operations
+;;; ---------------------------------------------------------------------
+
+(defmethod db-allocate-next-revision ((db sqlite-handle))
+  (let ((rev (execute-single db "SELECT `next_revision` FROM `delectus`")))
+    (execute-single db "UPDATE `delectus` SET `next_revision` = `next_revision` + 1")
+    rev))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-allocate-next-revision db))
+
+(defmethod db-allocate-next-iref ((db sqlite-handle))
+  (let ((iref (execute-single db "SELECT `next_iref` FROM `delectus`")))
+    (execute-single db "UPDATE `delectus` SET `next_iref` = `next_iref` + 1")
+    ;; allocating an iref is a change in the list file; we must therefore also increment the revision counter
+    (execute-single db "UPDATE `delectus` SET `next_revision` = `next_revision` + 1")
+    iref))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-allocate-next-iref db))
+
+(defmethod db-iref-to-identity ((db sqlite-handle)(iref integer))
+  (execute-single db (format nil "SELECT `identity` FROM `identities` WHERE `iref`='~A'" iref)))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-iref-to-identity db 0))
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-identity-to-iref db *origin*))
+
+(defmethod db-identity-to-iref ((db sqlite-handle)(identity string))
+  (execute-single db (format nil "SELECT `iref` FROM `identities` WHERE `identity`='~A'" identity)))
+
+;;; ---------------------------------------------------------------------
+;;; creating standard tables
+;;; ---------------------------------------------------------------------
 
 ;;; ---------------------------------------------------------------------
 ;;; creating standard tables
@@ -65,25 +96,27 @@
 
 (defmethod db-initialize-delectus-table ((db sqlite-handle)
                                          &key
-                                           (listid nil)
+                                           (list-id nil)
                                            (origin *origin*)
                                            (format-version +delectus-format-version+))
   ;; - insert the list id
   ;; - insert the list origin
   ;; - insert 0 for the `next_revision` and `next_iref` fields
-  )
+  (bind ((listid (or list-id (makeid)))
+         (sql vals (sqlgen::init-delectus-table list-id origin format-version 0 0)))
+    (apply 'execute-non-query db sql vals)))
 
 (defmethod db-create-delectus-table ((db sqlite-handle)
                                      &key
-                                       (id nil)
+                                       (list-id nil)
                                        (origin *origin*)
                                        (format-version +delectus-format-version+))
-  (let* ((id (or id (makeid))))
+  (let* ((list-id (or list-id (makeid))))
     ;; create the delectus table
     (bind ((sql vals (sqlgen::create-delectus-table)))
       (apply 'execute-non-query db sql vals))
     ;; populate it
-    (db-initialize-delectus-table db :id id :origin origin :format-version format-version)))
+    (db-initialize-delectus-table db :list-id list-id :origin origin :format-version format-version)))
 
 ;;; `identities`
 ;;; ---------------------------------------------------------------------
@@ -91,17 +124,26 @@
 
 (defmethod db-initialize-identities-table ((db sqlite-handle)
                                            &key
-                                             (local-origin *origin*))
+                                             (local-origin *origin*)
+                                             (list-id nil))
+  (assert list-id ()
+          "You must supply a valid list identity as the value of :LIST-ID; found ~S" list-id)
   ;; - insert local-origin with the next iref as its key
-  ;; - update the next iref
-  )
+  ;; - insert the list-id with the next iref as its key
+  (bind ((origin-iref (db-allocate-next-iref db))
+         (origin-sql origin-vals (sqlgen::insert-identity origin-iref local-origin))
+         (list-iref (db-allocate-next-iref db))
+         (list-sql list-vals (sqlgen::insert-identity list-iref list-id)))
+    (apply 'execute-non-query db origin-sql origin-vals)
+    (apply 'execute-non-query db list-sql list-vals)))
 
 (defmethod db-create-identities-table ((db sqlite-handle)
                                        &key
-                                         (local-origin *origin*))
+                                         (local-origin *origin*)
+                                         (list-id nil))
   (bind ((sql vals (sqlgen::create-identities-table)))
     (apply 'execute-non-query db sql vals)
-    (db-initialize-identities-table db :local-origin local-origin)))
+    (db-initialize-identities-table db :local-origin local-origin :list-id list-id)))
 
 ;;; `listdata`
 ;;; ---------------------------------------------------------------------
@@ -144,12 +186,13 @@
   (let ((list-id (or list-id (makeid))))
     (with-open-database (db db-path)
       (with-transaction db
-        (db-create-delectus-table db :id list-id :origin local-origin :format-version format-version)
-        (db-create-identities-table db :local-origin local-origin)
-        (db-create-listdata-table db)
-        (db-create-item-revision-origin-index db)
-        (when create-default-userdata
-          (db-insert-default-listdata-ops db)))))
+        (db-create-delectus-table db :list-id list-id :origin local-origin :format-version format-version)
+        (db-create-identities-table db :local-origin local-origin :list-id list-id)
+        ;;(db-create-listdata-table db)
+        ;;(db-create-item-revision-origin-index db)
+        ;; (when create-default-userdata
+        ;;   (db-insert-default-listdata-ops db))
+        )))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)

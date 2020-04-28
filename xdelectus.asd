@@ -19,7 +19,7 @@
   :license  "Specify license here"
   :version "2.0.0"
   :serial t
-  :depends-on (:fset :fare-csv :uuid :sqlite :cl-interpol :cl-emb :jonathan :local-time :named-readtables)
+  :depends-on (:fset :fare-csv :uuid :sqlite :cl-emb :jonathan :local-time)
   :components ((:module "xsrc"
                         :serial t
                         :components ((:file "package")
