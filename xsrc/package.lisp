@@ -35,9 +35,6 @@
            #:op-userdata
            #:with-open-database))
 
-(defpackage #:sqlgen
-  (:use #:cl #:sqlite #:named-readtables))
-
 (defpackage #:delectus-ui
   (:nicknames #:ui)
   (:use #:cl #:sqlite #:cl-emb #:named-readtables #:delectus #:capi))

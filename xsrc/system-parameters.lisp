@@ -18,3 +18,21 @@
 ;;; TODO: add logic for initializing parameters appropriately in a delivered app
 
 (defparameter *delectus-root-pathname* (asdf:system-relative-pathname :xdelectus "./"))
+
+
+;;; list-file parameters
+;;; ---------------------------------------------------------------------
+
+(defparameter *delectus-table-name* "delectus")
+(defparameter *identities-table-name* "identities")
+(defparameter *listdata-table-name* "listdata")
+(defparameter *item-revision-origin-index-name* "idx_item_revision_origin")
+
+;;; column parameters
+;;; ---------------------------------------------------------------------
+
+(defparameter *maximum-column-count* 200) ; chosen to be below common database limits
+(defparameter *column-order-interval* 10.0) ; default interval between order numbers autoassigned to new columns
+(defparameter *minimum-column-order* 10.0)
+(defparameter *default-initial-column-order* *minimum-column-order*)
+(defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))

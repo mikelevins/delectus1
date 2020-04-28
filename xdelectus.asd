@@ -30,6 +30,7 @@
                                      (:file "system-utils")      ; general-purpose helpers
                                      (:file "data-identities")   ; Delectus-specific UUID format
                                      (:file "data-json")         ; reading and writing JSON data
+                                     (:file "store-column-info") ; sqlite column-info utils
                                      (:file "store-sqlite")      ; operating on SQLite files
                                      (:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
                                      (:file "store-model")       ; store operations on Delectus model objects

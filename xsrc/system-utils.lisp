@@ -30,6 +30,24 @@
 
 
 ;;; ---------------------------------------------------------------------
+;;;  list utilities
+;;; ---------------------------------------------------------------------
+
+(defun alist->plist (alist)
+  (loop for pair in alist
+     appending (list (car pair)(cdr pair))))
+
+(defun wb-map->plist (wb-map)
+  (let ((alist (fset:convert 'list wb-map)))
+    (loop for (k . v) in alist
+       appending (list k
+                       (if (typep v 'wb-map)
+                           (wb-map->plist v)
+                           v)))))
+
+;;; (wb-map->plist {:|a| 1 :|b| 2 :|c| {:d 4 :e 5}})
+
+;;; ---------------------------------------------------------------------
 ;;;  map utilities
 ;;; ---------------------------------------------------------------------
 
@@ -42,6 +60,17 @@
 ;;; (get-key { :a 1 :b 3} :name 'nope)
 ;;; (get-key { :a 1 :b 3 :name "Fred"} :name 'nope)
 
+
+(defmethod get-keys ((map fset:map))
+  (fset:convert 'list (fset:domain map)))
+
+;;; (get-keys { :a 1 :b 3 :name "Fred"})
+
+
+(defmethod get-values ((map fset:map))
+  (fset:convert 'list (fset:range map)))
+
+;;; (get-values { :a 1 :b 3 :name "Fred"})
 
 (defun plist->map (plist)
   (convert 'wb-map
@@ -73,6 +102,20 @@
 
 (defun trim (s)
   (string-trim '(#\Space #\Newline #\Backspace #\Tab #\Linefeed #\Page #\Return #\Rubout) s))
+
+
+;;; ---------------------------------------------------------------------
+;;;  symbol utilities
+;;; ---------------------------------------------------------------------
+
+(defmethod as-keyword ((s string))
+  (intern s :keyword))
+
+(defmethod as-keyword ((s symbol))
+  (intern (symbol-name s) :keyword))
+
+(defmethod as-string ((s symbol))
+  (symbol-name s))
 
 ;;; ---------------------------------------------------------------------
 ;;;  time utilities

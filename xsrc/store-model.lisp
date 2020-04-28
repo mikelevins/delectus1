@@ -42,6 +42,45 @@
 ;;; - sync: records a successful synchronization with another copy
 ;;;   of the list
 
+
+;;; ---------------------------------------------------------------------
+;;; helpers
+;;; ---------------------------------------------------------------------
+
+(defun make-default-columns-data ()
+  (let ((default-column-identity (makeid)))
+    {(as-keyword default-column-identity)
+     {:|id| default-column-identity
+       :|name| "Item"
+       :|type| "TEXT"
+       :|order| *default-initial-column-order*
+       :|title| :false
+       :|subtitle| :false
+       :|sort| :false
+       :|deleted| :false}}))
+
+;;; (make-default-columns-data)
+
+(defmethod db-ensure-columns-exist ((db sqlite-handle) (columns-data wb-map))
+  (let* ((supplied-column-ids (get-keys columns-data))
+         (supplied-column-labels (mapcar #'as-string supplied-column-ids))
+         (found-columns (db-sqlite-table-column-info db *listdata-table-name*))
+         (found-column-labels (mapcar #'column-info-name found-columns))
+         (missing-column-ids (set-difference supplied-column-labels found-column-labels :test #'equal)))
+    (loop for missing-colid in missing-column-ids
+       do (let* ((colid (as-keyword missing-colid))
+                 (coldata (get-key columns-data colid nil)))
+            (assert (typep coldata 'wb-map)()
+                    "Expected a wb-map as a column-description, but found ~S"
+                    coldata)
+            (bind ((coljson (to-json coldata))
+                   (col-sql col-vals ()))
+              )))))
+
+;;; (setf $coldata (make-default-columns-data))
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-ensure-columns-exist db $coldata))
+
+
 ;;; =====================================================================
 ;;;
 ;;; list files
@@ -53,25 +92,25 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-allocate-next-revision ((db sqlite-handle))
-  (let ((rev (execute-single db (sqlgen::get-next-revision))))
-    (execute-single db (sqlgen::increment-next-revision))
+  (let ((rev (execute-single db (sqlgen-get-next-revision))))
+    (execute-single db (sqlgen-increment-next-revision))
     rev))
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-allocate-next-revision db))
 
 (defmethod db-allocate-next-iref ((db sqlite-handle))
-  (let ((iref (execute-single db (sqlgen::get-next-iref))))
-    (execute-single db (sqlgen::increment-next-iref))
+  (let ((iref (execute-single db (sqlgen-get-next-iref))))
+    (execute-single db (sqlgen-increment-next-iref))
     ;; allocating an iref is a change in the list file; we must
     ;; therefore also increment the revision counter
-    (execute-single db (sqlgen::increment-next-revision))
+    (execute-single db (sqlgen-increment-next-revision))
     iref))
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-allocate-next-iref db))
 
 (defmethod db-register-identity ((db sqlite-handle)(identity string))
   (bind ((iref (db-allocate-next-iref db))
-         (id-sql id-vals (sqlgen::insert-identity iref identity)))
+         (id-sql id-vals (sqlgen-insert-identity iref identity)))
     (apply 'execute-non-query db id-sql id-vals)
     iref))
 
@@ -110,7 +149,7 @@
   ;; - insert the list origin
   ;; - insert 0 for the `next_revision` and `next_iref` fields
   (bind ((listid (or list-id (makeid)))
-         (sql vals (sqlgen::init-delectus-table list-id origin format-version 0 0)))
+         (sql vals (sqlgen-init-delectus-table list-id origin format-version 0 0)))
     (apply 'execute-non-query db sql vals)))
 
 (defmethod db-create-delectus-table ((db sqlite-handle)
@@ -120,7 +159,7 @@
                                        (format-version +delectus-format-version+))
   (let* ((list-id (or list-id (makeid))))
     ;; create the delectus table
-    (bind ((sql vals (sqlgen::create-delectus-table)))
+    (bind ((sql vals (sqlgen-create-delectus-table)))
       (apply 'execute-non-query db sql vals))
     ;; populate it
     (db-initialize-delectus-table db :list-id list-id :origin origin :format-version format-version)))
@@ -138,9 +177,9 @@
   ;; - insert local-origin with the next iref as its key
   ;; - insert the list-id with the next iref as its key
   (bind ((origin-iref (db-allocate-next-iref db))
-         (origin-sql origin-vals (sqlgen::insert-identity origin-iref local-origin))
+         (origin-sql origin-vals (sqlgen-insert-identity origin-iref local-origin))
          (list-iref (db-allocate-next-iref db))
-         (list-sql list-vals (sqlgen::insert-identity list-iref list-id)))
+         (list-sql list-vals (sqlgen-insert-identity list-iref list-id)))
     (apply 'execute-non-query db origin-sql origin-vals)
     (apply 'execute-non-query db list-sql list-vals)))
 
@@ -148,7 +187,7 @@
                                        &key
                                          (local-origin *origin*)
                                          (list-id nil))
-  (bind ((sql vals (sqlgen::create-identities-table)))
+  (bind ((sql vals (sqlgen-create-identities-table)))
     (apply 'execute-non-query db sql vals)
     (db-initialize-identities-table db :local-origin local-origin :list-id list-id)))
 
@@ -156,7 +195,7 @@
 ;;; ---------------------------------------------------------------------
 ;;; the log of ops defining the contents of the list
 (defmethod db-create-listdata-table ((db sqlite-handle))
-  (bind ((sql vals (sqlgen::create-listdata-table)))
+  (bind ((sql vals (sqlgen-create-listdata-table)))
     (apply 'execute-non-query db sql vals)))
 
 
@@ -166,7 +205,7 @@
 ;;; the standard index
 
 (defun db-create-item-revision-origin-index (db)
-  (bind ((sql vals (sqlgen::create-item-revision-origin-index)))
+  (bind ((sql vals (sqlgen-create-item-revision-origin-index)))
     (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -180,9 +219,16 @@
          (origin-iref (db-identity-to-iref db *origin*))
          (list-name-timestamp (now-timestamp)))
     ;; insert listname
-    (bind ((sql vals (sqlgen::insert-listname list-name op-iref origin-iref list-name-timestamp)))
+    (bind ((sql vals (sqlgen-insert-listname-op list-name op-iref origin-iref list-name-timestamp)))
       (apply 'execute-non-query db sql vals))
+
     ;; insert columns with default column
+    ;; (bind ((columns-timestamp (now-timestamp))
+    ;;        (default-columns-data (make-default-columns-data))
+    ;;        (sql vals (sqlgen-insert-columns-op op-iref origin-iref columns-timestamp default-columns-data)))
+    ;;   (db-ensure-columns-exist db default-columns-data)
+    ;;   (apply 'execute-non-query db sql vals))
+
     ;; insert default item
     ))
 
@@ -230,7 +276,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-add-userdata-column ((db sqlite-handle) (column-id string))
-  (bind ((sql vals (sqlgen::add-userdata-column column-id "TEXT")))
+  (bind ((sql vals (sqlgen-add-userdata-column column-id "TEXT")))
     (apply 'execute-non-query db sql vals)))
 
 (defmethod add-userdata-column ((db-path pathname) (column-id string))
