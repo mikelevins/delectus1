@@ -8,40 +8,38 @@ mikel evins
 .Terminology used in this manual
 |===
 | term |  definition
-| *column* | A named collection of *fields* with shared attributes from all *items* in a *list*.
-| *identity* |  A unique identification of some object, distinct from all others. Delectus assigns identities to *nodes*, *lists*, *ops*, and other data objects. It represents an *identity* using the `identity` datatype.
+| *column* | A named collection of *fields* with shared attributes from all *items* in a *list*, stored as a column in a SQLite table.
+| *identity* |  A unique identification of some object, distinct from all others. Delectus uses identities for *nodes*, *lists*, *ops*, and other objects it works with. It represents an *identity* using the `identity` datatype.
 | *field* | A container for a *value* occupying a single *column* of an *item*.
-| *item* | An individual, user-created entry in a list. An item is a set of *fields*, one for each *column* of the *list*.
-| *list* |  A Delectus document containing data organized in rows and columns, one *item* to each row, and one *field* to each column. An item is a collection of fields; a list is a collection of items.
-| *metadata* | Attributes of an *item* other than its *userdata*, such as the time it was created, and its *identity*. Stored in each *item* alongside its *userdata*. Delectus automatically creates and maintains metadata without user intervention.
-| *node* | A Delectus process running on a specific user account on a specific device. Delectus assigns a distinct *identity* to each node to help it reliably merge data from different nodes.
+| *item* | An individual, user-created entry in a list, stored as a row in a SQLite table.
+| *list* |  A Delectus document containing data organized in rows and columns, one *item* to each row, and one *field* to each column. An item is a collection of fields; a list is a collection of items. Delectus stores each list in its own SQLite file, along with some associated *metadata*.
+| *metadata* and *userdata* | *Userdata* is the information that users create and store in Delectus lists. *Metadata* is information that Delectus automatically creates and stores alongdie the userdata, in order to support application features. For example, when you add the item "milk" to a shopping list, the text "milk" is *userdata*; the timestamp recorded when you save the item is *metadata*.
+| *node* | A Delectus process running on a specific user account on a specific device. Delectus assigns a distinct *identity* to each node, and records the `identity` of the node that writes each *op* in a list file.
 | *op* |  A structure in a list file that represents an update to the state of the list. Delectus list data is represented as a time-ordered append-only log of ops.
-| *userdata* | User-created values stored in list *items*. Distinguished from *metadata*. The user directly creates and controls userdata fields..
 |===
 
 
 == Delectus data types
 
-=== Metadata
+=== Metadata and userdata
 
-Delectus represents metadata using SQLite `NULL`, `NUMBER`, and `TEXT values.`
+Delectus represents *metadata* using SQLite `NULL`, `NUMBER`, and `TEXT values.`
 
-Delectus represents userdata using JSON values stored as `TEXT`.
+Delectus represents *userdata* using JSON values stored as `TEXT`.
 
 [cols="1,2,5",options="header"]
 .Data types in ops and op messages
 |===
 | type name | Metadata or Userdata |  description
-| `Boolean` | Userdata |  A type affinity representing values that can be true or false. 'null' is allowed, and is treated as `false`.
-| `column` | Userdata | A JSON object that defines a column's attributes. See the definition of `<<column-definition>>`, below.
-| `field` | Userdata | A *value* container in a *userdata* column. Fields contain JSON values.
-| `identity` | Metadata | A globally unique string derived from a v1 UUID, used in Delectus to uniquely identify certain types of objects, including *nodes*, *lists*, *ops*, *columns*, and *items*.
-| `iref` | Metadata | An integer that uniquely identifies an `_identity_` within a list file. An `iref` is valid only inside the list file that contains it.
-| `number` | Metadata and Userdata | Any JSON number.
-| `sort-order` | Userdata | `null`, `'ASC'`, or `'DESC'`. Specifies whether a column is the list's sort column, and if so, which direction to sort.
-| `string` | Metadata and Userdata | A text string.
-| `timestamp` | Metadata | An ISO-8601 time string.
-| `value` | Userdata | JSON `null`, `'boolean'`, `'number'`, or `'string'`. Specifies the types of values the user expects a column to contain.
+| `Boolean` | userdata |  JSON `true`, `false`, or `null`. `null` is treated as `false`.
+| `column` | userdata | A JSON object that defines a column's attributes. See the `<<column-definition>>` definition, below.
+| `field` | userdata | A *value* container in a *userdata* column. Fields contain JSON values.
+| `identity` | metadata | A globally unique string derived from a v1 UUID, used in Delectus to uniquely identify certain types of objects, including *nodes*, *lists*, *ops*, *columns*, and *items*.
+| `number` | metadata and userdata | Any JSON number.
+| `sort-order` | userdata | `null`, `'ASC'`, or `'DESC'`. Specifies whether a column is the list's sort column, and if so, which direction to sort.
+| `string` | metadata and userdata | A text string.
+| `timestamp` | metadata | An ISO-8601 time string.
+| `value` | userdata | JSON `null`, `'boolean'`, `'number'`, or `'string'`. Specifies the types of values the user expects a column to contain.
 |===
 
 === `column` [[column-definition, column]]
@@ -68,32 +66,9 @@ A `column` is a JSON object of the following form:
 
 An *op* is a structure that represents an update to the state of a Delectus list. A Delectus list is represented as an append-only time-ordered log of ops. Each type of op performs a different type of update to a list.
 
-An op is represented in a Delectus file as a row in the `list_data` table. The `list_data` table is structured as a time-ordered log of ops. Delectus only appends to the `list_data` table; it never deletes or overwrites existing data. Updating an existing op therefore means adding a new op that supersedes the old one.
+An op is represented in a Delectus file as a row in the `listdata` table. The `listdata` table is structured as a time-ordered log of ops. Delectus only appends to the `listdata` table; it never deletes or overwrites existing data. Updating an existing op therefore means adding a new op that supersedes the old one.
 
 This append-only discipline enables Delectus to safely merge data from concurrently-modified copies of a list without losing any data.
-
-=== Op messages
-
-An *op message* is an op serialized to a JSON object. It's a portable representation of an op. Given an op message, Delectus can convert it into an op for insertion into a list file.
-
-The differences between an *op* and an *op message* are:
-
-. An *op* is a row in a SQLite database; an *op message* is a JSON object representing the contents of that row.
-. In an op, Delectus uses an `iref` to represent an *identity*. In an op message, it uses the `identity` string that the `iref` points to. This is because each `iref` is valid only inside the list file that contains it, but op messages must be portable across files.
-. In an op, each userdata column is an SQLite column whose label is the `identity` string of the column. In an op message, all userdata columns are combined into a JSON `<<columns-map-definition>>` object.
-
-=== `columns-map` [[columns-map-definition, columns-map]]
-
-A `columns-map` is a JSON object of the following form:
-
-[JSON]
-----
-{
-  <identity>*: <column>*,
-}
-----
-
-Each `<identity>` is an `identity` string that identifies a specific column. Each `<column>` is a JSON `<<column-definition>>` object that specifies the attributes of the column.
 
 == Op structure
 
@@ -106,11 +81,11 @@ Records that Delectus successfully synchronized the lists's state with a differe
 |===
 | field | permitted values | description
 | `type` | `"sync"` | Identifies the type of op.
-| `opid` | `_iref_` | Uniquely identifies the op.
-| `origin` | `_iref_` | Uniquely identifies the node that created the op.
+| `opid` | `_identity_` | Uniquely identifies the op.
+| `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
-| `peer` | `_iref_` | Uniquely identifies the node from which the sync data was imported.
-| `file` | `_iref_` | Uniquely identifies the list file whose data the sync imported.
+| `peer` | `_identity_` | Uniquely identifies the node from which the sync data was imported.
+| `file` | `_identity_` | Uniquely identifies the list file whose data the sync imported.
 |===
 
 === `listname`
@@ -120,8 +95,8 @@ Records that Delectus successfully synchronized the lists's state with a differe
 |===
 | field | permitted values | description
 | `type` | `"listname"` | Identifies the type of op.
-| `opid` | `_iref_` | Uniquely identifies the op.
-| `origin` | `_iref_` | Uniquely identifies the node that created the op.
+| `opid` | `_identity_` | Uniquely identifies the op.
+| `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
 | `name` | `_string_` | The user-assignable name of the list.
 |===
@@ -133,8 +108,8 @@ Records that Delectus successfully synchronized the lists's state with a differe
 |===
 | field | permitted values | description
 | `type` | `"columns"` | Identifies the type of op.
-| `opid` | `_iref_` | Uniquely identifies the op.
-| `origin` | `_iref_` | Uniquely identifies the node that created the op.
+| `opid` | `_identity_` | Uniquely identifies the op.
+| `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
 | `_[identity]+_` | `_column_*` | The list's column attributes.
 |===
@@ -150,35 +125,30 @@ The `_[identity]+_` string is also used as the label of the SQLite column that s
 |===
 | field | permitted values | description
 | `type` | `"item"` | Identifies the type of op.
-| `opid` | `_iref_` | Uniquely identifies the op.
-| `origin` | `_iref_` | Uniquely identifies the node that created the op.
+| `opid` | `_identity_` | Uniquely identifies the op.
+| `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
-| `item` | `_iref_` | Uniquely identifies the list item.
+| `item` | `_identity_` | Uniquely identifies the list item.
 | `deleted` | `_Boolean_` | Whether the item is marked deleted.
 | `_[identity]+_` | `_field_*` | The field values for each column of the item.
 |===
 
 The notation `_[identity]+_` represents one or more columns whose labels are `identity` strings. There is one such field in the `item` op for each userdata column in the list. The contents of each one is the value of the corresponding field of the item.
 
+== Tables
 
-=== Userdata in op messages
+== The `delectus` table
 
-All *Userdata* columns in an op are converted to an embedded JSON object that maps the `identity` label of each column to its value in the op. If it's a `columns` op, then the value is another JSON object giving the `column` attributes; if it's an `item` op, then the value is the item's value for that column.
+The `delectus` table stores data identifying the file, the list, and the Delectus node that created them. It also records the version of the file format used.
 
-=== `iref` and `identity`
+== The `listdata` table
 
-Inside a list file, Delectus uses `iref` numbers for speed and compactness when referring to *identities*. An `iref`, however, has meaning only inside the particular list file that created it. In that file, it refers to an `identity` string that uniquely identifies some Delectus object.
+The `listdata` table contains the log of ops, and therefore the data and metadata of the list.
 
-In some other file, the same `iref` number might refer to a different `identity` string, or it might refer to nothing at all. In order to preserve the meanings of identity references, Delectus converts all `iref` numbers to the `identity` strings they refer to when serializing ops to op messages.
+It stores metadata in five SQLite columns named `type`, `opid`, `origin`, and `timestamp`, and `metadata`.
 
-When deserializing an op message to an op in a destination file, Delectus converts the `identity` strings back to `iref` numbers, using the `iref`-to-`identity` mapping defined in the destination file (and adding new mappings to the file's `identities` table as-needed).
+It stores userdata in a variable number of columns. Each column's label in the SQLite file is an `identity` string, and its contents is a JSON value.
 
-=== Examples of op messages
+In `columns` ops, the JSON value in the column is a `column` object that gives the attributes of the column--its user-assigned name and type, whether it has been marked deleted, and a few other attributes. See the <<column-definition>> definition for a full description.
 
-Let's suppose we create a new Delectus list named `'Test List'`. We let Delectus create it with the default initial column named `'Item'`, and then we add an item to it whose single value is the string `'A sample item'`. This sequence of events yields a sequence of three ops:
-
-. a `listname` to set the name of the list to `'Test List'`.
-. a `columns` to create the `'Item'` column.
-. an `item` to insert the string `'A sample item'` into the single default column.
-
-We can compare the *ops* that Delectus creates in the list file to the *op messages* that it creates when transferring the data to some other list file.
+In `item` ops, the JSON value is the user-assigned value in that column of the item.
