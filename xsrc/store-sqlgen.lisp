@@ -48,7 +48,7 @@
          " `fileid`, "
          " `origin`, "
          " `parent`, "
-         " `format``)"
+         " `format` )"
          "VALUES (?, ?, ?, ?, ?)"]
         *delectus-table-name*)
    (list list-id file-id list-origin list-parent format-version)))
