@@ -88,6 +88,13 @@
 ;;; (sqlgen-create-item-opid-origin-index)
 
 ;;; ---------------------------------------------------------------------
+;;; sqlgen-insert-sync-op
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-insert-sync-op (opid origin timestamp peer)
+  )
+
+;;; ---------------------------------------------------------------------
 ;;; sqlgen-insert-listname-op
 ;;; ---------------------------------------------------------------------
 
@@ -113,45 +120,14 @@
 ;;; sqlgen-insert-columns-op
 ;;; ---------------------------------------------------------------------
 
-(defun %sqlgen-columns-data-labels (columns-data)
-  (mapcar #'as-string (get-keys columns-data)))
-
-(defun %sqlgen-columns-data-objects (columns-data)
-  (get-values columns-data))
-
-(defun %sqlgen-columns-data-insert-parameters (columns-data)
-  (let ((lbls (columns-data-labels columns-data)))
-    (join-strings ", " lbls)))
-
-(defun %sqlgen-columns-data-insert-placeholders (columns-data)
-  (let* ((lbls (columns-data-labels columns-data))
-         (placeholders (mapcar (constantly "?")
-                               lbls)))
-    (join-strings ", " placeholders)))
-
-(defun %sqlgen-columns-data-insert-values (columns-data)
-  (mapcar #'to-json (columns-data-objects columns-data)))
-
 (defun sqlgen-insert-columns-op (opid origin timestamp columns-data)
-  (assert (integerp opid)() "You must supply an iref opid parameter; found ~S" opid)
-  (assert (integerp origin)() "You must supply an iref origin parameter; found ~S" origin)
-  (assert (stringp timestamp)() "You must supply a string timestamp parameter; found ~S" timestamp)
-  (let* ((column-labels (%sqlgen-columns-data-labels columns-data))
-         (column-objects (%sqlgen-columns-data-objects columns-data))
-         (insert-parameters-string (%sqlgen-columns-data-insert-parameters columns-data))
-         (insert-placeholders-string (%sqlgen-columns-data-insert-placeholders columns-data))
-         (insert-values (%sqlgen-columns-data-insert-values columns-data)))
-    (values
-     (delectus::trim
-      (format nil
-              "
+  )
 
-INSERT INTO `~A` (`type`, `opid`, `origin`, `timestamp`, `name`, `item`, `deleted`, `peer`, ~A) 
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ~A) 
+;;; ---------------------------------------------------------------------
+;;; sqlgen-insert-item-op
+;;; ---------------------------------------------------------------------
 
-" *listdata-table-name* insert-parameters-string insert-placeholders-string))
-     `("columns" ,opid ,origin ,timestamp nil nil nil nil ,@insert-values))))
-
-;;; (sqlgen-insert-columns-op 1 0 (now-timestamp) (make-default-columns-data))
+(defun sqlgen-insert-item-op (opid origin timestamp item-data)
+  )
 
 
