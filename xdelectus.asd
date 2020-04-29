@@ -31,21 +31,11 @@
                                      (:file "data-identities")   ; Delectus-specific UUID format
                                      (:file "data-json")         ; reading and writing JSON data
                                      (:file "store-column-info") ; sqlite column-info utils
-                                     (:file "store-sqlite")      ; operating on SQLite files
-                                     (:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
-                                     (:file "store-model")       ; store operations on Delectus model objects
-                                     ;;(:file "data-csv")          ; reading and writing CSV files
-                                     ;;(:file "store-columns")     ; modeling Delectus columns
-                                     ;;(:file "store-sql-utils")   ; helpers for sqlgen
-                                     ;;(:file "store-sqlgen")      ; generating SQL for the Dlectus store
+                                     ;;(:file "store-sqlite")      ; operating on SQLite files
+                                     ;;(:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
                                      ;;(:file "store-model")       ; store operations on Delectus model objects
-                                     ;; CAPI UI
-                                     ;;(:file "macos-constants")   ; constants to control macOS UI appearance
-                                     ;;(:file "macos-view-utils")  ; operations on native macOS widgets
-                                     ;;(:file "views-items-sheet") ; spreadsheet-like view
-                                     ;;(:file "views-card-list")   ; list-of-cards view
-                                     ;; Test data
-                                     ;;(:file "test-data")
+
+                                     ;;(:file "data-csv")          ; reading and writing CSV files
                                      ))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
