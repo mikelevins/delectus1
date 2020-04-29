@@ -35,7 +35,7 @@ Delectus represents *userdata* using JSON values stored as `TEXT`.
 | `column` | userdata | A JSON object that defines a column's attributes. See the `<<column-definition>>` definition, below.
 | `field` | userdata | A *value* container in a *userdata* column. Fields contain JSON values.
 | `identity` | metadata | A globally unique string derived from a v1 UUID, used in Delectus to uniquely identify certain types of objects, including *nodes*, *lists*, *ops*, *columns*, and *items*.
-| `metadata` | metadata | A JSON object giving op-specific metadata in addition to the common columns `type`, `opid`, `origin`, and `timestamp`. See the `<<metadata-definition>>` definition, below.
+| `metadata` | metadata | A JSON object giving op-specific metadata in addition to the common columns `optype`, `opid`, `origin`, and `timestamp`. See the `<<metadata-definition>>` definition, below.
 | `number` | metadata and userdata | Any JSON number.
 | `sort-order` | userdata | `null`, `'ASC'`, or `'DESC'`. Specifies whether a column is the list's sort column, and if so, which direction to sort.
 | `string` | metadata and userdata | A text string.
@@ -76,7 +76,7 @@ A `metadata` value is a JSON object of the following form:
 }
 ----
 
-`metadata` objects appear in all ops, where they specify attributes of the op in addition to those in the common columns, `type`, `opid`, `origin`, and `timestamp`.
+`metadata` objects appear in all ops, where they specify attributes of the op in addition to those in the common columns, `optype`, `opid`, `origin`, and `timestamp`.
 
 Each type of op uses only some of the fields of the `metadata` object. Fields that are not used in a given type of op are not present in the metadata object for that op. The fields used by the four types of ops are as follows:
 
@@ -124,7 +124,7 @@ The common shared structure is shown in table 5:
 .Common op structure
 |===
 | field | permitted values | description
-| `type` | `"sync"`,`"listname"`,`"columns"`,`"item"` | Identifies the type of op.
+| `optype` | `"sync"`,`"listname"`,`"columns"`,`"item"` | Identifies the type of op.
 | `opid` | `_identity_` | Uniquely identifies the op.
 | `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
@@ -176,7 +176,7 @@ The `listdata` table contains the log of ops, and therefore the data and metadat
 .Structure of the `listdata` table
 |===
 | field | permitted values | description
-| `type` | `"sync"`,`"listname"`,`"columns"`,`"item"` | Identifies the type of op.
+| `optype` | `"sync"`,`"listname"`,`"columns"`,`"item"` | Identifies the type of op.
 | `opid` | `_identity_` | Uniquely identifies the op.
 | `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
@@ -184,7 +184,7 @@ The `listdata` table contains the log of ops, and therefore the data and metadat
 | `_[identity]_*` | `_column_` or `_value_`  | The value of the column's field
 |===
 
-The columns `type`, `opid`, `origin`, `timestamp`, and `metadata` are always the same in every Delectus list file.
+The columns `optype`, `opid`, `origin`, `timestamp`, and `metadata` are always the same in every Delectus list file.
 
 The contents of the `metadata` column are always JSON <<metadata-definition>> objects, but the exact contents of the objects depend on the type of each op. See the <<metadata-definition>> definition, above, for details.
 

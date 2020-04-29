@@ -26,7 +26,7 @@
 (defparameter *delectus-table-name* "delectus")
 (defparameter *identities-table-name* "identities")
 (defparameter *listdata-table-name* "listdata")
-(defparameter *item-revision-origin-index-name* "idx_item_revision_origin")
+(defparameter *item-opid-origin-index-name* "idx_item_opid_origin")
 
 ;;; column parameters
 ;;; ---------------------------------------------------------------------
@@ -36,3 +36,11 @@
 (defparameter *minimum-column-order* 10.0)
 (defparameter *default-initial-column-order* *minimum-column-order*)
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
+
+;;; op parameters
+;;; ---------------------------------------------------------------------
+
+(defparameter *sync-optype* "sync")
+(defparameter *listname-optype* "listname")
+(defparameter *columns-optype* "columns")
+(defparameter *item-optype* "items")
