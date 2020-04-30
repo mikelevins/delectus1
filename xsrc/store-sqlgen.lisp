@@ -65,7 +65,7 @@
   (values
    (sql ["CREATE TABLE `~A` ("
          " `optype` TEXT, "
-         " `opid` TEXT, "
+         " `opid` INTEGER, "
          " `origin` TEXT, "
          " `timestamp` TEXT, "
          " `metadata` TEXT )"]
