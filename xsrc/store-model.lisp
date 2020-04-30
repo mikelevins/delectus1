@@ -58,6 +58,7 @@
         (1+ max-opid)
         0)))
 
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-get-next-opid db))
 
 ;;; =====================================================================
 ;;;
