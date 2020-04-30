@@ -20,6 +20,19 @@
     (apply 'format nil format-string parameters)))
 
 ;;; ---------------------------------------------------------------------
+;;; sqlgen-get-next-opid
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-max-opid ()
+  (values
+   (sql ["SELECT MAX(`~A`) FROM `~A`"]
+        *opid-column-name*
+        *listdata-table-name*)
+   nil))
+
+;;; (sqlgen-get-max-opid)
+
+;;; ---------------------------------------------------------------------
 ;;; sqlgen-create-delectus-table
 ;;; ---------------------------------------------------------------------
 
@@ -102,7 +115,7 @@
 
 (defun sqlgen-insert-listname-op (list-name opid origin timestamp)
   (assert (stringp list-name)() "You must supply a string list-name parameter; found ~S" list-name)
-  (assert (stringp opid)() "You must supply an opid opid parameter; found ~S" opid)
+  (assert (integerp opid)() "You must supply an integer opid parameter; found ~S" opid)
   (assert (stringp origin)() "You must supply an iref origin parameter; found ~S" origin)
   (assert (stringp timestamp)() "You must supply a string timestamp parameter; found ~S" timestamp)
   (values

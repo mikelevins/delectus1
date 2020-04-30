@@ -26,6 +26,9 @@
 (defparameter *delectus-table-name* "delectus")
 (defparameter *identities-table-name* "identities")
 (defparameter *listdata-table-name* "listdata")
+
+(defparameter *opid-column-name* "opid")
+
 (defparameter *item-opid-origin-index-name* "idx_item_opid_origin")
 
 ;;; column parameters

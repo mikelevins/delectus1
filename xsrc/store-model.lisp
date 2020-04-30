@@ -51,6 +51,14 @@
 ;;; (make-default-columns-data)
 
 
+(defmethod db-get-next-opid ((db sqlite-handle))
+  (bind ((max-opid-sql max-opid-vals (sqlgen-get-max-opid))
+         (max-opid (apply 'execute-single db max-opid-sql max-opid-vals)))
+    (if max-opid
+        (1+ max-opid)
+        0)))
+
+
 ;;; =====================================================================
 ;;;
 ;;; list files
@@ -100,6 +108,28 @@
   (bind ((sql vals (sqlgen-create-listdata-table)))
     (apply 'execute-non-query db sql vals)))
 
+
+;;; default listdata ops
+;;; --------------------
+
+(defmethod db-insert-default-listdata-ops ((db sqlite-handle)
+                                           &key
+                                             (list-name nil)
+                                             (opid nil)
+                                             (origin *origin*)
+                                             (timestamp nil))
+  (assert (stringp list-name) ()
+          "You must supply a string :LIST-NAME parameter; found ~S"
+          list-name)
+  ;; insert the default listdata op
+  (bind ((opid (db-get-next-opid db))
+         (timestamp (now-timestamp))
+         (listname-sql listname-vals (sqlgen-insert-listname-op list-name opid origin timestamp)))
+    (apply 'execute-non-query db listname-sql listname-vals))
+  ;; insert the defaultcolumns op
+  ;; insert the default item op
+  )
+
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
 ;;; ---------------------------------------------------------------------
@@ -121,8 +151,8 @@
         (db-create-delectus-table db :list-id list-id :file-id file-id :parent-id parent-id
                                   :origin local-origin :format-version format-version)
         (db-create-listdata-table db)
-        ;;(when create-default-userdata
-        ;;  (db-insert-default-listdata-ops db :list-name list-name))
+        (when create-default-userdata
+         (db-insert-default-listdata-ops db :list-name list-name))
         ;;(db-create-item-opid-origin-index db)
         )))
   db-path)
