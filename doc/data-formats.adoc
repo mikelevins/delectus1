@@ -118,6 +118,13 @@ Each type of op uses only some of the fields of the `metadata` object. Fields th
 | `'item'` | `item`, `deleted`
 |===
 
+=== `opid` and `item` numbers
+
+Delectus identifies each `op` and each `item` in a list file with an integer. Each list file maintains an `opid` counter and an `item` counter. When Delectus inserts a new op, it increments the `opid` counter and stores the number in the `opid` field of the new op. When it creates a new `item` op, it increments the `item` counter and stores the number in the `metadata.item` field of the `item` op.
+
+Delectus nodes on different devices or accounts may duplicate one another's `opid` and `item` numbers, but Delectus also assigns an `identity`, called `'origin'` to each op. Although the `opid` and `item` are not globally unique, the combination of each with an `origin` is. Delectus is therefore able to uniquely distinguish each op by inspecting its `opid` and `origin`, and it can similarly distinguish each `item` by inspecting its `item` number and `origin`.
+
+Delectus does not store the `opid` and `item` counters in the list file. Instead, when it assigns a new `opid`, it queries the `listdata` table for the current maximum `opid` and adds one to obtain the new `opid`. It gets a new `item` number in the same way, using the `metadata.item` field.
 
 == Ops
 
@@ -201,8 +208,6 @@ The `delectus` table stores data identifying the file, the list, and the Delectu
 | `origin` | `_identity_`  | The unique identity of the Delectus node that created this list file
 | `parent` | `_identity_` or `NULL`  | The unique identity of the Delectus list file from which this file was derived by a *compaction*
 | `format` | `_TEXT_`  | The version of the Delectus file format in this list file
-| `next_opid` | `_INTEGER_`  | The next `opid` number to be assigned.
-| `next_item` | `_INTEGER_`  | The next `item` number to be assigned.
 |===
 
 

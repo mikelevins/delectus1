@@ -30,9 +30,7 @@
          " `fileid` TEXT, "
          " `origin` TEXT, "
          " `parent` TEXT, "
-         " `format` TEXT, "
-         " `next_opid` INTEGER, "
-         " `next_item` INTEGER "
+         " `format` TEXT "
          ")"]
         *delectus-table-name*)
    nil))
@@ -44,22 +42,20 @@
 ;;; sqlgen-init-delectus-table
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-init-delectus-table (list-id file-id list-origin list-parent format-version next-opid next-item)
+(defun sqlgen-init-delectus-table (list-id file-id list-origin list-parent format-version)
   (values
    (sql ["INSERT INTO `~A` ("
          " `listid`, "
          " `fileid`, "
          " `origin`, "
          " `parent`, "
-         " `format`, "
-         " `next_opid`, "
-         " `next_item` "
+         " `format` "
          ")"
          "VALUES (?, ?, ?, ?, ?, ?, ?)"]
         *delectus-table-name*)
    (list list-id file-id list-origin list-parent format-version next-opid next-item)))
 
-;;; (sqlgen-init-delectus-table (makeid)(makeid) *origin* (makeid) +delectus-format-version+ 0 0)
+;;; (sqlgen-init-delectus-table (makeid)(makeid) *origin* (makeid) +delectus-format-version+)
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen-create-listdata-table
