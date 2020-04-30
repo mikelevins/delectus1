@@ -77,8 +77,8 @@
                                      &key
                                        (list-id nil)
                                        (file-id nil)
-                                       (parent-id nil)
                                        (origin *origin*)
+                                       (parent-id nil)
                                        (format-version +delectus-format-version+))
   (let* ((list-id (or list-id (makeid)))
          (file-id (or file-id (makeid))))
@@ -87,8 +87,7 @@
       (apply 'execute-non-query db sql vals))
     ;; populate it
     (db-initialize-delectus-table db :list-id list-id :file-id file-id :parent-id parent-id
-                                  :origin origin :format-version format-version)
-    ))
+                                  :origin origin :format-version format-version)))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file

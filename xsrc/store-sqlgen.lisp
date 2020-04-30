@@ -51,9 +51,9 @@
          " `parent`, "
          " `format` "
          ")"
-         "VALUES (?, ?, ?, ?, ?, ?, ?)"]
+         "VALUES (?, ?, ?, ?, ?)"]
         *delectus-table-name*)
-   (list list-id file-id list-origin list-parent format-version next-opid next-item)))
+   (list list-id file-id list-origin list-parent format-version)))
 
 ;;; (sqlgen-init-delectus-table (makeid)(makeid) *origin* (makeid) +delectus-format-version+)
 
