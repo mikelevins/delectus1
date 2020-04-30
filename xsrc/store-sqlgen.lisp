@@ -30,7 +30,10 @@
          " `fileid` TEXT, "
          " `origin` TEXT, "
          " `parent` TEXT, "
-         " `format` TEXT )"]
+         " `format` TEXT, "
+         " `next_opid` INTEGER, "
+         " `next_item` INTEGER "
+         ")"]
         *delectus-table-name*)
    nil))
 
@@ -41,19 +44,22 @@
 ;;; sqlgen-init-delectus-table
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-init-delectus-table (list-id file-id list-origin list-parent format-version)
+(defun sqlgen-init-delectus-table (list-id file-id list-origin list-parent format-version next-opid next-item)
   (values
    (sql ["INSERT INTO `~A` ("
          " `listid`, "
          " `fileid`, "
          " `origin`, "
          " `parent`, "
-         " `format` )"
-         "VALUES (?, ?, ?, ?, ?)"]
+         " `format`, "
+         " `next_opid`, "
+         " `next_item` "
+         ")"
+         "VALUES (?, ?, ?, ?, ?, ?, ?)"]
         *delectus-table-name*)
-   (list list-id file-id list-origin list-parent format-version)))
+   (list list-id file-id list-origin list-parent format-version next-opid next-item)))
 
-;;; (sqlgen-init-delectus-table (makeid)(makeid) *origin* (makeid) +delectus-format-version+)
+;;; (sqlgen-init-delectus-table (makeid)(makeid) *origin* (makeid) +delectus-format-version+ 0 0)
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen-create-listdata-table
@@ -62,7 +68,7 @@
 (defun sqlgen-create-listdata-table ()
   (values
    (sql ["CREATE TABLE `~A` ("
-         " `type` TEXT, "
+         " `optype` TEXT, "
          " `opid` TEXT, "
          " `origin` TEXT, "
          " `timestamp` TEXT, "
@@ -74,7 +80,7 @@
 
 
 ;;; ---------------------------------------------------------------------
-;;; sqlgen-create-item-revision-origin-index
+;;; sqlgen-create-item-opid-origin-index
 ;;; ---------------------------------------------------------------------
 
 (defun sqlgen-create-item-opid-origin-index ()

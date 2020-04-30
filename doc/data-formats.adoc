@@ -12,10 +12,10 @@ mikel evins
 | *identity* |  A unique identification of some object, distinct from all others. Delectus uses identities for *nodes*, *lists*, *ops*, and other objects it works with. It represents an *identity* using the `identity` datatype.
 | *field* | A container for a *value* occupying a single *column* of an *item*.
 | *item* | An individual, user-created entry in a list, stored as a row in a SQLite table.
-| *list* |  A Delectus document containing data organized in rows and columns, one *item* to each row, and one *field* to each column. An item is a collection of fields; a list is a collection of items. Delectus stores each list in its own SQLite file, along with some associated *metadata*.
-| *metadata* and *userdata* | *Userdata* is the information that users create and store in Delectus lists. *Metadata* is information that Delectus automatically creates and stores alongside the userdata, in order to support application features. For example, when you add the item "milk" to a shopping list, the text "milk" is *userdata*; the timestamp recorded when you save the item is *metadata*.
-| *node* | A Delectus process running on a specific user account on a specific device. Delectus assigns a distinct *identity* to each node, and records the `identity` of the node that writes each *op* in a list file.
-| *op* |  A structure in a list file that represents an update to the state of the list. Delectus list data is represented as a time-ordered append-only log of ops.
+| *list* |  A Delectus document containing data organized in rows and columns, one *item* to each row, and one *field* to each column of the row. An item is a collection of fields; a list is a collection of items. Delectus stores each list in its own SQLite file, along with some associated *metadata*.
+| *metadata* and *userdata* | *Userdata* is the information that users create and store in Delectus lists. *Metadata* is information that Delectus automatically creates and stores alongside the userdata in order to support application features. For example, when you add the item "milk" to a shopping list, the text "milk" is *userdata*; the timestamp recorded when you save the item is *metadata*.
+| *node* | A Delectus process running on a specific user account on a specific device. Delectus assigns a distinct *identity* to each node, and records the `identity` of the node that makes each change to a list file.
+| *op* |  A structure in a list file that represents an update to the state of the list. Represented as a row in a SQLite table. Delectus list data is represented as a time-ordered append-only log of ops.
 |===
 
 
@@ -27,15 +27,16 @@ Delectus represents *metadata* using SQLite `NULL`, `NUMBER`, and `TEXT values.`
 
 Delectus represents *userdata* using JSON values stored as `TEXT`.
 
+=== Datatypes
+
 [cols="1,2,5",options="header"]
-.Data types in ops and op messages
+.Datatypes in ops
 |===
 | type name | Metadata or Userdata |  description
-| `Boolean` | userdata |  JSON `true`, `false`, or `null`. `null` is treated as `false`.
+| `Boolean` | userdata |  JSON `true`, `false`, or `null`. `null` is treated as `false` for logical purposes.
 | `column` | userdata | A JSON object that defines a column's attributes. See the `<<column-definition>>` definition, below.
-| `field` | userdata | A *value* container in a *userdata* column. Fields contain JSON values.
-| `identity` | metadata | A globally unique string derived from a v1 UUID, used in Delectus to uniquely identify certain types of objects, including *nodes*, *lists*, *ops*, *columns*, and *items*.
-| `metadata` | metadata | A JSON object giving op-specific metadata in addition to the common columns `optype`, `opid`, `origin`, and `timestamp`. See the `<<metadata-definition>>` definition, below.
+| `identity` | metadata | A globally unique string derived from a UUID, used in Delectus to uniquely identify certain types of objects, including *nodes*, *lists*, *ops*, *columns*, and *items*.
+| `metadata` | metadata | A JSON object giving op-specific metadata in addition to the common metadata columns `optype`, `opid`, `origin`, and `timestamp`. See the `<<metadata-definition>>` definition, below.
 | `number` | metadata and userdata | Any JSON number.
 | `sort-order` | userdata | `null`, `'ASC'`, or `'DESC'`. Specifies whether a column is the list's sort column, and if so, which direction to sort.
 | `string` | metadata and userdata | A text string.
