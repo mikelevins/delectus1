@@ -13,7 +13,7 @@
 ;;; TODO: add a config subsystem and store this value in per-node
 ;;; configuration
 
-(defparameter *origin* "9447d300752b11ea8256d9dd744b5501")
+(defparameter *origin* "I9447d300752b11ea8256d9dd744b5501")
 
 ;;; TODO: add logic for initializing parameters appropriately in a delivered app
 

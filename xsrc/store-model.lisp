@@ -60,6 +60,9 @@
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-get-next-opid db))
 
+(defmethod db-ensure-columns-exist ((db sqlite-handle) (columns-data wb-map))
+  )
+
 ;;; =====================================================================
 ;;;
 ;;; list files
@@ -128,6 +131,11 @@
          (listname-sql listname-vals (sqlgen-insert-listname-op list-name opid origin timestamp)))
     (apply 'execute-non-query db listname-sql listname-vals))
   ;; insert the defaultcolumns op
+  (bind ((coldata (make-default-columns-data))
+         (timestamp (now-timestamp))
+         (columns-sql columns-vals (sqlgen-insert-columns-op opid origin timestamp coldata)))
+    (db-ensure-columns-exist db coldata)
+    (apply 'execute-non-query db columns-sql columns-vals))
   ;; insert the default item op
   )
 

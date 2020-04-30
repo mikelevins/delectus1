@@ -107,7 +107,9 @@
 ;;; ---------------------------------------------------------------------
 
 (defun sqlgen-insert-sync-op (opid origin timestamp peer)
-  )
+  (values
+   (sql [])
+   (list  *sync-optype* )))
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen-insert-listname-op
@@ -127,7 +129,7 @@
          " `metadata`) "
          "VALUES (?, ?, ?, ?, ?)"]
         *listdata-table-name*)
-   (list "listname" opid origin timestamp nil)))
+   (list *listname-optype* opid origin timestamp nil)))
 
 ;;; (sqlgen-insert-listname-op "Test" (makeid) *origin* (now-timestamp))
 
@@ -135,14 +137,55 @@
 ;;; sqlgen-insert-columns-op
 ;;; ---------------------------------------------------------------------
 
+(defun %sql-column-parameters-string (columns-data)
+  (join-strings ", "
+                (let ((param-strings (mapcar (lambda (k)(format nil "`~A`" (symbol-name k)))
+                                             (get-keys columns-data))))
+                  param-strings)))
+
+;;; (%sql-column-parameters-string (make-default-columns-data))
+
+;;; generate a "?" for each argument
+(defun %sql-placeholders-string (val-list)
+  (join-strings ", "
+               (mapcar (constantly "?")
+                       val-list)))
+
+;;; (join-strings ", " ["1" "2" "3" "4" "5"])
+
+(defun %sql-column-json-objects (columns-data)
+  (mapcar 'to-json
+          (get-values columns-data)))
+
+;;; (%sql-column-json-objects (make-default-columns-data))
+
 (defun sqlgen-insert-columns-op (opid origin timestamp columns-data)
-  )
+  (let* ((column-parameters-string (%sql-column-parameters-string columns-data))
+         (placeholders-string (%sql-placeholders-string
+                               (append [:optype opid origin timestamp]
+                                       (get-keys columns-data))))
+         (column-objects (%sql-column-json-objects columns-data)))
+    (values
+     (sql ["INSERT INTO `~A` ("
+           " `optype`, "
+           " `opid`, "
+           " `origin`, "
+           " `timestamp`, "
+           column-parameters-string
+           ") "
+           "VALUES (" placeholders-string ")"]
+          *listdata-table-name*)
+     (append [*columns-optype* opid origin timestamp] column-objects))))
+
+;;; (sqlgen-insert-columns-op 1 *origin* (now-timestamp) (make-default-columns-data))
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen-insert-item-op
 ;;; ---------------------------------------------------------------------
 
 (defun sqlgen-insert-item-op (opid origin timestamp item-data)
-  )
+  (values
+   (sql [])
+   (list  *item-optype* )))
 
 
