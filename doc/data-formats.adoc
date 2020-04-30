@@ -9,6 +9,7 @@ mikel evins
 |===
 | term |  definition
 | *column* | A named collection of *fields* with shared attributes from all *items* in a *list*, stored as a column in a SQLite table.
+| *compacting* | The process of creating a new Delectus list by copying only the latest versions of live (undeleted) data from an existing list.
 | *identity* |  A unique identification of some object, distinct from all others. Delectus uses identities for *nodes*, *lists*, *ops*, and other objects it works with. It represents an *identity* using the `identity` datatype.
 | *field* | A container for a *value* occupying a single *column* of an *item*.
 | *item* | An individual, user-created entry in a list, stored as a row in a SQLite table.
@@ -35,7 +36,6 @@ Delectus represents *userdata* using JSON values stored as `TEXT`.
 | type name | Metadata or Userdata |  description
 | `Boolean` | userdata |  JSON `true`, `false`, or `null`. `null` is treated as `false` for logical purposes.
 | `column` | userdata | A JSON object that defines a column's attributes. See the `<<column-definition>>` definition, below.
-| `column-label` | metadata | A string derived from an `identity` by prepending the letter 'I', and used as the label for the column in the SQLite `listdata` table. The `column-label` of a Delectus column is simply the column's `identity` with the letter 'I' added to the front to ensure that it can be used without problem as a SQLite column label.
 | `identity` | metadata | A globally unique string derived from a UUID, used in Delectus to uniquely identify certain types of objects, including *nodes*, *lists*, *ops*, *columns*, and *items*.
 | `metadata` | metadata | A JSON object giving op-specific metadata in addition to the common metadata columns `optype`, `opid`, `origin`, and `timestamp`. See the `<<metadata-definition>>` definition, below.
 | `number` | metadata and userdata | Any JSON number.
@@ -69,7 +69,7 @@ All fields of the `column` object except the `id` can be edited by the user. The
 .Fields of the `column` object
 |===
 | field |  description
-| `id` | The `identity` of the column. The column's SQLite label is this string with the letter 'I' added to the front.
+| `id` | The `identity` of the column. Also used as the label of the SQLite column that stores the column in the list file.
 | `name` | The name of the column. It can be any text string, and can be changed by the user at any time.
 | `type` | The type of data that the user expects to put in the column.
 | `order` | A decimal number used to tell Delectus in what order to present the columns in its UI. Delectus assigns 10.0 to the first column in a list, and increases the number by 10.0 for each column it creates afterward, but users may change these numbers at any time. Delectus forbids assigning the same `order` number to two or more columns.
@@ -89,7 +89,7 @@ A `metadata` value is a JSON object of the following form:
   peer: <identity>,
   file: <identity>,
   name: <string>,
-  item: <identity>,
+  item: <integer>,
   deleted: <Boolean>,
 }
 ----
@@ -104,14 +104,14 @@ A `metadata` value is a JSON object of the following form:
 | `deleted` | True if an item has been marked deleted by the user; false or `null` otherwise.
 |===
 
-`metadata` objects appear in all ops except `columns`. They specify attributes of the op in addition to those in the common columns, `optype`, `opid`, `origin`, and `timestamp`.
+`metadata` objects appear in all ops except those of type `columns`. They specify attributes of the op in addition to those in the common columns, `optype`, `opid`, `origin`, and `timestamp`.
 
 Each type of op uses only some of the fields of the `metadata` object. Fields that are not used in a given type of op are not present in the metadata object for that op. The fields used by the four types of ops are as follows:
 
 [cols="1,4",options="header"]
 .Op `metadata` by optype
 |===
-| optype |  metadata fields
+| optype |  metadata fields used
 | `'sync'` | `peer`, `file`
 | `'listname'` | `name`
 | `'columns'` | _none_
@@ -120,11 +120,11 @@ Each type of op uses only some of the fields of the `metadata` object. Fields th
 
 === `opid` and `item` numbers
 
-Delectus identifies each `op` and each `item` in a list file with an integer. Each list file maintains an `opid` counter and an `item` counter. When Delectus inserts a new op, it increments the `opid` counter and stores the number in the `opid` field of the new op. When it creates a new `item` op, it increments the `item` counter and stores the number in the `metadata.item` field of the `item` op.
+Delectus identifies each `op` and each `item` in a list file with an integer. Each list file maintains an `opid` counter and an `item` counter. When Delectus inserts a new op, it increments the `opid` counter and stores the new number in the `opid` field of the new op. When it creates a new `item` op, it increments the `item` counter and stores the number in the `metadata.item` field of the op.
 
-Delectus nodes on different devices or accounts may duplicate one another's `opid` and `item` numbers, but Delectus also assigns an `identity`, called `'origin'` to each op. Although the `opid` and `item` are not globally unique, the combination of each with an `origin` is. Delectus is therefore able to uniquely distinguish each op by inspecting its `opid` and `origin`, and it can similarly distinguish each `item` by inspecting its `item` number and `origin`.
+Delectus nodes on different devices or accounts may duplicate one another's `opid` and `item` numbers, but Delectus also assigns an `identity`, called `'origin'` to each op. The `opid` number and the `item` number are not globally unique, but the combination of an `opid` with an `origin`, or the combination of an `item` with an `origin`, is globally unique. Delectus is therefore able to uniquely distinguish each op by inspecting its `opid` and `origin`, and it can similarly distinguish each `item` by inspecting its `item` number and `origin`.
 
-Delectus does not store the `opid` and `item` counters in the list file. Instead, when it assigns a new `opid`, it queries the `listdata` table for the current maximum `opid` and adds one to obtain the new `opid`. It gets a new `item` number in the same way, using the `metadata.item` field.
+Delectus does not store the `opid` and `item` counters in the list file. Instead, when it assigns a new `opid`, it queries the `listdata` table for the current maximum `opid` and adds one to obtain the new `opid`. It gets a new `item` number in the same way, by inspecting the `metadata.item` field.
 
 == Ops
 
@@ -151,9 +151,9 @@ An *op* is a row in the `listdata` table of a Delectus 2 file that records an up
 
 The sum total of all operations that may be performed on a Delectus list are just those described by these four ops.
 
-All ops have a common shared structure, plus structure that varies according to the op type.
+All ops have a common shared structure, plus some additional structure that varies according to the op type.
 
-The common shared structure is shown in table 5:
+The common shared structure is shown here:
 
 [cols="1,2,4",options="header"]
 .Common op structure
@@ -166,38 +166,40 @@ The common shared structure is shown in table 5:
 | `metadata` | `_metadata_` | A JSON object that records metadata attributes of the op.  See the `<<metadata-definition>>` definition, above.
 |===
 
+The contents of the `metadata` field vary according to the type of op, as described in the `<<metadata-definition>>` section.
+
 In addition to the common structure, the `columns` and `item` ops share a variable number of *userdata* columns, organized as shown in table 8:
 
 [cols="1,2,4",options="header"]
 .Op userdata structure
 |===
 | field | permitted values | description
-| `_[column-label]_+` | `_column_` or `_value_`  | The value of the column's field
+| `_[identity]_+` | `_column_` or `_value_`  | The value of the identified column's field
 |===
 
-`_[column-label]_+` means that there may be one or more userdata columns, each with its own  `column-label`. Delectus assigns an `identity` to the column when it creates it. That `identity` is stored permanently in the column's attributes, and the `column-label` derived from it is used as its label in the list's SQLite file.
+The notation `_[identity]_+` means that there may be one or more userdata columns, each with its own  `identity` string. Delectus assigns an `identity` to the column when it creates it. That `identity` is stored permanently in the column's attributes, and is also used as the label of the SQLite column that represents the column in the list file.
 
-For example, a newly-created column might get an `identity` like `"0b70ea94f385437abd1a541cf76b698b"`. This `identity` string starts with a digit, so SQLite can't use it as the label of a column without special handling. We therefore derive the `column-label` `"I0b70ea94f385437abd1a541cf76b698b"` from it--exactly the same as the `identity`, but with the letter "I" added to the front to make it convenient to use as a SQLite column label.
+For example, a newly-created column might get an `identity` like `"I0b70ea94f385437abd1a541cf76b698b"`. This new column will now and forever after have the `identity` `"I0b70ea94f385437abd1a541cf76b698b"`. That string will be the label of the SQLite column in the list file, and will be the value of the `id` field of the the `column` object that represents the column's attributes.
 
-This new column will now and forever after have the `identity` `"0b70ea94f385437abd1a541cf76b698b"`, and the `column-label` `"I0b70ea94f385437abd1a541cf76b698b"`.
+Why not just use the user-assigned names as the column labels? For a couple of reasons:
 
-Why not just use the user-assigned names as the column labels? For a couple of reasons.
-
-First, if we used the user's names for column labels then we'd have to restrict the names they can use, because of SQLite's restrictions on column labels. By using automatically-generated labels instead, we can allow users to use any names they like.
+First, if we used the user's names for column labels then we'd have to restrict the names they can use, because of SQLite's restrictions on column labels. By using automatically-generated labels instead, we can enable users to use any names they like.
 
 Second, by using automatically-generated labels based on UUIDs we ensure that a user can create two columns on two different devices, and there will be no conflict when the copies of the list are merged. Both columns will be present in the merged copies of the list, and the user can delete one of them if it turns out to be redundant.
 
-The contents of a column's field in a given op depend on the type of op. In a `columns` op, the column contains a `<<column-definition>>` object that defines the column's attributes. In an `item` op, the column contains a `value`. In `listname` and `sync` ops, the columns always contain `NULL`.
+The contents of a userdata field depend on the type of op. In a `columns` op, the column contains a JSON `<<column-definition>>` object that defines the column's attributes. In an `item` op, the column contains a JSON `value`. In `listname` and `sync` ops, the userdata fields are always empty.
 
-Because the user can add userdata columns at any time, the number and names of userdata columns is not predefined. Delectus creates a new list with the common shared metadata columns, and then normally then adds a default userdata column with a unique identity and the name `'Item'`. It then adds a single item to the list with an empy field in the `'Item'` column.
+Because the user can add userdata columns at any time, the number and the `identity` strings of userdata columns is not predefined; Delectus creates new ones as-needed.
+
+Delectus creates a new list with the common shared metadata columns, and then normally then adds a default userdata column with a unique identity and the name `'Item'`. It then adds a single empty item to the list.
 
 From that point on, the number, names, and contents of the userdata columns are up to the user.
 
 == Tables
 
-== The `delectus` table
+=== The `delectus` table
 
-The `delectus` table stores data identifying the file, the list, and the Delectus node that created them. It also records the version of the file format used, and it records a `parent` list if it was created by *compacting* an existing list.
+The `delectus` table stores data identifying the file, the list, and the Delectus node that created them. It also records the version of the file format used, and if the new list was created by *compacting* an existing *parent* list, then it records the `identity` of the parent.
 
 [cols="1,2,4",options="header"]
 .Structure of the `delectus` table
