@@ -61,6 +61,9 @@
 ;;; creating the standard tables
 ;;; ---------------------------------------------------------------------
 
+;;; delectus table
+;;; --------------
+
 (defmethod db-initialize-delectus-table ((db sqlite-handle)
                                          &key
                                            (list-id nil)
@@ -89,6 +92,14 @@
     (db-initialize-delectus-table db :list-id list-id :file-id file-id :parent-id parent-id
                                   :origin origin :format-version format-version)))
 
+
+;;; listdata table
+;;; --------------
+
+(defmethod db-create-listdata-table ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-create-listdata-table)))
+    (apply 'execute-non-query db sql vals)))
+
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
 ;;; ---------------------------------------------------------------------
@@ -109,7 +120,7 @@
       (with-transaction db
         (db-create-delectus-table db :list-id list-id :file-id file-id :parent-id parent-id
                                   :origin local-origin :format-version format-version)
-        ;;(db-create-listdata-table db)
+        (db-create-listdata-table db)
         ;;(when create-default-userdata
         ;;  (db-insert-default-listdata-ops db :list-name list-name))
         ;;(db-create-item-opid-origin-index db)
