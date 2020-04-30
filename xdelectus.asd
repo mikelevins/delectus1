@@ -32,8 +32,8 @@
                                      (:file "data-json")         ; reading and writing JSON data
                                      (:file "store-column-info") ; sqlite column-info utils
                                      (:file "store-sqlite")      ; operating on SQLite files
-                                     (:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
-                                     (:file "store-model")       ; store operations on Delectus model objects
+                                     ;;(:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
+                                     ;;(:file "store-model")       ; store operations on Delectus model objects
 
                                      ;;(:file "data-csv")          ; reading and writing CSV files
                                      ))))
