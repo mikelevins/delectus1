@@ -48,7 +48,8 @@
        :|sort| :false
        :|deleted| :false}}))
 
-;;; (make-default-columns-data)
+;;; (setf $coldata (make-default-columns-data))
+;;; (to-json (get-key $coldata (first (get-keys $coldata))))
 
 
 (defmethod db-get-next-opid ((db sqlite-handle))
@@ -61,7 +62,11 @@
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-get-next-opid db))
 
 (defmethod db-add-userdata-column ((db sqlite-handle)(column-description wb-map))
-  )
+  (let ((colid (get-key column-description :|id| nil)))
+    (assert (stringp colid)()
+           "Invalid column description: ~S" column-description)
+   (bind ((sql vals (sqlgen-add-userdata-column colid)))
+     )))
 
 (defmethod db-ensure-columns-exist ((db sqlite-handle) (columns-data wb-map))
   ;; identify missing columns in the file or the columns-data argument

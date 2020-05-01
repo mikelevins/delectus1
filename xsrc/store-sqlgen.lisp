@@ -20,7 +20,7 @@
     (apply 'format nil format-string parameters)))
 
 ;;; ---------------------------------------------------------------------
-;;; sqlgen-get-next-opid
+;;; sqlgen-get-max-opid
 ;;; ---------------------------------------------------------------------
 
 (defun sqlgen-get-max-opid ()
@@ -31,6 +31,19 @@
    nil))
 
 ;;; (sqlgen-get-max-opid)
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen-get-max-item
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-max-item ()
+  (values
+   (sql ["SELECT MAX(`~A`) FROM `~A`"]
+        *item-column-name*
+        *listdata-table-name*)
+   nil))
+
+;;; (sqlgen-get-max-item)
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen-create-delectus-table
@@ -91,6 +104,20 @@
    nil))
 
 ;;; (sqlgen-create-listdata-table)
+
+
+;;; ---------------------------------------------------------------------
+;;; sqlgen-add-userdata-column
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-add-userdata-column (column-id)
+  (values
+   (sql ["ALTER TABLE `~A`"
+         "ADD `~A` TEXT"]
+        *listdata-table-name* column-id)
+   nil))
+
+;;; (sqlgen-add-userdata-column (makeid))
 
 
 ;;; ---------------------------------------------------------------------
