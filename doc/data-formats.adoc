@@ -71,7 +71,9 @@ Certain values have an interpretation beyond their SQLite type affinities. The f
 
 === `column` [[column-definition, column]]
 
-A `column` is a JSON object of the following form:
+A `column` is a JSON object that defines the name and other attributes of a *userdata column* in a list. Delectus stores `column` objects in the columns that they describe, in special `columns` opss
+
+Following is the structure of a `column` object:
 
 [JSON]
 ----
