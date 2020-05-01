@@ -60,8 +60,27 @@
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-get-next-opid db))
 
-(defmethod db-ensure-columns-exist ((db sqlite-handle) (columns-data wb-map))
+(defmethod db-add-userdata-column ((db sqlite-handle)(column-description wb-map))
   )
+
+(defmethod db-ensure-columns-exist ((db sqlite-handle) (columns-data wb-map))
+  ;; identify missing columns in the file or the columns-data argument
+  (let* ((found-columns-info (db-sqlite-table-column-info db *listdata-table-name*))
+         (found-column-ids (mapcar 'column-info-name found-columns-info))
+         (supplied-column-ids (mapcar 'symbol-name (get-keys columns-data)))
+         (missing-from-columns-data (remove-list-elements found-column-ids supplied-column-ids :test 'equal))
+         (missing-from-found (remove-list-elements supplied-column-ids found-column-ids :test 'equal)))
+    ;; if there are columns missing from the columns-data, signal an error
+    (when missing-from-columns-data
+      (error "Columns exist in the list file that are missing from the supplied columns data: ~S"
+             missing-from-columns-data))
+    ;; if there are columns missing from the file, create them
+    (when missing-from-found
+      (loop for colid in missing-from-found
+         do (db-add-userdata-column db
+                                    (get-key columns-data (as-keyword colid)))))))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-ensure-columns-exist db (make-default-columns-data)))
 
 ;;; =====================================================================
 ;;;
