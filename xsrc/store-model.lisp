@@ -59,6 +59,13 @@
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-get-next-opid db))
 
+(defmethod db-get-next-item ((db sqlite-handle))
+  (bind ((max-item-sql max-item-vals (sqlgen-get-max-item))
+         (max-item (apply 'execute-single db max-item-sql max-item-vals)))
+    (if max-item
+        (1+ max-item)
+        0)))
+
 (defmethod db-add-userdata-column ((db sqlite-handle) (column-id string))
   (bind ((sql vals (sqlgen-add-userdata-column column-id)))
     (apply 'execute-non-query db sql vals)))
@@ -130,9 +137,7 @@
 (defmethod db-insert-default-listdata-ops ((db sqlite-handle)
                                            &key
                                              (list-name nil)
-                                             (opid nil)
-                                             (origin *origin*)
-                                             (timestamp nil))
+                                             (origin *origin*))
   (assert (stringp list-name) ()
           "You must supply a string :LIST-NAME parameter; found ~S"
           list-name)
@@ -141,19 +146,25 @@
          (timestamp (now-timestamp))
          (listname-sql listname-vals (sqlgen-insert-listname-op list-name opid origin timestamp)))
     (apply 'execute-non-query db listname-sql listname-vals))
-  ;; insert the default columns op
-  (bind ((default-column-id (makeid))
-         (default-column-map (make-default-userdata-column default-column-id))
-         (default-columns-data {(as-keyword default-column-id) default-column-map})
-         (opid (db-get-next-opid db))
-         (timestamp (now-timestamp))
-         (columns-sql columns-vals (sqlgen-insert-columns-op opid *origin* (now-timestamp) default-columns-data)))
-    (db-ensure-columns-exist db (list default-column-id))
-    (apply 'execute-non-query db columns-sql columns-vals))
-  ;; insert the default item op
-  )
-
-;;;(make-default-userdata-column)
+  (let ((default-column-id (makeid)))
+    ;; insert the default columns op
+    (bind ((default-column-json (to-json (make-default-userdata-column default-column-id)))
+           (opid (db-get-next-opid db))
+           (timestamp (now-timestamp))
+           (columns-sql columns-vals (sqlgen-insert-columns-op opid origin (now-timestamp)
+                                                               {default-column-id default-column-json})))
+      (db-ensure-columns-exist db (list default-column-id))
+      (apply 'execute-non-query db columns-sql columns-vals))
+    ;; insert the default item op
+    (bind ((opid (db-get-next-opid db))
+           (item (db-get-next-item db))
+           (timestamp (now-timestamp))
+           (deleted? nil)
+           (default-value nil)
+           (item-sql item-vals (sqlgen-insert-item-op opid origin timestamp item deleted?
+                                                      {default-column-id default-value})))
+      (apply 'execute-non-query db item-sql item-vals)
+      )))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file

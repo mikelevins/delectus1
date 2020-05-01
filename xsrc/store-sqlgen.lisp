@@ -11,6 +11,21 @@
 (in-package :delectus)
 
 ;;; ---------------------------------------------------------------------
+;;; helper functions
+;;; ---------------------------------------------------------------------
+
+;;; generate a string of parameter names joined by ", "
+(defun %make-parameters-string (parameter-names)
+  (join-strings ", "
+                (mapcar (lambda (p)(format nil "`~A`" p))
+                        parameter-names)))
+
+;;; generate a "?" for each argument
+(defun %make-placeholders-string (parameters)
+  (join-strings ", "
+                (mapcar (constantly "?") parameters)))
+
+;;; ---------------------------------------------------------------------
 ;;; sql
 ;;; ---------------------------------------------------------------------
 ;;; generate a trimmed SQL string
@@ -174,39 +189,22 @@
 ;;; sqlgen-insert-columns-op
 ;;; ---------------------------------------------------------------------
 
-(defun %sql-column-parameters-string (columns-data)
-  (join-strings ", "
-                (let ((param-strings (mapcar (lambda (k)(format nil "`~A`" (symbol-name k)))
-                                             (get-keys columns-data))))
-                  param-strings)))
-
-;;; (%sql-column-parameters-string (make-default-columns-data))
-
-;;; generate a "?" for each argument
-(defun %sql-placeholders-string (val-list)
-  (join-strings ", "
-               (mapcar (constantly "?")
-                       val-list)))
-
 ;;; (join-strings ", " ["1" "2" "3" "4" "5"])
-
-(defun %sql-column-json-objects (columns-data)
-  (mapcar 'to-json
-          (get-values columns-data)))
 
 ;;; (%sql-column-json-objects (make-default-columns-data))
 
-(defun sqlgen-insert-columns-op (opid origin timestamp columns-data)
+(defun sqlgen-insert-columns-op (opid origin timestamp columns-map)
   (let* ((peer nil)
          (file nil)
          (name nil)
          (item nil)
          (deleted nil)
-         (column-parameters-string (%sql-column-parameters-string columns-data))
-         (placeholders-string (%sql-placeholders-string
+         (column-parameters (get-keys columns-map))
+         (column-parameters-string (%make-parameters-string column-parameters))
+         (placeholders-string (%make-placeholders-string
                                (append [:optype opid origin timestamp peer file name item deleted]
-                                       (get-keys columns-data))))
-         (column-objects (%sql-column-json-objects columns-data)))
+                                       (get-keys columns-map))))
+         (column-objects (get-values columns-map)))
     (values
      (sql ["INSERT INTO `~A` ("
            " `optype`, "
@@ -225,15 +223,38 @@
      (append [*columns-optype* opid origin timestamp peer file name item deleted]
              column-objects))))
 
-;;; (sqlgen-insert-columns-op 1 *origin* (now-timestamp) (make-default-columns-data))
+;;; (sqlgen-insert-columns-op 1 *origin* (now-timestamp) {(makeid) (to-json (make-default-userdata-column))})
 
 ;;; ---------------------------------------------------------------------
 ;;; sqlgen-insert-item-op
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-insert-item-op (opid origin timestamp item-data)
-  (values
-   (sql [])
-   (list  *item-optype* )))
+(defun sqlgen-insert-item-op (opid origin timestamp item deleted? values-map)
+  (let* ((peer nil)
+         (file nil)
+         (name nil)
+         (column-ids (get-keys values-map))
+         (column-values (get-values values-map))
+         (item-parameters-string (%make-parameters-string column-ids))
+         (placeholders-string (%sql-placeholders-string
+                               (append [:optype opid origin timestamp peer file name item deleted?]
+                                       (get-keys values-map)))))
+    (values
+     (sql ["INSERT INTO `~A` ("
+           " `optype`, "
+           " `opid`, "
+           " `origin`, "
+           " `timestamp`, "
+           " `peer`, "
+           " `file`, "
+           " `name`, "
+           " `item`, "
+           " `deleted`, "
+           item-parameters-string
+           ") "
+           "VALUES (" placeholders-string ")"]
+          *listdata-table-name*)
+     (append [*item-optype* opid origin timestamp peer file name item deleted?]
+             column-values))))
 
-
+;;; (sqlgen-insert-item-op 1 *origin* (now-timestamp) 1 nil {(makeid) nil})

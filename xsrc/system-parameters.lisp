@@ -63,4 +63,4 @@
 (defparameter *sync-optype* "sync")
 (defparameter *listname-optype* "listname")
 (defparameter *columns-optype* "columns")
-(defparameter *item-optype* "items")
+(defparameter *item-optype* "item")
