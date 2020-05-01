@@ -256,4 +256,4 @@ It also records each time Delectus successfully synchronized this copy of the li
 
 A newly-created Delectus list has exactly the columns shown above, with `_[identity]_*` replaced by a specific, newly-generated `identity` string. That `identity` labels a newly-created userdata column that Delectus automatically gives the name `'Item'`. Delectus adds a single item to the list, leaving the `'Item'` column empty, to be filled in by the user.
 
-From that point, the number, names, and contents of the list's userdata are controlled by the user.
+From that point, details of the list's userdata are controlled by the user.
