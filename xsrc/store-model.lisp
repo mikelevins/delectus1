@@ -36,20 +36,19 @@
 ;;; helpers
 ;;; ---------------------------------------------------------------------
 
-(defun make-default-columns-data ()
+(defun make-default-userdata-column ()
   (let ((default-column-identity (makeid)))
-    {(as-keyword default-column-identity)
-     {:|id| default-column-identity
-       :|name| "Item"
-       :|type| "TEXT"
-       :|order| *default-initial-column-order*
-       :|title| :false
-       :|subtitle| :false
-       :|sort| :false
-       :|deleted| :false}}))
+    {:|id| default-column-identity
+      :|name| "Item"
+      :|type| "TEXT"
+      :|order| *default-initial-column-order*
+      :|title| :false
+      :|subtitle| :false
+      :|sort| :false
+      :|deleted| :false}))
 
-;;; (setf $coldata (make-default-columns-data))
-;;; (to-json (get-key $coldata (first (get-keys $coldata))))
+;;; (setf $coldata (make-default-userdata-column))
+;;; (to-json $coldata)
 
 
 (defmethod db-get-next-opid ((db sqlite-handle))
@@ -66,7 +65,7 @@
     (assert (stringp colid)()
            "Invalid column description: ~S" column-description)
    (bind ((sql vals (sqlgen-add-userdata-column colid)))
-     )))
+     (apply 'execute-non-query db sql vals))))
 
 (defmethod db-ensure-columns-exist ((db sqlite-handle) (columns-data wb-map))
   ;; identify missing columns in the file or the columns-data argument
@@ -155,11 +154,14 @@
          (listname-sql listname-vals (sqlgen-insert-listname-op list-name opid origin timestamp)))
     (apply 'execute-non-query db listname-sql listname-vals))
   ;; insert the default columns op
-  ;; (bind ((coldata (make-default-columns-data))
-  ;;        (timestamp (now-timestamp))
-  ;;        (columns-sql columns-vals (sqlgen-insert-columns-op opid origin timestamp coldata)))
-  ;;   (db-ensure-columns-exist db coldata)
-  ;;   (apply 'execute-non-query db columns-sql columns-vals))
+  (bind ((default-coldata (make-default-userdata-column))
+         (default-coldata-id (get-key default-coldata :|id| nil))
+         (found-column-descriptions )
+         (coldata (merge-maps found-column-descriptions {(as-keyword default-coldata-id) default-coldata}))
+         (timestamp (now-timestamp))
+         (columns-sql columns-vals (sqlgen-insert-columns-op opid origin timestamp coldata)))
+    (db-ensure-columns-exist db coldata)
+    (apply 'execute-non-query db columns-sql columns-vals))
   ;; insert the default item op
   )
 

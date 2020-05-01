@@ -80,6 +80,9 @@
 
 ;;; (get-values { :a 1 :b 3 :name "Fred"})
 
+(defmethod merge-maps ((left-map wb-map) (right-map wb-map))
+  )
+
 (defun plist->map (plist)
   (convert 'wb-map
            (loop for tail on plist by #'cddr
