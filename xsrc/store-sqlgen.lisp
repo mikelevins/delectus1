@@ -99,7 +99,7 @@
 
 (defun sqlgen-create-item-opid-origin-index ()
   (values
-   (sql ["CREATE INDEX `~A` "
+   (sql ["CREATE INDEX `~A`"
          "ON `~A` (`item`, `opid`, `origin`)"
          "WHERE `optype`='item'"]
         *item-opid-origin-index-name* *listdata-table-name*)
@@ -170,9 +170,14 @@
 ;;; (%sql-column-json-objects (make-default-columns-data))
 
 (defun sqlgen-insert-columns-op (opid origin timestamp columns-data)
-  (let* ((column-parameters-string (%sql-column-parameters-string columns-data))
+  (let* ((peer nil)
+         (file nil)
+         (name nil)
+         (item nil)
+         (deleted nil)
+         (column-parameters-string (%sql-column-parameters-string columns-data))
          (placeholders-string (%sql-placeholders-string
-                               (append [:optype opid origin timestamp]
+                               (append [:optype opid origin timestamp peer file name item deleted]
                                        (get-keys columns-data))))
          (column-objects (%sql-column-json-objects columns-data)))
     (values
@@ -181,11 +186,17 @@
            " `opid`, "
            " `origin`, "
            " `timestamp`, "
+           " `peer`, "
+           " `file`, "
+           " `name`, "
+           " `item`, "
+           " `deleted`, "
            column-parameters-string
            ") "
            "VALUES (" placeholders-string ")"]
           *listdata-table-name*)
-     (append [*columns-optype* opid origin timestamp] column-objects))))
+     (append [*columns-optype* opid origin timestamp peer file name item deleted]
+             column-objects))))
 
 ;;; (sqlgen-insert-columns-op 1 *origin* (now-timestamp) (make-default-columns-data))
 

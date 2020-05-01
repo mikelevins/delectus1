@@ -23,16 +23,33 @@
 ;;; list-file parameters
 ;;; ---------------------------------------------------------------------
 
+;;; table names
+;;; -----------
+
 (defparameter *delectus-table-name* "delectus")
-(defparameter *identities-table-name* "identities")
 (defparameter *listdata-table-name* "listdata")
 
-(defparameter *opid-column-name* "opid")
+;;; index names
+;;; -----------
 
 (defparameter *item-opid-origin-index-name* "idx_item_opid_origin")
 
+;;; column names
+;;; ------------
+
+(defparameter *metadata-column-names* ["optype" "opid" "origin" "timestamp" "peer" "file" "name" "item" "deleted"])
+(defparameter *optype-column-name* "optype")
+(defparameter *opid-column-name* "opid")
+(defparameter *origin-column-name* "origin")
+(defparameter *timestamp-column-name* "timestamp")
+(defparameter *peer-column-name* "peer")
+(defparameter *file-column-name* "file")
+(defparameter *name-column-name* "name")
+(defparameter *item-column-name* "item")
+(defparameter *deleted-column-name* "deleted")
+
 ;;; column parameters
-;;; ---------------------------------------------------------------------
+;;; -----------------
 
 (defparameter *maximum-column-count* 200) ; chosen to be below common database limits
 (defparameter *column-order-interval* 10.0) ; default interval between order numbers autoassigned to new columns
@@ -41,7 +58,7 @@
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
 
 ;;; op parameters
-;;; ---------------------------------------------------------------------
+;;; -------------
 
 (defparameter *sync-optype* "sync")
 (defparameter *listname-optype* "listname")
