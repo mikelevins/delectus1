@@ -246,7 +246,7 @@ The `delectus` table stores data identifying the file, the list, and the Delectu
 |===
 
 
-== The `listdata` table
+=== The `listdata` table
 
 The `listdata` table contains the log of ops, and therefore the data and metadata of the list.
 
