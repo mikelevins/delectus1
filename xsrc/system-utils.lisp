@@ -81,7 +81,7 @@
 ;;; (get-values { :a 1 :b 3 :name "Fred"})
 
 (defmethod merge-maps ((left-map wb-map) (right-map wb-map))
-  )
+  (fset:map-union left-map right-map))
 
 (defun plist->map (plist)
   (convert 'wb-map

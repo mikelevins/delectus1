@@ -36,8 +36,8 @@
 ;;; helpers
 ;;; ---------------------------------------------------------------------
 
-(defun make-default-userdata-column ()
-  (let ((default-column-identity (makeid)))
+(defun make-default-userdata-column (&optional column-id)
+  (let ((default-column-identity (or column-id (makeid))))
     {:|id| default-column-identity
       :|name| "Item"
       :|type| "TEXT"
@@ -50,7 +50,6 @@
 ;;; (setf $coldata (make-default-userdata-column))
 ;;; (to-json $coldata)
 
-
 (defmethod db-get-next-opid ((db sqlite-handle))
   (bind ((max-opid-sql max-opid-vals (sqlgen-get-max-opid))
          (max-opid (apply 'execute-single db max-opid-sql max-opid-vals)))
@@ -60,31 +59,20 @@
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-get-next-opid db))
 
-(defmethod db-add-userdata-column ((db sqlite-handle)(column-description wb-map))
-  (let ((colid (get-key column-description :|id| nil)))
-    (assert (stringp colid)()
-           "Invalid column description: ~S" column-description)
-   (bind ((sql vals (sqlgen-add-userdata-column colid)))
-     (apply 'execute-non-query db sql vals))))
+(defmethod db-add-userdata-column ((db sqlite-handle) (column-id string))
+  (bind ((sql vals (sqlgen-add-userdata-column column-id)))
+    (apply 'execute-non-query db sql vals)))
 
-(defmethod db-ensure-columns-exist ((db sqlite-handle) (columns-data wb-map))
+(defmethod db-ensure-columns-exist ((db sqlite-handle) supplied-column-ids)
   ;; identify missing columns in the file or the columns-data argument
   (let* ((found-columns-info (db-sqlite-table-column-info db *listdata-table-name*))
          (found-column-ids (mapcar 'column-info-name found-columns-info))
-         (supplied-column-ids (mapcar 'symbol-name (get-keys columns-data)))
-         (missing-from-columns-data (remove-list-elements found-column-ids supplied-column-ids :test 'equal))
-         (missing-from-found (remove-list-elements supplied-column-ids found-column-ids :test 'equal)))
-    ;; if there are columns missing from the columns-data, signal an error
-    (when missing-from-columns-data
-      (error "Columns exist in the list file that are missing from the supplied columns data: ~S"
-             missing-from-columns-data))
-    ;; if there are columns missing from the file, create them
+         (missing-from-found (remove-list-elements found-column-ids supplied-column-ids :test 'equal)))
+    ;; if there are columns in the columns-data that are missing from
+    ;; the file, create them
     (when missing-from-found
       (loop for colid in missing-from-found
-         do (db-add-userdata-column db
-                                    (get-key columns-data (as-keyword colid)))))))
-
-;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2")(db-ensure-columns-exist db (make-default-columns-data)))
+         do (db-add-userdata-column db colid)))))
 
 ;;; =====================================================================
 ;;;
@@ -154,16 +142,10 @@
          (listname-sql listname-vals (sqlgen-insert-listname-op list-name opid origin timestamp)))
     (apply 'execute-non-query db listname-sql listname-vals))
   ;; insert the default columns op
-  (bind ((default-coldata (make-default-userdata-column))
-         (default-coldata-id (get-key default-coldata :|id| nil))
-         (found-column-descriptions )
-         (coldata (merge-maps found-column-descriptions {(as-keyword default-coldata-id) default-coldata}))
-         (timestamp (now-timestamp))
-         (columns-sql columns-vals (sqlgen-insert-columns-op opid origin timestamp coldata)))
-    (db-ensure-columns-exist db coldata)
-    (apply 'execute-non-query db columns-sql columns-vals))
-  ;; insert the default item op
-  )
+  (let ((default-column-id (makeid)))
+    (db-ensure-columns-exist db (list default-column-id))
+    ;; insert the default item op
+    ))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
