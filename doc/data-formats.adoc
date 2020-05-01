@@ -14,35 +14,59 @@ mikel evins
 | *field* | A container for a *value* occupying a single *column* of an *item*.
 | *item* | An individual, user-created entry in a list, stored as a row in a SQLite table.
 | *list* |  A Delectus document containing data organized in rows and columns, one *item* to each row, and one *field* to each column of the row. An item is a collection of fields; a list is a collection of items. Delectus stores each list in its own SQLite file, along with some associated *metadata*.
-| *metadata* and *userdata* | *Userdata* is the information that users create and store in Delectus lists. *Metadata* is information that Delectus automatically creates and stores alongside the userdata in order to support application features. For example, when you add the item "milk" to a shopping list, the text "milk" is *userdata*; the timestamp recorded when you save the item is *metadata*.
 | *node* | A Delectus process running on a specific user account on a specific device. Delectus assigns a distinct *identity* to each node, and records the `identity` of the node that makes each change to a list file.
 | *op* |  A structure in a list file that represents an update to the state of the list. Represented as a row in a SQLite table. Delectus list data is represented as a time-ordered append-only log of ops.
 |===
 
 
-== Delectus data types
+== Delectus datatypes
 
 === Metadata and userdata
 
-Delectus represents *metadata* using SQLite `NULL`, `NUMBER`, and `TEXT values.`
+*Userdata* is the data that a Delectus user creates and stores in Delectus lists.
 
-Delectus represents *userdata* using JSON values stored as `TEXT`.
+*Metadata* is data that Delectus automatically creates and maintains to help support application features.
+
+As an example, when you add "milk" to your shopping list, the item "milk" is *userdata*. When you add or edit that item, Delectus automatically stores a timestamp that records when you edited it; that timestamp is *metadata*.
+
+Delectus distinguishes between userdata and metadata, and stores them differently. It represents *userdata* using JSON values stored as `TEXT` in distinct *userdata columns*. It represents metadata using SQLite `NULL`, `NUMBER`, and `TEXT values` in *metadata columns*.
+
+In a list file, userdata and metadata are both stored in the rows of the `listdata` table. Metadata is stored in a predefined set of *metadata columns*; userdata is stored in a variable set of user-defined *userdata columns*. For a full description of these columns, see the <<op-structure>> section, below.
 
 === Datatypes
 
-[cols="1,2,5",options="header"]
-.Datatypes in ops
+==== Userdata
+
+Userdata values are stored as `TEXT` strings representing JSON values. The following table defines the types of those values.
+
+[cols="1,5",options="header"]
+.Userdata types
 |===
-| type name | Metadata or Userdata |  description
-| `Boolean` | userdata |  JSON `true`, `false`, or `null`. `null` is treated as `false` for logical purposes.
-| `column` | userdata | A JSON object that defines a column's attributes. See the `<<column-definition>>` definition, below.
-| `identity` | metadata | A globally unique string derived from a UUID, used in Delectus to uniquely identify certain types of objects, including *nodes*, *lists*, *ops*, *columns*, and *items*.
-| `metadata` | metadata | A JSON object giving op-specific metadata in addition to the common metadata columns `optype`, `opid`, `origin`, and `timestamp`. See the `<<metadata-definition>>` definition, below.
-| `number` | metadata and userdata | Any JSON number.
-| `sort-order` | userdata | `null`, `'ASC'`, or `'DESC'`. Specifies whether a column is the list's sort column, and if so, which direction to sort.
-| `string` | metadata and userdata | A text string.
-| `timestamp` | metadata | An ISO-8601 time string.
-| `value` | userdata | JSON `null`, `'boolean'`, `'number'`, or `'string'`. Specifies the types of values the user expects a column to contain.
+| type name |  description
+| `Boolean` |  JSON `true`, `false`, or `null`. `null` is treated as `false` for logical purposes.
+| `null` |  JSON `null`, representing an empty field.
+| `number` | Any valid JSON `number`.
+| `string` | Any valid JSON string.
+|===
+
+==== Metadata
+
+Metadata fields contain SQLite `NULL`, `NUMBER`, or `TEXT` values.
+
+Certain values have an interpretation beyond their SQLite type affinities. The following table defines those interpretations, as well as the roles of the standard SQLite `NULL`, `NUMBER`, and `TEXT` affinities.
+
+[cols="1,5",options="header"]
+.Metadata types
+|===
+| type name |  description
+| `Boolean` |  A `NUMBER` value that can be `1`, `0`, or `NULL`. `1` represents true; the other values represent false.
+| `column` | A `TEXT` string representing a JSON object that defines a userdata column's attributes. See the `<<column-definition>>` definition, below.
+| `identity` | A globally unique string derived from a UUID, used in Delectus as a unique identifier.
+| `NULL` | Signifies an empty metadata field.
+| `NUMBER` | Signifies a number.
+| `sort-order` | Any of the values `null`, `'ASC'`, or `'DESC'`. Specifies whether a column is the list's sort column, and if so, which direction to sort.
+| `TEXT` | Signifies a text string.
+| `timestamp` | A `TEXT` value interpreted as an ISO 8601 timestamp.
 |===
 
 === `column` [[column-definition, column]]
@@ -54,12 +78,12 @@ A `column` is a JSON object of the following form:
 {
   id: <identity>,
   name: <string>,
-  type: <value>,
+  type: 'null' | 'Boolean' | 'number' | 'string',
   order: <number>,
-  title: <boolean>,
-  subtitle: <boolean>,
+  title: <Boolean>,
+  subtitle: <Boolean>,
   sort: <sort-order>,
-  deleted: <boolean>
+  deleted: <Boolean>
 }
 ----
 
@@ -71,73 +95,37 @@ All fields of the `column` object except the `id` can be edited by the user. The
 | field |  description
 | `id` | The `identity` of the column. Also used as the label of the SQLite column that stores the column in the list file.
 | `name` | The name of the column. It can be any text string, and can be changed by the user at any time.
-| `type` | The type of data that the user expects to put in the column.
+| `type` | A string identifying the type of data that the user expects to put in the column.
 | `order` | A decimal number used to tell Delectus in what order to present the columns in its UI. Delectus assigns 10.0 to the first column in a list, and increases the number by 10.0 for each column it creates afterward, but users may change these numbers at any time. Delectus forbids assigning the same `order` number to two or more columns.
-| `title` | True if this column is to be used as the title of the item; false or `null` otherwise. Only one column may be the title column at a time. If no column is marked as the `title` column then Delectus chooses one arbitrarily to use as the title in views that require it.
-| `subtitle` | True if this column is to be used as the subtitle of the item; false or `null` otherwise. Only one column may be the subtitle column at a time. If no column is marked as the `subtitle` column then Delectus presents items without a subtitle.
-| `deleted` | True if the column has been marked deleted by the user; false or `null` otherwise.
+| `title` | True if this column is to be used as the title of the item; false otherwise. Only one column may be the title column at a time. If no column is marked as the `title` column then Delectus chooses one arbitrarily to use as the title in views that require it.
+| `subtitle` | True if this column is to be used as the subtitle of the item; false otherwise. Only one column may be the subtitle column at a time. If no column is marked as the `subtitle` column then Delectus presents items without a subtitle.
+| `deleted` | True if the column has been marked deleted by the user; false otherwise.
 |===
 
-
-=== `metadata` [[metadata-definition, metadata]]
-
-A `metadata` value is a JSON object of the following form:
-
-[JSON]
-----
-{
-  peer: <identity>,
-  file: <identity>,
-  name: <string>,
-  item: <integer>,
-  deleted: <Boolean>,
-}
-----
-[cols="1,4",options="header"]
-.Fields of the `metadata` object
-|===
-| field |  description
-| `peer` | The `identity` of a peer Delectus node in a `sync` op.
-| `file` | The `identity` of a peer list file in a `sync` op.
-| `name` | The new name of a Delectus list in a `listname` op.
-| `item` | The `item` number in an `item` op.
-| `deleted` | True if an item has been marked deleted by the user; false or `null` otherwise.
-|===
-
-`metadata` objects appear in all ops except those of type `columns`. They specify attributes of the op in addition to those in the common columns, `optype`, `opid`, `origin`, and `timestamp`.
-
-Each type of op uses only some of the fields of the `metadata` object. Fields that are not used in a given type of op are not present in the metadata object for that op. The fields used by the four types of ops are as follows:
-
-[cols="1,4",options="header"]
-.Op `metadata` by optype
-|===
-| optype |  metadata fields used
-| `'sync'` | `peer`, `file`
-| `'listname'` | `name`
-| `'columns'` | _none_
-| `'item'` | `item`, `deleted`
-|===
 
 === `opid` and `item` numbers
 
-Delectus identifies each `op` and each `item` in a list file with an integer. Each list file maintains an `opid` counter and an `item` counter. When Delectus inserts a new op, it increments the `opid` counter and stores the new number in the `opid` field of the new op. When it creates a new `item` op, it increments the `item` counter and stores the number in the `metadata.item` field of the op.
+Delectus identifies each `op` and each `item` in a list file with an integer. Each list file maintains an `opid` counter and an `item` counter.
+
+When Delectus inserts a new op, it increments the `opid` counter and stores the new number in the `opid` field of the new op. When it creates a new `item` op, it increments the `item` counter and stores the number in the `item` field of the op.
 
 Delectus nodes on different devices or accounts may duplicate one another's `opid` and `item` numbers, but Delectus also assigns an `identity`, called `'origin'` to each op. The `opid` number and the `item` number are not globally unique, but the combination of an `opid` with an `origin`, or the combination of an `item` with an `origin`, is globally unique. Delectus is therefore able to uniquely distinguish each op by inspecting its `opid` and `origin`, and it can similarly distinguish each `item` by inspecting its `item` number and `origin`.
 
-Delectus does not store the `opid` and `item` counters in the list file. Instead, when it assigns a new `opid`, it queries the `listdata` table for the current maximum `opid` and adds one to obtain the new `opid`. It gets a new `item` number in the same way, by inspecting the `metadata.item` field.
+Delectus does not store the `opid` and `item` counters in the list file. Instead, when it assigns a new `opid`, it queries the `listdata` table for the current maximum `opid` and adds one to obtain the new `opid`. It gets a new `item` number in the same way, by inspecting the `item` field.
 
 == Ops
 
-An *op* is a structure that represents an update to the state of a Delectus list. A Delectus list is represented as an append-only time-ordered log of ops. After an op is added to the log, the state of the data and metadata in the list have somehow changed. Each type of op performs a different type of update.
+An *op* is a structure that represents an update to the state of a Delectus list. A Delectus list is represented as an append-only time-ordered log of ops. After an op is added to the log, the state of the data and metadata in the list have changed in some way. Each type of op performs a different type of update.
 
-An op is represented in a Delectus file as a row in the `listdata` table. The `listdata` table is structured as a time-ordered log of ops. Delectus only appends to the `listdata` table; it never deletes or overwrites existing data. Making any edit to a list therefore means adding a new op that supersedes any old ones.
+An op is represented in a Delectus file as a row in the `listdata` table. Delectus only appends to the `listdata` table; it never deletes or overwrites existing data. Making any edit to a list therefore means adding a new op that supersedes any old ones.
 
 This append-only discipline enables Delectus to safely merge data from concurrently-modified copies of a list without losing any data.
 
-== Op structure
+== Op structure [[op-structure]]
 
-An *op* is a row in the `listdata` table of a Delectus 2 file that records an update to the state of the list. There are four types of ops:
+An *op* is a row in the `listdata` table that records an update to the state of the list. All information in Delectus lists is represented by ops.
 
+There are four types of ops:
 
 [cols="1,4",options="header"]
 .Op types
@@ -149,11 +137,22 @@ An *op* is a row in the `listdata` table of a Delectus 2 file that records an up
 | `'item'` | Adds or updates an item.
 |===
 
-The sum total of all operations that may be performed on a Delectus list are just those described by these four ops.
+These four ops together describe all data that a Delectus list can store, and all edits that may be made to it.
 
-All ops have a common shared structure, plus some additional structure that varies according to the op type.
+All ops have a common shared structure that is the same in every op, and in every list file. That structure defines a standard set of *metadata columns* used by every op in every list, and a set of *userdata* columns that is different from one list to another, and that can change over time as a user adds and changed columns.
 
-The common shared structure is shown here:
+The following table illustrates the two kinds of columns in Delectus ops:
+
+[cols="1,1",options="header"]
+.Op metadata and userdata columns
+|===
+| metadata columns |  userdata columns
+| `'optype'`, `'opid'`, `'origin'`, `'timestamp'`, `'peer'`, `'file'`, `'name'`, `'item'`, `'deleted'` | `"Ic3be769f0a364bb682691493716b3e67"`, `"I43c2837007534861af6a4d87c375152d"`, `"I43c2837007534861af6a4d87c375152d"`, ... (for example)
+|===
+
+The metadata columns shown are exactly the ones that appear in every Delectus list. The userdata columns, on the other hand, are just examples; the real userdata columns will be different in every list.
+
+The metadata columns are defined as follows:
 
 [cols="1,2,4",options="header"]
 .Common op structure
@@ -163,33 +162,67 @@ The common shared structure is shown here:
 | `opid` | `_integer_` | Uniquely identifies the op.
 | `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
-| `metadata` | `_metadata_` | A JSON object that records metadata attributes of the op.  See the `<<metadata-definition>>` definition, above.
+| `peer` | `_identity_` | In a `'sync'` op, the `identity` of the Delectus node that we synced with.
+| `file` | `_identity_` | In a `'sync'` op, the `identity` of the Delectus file that we synced with.
+| `name` | `_string_` | In a `'listname'` op, the new name of the list.
+| `item` | `_integer_` | In an `'item'` op, the `identity` of the item.
+| `deleted` | `_Boolean_` | In an `'item'` op, whether the item is marked deleted.
 |===
 
-The contents of the `metadata` field vary according to the type of op, as described in the `<<metadata-definition>>` section.
+Userdata columns, on the other hand, are created and controlled by users. They vary in two ways:
 
-In addition to the common structure, the `columns` and `item` ops share a variable number of *userdata* columns, organized as shown in table 8:
+. The userdata columns in one list are unique, completely different from the userdata column in any other list.
+. The set of userdata columns in a single list may expand and change over time, as a user adds and edits columns.
 
-[cols="1,2,4",options="header"]
-.Op userdata structure
+Because users control userdata columns, we can't give a detailed definition of them, but we can illustrate their common structure:
+
+[cols="1,4",options="header"]
+.Userdata column structure
 |===
-| field | permitted values | description
-| `_[identity]_+` | `_column_` or `_value_`  | The value of the identified column's field
+| column label | column value
+| `_[identity]_+` | A `'NULL'`, a `column` object, or a userdata value, depending on the op's `optype`.
 |===
 
-The notation `_[identity]_+` means that there may be one or more userdata columns, each with its own  `identity` string. Delectus assigns an `identity` to the column when it creates it. That `identity` is stored permanently in the column's attributes, and is also used as the label of the SQLite column that represents the column in the list file.
+The notation `_[identity]_+` means that there may be one or more userdata columns, each with its own  `identity`.
 
-For example, a newly-created column might get an `identity` like `"I0b70ea94f385437abd1a541cf76b698b"`. This new column will now and forever after have the `identity` `"I0b70ea94f385437abd1a541cf76b698b"`. That string will be the label of the SQLite column in the list file, and will be the value of the `id` field of the the `column` object that represents the column's attributes.
+Delectus assigns an `identity` to the column when it creates it. That `identity` is  used as the label of the SQLite column that represents the column, and is stored permanently in the `column` object that specifies the column's attributes.
 
-Why not just use the user-assigned names as the column labels? For a couple of reasons:
+For example, a newly-created column might get an `identity` like `"I0b70ea94f385437abd1a541cf76b698b"`. This new column will now and forever after have the `identity` `"I0b70ea94f385437abd1a541cf76b698b"`. The `identity` string will be the label of the SQLite column in the list file, and will be the value of the `id` field of the the `column` object that represents the column's attributes.
 
-First, if we used the user's names for column labels then we'd have to restrict the names they can use, because of SQLite's restrictions on column labels. By using automatically-generated labels instead, we can enable users to use any names they like.
+The value stored in the column depends on the `optype` of the op it appears in. The following table defines the values that may appear in userdata columns:
+
+[cols="1,4",options="header"]
+.Userdata column values
+|===
+| optype | permitted values
+| `'sync'` | `NULL`
+| `'listname'` | `NULL`
+| `'columns'` | a JSON `column` object.
+| `'item'` | a JSON `null`, `Boolean`, `number`, or `string` value.
+|===
+
+
+=== Why identities?
+
+Why not just use user-assigned names as the column labels? For a couple of reasons:
+
+First, if we used the user's names for column labels then SQLite's restrictions on column labels would restrict the names they can use. By using automatically-generated labels instead, we can store the user's choice of names in metadata, and enable users to give their columns any names they like.
 
 Second, by using automatically-generated labels based on UUIDs we ensure that a user can create two columns on two different devices, and there will be no conflict when the copies of the list are merged. Both columns will be present in the merged copies of the list, and the user can delete one of them if it turns out to be redundant.
 
-The contents of a userdata field depend on the type of op. In a `columns` op, the column contains a JSON `<<column-definition>>` object that defines the column's attributes. In an `item` op, the column contains a JSON `value`. In `listname` and `sync` ops, the userdata fields are always empty.
+=== Userdata and metadata contents
 
-Because the user can add userdata columns at any time, the number and the `identity` strings of userdata columns is not predefined; Delectus creates new ones as-needed.
+The predefined columns labeled `'optype'`, `'opid'`, `'origin'`, `'timestamp'`, `'peer'`, `'file'`, `'name'`, `'item'`, and `'deleted'` store metadata.
+
+The user-created columns whose labels are `identity` strings store userdata.
+
+Like the columns themselves, the contents of the metadata columns are predefined and maintained automatically by Delectus.
+
+The contents of userdata columns are not predefined. Users can add and change them at any time. Delectus creates new ones as-needed.
+
+The contents of userdata columns depend on the type of op. In a `columns` op, the column contains a JSON `<<column-definition>>` object that defines the column's attributes. In an `item` op, the column contains userdata represented as a JSON value.
+
+In `listname` and `sync` ops, the userdata fields are always empty.
 
 Delectus creates a new list with the common shared metadata columns, and then normally then adds a default userdata column with a unique identity and the name `'Item'`. It then adds a single empty item to the list.
 
@@ -222,19 +255,21 @@ The `listdata` table contains the log of ops, and therefore the data and metadat
 |===
 | field | permitted values | description
 | `optype` | `"sync"`,`"listname"`,`"columns"`,`"item"` | Identifies the type of op.
-| `opid` | `_identity_` | Uniquely identifies the op.
+| `opid` | `_integer_` | Uniquely identifies the op.
 | `origin` | `_identity_` | Uniquely identifies the node that created the op.
 | `timestamp` | `_timestamp_` | The time that the op was created, as reported by the creating node.
-| `metadata` | `_metadata_` | A JSON object that records metadata attributes of the op.  See the `<<metadata-definition>>` definition, above.
-| `_[identity]_*` | `_column_` or `_value_`  | The value of the column's field
+| `peer` | `_identity_` | In `sync` ops, identifies the Delectus node we synced with.
+| `file` | `_identity_` | In `sync` ops, identifies the Delectus list file we synced with.
+| `name` | `_string_` | In `listname` ops, defines the name of the list.
+| `item` | `_integer_` | In `item` ops, identifies the item.
+| `deleted` | `_Boolean_` | In `item` ops, specifies whether the item has been marked deleted.
+| `_[identity]_*` | `_column_` or `_value_`  | `NULL`, a `column` object or a JSON value, depending on the `optype` of the op.
 |===
 
-The columns `optype`, `opid`, `origin`, `timestamp`, and `metadata` are always the same in every Delectus list file.
+The `listdata` table stores all ops that have ever been added to the list. It stores metadata that enable Delectus to reliably sort the ops into a time-ordered sequence, and deterministically identify the latest and defining op that establishes the list name, the set of defined userdata columns and their attributes, and the laterst versions of all items in the list.
 
-The contents of the `metadata` column are always JSON <<metadata-definition>> objects, but the exact contents of the objects depend on the type of each op. See the <<metadata-definition>> definition, above, for details.
+It also records each time Delectus successfully synchronized this copy of the list with another, in order to facilitate efficient synchronization between copies.
 
-The number and contents of the userdata columns, represented by the `_[identity]_*` entry in table 8, vary from one Delectus list file to another, and may change over time as the user adds and updates data in the list.
+A newly-created Delectus list has exactly the columns shown above, with `_[identity]_*` replaced by a specific, newly-generated `identity` string. That `identity` labels a newly-created userdata column that Delectus automatically gives the name `'Item'`. Delectus adds a single item to the list, leaving the `'Item'` column empty, to be filled in by the user.
 
-When the user adds a column to a list, Delectus creates a new SQLite column with a new `identity`, and inserts a `columns` op to record that fact. When a user deletes a column, Delectus adds a new `column` op that records the deletion in the `metadata` for that column (it does not actually delete the column or any existing data in the file).
-
-When Delectus merges the op logs from two different copies of a list, it takes care to create any columns referenced by the ops that it's inserting in both copies of the list, so that both copies end up with the same columns, and the same ops in the same order, containing the same data.
+From that point, the number, names, and contents of the list's columns and items are controlled by the user.
