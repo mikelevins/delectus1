@@ -81,7 +81,12 @@
          " `opid` INTEGER, "
          " `origin` TEXT, "
          " `timestamp` TEXT, "
-         " `metadata` TEXT )"]
+         " `peer` TEXT, "
+         " `file` TEXT, "
+         " `name` TEXT, "
+         " `item` INTEGER, "
+         " `deleted` INTEGER "
+         ")"]
         *listdata-table-name*)
    nil))
 
@@ -95,7 +100,7 @@
 (defun sqlgen-create-item-opid-origin-index ()
   (values
    (sql ["CREATE INDEX `~A` "
-         "ON `~A` (JSON_EXTRACT(metadata, '$.item'), `opid`, `origin`)"
+         "ON `~A` (`item`, `opid`, `origin`)"
          "WHERE `optype`='item'"]
         *item-opid-origin-index-name* *listdata-table-name*)
    nil))
@@ -126,10 +131,15 @@
          " `opid`, "
          " `origin`, "
          " `timestamp`, "
-         " `metadata`) "
-         "VALUES (?, ?, ?, ?, ?)"]
+         " `peer`, "
+         " `file`, "
+         " `name`, "
+         " `item`, "
+         " `deleted` "
+         ")"
+         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"]
         *listdata-table-name*)
-   (list *listname-optype* opid origin timestamp nil)))
+   (list *listname-optype* opid origin timestamp nil nil list-name nil nil)))
 
 ;;; (sqlgen-insert-listname-op "Test" (makeid) *origin* (now-timestamp))
 

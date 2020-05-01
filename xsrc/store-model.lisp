@@ -130,12 +130,12 @@
          (timestamp (now-timestamp))
          (listname-sql listname-vals (sqlgen-insert-listname-op list-name opid origin timestamp)))
     (apply 'execute-non-query db listname-sql listname-vals))
-  ;; insert the defaultcolumns op
-  (bind ((coldata (make-default-columns-data))
-         (timestamp (now-timestamp))
-         (columns-sql columns-vals (sqlgen-insert-columns-op opid origin timestamp coldata)))
-    (db-ensure-columns-exist db coldata)
-    (apply 'execute-non-query db columns-sql columns-vals))
+  ;; insert the default columns op
+  ;; (bind ((coldata (make-default-columns-data))
+  ;;        (timestamp (now-timestamp))
+  ;;        (columns-sql columns-vals (sqlgen-insert-columns-op opid origin timestamp coldata)))
+  ;;   (db-ensure-columns-exist db coldata)
+  ;;   (apply 'execute-non-query db columns-sql columns-vals))
   ;; insert the default item op
   )
 
