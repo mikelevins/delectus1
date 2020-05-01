@@ -71,7 +71,7 @@ Certain values have an interpretation beyond their SQLite type affinities. The f
 
 === `column` [[column-definition, column]]
 
-A `column` is a JSON object that defines the name and other attributes of a *userdata column* in a list. Delectus stores `column` objects in the columns that they describe, in special `columns` ops
+A `column` is a JSON object that defines the name and other attributes of a *userdata column* in a list. Delectus stores `column` objects in the columns that they describe, in special `columns` ops.
 
 Following is the structure of a `column` object:
 
@@ -123,7 +123,7 @@ An op is represented in a Delectus file as a row in the `listdata` table. Delect
 
 This append-only discipline enables Delectus to safely merge data from concurrently-modified copies of a list without losing any data.
 
-== Op structure [[op-structure]]
+=== Op structure [[op-structure]]
 
 An *op* is a row in the `listdata` table that records an update to the state of the list. All information in Delectus lists is represented by ops.
 
@@ -204,7 +204,7 @@ The value stored in the column depends on the `optype` of the op it appears in. 
 |===
 
 
-=== Why identities?
+==== Why identities?
 
 Why not just use user-assigned names as the column labels? For a couple of reasons:
 
@@ -212,7 +212,7 @@ First, if we used the user's names for column labels then SQLite's restrictions 
 
 Second, by using automatically-generated labels based on UUIDs we ensure that a user can create two columns on two different devices, and there will be no conflict when the copies of the list are merged. Both columns will be present in the merged copies of the list, and the user can delete one of them if it turns out to be redundant.
 
-=== Userdata and metadata contents
+==== Userdata and metadata contents
 
 The predefined columns labeled `'optype'`, `'opid'`, `'origin'`, `'timestamp'`, `'peer'`, `'file'`, `'name'`, `'item'`, and `'deleted'` store metadata.
 
