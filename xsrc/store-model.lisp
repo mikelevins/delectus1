@@ -142,10 +142,18 @@
          (listname-sql listname-vals (sqlgen-insert-listname-op list-name opid origin timestamp)))
     (apply 'execute-non-query db listname-sql listname-vals))
   ;; insert the default columns op
-  (let ((default-column-id (makeid)))
+  (bind ((default-column-id (makeid))
+         (default-column-map (make-default-userdata-column default-column-id))
+         (default-columns-data {(as-keyword default-column-id) default-column-map})
+         (opid (db-get-next-opid db))
+         (timestamp (now-timestamp))
+         (columns-sql columns-vals (sqlgen-insert-columns-op opid *origin* (now-timestamp) default-columns-data)))
     (db-ensure-columns-exist db (list default-column-id))
-    ;; insert the default item op
-    ))
+    (apply 'execute-non-query db columns-sql columns-vals))
+  ;; insert the default item op
+  )
+
+;;;(make-default-userdata-column)
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
