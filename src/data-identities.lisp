@@ -14,13 +14,21 @@
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; Identities are strings derived from time-first uuids the Delectus
-;;; uses as identifiers for lists, ops, and user-created columns.  It
-;;; does not use standard-format UUID strings because they contain
-;;; hyphens and may start with a numeric digit; these properties make
-;;; it more complicated to work with them in SQLite, so we render the
-;;; UUIDs as lowercase strings without hyphens, and with the letter
-;;; 'I' prepended to signify "identity".
+
+(defmethod identity? (thing) nil)
+
+(defmethod identity? ((thing string))
+  (and (= 33 (length thing))
+       (char= #\I (elt thing 0))
+       (let ((result t))
+         (block checking
+           (loop for i from 1 below (length thing)
+              do (unless (find (elt thing i) "0123456789abcdefABCDEF")
+                   (setf result nil)
+                   (return-from checking nil))))
+         result)))
+
+;;; (time (identity? (makeid)))
 
 (defmethod uuid->identity ((id uuid:uuid))
   (concatenate 'string "I"
@@ -29,9 +37,22 @@
                   (uuid::print-bytes out id)))))
 
 (defmethod makeid ()
-  (uuid->identity (uuid:make-v1-uuid)))
+  (uuid->identity (uuid:make-v4-uuid)))
 
 ;;; (time (makeid))
 
 (defparameter +delectus-identity-string-length+
   (length (makeid)))
+
+(defmethod identity->uuid ((identity string))
+  (assert (identity? identity)() "Not a valid identity")
+  (let* ((bytestring (subseq identity 1))
+         (uuid-string (join-strings "-"
+                                    (list (subseq bytestring 0 8)
+                                          (subseq bytestring 8 12)
+                                          (subseq bytestring 12 16)
+                                          (subseq bytestring 16 20)
+                                          (subseq bytestring 20)))))
+    (uuid:make-uuid-from-string uuid-string)))
+
+;;; (time (identity->uuid (makeid)))
