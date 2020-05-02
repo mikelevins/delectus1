@@ -1,4 +1,3 @@
-
 ;;;; ***********************************************************************
 ;;;;
 ;;;; Name:          delectus.asd
@@ -9,15 +8,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;;; delectus.asd
-
 (ql:quickload :cffi)
 
 (asdf:defsystem #:delectus
-  :description "Describe delectus here"
-  :author "Your Name <your.name@example.com>"
-  :license  "Specify license here"
-  :version "2.0.0"
+  :description "The Delectus 2 data engine"
+  :author "mikel evins <mikel@evins.net>"
+  :license  "Apache 2.0"
+  :version "2.0.3"
   :serial t
   :depends-on (:fset :fare-csv :uuid :sqlite :cl-interpol :cl-emb :jonathan :local-time :named-readtables)
   :components ((:module "src"
@@ -36,11 +33,6 @@
                                      (:file "store-sqlgen")      ; generating SQL for the Dlectus store
                                      (:file "store-sqlite")      ; operating on SQLite files
                                      (:file "store-model")       ; store operations on Delectus model objects
-                                     ;; CAPI UI
-                                     (:file "macos-constants")   ; constants to control macOS UI appearance
-                                     (:file "macos-view-utils")  ; operations on native macOS widgets
-                                     (:file "views-items-sheet") ; spreadsheet-like view
-                                     (:file "views-card-list")   ; list-of-cards view
                                      ;; Test data
                                      (:file "test-data")))))
 
