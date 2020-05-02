@@ -9,6 +9,7 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
+(in-readtable :delectus)
 
 (defparameter $test-list-id "I38fee3007f2411ea984e38c9864ebde0")
 

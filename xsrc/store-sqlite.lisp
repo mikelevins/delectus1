@@ -9,7 +9,6 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
-(in-readtable :delectus)
 
 ;;; check the SQLite library version
 
@@ -22,7 +21,6 @@
 ;;; (fli:convert-from-foreign-string (sqlite3-libversion))
 ;;; currently reports 3.28.0 for the SQLite included with macOS Catalina
 ;;; (mapcar #'cffi:foreign-library-pathname (cffi:list-foreign-libraries :loaded-only t))
-
 
 
 ;;; GENERIC FUNCTION sqlite-compile-options (path)
@@ -95,14 +93,18 @@
 ;;; returns a list of column descriptions from the named table in the
 ;;; file at PATH
 
-(defmethod sqlite-list-table-column-info ((path pathname) (table-name string))
+(defmethod db-sqlite-table-column-info ((db sqlite-handle) (table-name string))
+  (mapcar (lambda (info)(apply #'column-info info))
+          (sqlite:execute-to-list db (format nil "pragma table_info(~S)" table-name))))
+
+(defmethod sqlite-table-column-info ((path pathname) (table-name string))
   (sqlite:with-open-database (db path)
-    (sqlite:execute-to-list db (format nil "pragma table_info(~S)" table-name))))
+    (db-sqlite-table-column-info db table-name)))
 
-(defmethod sqlite-list-table-column-info ((path string) (table-name string))
-  (sqlite-list-table-column-info (pathname path) table-name))
+(defmethod sqlite-table-column-info ((path string) (table-name string))
+  (sqlite-table-column-info (pathname path) table-name))
 
-;;; (sqlite-list-table-column-info "/Users/mikel/Workshop/data/kinder/kinder_data.sqlite3" "kinder_data")
+;;; (sqlite-table-column-info "/Users/mikel/Desktop/testlist.delectus2" "listdata")
 
 ;;; GENERIC FUNCTION sqlite-list-table-column-names (path table-name)
 ;;; ---------------------------------------------------------------------

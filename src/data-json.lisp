@@ -9,12 +9,14 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
+(in-readtable :delectus)
 
 (defmethod to-json ((obj wb-map))
-  (let* ((plist (wb-map->plist obj)))
-    (jonathan:to-json plist)))
-
-;;; (to-json {:a 1 :b 2})
+  (let ((result nil))
+    (do-map (k v obj)
+      (setf result
+            (cons v (cons k result))))
+    (jonathan:to-json (reverse result))))
 
 (defmethod from-json ((obj string))
   (plist->map (jonathan:parse obj)))

@@ -9,15 +9,17 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;;; delectus.asd
+
 (ql:quickload :cffi)
 
 (asdf:defsystem #:delectus
-  :description "Delectus 2"
-  :author "mikel evins <mikel@evins.net>"
-  :license  "Apache 2"
-  :version "2.0.2"
+  :description "Describe delectus here"
+  :author "Your Name <your.name@example.com>"
+  :license  "Specify license here"
+  :version "2.0.0"
   :serial t
-  :depends-on (:fset :fare-csv :uuid :sqlite :jonathan :local-time)
+  :depends-on (:fset :fare-csv :uuid :sqlite :cl-interpol :cl-emb :jonathan :local-time :named-readtables)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
@@ -27,14 +29,20 @@
                                      (:file "system-bind")       ; more compact binding of multiple values
                                      (:file "system-utils")      ; general-purpose helpers
                                      (:file "data-identities")   ; Delectus-specific UUID format
+                                     (:file "data-csv")          ; reading and writing CSV files
                                      (:file "data-json")         ; reading and writing JSON data
-                                     (:file "store-column-info") ; sqlite column-info utils
+                                     (:file "store-columns")     ; modeling Delectus columns
+                                     (:file "store-sql-utils")   ; helpers for sqlgen
+                                     (:file "store-sqlgen")      ; generating SQL for the Dlectus store
                                      (:file "store-sqlite")      ; operating on SQLite files
-                                     (:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
                                      (:file "store-model")       ; store operations on Delectus model objects
-
-                                     ;;(:file "data-csv")          ; reading and writing CSV files
-                                     ))))
+                                     ;; CAPI UI
+                                     (:file "macos-constants")   ; constants to control macOS UI appearance
+                                     (:file "macos-view-utils")  ; operations on native macOS widgets
+                                     (:file "views-items-sheet") ; spreadsheet-like view
+                                     (:file "views-card-list")   ; list-of-cards view
+                                     ;; Test data
+                                     (:file "test-data")))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
 
