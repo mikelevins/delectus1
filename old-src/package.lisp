@@ -9,9 +9,10 @@
 ;;;; ***********************************************************************
 
 (in-package :cl-user)
+(named-readtables:in-readtable :standard)
 
 (defpackage #:delectus
-  (:use #:cl #:sqlite)
+  (:use #:cl #:sqlite #:named-readtables)
   (:import-from #:fset
                 #:compare #:convert #:do-map #:domain
                 #:lookup #:wb-map #:with)
@@ -35,6 +36,9 @@
            #:op-userdata
            #:with-open-database))
 
+(defpackage #:sqlgen
+  (:use #:cl #:sqlite #:named-readtables))
+
 (defpackage #:delectus-ui
   (:nicknames #:ui)
-  (:use #:cl #:sqlite #:delectus #:capi))
+  (:use #:cl #:sqlite #:named-readtables #:delectus #:capi))

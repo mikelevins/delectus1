@@ -2,7 +2,7 @@
 ;;;;
 ;;;; Name:          delectus.asd
 ;;;; Project:       delectus 2
-;;;; Purpose:       Delectus 2 system definition
+;;;; Purpose:       delectus system definition
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2010-2020 by mikel evins
 ;;;;
@@ -11,29 +11,30 @@
 (ql:quickload :cffi)
 
 (asdf:defsystem #:delectus
-  :description "Delectus 2"
+  :description "The Delectus 2 data engine"
   :author "mikel evins <mikel@evins.net>"
-  :license  "Specify license here"
-  :version "2.0.0"
+  :license  "Apache 2.0"
+  :version "2.0.3"
   :serial t
-  :depends-on (:fset :fare-csv :uuid :sqlite :jonathan :local-time)
+  :depends-on (:fset :fare-csv :uuid :sqlite :cl-interpol :jonathan :local-time :named-readtables)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     (:file "system-syntax")     ; syntax for map literals
                                      (:file "system-parameters") ; application globals
+                                     (:file "system-syntax")     ; syntax for map literals
                                      (:file "system-bind")       ; more compact binding of multiple values
                                      (:file "system-utils")      ; general-purpose helpers
                                      (:file "data-identities")   ; Delectus-specific UUID format
+                                     (:file "data-csv")          ; reading and writing CSV files
                                      (:file "data-json")         ; reading and writing JSON data
-                                     (:file "store-column-info") ; sqlite column-info utils
+                                     (:file "store-columns")     ; modeling Delectus columns
+                                     (:file "store-sql-utils")   ; helpers for sqlgen
+                                     (:file "store-sqlgen")      ; generating SQL for the Dlectus store
                                      (:file "store-sqlite")      ; operating on SQLite files
-                                     ;; (:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
-                                     ;; (:file "store-model")       ; store operations on Delectus model objects
-
-                                     ;;(:file "data-csv")          ; reading and writing CSV files
-                                     ))))
+                                     (:file "store-model")       ; store operations on Delectus model objects
+                                     ;; Test data
+                                     (:file "test-data")))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
 

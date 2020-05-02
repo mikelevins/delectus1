@@ -9,6 +9,7 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
+(in-readtable :standard)
 
-(defparameter +delectus-version+ "2.0.3")
-(defparameter +delectus-format-version+ "2.3")
+(defparameter +delectus-version+ "2.0.0")
+(defparameter +delectus-format-version+ "2.0")

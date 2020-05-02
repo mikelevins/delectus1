@@ -8,28 +8,12 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(in-package #:delectus)
+(in-readtable :delectus)
 
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; Identities are strings derived from random (v4) uuids the Delectus
-;;; uses as identifiers for lists, ops, and user-created columns.  It
-;;; does not use standard-format UUID strings because they contain
-;;; hyphens and may start with a numeric digit; these properties make
-;;; it more complicated to work with them in SQLite.
-;;;
-;;; We construct an identity by first creating a v4 (random) UUID, then
-;;; printing its bytes to a string in hexadecimal notation. We then
-;;; downcase the resulting string and prepend the letter "I".
-;;;
-;;; For example, "I072e66008a6611ea85ed38c9864ebde0" is a vaid
-;;; identity.
-
-;;; ---------------------------------------------------------------------
-;;; identities
-;;; ---------------------------------------------------------------------
-
-(in-package #:delectus)
 
 (defmethod identity? (thing) nil)
 
@@ -72,4 +56,3 @@
     (uuid:make-uuid-from-string uuid-string)))
 
 ;;; (time (identity->uuid (makeid)))
-

@@ -9,6 +9,7 @@
 ;;;; ***********************************************************************
 
 (in-package #:delectus)
+(in-readtable :delectus)
 
 (defmethod to-json ((obj wb-map))
   (let* ((plist (wb-map->plist obj)))
@@ -18,4 +19,3 @@
 
 (defmethod from-json ((obj string))
   (plist->map (jonathan:parse obj)))
-
