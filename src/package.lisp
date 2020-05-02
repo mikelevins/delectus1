@@ -12,7 +12,7 @@
 (named-readtables:in-readtable :standard)
 
 (defpackage #:delectus
-  (:use #:cl #:sqlite #:cl-emb #:named-readtables)
+  (:use #:cl #:sqlite #:named-readtables)
   (:import-from #:fset
                 #:compare #:convert #:do-map #:domain
                 #:lookup #:wb-map #:with)
@@ -41,4 +41,4 @@
 
 (defpackage #:delectus-ui
   (:nicknames #:ui)
-  (:use #:cl #:sqlite #:cl-emb #:named-readtables #:delectus #:capi))
+  (:use #:cl #:sqlite #:named-readtables #:delectus #:capi))

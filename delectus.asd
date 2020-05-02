@@ -16,7 +16,7 @@
   :license  "Apache 2.0"
   :version "2.0.3"
   :serial t
-  :depends-on (:fset :fare-csv :uuid :sqlite :cl-interpol :cl-emb :jonathan :local-time :named-readtables)
+  :depends-on (:fset :fare-csv :uuid :sqlite :cl-interpol :jonathan :local-time :named-readtables)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
