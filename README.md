@@ -1,9 +1,10 @@
-# delectus
-### _Your Name <your.name@example.com>_
 
-This is a project to do ... something.
+# delectus
+### _mikel evins <mikel@evins.net>_
+
+Work in progress on Delectus 2
 
 ## License
 
-Specify license here
+Apache 2.0
 
