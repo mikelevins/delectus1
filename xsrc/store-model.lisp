@@ -163,8 +163,13 @@
            (default-value nil)
            (item-sql item-vals (sqlgen-insert-item-op opid origin timestamp item deleted?
                                                       {default-column-id default-value})))
-      (apply 'execute-non-query db item-sql item-vals)
-      )))
+      (apply 'execute-non-query db item-sql item-vals))))
+
+;;; the item-opid-origin index
+
+(defmethod db-create-item-opid-origin-index ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-create-item-opid-origin-index)))
+    (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
@@ -189,8 +194,7 @@
         (db-create-listdata-table db)
         (when create-default-userdata
          (db-insert-default-listdata-ops db :list-name list-name))
-        ;;(db-create-item-opid-origin-index db)
-        )))
+        (db-create-item-opid-origin-index db))))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)
