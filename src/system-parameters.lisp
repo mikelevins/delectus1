@@ -10,11 +10,6 @@
 
 (in-package #:delectus)
 
-;;; TODO: add a config subsystem and store this value in per-node
-;;; configuration
-
-(defparameter *origin* "I9447d300752b11ea8256d9dd744b5501")
-
 ;;; TODO: add logic for initializing parameters appropriately in a delivered app
 
 (defparameter *delectus-root-pathname* (asdf:system-relative-pathname :delectus "./"))
@@ -27,7 +22,10 @@
 ;;; -----------
 
 (defparameter *delectus-table-name* "delectus")
-(defparameter *listdata-table-name* "listdata")
+(defparameter *syncs-table-name* "syncs")
+(defparameter *listnames-table-name* "listnames")
+(defparameter *columns-table-name* "columns")
+(defparameter *items-table-name* "items")
 
 ;;; index names
 ;;; -----------
@@ -37,9 +35,12 @@
 ;;; column names
 ;;; ------------
 
-(defparameter *metadata-column-names* ["optype" "opid" "origin" "timestamp" "peer" "file" "name" "item" "deleted"])
-(defparameter *optype-column-name* "optype")
-(defparameter *opid-column-name* "opid")
+(defparameter *common-metadata-columns* ["origin" "timestamp"])
+(defparameter *sync-metadata-columns* (append *common-metadata-columns* ["peer" "file"]))
+(defparameter *listname-metadata-columns* (append *common-metadata-columns* ["name"]))
+(defparameter *columns-metadata-columns* *common-metadata-columns*)
+(defparameter *items-metadata-columns* (append *common-metadata-columns* ["item" "deleted"]))
+
 (defparameter *origin-column-name* "origin")
 (defparameter *timestamp-column-name* "timestamp")
 (defparameter *peer-column-name* "peer")
@@ -57,10 +58,3 @@
 (defparameter *default-initial-column-order* *minimum-column-order*)
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
 
-;;; op parameters
-;;; -------------
-
-(defparameter *sync-optype* "sync")
-(defparameter *listname-optype* "listname")
-(defparameter *columns-optype* "columns")
-(defparameter *item-optype* "item")

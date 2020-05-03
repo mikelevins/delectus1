@@ -21,17 +21,18 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     (:file "system-syntax")     ; syntax for map literals
-                                     (:file "system-parameters") ; application globals
-                                     (:file "system-bind")       ; more compact binding of multiple values
-                                     (:file "system-utils")      ; general-purpose helpers
-                                     (:file "data-identities")   ; Delectus-specific UUID format
-                                     (:file "data-json")         ; reading and writing JSON data
-                                     (:file "store-column-info") ; sqlite column-info utils
-                                     (:file "store-sqlite")      ; operating on SQLite files
+                                     (:file "system-syntax")        ; syntax for map literals
+                                     (:file "system-parameters")    ; application globals
+                                     (:file "system-bind")          ; more compact binding of multiple values
+                                     (:file "system-utils")         ; general-purpose helpers
+                                     ;; (:file "data-identities")   ; Delectus-specific UUID format
+                                     ;; (:file "data-origin")       ; computing identity of the Delectus process
+                                     ;; (:file "data-timestamps")   ; Delectus-specific timestamps
+                                     ;; (:file "data-json")         ; reading and writing JSON data
+                                     ;; (:file "store-column-info") ; sqlite column-info utils
+                                     ;; (:file "store-sqlite")      ; operating on SQLite files
                                      ;; (:file "store-sqlgen")      ; generating SQL for interacting with the Delectus store
                                      ;; (:file "store-model")       ; store operations on Delectus model objects
-
                                      ;;(:file "data-csv")          ; reading and writing CSV files
                                      ))))
 

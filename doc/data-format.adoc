@@ -103,6 +103,20 @@ The `delectus` table stores data identifying the file, the list, and the Delectu
 | `next_item` | `integer`  | The item number that will be assigned to the next item created in this file.
 |===
 
+=== 'syncs'
+
+The `'syncs'` table records `sync` ops, which record successfuly sync operations.
+
+[cols="1,2,4",options="header"]
+.Structure of the `syncs` table
+|===
+| field | type | description
+| `origin` | `BLOB` | The `identity` of the Delectus process that created this op.
+| `timestamp` | `INTEGER` | The time that the op was created, as reported by the creating node.
+| `peer` | `TEXT` | The `identity` of the Delectus process file with which we synced.
+| `file` | `TEXT` | The `identity` of the list file with which we synced.
+|===
+
 === 'listnames'
 
 The `'listnames'` table records `listname` ops, which set the name of the list. The current name of the list is the value of the `name` field of the latest row of the `listnames` table.
