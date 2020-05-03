@@ -47,11 +47,11 @@ The `'columns'` table records `'columns'` ops, which specify the identities and 
 | `_[label]_+` | `identity` | A `column` object defining the attributes of the column.
 |===
 
-The notation `_[label]_+` represents one or more column labels, each of which is an `identity` string. There may any number of columns, each created by the user, and each with its own _label_.
+The notation `_[label]_+` represents one or more column labels, each of which is an `identity` string. There may be any number of columns, each created by the user, and each with its own _label_. The contents of each column in the `'columns'` table is a JSON object that gives the attributes of the column.
+
+The `'columns'` and `'item'` tables must have the same `_[label]_+` columns.
 
 == 'items'
-
-
 
 [cols="1,2,4",options="header"]
 .Structure of the `'columns'` table
@@ -66,4 +66,6 @@ The notation `_[label]_+` represents one or more column labels, each of which is
 | `_[label]_+` | JSON `null`, `Boolean`, `number`, or `string` | A JSON value.
 |===
 
-The notation `_[label]_+` represents one or more column labels, each of which is an `identity` string. There may any number of columns, each created by the user, and each with its own _label_.
+The notation `_[label]_+` represents one or more column labels, each of which is an `identity` string. There may be any number of columns, each created by the user, and each with its own _label_. The contents of each column in the `'items'` table is a JSON object that gives the value of the column in the item.
+
+The `'columns'` and `'items'` tables must have the same `_[label]_+` columns.
