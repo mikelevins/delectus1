@@ -25,7 +25,7 @@
                                      (:file "system-parameters")    ; application globals
                                      (:file "system-bind")          ; more compact binding of multiple values
                                      (:file "system-utils")         ; general-purpose helpers
-                                     ;; (:file "data-identities")   ; Delectus-specific UUID format
+                                     (:file "data-identities")   ; Delectus-specific UUID format
                                      ;; (:file "data-origin")       ; computing identity of the Delectus process
                                      ;; (:file "data-timestamps")   ; Delectus-specific timestamps
                                      ;; (:file "data-json")         ; reading and writing JSON data
