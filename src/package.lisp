@@ -15,6 +15,7 @@
   (:import-from #:fset
                 #:compare #:convert #:do-map #:domain
                 #:lookup #:wb-map #:with)
+  (:import-from #:local-time #:now)
   (:export #:bind
            #:count-latest-filtered-items
            #:from-json
