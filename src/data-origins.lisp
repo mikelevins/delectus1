@@ -34,44 +34,28 @@
 ;;; (make-origin (process-identity)(pathname "/Users/mikel/.emacs"))
 
 ;;; ---------------------------------------------------------------------
-;;; *origins*
+;;; origins registry
 ;;; ---------------------------------------------------------------------
-;;; *origins* is a registry of origins that we've created in the current
-;;; session. You can use it to look up a pathname given an origin,
-;;; or vice-versa. It works *only* with origins created in the current
-;;; session; origins stored in a file in any other Delectus session
-;;; cannot be mapped to their pathnames.
+;;; used to find the pathname used to create an origin in the current
+;;; session
 
-(defparameter *origins*
-  {:origin->pathname-map {}
-   :pathname->origin-map {}})
+(defparameter *origin-pathnames* {})
 
-(defun origins () *origins*)
-(defun set-origins (new-origins)
-  (setf *origins* new-origins))
+(defun origin-pathnames () *origin-pathnames*)
 
-(defmethod register-origin ((list-file pathname))
-  (assert (uiop/pathname:absolute-pathname-p list-file)()
-          "Expected a full pathname; found ~S" list-file)
-  (let* ((process-id (process-identity))
-         (file-origin (make-origin process-id list-file)))
-    (set-origins
-     {:origin->pathname-map (merge-maps (get-key (origins) :origin->pathname-map {})
-                                        {file-origin list-file})
-                            :pathname->origin-map (merge-maps (get-key (origins) :pathname->origin-map {})
-                                                              {list-file file-origin})})))
+(defun set-origin-pathnames (new-origin-pathnames)
+  (setf *origin-pathnames*
+        new-origin-pathnames))
 
-(defmethod pathname->origin ((path pathname))
-  (assert (uiop/pathname:absolute-pathname-p path)()
-          "Expected a full pathname; found ~S" path)
-  (get-key (get-key (origins) :pathname->origin-map {})
-           path))
-
-(defmethod origin->pathname ((origin vector))
-  (get-key (get-key (origins) :origin->pathname-map {})
+(defmethod find-origin-pathname ((origin vector))
+  (get-key (origin-pathnames)
            origin))
 
-;;; (register-origin (pathname "/Users/mikel/.emacs"))
-;;; (pathname->origin (pathname "/Users/mikel/.emacs"))
-;;; (origin->pathname (pathname->origin (pathname "/Users/mikel/.emacs")))
+(defmethod register-origin-pathname ((origin vector)(path pathname))
+  (set-origin-pathnames (merge-maps (origin-pathnames)
+                                    {origin path}))
+  (origin-pathnames))
 
+;;; (setf $orig (make-origin (process-identity)(pathname "/Users/mikel/.emacs")))
+;;; (register-origin-pathname $orig (pathname "/Users/mikel/.emacs"))
+;;; (find-origin-pathname $orig)
