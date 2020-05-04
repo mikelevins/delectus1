@@ -7,12 +7,13 @@ Conceptually, a Delectus list is a named sequence of *items*, each of which cont
 
 Concretely, Delectus stores these objects in the form of rows in a set of tables in a SQLite file. Each row represents an *op*; an *op*--short for "operation"--is a tuple that asserts a change in the state of the list. A Delectus list file is an append-only, time-ordered log of ops. The current state of its data is the combination of the latest values in its ops.
 
-There are four types of op:
+There are three types of op:
 
-. `sync` ops record a successfully synchronization of two Delectus list files.
 . `listname` ops define or update the user-assigned name of the list.
 . `columns` ops define or update the *userdata* columns of the list.
 . `item` ops insert, update, or delete an individual item in the list.
+
+NOTE: A fourth type of op, `sync`, is intended to record successful synchronization events, in which two or more list files are reconciled so that they contain the same data. The `sync` op is not yet defined because the details of the synchronization algorithm are not yet worked out.
 
 A Delectus file contains one SQLite table for each of these op types. See the <<delectus-table-definitions>> section for a detailed description of each.
 
@@ -31,90 +32,85 @@ The set of metadata columns is predefined, and so are the labels of those column
 
 The set of userdata columns, on the other hand, is open-ended, because a user may add a new column at any time.
 
+== Identities [[identity-definition, identity]]
 
-== Identities
+An `*identity*` is a v4 UUID represented as a 128-bit integer. Delectus uses identities to uniquely identify Delectus processes and userdata columns. It stores them as hexadecimal strings in the `delectus` table, and uses them to compute <<origin-definition>>s and <<userdata-column-label-definition>>s.
 
-An *identity* is a globally-unique 128-bit number that Delectus uses to uniquely identify Delectus processes and *userdata columns*.
-
-Delectus identities are v4 UUIDs in the form of unsigned 128-bit integers.
-
-Delectus uses an identity in one of two ways:
-
-. as an <<origin-definition>> object, stored in the SQlite `'origin'` column as a BLOB.
-. as a <<userdata-column-label-definition>>, converted to a hexadecimal string with the letter "I" prepended.
-
-
-== Userdata column labels [[userdata-column-label-definition, userdata column label]]
-
-A user may run any number of Delectus processes at the same time, and may add columns in each to different copies of the same list. Delectus has to be able to merge the logs from two or more lists without losing data.
-
-In order to ensure that it can merge arbitrary logs safely, Delectus automatically generates a new, unique column label for each userdata column at the time it's created. This label is a Delectus identity rendered as a string, with the letter "I" prepended. Converting a UUID to a hexadecimal string yields a string that is valid for labeling a SQLite column, except that about sixty precent of the time it will start with a digit. SQLite doesn't allow column labels to start with digits without escaping, so we prepend the letter "I" to ensure the label is usable without gymnastics.
-
-As an example, a typical Delectus `identity` string is `"f3f02b62f35f48c3bd870759f42bed57"`. If using this value as a userdata column label, Delectus renders it as `"If3f02b62f35f48c3bd870759f42bed57"`.
-
-Users normally never see `identity` strings or userdata column labels. Instead of using the SQLite column label, Delectus renders userdata columns using the user-assigned `'name'` attribute of each column.
+Each time Delectus runs, it generates an `identity`. It stores it in the variable `delectus:*process-identity*`. It then uses `delectus:*process-identity*` as an input to all subsequent <<origin-definition>> and <<userdata-column-label-definition>> computations.
 
 == Origins [[origin-definition, origin]]
 
-An *origin* is an identity computed for a given Delectus process. Each time Delectus runs it computes a new origin, and it tags each change to a Delectus list with that origin.
+An `*origin*` is a 128-bit integer--a SHAKE128 digest--used to distinguish among the sources of edits in a Delectus file. It's computed from the current value of `delectus:*process-identity*` and the absolute pathname of a list file. Each time the Delectus process inserts an op into one of the file's tables, it writes the `origin` into the `origin` field of the op.
 
-The *origin* conceptually identifies the Delectus process that made a set of changes, but cannot in general be used to locate and identify that process. The `origin` value is a random UUID, and there is no guarantee that the process that created it still exists at any particular time in the future.
+Each combination of a Delectus process and a Delectus file yields a distinct origin. This property ensures that multiple processes updating multiple copies of the same Delectus list can always merge all of the changes into a single consistent state without collisions or data loss. All edits are distinguishable by a combination of `origin` and the *revision number* of the edit.
 
-Fortunately, it's not important to be able to put your finger on the Delectus process that created a given logged edit; it's only important to be able to distinguish that edit globally from all others in an unambiguous way. Per-process `origin` values achieve that goal.
+When a Delectus process closes a file or exits, it discards the `origin` associated with the file. It thereafter exists only as strings in the `origin` fields of certain ops in the file.
 
-Delectus stores origins as `BLOB` values in the `origin` column of each SQLite table.
+Delectus stores origins as `BLOB` values in the `origin` column of each SQLite table. It indexes rows of the tables on the `origin` column, and uses `origin` values in computing the current state of the Delectus list in the file.
 
 NOTE: Storing origins in this way represents a dependence on implementation details of SQLite. SQLite can index BLOB values, but that feature is an extension to the SQL standard and is not generally supported by other databases. If at some point Delectus needs to support storage in other databases then we may have to invent a method of converting origins to a more suitable format for the destination database.
 
-== Timestamps and items
+== Revision and item numbers
 
-Each time Delectus writes an op, it assigns it a *timestamp*. The timestamp is an integer that counts the number of milliseconds since the *Delectus epoch*, which is defined to be January 1, 2010 GMT.
+Delectus keeps a count, called the *revision number*, of the number of times each list file has been updated. It stores this count in the `next_revision` field of the `delectus` table. Each time it inserts an op to any of the tables, it stores the current value of `next_revision` in the op's `revision` field and increments `next_revision`.
 
-The timestamp is not globally unique; only locally unique. A different Delectus process can and will assign the same timestamp to different ops. On the other hand, different Delectus processes have different origins; that means that, because the origins are unique, the pair `(timestamp, origin)` _is_ globally unique. Each op in any copy of a Delectus list is therefore uniquely identifiable, which means that op logs from different Delectus files can be safely merged without loss of data.
+Delectus also keeps a count of how many new items it has added to each list file. It stores this count in the `next_item` field of the `delectus` table. When it inserts an `item` op that is not an update to an existing op, it stores the current value of `next_item` in the `item` field of the op, and increments `next_item`. When Delectus inserts an update to an existing item, it doesn't allocate a new item number. Instead, it reuses the item number of the previous op, thud identifying the new op as an update to the old item.
 
-=== Items
+This is how Delectus is able to identify all the ops that have updated a given item, and how it distinguishes between a new item and an update to an old one.
 
-As the previous section explained, each op added to a Delectus list file is unique. A list's *items* are also unique, but in a different way. Although each item is distinct from every other, a given item may be represented by more than one op. That's because after being added to a list, a given item may be updated any number of times. The ops that update it are each unique, but they all refer to the same item.
+== Userdata column labels [[userdata-column-label-definition, userdata column label]]
 
-Delectus therefore requires a way to identify items and all of the unique ops that apply to each one. Solves this problem by assigning a unique-per-process *itemid* to each item at the time it's created. The itemid is an integer that uniquely identifies a given item among all the ops inserted by the current process.
+A *userdata column label* is an <<identity-definition>> string, but with the letter "I" prepended. Delectus uses these strings as the labels of userdata columns.
 
-Once again, two or more Delectus processes can and will assign the same itemid to different items, and, once again, the solution is to identify items using the pair `(itemid, origin)`, because each process assigning itemids will have a distinct origin.
+Why not simply use the names that users give to their columns?
+
+Because a user might edit the same list on two or more devices, and might give the same name to two or more columns with different contents. If we had to rely on user-assigned names for columns, then when a user gave the same name to two different columns, we'd have a conflict between them as soon as we tried to merge the two versions of the file. By instead using autogenerated `identity` strings as labels, we ensure that we can always safely merge the user's edits. Even if the user gives the same name to two columns created on different devices, Delectus knows that they're different and can preserve both.
+
+Delectus prepends the letter "I" to `identity` strings when it uses them as column labels. This practice is to make it easier to work with SQLite. SQlite has some restrictions on the names of columns that you can use without jumping through extra hoops. In order to avoid those complications, we simply stick an "I" onto the front of the `identity` when we want to use it as a column label.
+
+Users normally never see `identity`-based column labels. When presenting a userdata column in the user interface, Delectus instead displays the name that the user gives to the column.
+
+== Uniquely identifying ops and items
+
+Because you can edit two or more copies of a list on different devices or in different processes, it's possible--common, in fact--for Delectus to assign the same revision or item number to different ops. Neither the revision number nor the item number are globally unique.
+
+On the other hand, if Delectus is concurrently editing two or more copies of a list, whether on different devices or in different processes on the same device, then each Delectus process has a different `origin`. Delectus computes a new, unique `origin` each time a Delectus process opens a list file.
+
+This means that, although a revision number is not globally unique, the pair `(revision, origin)` _is_ globally unique. In the same way, the pair `(item, origin)` is unique for any given item and origin.
+
+Delectus can therefore uniquely identify any op using the pair `(revision, origin)`, and can uniquely identify any item using `(item, origin)`.
+
+== Timestamps
+
+Each time Delectus writes an op, it assigns it a *timestamp*. The timestamp is a count of the number of seconds since 1900-01-01T00:00:00Z--that is, since the UTC epoch. These timestamps exist to help users  know when they last edited an item in a list.
+
+NOTE: SQLite INTEGER values are 64-bit signed integers, meaning they offer 63 bits of precision (plus a sign bit). The Delectus timestamp will therefore roll over at 292277026526-12-05T15:30:07.000000Z--that is, on December 5th of the year 292,277,026,526 A.D., at 3:30 PM.
 
 === The current state
 
-The current state of the data in a Delectus list is just the composition of all the latest relevant ops. For `sync`, `listname`, and `columns` ops, this simply means the ops with the latest timestamps. When two or more ops of the same type have the same timestamp, they're sorted by origin, and the one that sorts last is chosen as the current value.
+The current state of the data in a Delectus list is just the composition of all the newest relevant ops. For `listname` and `columns` ops, this simply means the ops with the highest revision numbers. If two or more ops of the same type have the same revision number, then Delectus sorts them by origin and chooses the one that ends up last as the current value.
 
-For `item` ops, the process is similar, but a little more complicated, because we need the latest version of each item. In order to get it, we first gather items into groups by `itemid`, and then sort each group by `timestamp` and then `origin`, just as we do with the other ops. The current items in the list are the latest version of each item according to this method.
+For `item` ops, the process is similar,  but we have to account for the fact that there can be multiple versions of the same item. To determine the current state of all items, Delectus partitions the `item` ops into groups by their `item` and `origin` fields. Next, it sorts each group of items by the `revision` and `origin` fields. Finally, it collects the last element of each group, yielding the latest version of each item.
+
+Delectus never discards the older version of any item. It's always possible to ask it to show you the version history of any item, so that, if its merge algorithm yields a final value different from the one you wanted, you can select an older one and make it current.
+
+The same goes for `columns` and `listname` ops: the history of each type of op is stored in the list file, and you can easily browse and restore old values as-needed.
 
 == SQlite Tables [[delectus-table-definitions, Delectus tables]]
 
 === 'delectus'
 
-The `delectus` table stores data identifying the file, the list, and the Delectus node that created them. It also records the version of the file format used, and if the new list was created by *compacting* an existing *parent* list, then it records the `identity` of the parent.
+Records the `identity` of the list, along with some other supporting data.
 
 [cols="1,2,4",options="header"]
 .Structure of the `delectus` table
 |===
 | column | type | description
-| `listid` | `BLOB`  | The unique `identity` of this list, assigned when it was created.
-| `fileid` | `BLOB`  | The unique `identity` of this list file, assigned when it was created.
-| `parent` | `BLOB`  | The  `identity` of the Delectus list file from which this file was derived by a *compaction*. If `NULL`, it signifies that the file is not a child of another list file.
+| `listid` | `TEXT`  | The unique `identity` of this list, assigned when it was created.
+| `parent` | `TEXT`  | The  `listid` of the Delectus list from which this one was derived by a *compaction*. If `NULL`, it signifies that the list is not a child of another list, but was created independently.
 | `format` | `TEXT`  | The version of the Delectus file format in this list file
+| `next_revision` | `integer`  | The revision number that will be assigned to the next op created in this file.
 | `next_item` | `integer`  | The item number that will be assigned to the next item created in this file.
-|===
-
-=== 'syncs'
-
-The `'syncs'` table records `sync` ops, which record successfuly sync operations.
-
-[cols="1,2,4",options="header"]
-.Structure of the `syncs` table
-|===
-| field | type | description
-| `origin` | `BLOB` | The `identity` of the Delectus process that created this op.
-| `timestamp` | `INTEGER` | The time that the op was created, as reported by the creating node.
-| `peer` | `TEXT` | The `identity` of the Delectus process file with which we synced.
-| `file` | `TEXT` | The `identity` of the list file with which we synced.
 |===
 
 === 'listnames'
@@ -126,6 +122,7 @@ The `'listnames'` table records `listname` ops, which set the name of the list. 
 |===
 | field | type | description
 | `origin` | `BLOB` | The `identity` of the Delectus process that created this op.
+| `revision` | `INTEGER` | The revision number of this op.
 | `timestamp` | `INTEGER` | The time that the op was created, as reported by the creating node.
 | `name` | `TEXT` | The new name of the list.
 |===
@@ -139,6 +136,7 @@ The `'columns'` table records `'columns'` ops, which specify the identities and 
 |===
 | field | type | description
 | `origin` | `BLOB` | The `identity` of the Delectus process that created this op.
+| `revision` | `INTEGER` | The revision number of this op.
 | `timestamp` | `INTEGER` | The time that the op was created, as reported by the creating node.
 | `_[label]_+` | `identity` | A `column` object defining the attributes of the column.
 |===
@@ -154,6 +152,7 @@ The `'columns'` and `'item'` tables are required to have the same `_[label]_+` c
 |===
 | field | type | description
 | `origin` | `BLOB` | The `identity` of the Delectus process that created this op.
+| `revision` | `INTEGER` | The revision number of this op.
 | `timestamp` | `INTEGER` | The time that the op was created, as reported by the creating node.
 | `item` | `INTEGER` | An `itemid that uniquely identifies the item that this op represents.
 | `deleted` | `Boolean` | Whether this item is marked deleted.
