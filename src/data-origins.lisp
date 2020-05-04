@@ -36,6 +36,11 @@
 ;;; ---------------------------------------------------------------------
 ;;; *origins*
 ;;; ---------------------------------------------------------------------
+;;; *origins* is a registry of origins that we've created in the current
+;;; session. You can use it to look up a pathname given an origin,
+;;; or vice-versa. It works *only* with origins created in the current
+;;; session; origins stored in a file in any other Delectus session
+;;; cannot be mapped to their pathnames.
 
 (defparameter *origins*
   {:origin->pathname-map {}
