@@ -14,6 +14,13 @@
 
 (defparameter *delectus-root-pathname* (asdf:system-relative-pathname :delectus "./"))
 
+;;; an identity generated once per Delectus launch
+(defparameter *process-identity* nil)
+
+(defun process-identity ()
+  (unless *process-identity*
+    (setf *process-identity* (makeid)))
+  *process-identity*)
 
 ;;; list-file parameters
 ;;; ---------------------------------------------------------------------
