@@ -11,7 +11,7 @@
 (in-package :cl-user)
 
 (defpackage #:delectus
-  (:use #:cl #:sqlite)
+  (:use #:cl #:sqlite #:sxql)
   (:import-from #:fset
                 #:compare #:convert #:do-map #:domain
                 #:lookup #:wb-map #:with)

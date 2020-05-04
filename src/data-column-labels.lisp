@@ -44,6 +44,7 @@
 
 ;;; (setf $lbl (make-column-label))
 ;;; (column-label? $lbl)
+;;; (as-keyword (make-column-label))
 
 (defmethod column-label->identity-string ((lbl string))
   (assert (column-label? lbl)() "Not a valid column-label: ~S" lbl)
