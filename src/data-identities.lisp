@@ -8,32 +8,66 @@
 ;;;;
 ;;;; ***********************************************************************
 
-
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; Identities are strings derived from random (v4) uuids the Delectus
-;;; uses as identifiers for lists, ops, and user-created columns.  It
-;;; does not use standard-format UUID strings because they contain
-;;; hyphens and may start with a numeric digit; these properties make
-;;; it more complicated to work with them in SQLite.
-;;;
-;;; We construct an identity by first creating a v4 (random) UUID, then
-;;; printing its bytes to a string in hexadecimal notation. We then
-;;; downcase the resulting string and prepend the letter "I".
-;;;
-;;; For example, "I072e66008a6611ea85ed38c9864ebde0" is a vaid
-;;; identity.
+;;; functions for creating and converting between Delectus identities
+;;; and identity-strings.
 
 ;;; ---------------------------------------------------------------------
 ;;; identities
 ;;; ---------------------------------------------------------------------
+;;; an identity is a v4 UUID byte array.
 
 (in-package #:delectus)
 
 (defmethod identity? (thing) nil)
 
-(defmethod identity? ((thing string))
+(defmethod identity? ((thing vector))
+  (and (vectorp thing)
+       (every (lambda (x)(typep x '(unsigned-byte 8)))
+              thing)
+       t))
+
+;;; (identity? (makeid))
+;;; (identity? "foo")
+
+(defmethod uuid->identity ((u uuid:uuid))
+  (uuid:uuid-to-byte-array u))
+
+(defmethod identity->uuid ((identity vector))
+  (assert (identity identity)() "Not a valid identity: ~S" identity)
+  (uuid:byte-array-to-uuid identity))
+
+(defmethod makeid ()
+  (uuid->identity (uuid:make-v4-uuid)))
+
+;;; (time (makeid))
+;;; (setf $u (uuid:make-v4-uuid))
+;;; (setf $id (uuid->identity $u))
+;;; (setf $u2 (identity->uuid $id))
+
+;;; ---------------------------------------------------------------------
+;;; identity strings
+;;; ---------------------------------------------------------------------
+;;; an identity-string is an identity printed to a downcased
+;;; hexadecimal string.
+
+(defmethod identity->string ((id vector))
+  (assert (identity id)() "Not a valid identity: ~S" id)
+  (string-downcase
+   (with-output-to-string (out)
+     (loop for b across id
+        do (format out "~2,'0x" b)))))
+
+;;; (identity->string (makeid))
+
+(defparameter +delectus-identity-string-length+
+  (length (identity->string (makeid))))
+
+(defmethod identity-string? (thing) nil)
+
+(defmethod identity-string? ((thing string))
   (and (= 32 (length thing))
        (let ((result t))
          (block checking
@@ -43,30 +77,24 @@
                    (return-from checking nil))))
          result)))
 
-;;; (time (identity? (makeid)))
+(defun make-identity-string ()
+  (identity->string (makeid)))
 
-(defmethod uuid->identity ((id uuid:uuid))
-  (string-downcase
-   (with-output-to-string (out)
-     (uuid::print-bytes out id))))
+;;; (time (make-identity-string))
 
-(defmethod makeid ()
-  (uuid->identity (uuid:make-v4-uuid)))
-
-;;; (time (makeid))
-
-(defparameter +delectus-identity-string-length+
-  (length (makeid)))
-
-(defmethod identity->uuid ((identity string))
-  (assert (identity? identity)() "Not a valid identity")
+(defmethod string->identity ((identity string))
+  (assert (identity-string? identity)() "Not a valid identity-string: ~S" identity)
   (let* ((uuid-string (join-strings "-"
                                     (list (subseq identity 0 8)
                                           (subseq identity 8 12)
                                           (subseq identity 12 16)
                                           (subseq identity 16 20)
-                                          (subseq identity 20)))))
-    (uuid:make-uuid-from-string uuid-string)))
+                                          (subseq identity 20))))
+         (uuid (uuid:make-uuid-from-string uuid-string)))
+    (uuid:uuid-to-byte-array uuid)))
 
-;;; (time (identity->uuid (makeid)))
+;;; (string->identity (identity->string (makeid)))
 
+;;; (setf $id (makeid))
+;;; (identity->string $id)
+;;; (setf $uid )
