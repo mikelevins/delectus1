@@ -28,8 +28,9 @@
 ;;; (make-origin-string (process-identity)(pathname "/Users/mikel/.emacs"))
 
 (defmethod make-origin ((process-id vector) (list-file pathname))
-  (ironclad:digest-sequence :shake128
-                            (babel:string-to-octets (make-origin-string process-id list-file))))
+  (coerce (ironclad:digest-sequence :shake128
+                                    (babel:string-to-octets (make-origin-string process-id list-file)))
+          '(simple-vector 16)))
 
 ;;; (make-origin (process-identity)(pathname "/Users/mikel/.emacs"))
 

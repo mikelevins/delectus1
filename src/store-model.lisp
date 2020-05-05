@@ -126,13 +126,7 @@
                                  timestamp
                                  name)
   (bind ((sql vals (sqlgen-insert-listname origin revision timestamp name)))
-    ;; we have to coerce the origin value to type (simple-vector 16)
-    ;; or Lispworks fails to convert it to a BLOB
-    (let* ((origin (first vals))
-           (rest-vals (rest vals))
-           (corrected-origin (coerce origin '(simple-vector 16)))
-           (corrected-vals (cons corrected-origin rest-vals)))
-      (apply 'execute-non-query db sql corrected-vals))))
+    (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating a list file
@@ -176,6 +170,5 @@
   db-path)
 
 ;;; (setf $testlist (pathname "/Users/mikel/Desktop/testlist.delectus2"))
-;;; (make-origin (process-identity) $testlist)
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string))
 ;;; (delete-file $testlist)
