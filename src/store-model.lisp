@@ -93,11 +93,9 @@
 
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-get-next-revision db))
 
-(defmethod db-inc-next-revision ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-inc-next-revision)))
-    (apply 'execute-non-query db sql vals)))
-
-;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-inc-next-revision db))
+(defmethod db-set-next-revision ((db sqlite-handle)(rev integer))
+  (bind ((sql vals (sqlgen-set-next-revision rev)))
+    (apply 'execute-single db sql vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; the next item
@@ -107,13 +105,9 @@
   (bind ((sql vals (sqlgen-get-next-item)))
     (apply 'execute-single db sql vals)))
 
-;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-get-next-item db))
-
-(defmethod db-inc-next-item ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-inc-next-item)))
-    (apply 'execute-non-query db sql vals)))
-
-;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-inc-next-item db))
+(defmethod db-set-next-item ((db sqlite-handle)(rev integer))
+  (bind ((sql vals (sqlgen-set-next-item rev)))
+    (apply 'execute-single db sql vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops
@@ -122,20 +116,22 @@
 (defmethod db-insert-listname ((db sqlite-handle)
                                &key
                                  origin
-                                 revision
                                  timestamp
                                  name)
-  (bind ((sql vals (sqlgen-insert-listname origin revision timestamp name)))
-    (apply 'execute-non-query db sql vals)))
+  (bind ((revision (db-get-next-revision db))
+         (sql vals (sqlgen-insert-listname origin revision timestamp name)))
+    (apply 'execute-non-query db sql vals)
+    (db-set-next-revision db (1+ revision))))
 
 (defmethod db-insert-columns ((db sqlite-handle)
                               &key
                                 origin
-                                revision
                                 timestamp
                                 column-descriptions)
-  (bind ((sql vals (sqlgen-insert-columns origin revision timestamp column-descriptions)))
-    (apply 'execute-non-query db sql vals)))
+  (bind ((revision (db-get-next-revision db))
+         (sql vals (sqlgen-insert-columns origin revision timestamp column-descriptions)))
+    (apply 'execute-non-query db sql vals)
+    (db-set-next-revision db (1+ revision))))
 
 ;;; ---------------------------------------------------------------------
 ;;; checking columns
@@ -178,7 +174,6 @@
         (db-create-item-revision-origin-index db)
         (when create-default-userdata
           (let ((origin (make-origin (process-identity) db-path))
-                (revision (db-get-next-revision db))
                 (default-column-descriptions (list
                                               (column-description :id (make-identity-string)
                                                                   :name "Item"
@@ -188,9 +183,10 @@
                                                                   :subtitle :false
                                                                   :deleted :false))))
             (db-ensure-columns-exist db default-column-descriptions)
-            (db-insert-listname db :origin origin :revision revision :timestamp (now-utc) :name listname)
-            (db-insert-columns db :origin origin :revision revision :timestamp (now-utc)
+            (db-insert-listname db :origin origin :timestamp (now-utc) :name listname)
+            (db-insert-columns db :origin origin :timestamp (now-utc)
                                :column-descriptions default-column-descriptions)
+            ;; TODO: insert default item
             )))))
   db-path)
 

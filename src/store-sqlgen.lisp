@@ -115,8 +115,8 @@
 
 ;;; (sqlgen-get-next-revision)
 
-(defun sqlgen-inc-next-revision ()
-  (values "UPDATE `delectus` SET `next_revision` = `next_revision` + 1"
+(defun sqlgen-set-next-revision (rev)
+  (values (format nil "UPDATE `delectus` SET `next_revision` = ~A" rev)
           nil))
 
 (defun sqlgen-get-next-item ()
@@ -124,8 +124,8 @@
    (select :next_item
      (from :delectus))))
 
-(defun sqlgen-inc-next-item ()
-  (values "UPDATE `delectus` SET `next_item` = `next_item` + 1"
+(defun sqlgen-set-next-item (rev)
+  (values (format nil "UPDATE `delectus` SET `next_item` = ~A" rev)
           nil))
 
 ;;; ---------------------------------------------------------------------
