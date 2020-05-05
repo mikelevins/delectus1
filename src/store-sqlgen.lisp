@@ -97,7 +97,7 @@
 ;;; (sqlgen-create-items-table)
 
 ;;; ---------------------------------------------------------------------
-;;; creating te main items index
+;;; creating the main items index
 ;;; ---------------------------------------------------------------------
 
 (defun sqlgen-create-item-revision-origin-index ()
@@ -107,3 +107,27 @@
 ;; (yield
 ;;  (alter-table :columns
 ;;    (add-column (delectus::as-keyword (delectus::make-column-label)) :type 'text)))
+
+;;; ---------------------------------------------------------------------
+;;; next_revision and next_item
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-next-revision ()
+  (yield
+   (select :next_revision
+     (from :delectus))))
+
+;;; (sqlgen-get-next-revision)
+
+(defun sqlgen-inc-next-revision ()
+  (values "UPDATE `delectus` SET `next_revision` = `next_revision` + 1"
+          nil))
+
+(defun sqlgen-get-next-item ()
+  (yield
+   (select :next_item
+     (from :delectus))))
+
+(defun sqlgen-inc-next-item ()
+  (values "UPDATE `delectus` SET `next_item` = `next_item` + 1"
+          nil))

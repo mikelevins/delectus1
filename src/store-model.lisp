@@ -84,6 +84,38 @@
     (apply 'execute-non-query db create-sql create-vals)))
 
 ;;; ---------------------------------------------------------------------
+;;; the next revision
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-next-revision ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-next-revision)))
+    (apply 'execute-single db sql vals)))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-get-next-revision db))
+
+(defmethod db-inc-next-revision ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-inc-next-revision)))
+    (apply 'execute-non-query db sql vals)))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-inc-next-revision db))
+
+;;; ---------------------------------------------------------------------
+;;; the next item
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-next-item ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-next-item)))
+    (apply 'execute-single db sql vals)))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-get-next-item db))
+
+(defmethod db-inc-next-item ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-inc-next-item)))
+    (apply 'execute-non-query db sql vals)))
+
+;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-inc-next-item db))
+
+;;; ---------------------------------------------------------------------
 ;;; creating a list file
 ;;; ---------------------------------------------------------------------
 
@@ -104,7 +136,9 @@
         (db-create-columns-table db)
         (db-create-items-table db)
         (db-create-item-revision-origin-index db)
-        )))
+        (when create-default-userdata
+          ;; TODO: insert the default userdata
+          ))))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)
