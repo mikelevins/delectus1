@@ -132,12 +132,15 @@
 ;;; adding columns
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-add-userdata-column (column-label)
+(defun sqlgen-add-columns-userdata-column (column-label)
   (yield
    (alter-table :columns
      (add-column (delectus::as-keyword column-label) :type 'text))))
 
-;;; (sqlgen-add-userdata-column (make-column-label))
+(defun sqlgen-add-items-userdata-column (column-label)
+  (yield
+   (alter-table :items
+     (add-column (delectus::as-keyword column-label) :type 'text))))
 
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops
@@ -171,3 +174,22 @@
 
 ;;; (setf $origin (make-origin (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
 ;;; (sqlgen-insert-columns $origin 5 (now-utc) (list (column-description :id (make-identity-string) :name "Item")))
+
+
+(defun sqlgen-insert-item (origin revision timestamp item deleted column-values)
+  (let* ((column-id-strings (get-keys column-values))
+         (column-labels (mapcar 'identity->column-label column-id-strings))
+         (column-ids (mapcar 'as-keyword column-labels))
+         (column-values (get-values column-values))
+         (parameter-names (append [:|origin| :|revision| :|timestamp| :|item| :|deleted|]
+                                  column-ids))
+         (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
+         (parameter-values (append [origin revision timestamp item deleted] column-values))
+         (parameter-placeholders (format nil "~{~A~^, ~}" (mapcar (constantly "?") parameter-names)))
+         (sql (format nil "INSERT INTO `items` (~A) VALUES (~A)"
+                      parameter-names-string parameter-placeholders)))
+    (values sql parameter-values)))
+
+
+;;; (setf $origin (make-origin (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
+;;; (sqlgen-insert-item $origin 5 (now-utc) 3 nil {(make-identity-string) 101})
