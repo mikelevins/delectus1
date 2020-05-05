@@ -131,3 +131,19 @@
 (defun sqlgen-inc-next-item ()
   (values "UPDATE `delectus` SET `next_item` = `next_item` + 1"
           nil))
+
+
+;;; ---------------------------------------------------------------------
+;;; inserting ops
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-insert-listname (origin revision timestamp name)
+  (yield
+   (insert-into :listnames
+     (set= :origin origin
+           :revision revision
+           :timestamp timestamp
+           :name name))))
+
+;;; (setf $origin (make-origin (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
+;;; (sqlgen-insert-listname $origin 3 (now-utc) "Foobar")

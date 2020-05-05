@@ -56,7 +56,7 @@
                                     {origin path}))
   (origin-pathnames))
 
-;;; (setf $orig (make-origin (process-identity)(pathname "/Users/mikel/.emacs")))
+;;; (setf $orig (make-origin (process-identity)(pathname (pathname "/Users/mikel/.emacs"))))
 ;;; (equalp (make-origin (process-identity)(pathname "/Users/mikel/.emacs"))(make-origin (process-identity)(pathname "/Users/mikel/.emacs")))
 ;;; (register-origin-pathname $orig (pathname "/Users/mikel/.emacs"))
 ;;; (find-origin-pathname $orig)

@@ -116,6 +116,25 @@
 ;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-inc-next-item db))
 
 ;;; ---------------------------------------------------------------------
+;;; inserting ops
+;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-listname ((db sqlite-handle)
+                               &key
+                                 origin
+                                 revision
+                                 timestamp
+                                 name)
+  (bind ((sql vals (sqlgen-insert-listname origin revision timestamp name)))
+    ;; we have to coerce the origin value to type (simple-vector 16)
+    ;; or Lispworks fails to convert it to a BLOB
+    (let* ((origin (first vals))
+           (rest-vals (rest vals))
+           (corrected-origin (coerce origin '(simple-vector 16)))
+           (corrected-vals (cons corrected-origin rest-vals)))
+      (apply 'execute-non-query db sql corrected-vals))))
+
+;;; ---------------------------------------------------------------------
 ;;; creating a list file
 ;;; ---------------------------------------------------------------------
 
@@ -123,6 +142,7 @@
                                  &key
                                    (listname nil)
                                    (listid nil)
+                                   (origin nil)
                                    (format +delectus-format-version+)
                                    (create-default-userdata t))
   (assert (not (probe-file db-path)) () "file exists: ~S" db-path)
@@ -137,8 +157,10 @@
         (db-create-items-table db)
         (db-create-item-revision-origin-index db)
         (when create-default-userdata
-          ;; TODO: insert the default userdata
-          ))))
+          (let ((origin (make-origin (process-identity) db-path))
+                (revision (db-get-next-revision db)))
+            (db-insert-listname db :origin origin :revision revision :timestamp (now-utc) :name listname)
+            )))))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)
@@ -153,5 +175,7 @@
                         :create-default-userdata create-default-userdata)
   db-path)
 
-;;; (create-delectus-file "/Users/mikel/Desktop/testlist.delectus2" :listname "Test List" :listid (make-identity-string))
-;;; (delete-file "/Users/mikel/Desktop/testlist.delectus2")
+;;; (setf $testlist (pathname "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (make-origin (process-identity) $testlist)
+;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string))
+;;; (delete-file $testlist)
