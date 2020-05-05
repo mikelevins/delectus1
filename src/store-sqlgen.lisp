@@ -41,19 +41,6 @@
              :next_revision next-revision
              :next_item next-item)))))
 
-;;; 'comments' table
-;;; ----------------
-
-(defun sqlgen-create-comments-table ()
-  (yield
-   (create-table :comments
-       ((origin :type 'blob)
-        (revision :type 'integer)
-        (timestamp :type 'integer)
-        (comment :type 'text)))))
-
-;;; (sqlgen-create-comments-table)
-
 
 ;;; 'listnames' table
 ;;; ----------------
@@ -67,6 +54,19 @@
         (name :type 'text)))))
 
 ;;; (sqlgen-create-listnames-table)
+
+;;; 'comments' table
+;;; ----------------
+
+(defun sqlgen-create-comments-table ()
+  (yield
+   (create-table :comments
+       ((origin :type 'blob)
+        (revision :type 'integer)
+        (timestamp :type 'integer)
+        (comment :type 'text)))))
+
+;;; (sqlgen-create-comments-table)
 
 
 ;;; 'columns' table
@@ -95,6 +95,14 @@
         (deleted :type 'integer)))))
 
 ;;; (sqlgen-create-items-table)
+
+;;; ---------------------------------------------------------------------
+;;; creating te main items index
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-create-item-revision-origin-index ()
+  (values "CREATE INDEX `idx_item_revision_origin` ON `items` (`item`, `revision`, `origin`)"
+          nil))
 
 ;; (yield
 ;;  (alter-table :columns

@@ -43,7 +43,45 @@
       (apply 'execute-non-query db create-sql create-vals)
       (apply 'execute-non-query db init-sql init-vals))))
 
-;;; (with-open-database (db ":memory:") (db-create-delectus-table db (make-identity-string)))
+;;; ---------------------------------------------------------------------
+;;; creating the 'listnames' table
+;;; ---------------------------------------------------------------------
+
+(defmethod db-create-listnames-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-listnames-table)))
+    (apply 'execute-non-query db create-sql create-vals)))
+
+;;; ---------------------------------------------------------------------
+;;; creating the 'comments' table
+;;; ---------------------------------------------------------------------
+
+(defmethod db-create-comments-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-comments-table)))
+    (apply 'execute-non-query db create-sql create-vals)))
+
+;;; ---------------------------------------------------------------------
+;;; creating the 'columns' table
+;;; ---------------------------------------------------------------------
+
+(defmethod db-create-columns-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-columns-table)))
+    (apply 'execute-non-query db create-sql create-vals)))
+
+;;; ---------------------------------------------------------------------
+;;; creating the 'items' table
+;;; ---------------------------------------------------------------------
+
+(defmethod db-create-items-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-items-table)))
+    (apply 'execute-non-query db create-sql create-vals)))
+
+;;; ---------------------------------------------------------------------
+;;; creating the 'items' main index
+;;; ---------------------------------------------------------------------
+
+(defmethod db-create-item-revision-origin-index ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-item-revision-origin-index)))
+    (apply 'execute-non-query db create-sql create-vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating a list file
@@ -61,11 +99,11 @@
     (with-open-database (db db-path)
       (with-transaction db
         (db-create-delectus-table db listid)
-        ;; (db-create-comments-table db )
-        ;; (db-create-listnames-table db )
-        ;; (db-create-columns-table db )
-        ;; (db-create-items-table db )
-        ;; (db-create-item-revision-origin-index db)
+        (db-create-listnames-table db)
+        (db-create-comments-table db)
+        (db-create-columns-table db)
+        (db-create-items-table db)
+        (db-create-item-revision-origin-index db)
         )))
   db-path)
 
