@@ -42,11 +42,10 @@
 ;;; column names
 ;;; ------------
 
-(defparameter *common-metadata-columns* ["origin" "timestamp"])
-(defparameter *sync-metadata-columns* (append *common-metadata-columns* ["peer" "file"]))
-(defparameter *listname-metadata-columns* (append *common-metadata-columns* ["name"]))
-(defparameter *columns-metadata-columns* *common-metadata-columns*)
-(defparameter *items-metadata-columns* (append *common-metadata-columns* ["item" "deleted"]))
+(defparameter *listnames-metadata-columns* [:|origin| :|revision| :|timestamp| :|name|])
+(defparameter *comments-metadata-columns* [:|origin| :|revision| :|timestamp| :|comment|])
+(defparameter *columns-metadata-columns* [:|origin| :|revision| :|timestamp|])
+(defparameter *items-metadata-columns* [:|origin| :|revision| :|timestamp| :|item| :|deleted|])
 
 (defparameter *origin-column-name* "origin")
 (defparameter *timestamp-column-name* "timestamp")

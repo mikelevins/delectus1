@@ -128,6 +128,32 @@
   (bind ((sql vals (sqlgen-insert-listname origin revision timestamp name)))
     (apply 'execute-non-query db sql vals)))
 
+(defmethod db-insert-columns ((db sqlite-handle)
+                              &key
+                                origin
+                                revision
+                                timestamp
+                                column-descriptions)
+  (bind ((sql vals (sqlgen-insert-columns origin revision timestamp column-descriptions)))
+    (apply 'execute-non-query db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; checking columns
+;;; ---------------------------------------------------------------------
+
+;;; (sqlite-table-column-info "/Users/mikel/Desktop/testlist.delectus2" "listnames")
+
+(defmethod db-ensure-columns-exist ((db sqlite-handle) (column-descriptions list))
+  (let* ((supplied-column-labels (mapcar (lambda (desc)(identity->column-label (get-key desc :|id|)))
+                                         column-descriptions))
+         (found-column-labels (mapcar 'column-info-name
+                                      (db-sqlite-table-column-info db *columns-table-name*)))
+         (missing-column-labels (remove-list-elements found-column-labels supplied-column-labels)))
+    (when missing-column-labels
+      (loop for label in missing-column-labels
+         do (bind ((sql vals (sqlgen-add-userdata-column label)))
+              (apply 'execute-non-query db sql vals))))))
+
 ;;; ---------------------------------------------------------------------
 ;;; creating a list file
 ;;; ---------------------------------------------------------------------
@@ -141,7 +167,7 @@
                                    (create-default-userdata t))
   (assert (not (probe-file db-path)) () "file exists: ~S" db-path)
   (assert (stringp listname) () "Expected a string :LISTNAME parameter, but found ~S" listname)
-  (let ((listid (or listid (make-identity-string))))
+  (let* ((listid (or listid (make-identity-string))))
     (with-open-database (db db-path)
       (with-transaction db
         (db-create-delectus-table db listid)
@@ -152,8 +178,19 @@
         (db-create-item-revision-origin-index db)
         (when create-default-userdata
           (let ((origin (make-origin (process-identity) db-path))
-                (revision (db-get-next-revision db)))
+                (revision (db-get-next-revision db))
+                (default-column-descriptions (list
+                                              (column-description :id (make-identity-string)
+                                                                  :name "Item"
+                                                                  :order 10.0
+                                                                  :sort :null
+                                                                  :title :false
+                                                                  :subtitle :false
+                                                                  :deleted :false))))
+            (db-ensure-columns-exist db default-column-descriptions)
             (db-insert-listname db :origin origin :revision revision :timestamp (now-utc) :name listname)
+            (db-insert-columns db :origin origin :revision revision :timestamp (now-utc)
+                               :column-descriptions default-column-descriptions)
             )))))
   db-path)
 

@@ -104,7 +104,7 @@
 (defmethod sqlite-table-column-info ((path string) (table-name string))
   (sqlite-table-column-info (pathname path) table-name))
 
-;;; (sqlite-table-column-info "/Users/mikel/Desktop/testlist.delectus2" "listdata")
+;;; (sqlite-table-column-info "/Users/mikel/Desktop/testlist.delectus2" "listnames")
 
 ;;; GENERIC FUNCTION sqlite-list-table-column-names (path table-name)
 ;;; ---------------------------------------------------------------------

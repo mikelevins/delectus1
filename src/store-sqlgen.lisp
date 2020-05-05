@@ -104,10 +104,6 @@
   (values "CREATE INDEX `idx_item_revision_origin` ON `items` (`item`, `revision`, `origin`)"
           nil))
 
-;; (yield
-;;  (alter-table :columns
-;;    (add-column (delectus::as-keyword (delectus::make-column-label)) :type 'text)))
-
 ;;; ---------------------------------------------------------------------
 ;;; next_revision and next_item
 ;;; ---------------------------------------------------------------------
@@ -132,6 +128,16 @@
   (values "UPDATE `delectus` SET `next_item` = `next_item` + 1"
           nil))
 
+;;; ---------------------------------------------------------------------
+;;; adding columns
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-add-userdata-column (column-label)
+  (yield
+   (alter-table :columns
+     (add-column (delectus::as-keyword column-label) :type 'text))))
+
+;;; (sqlgen-add-userdata-column (make-column-label))
 
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops
@@ -147,3 +153,21 @@
 
 ;;; (setf $origin (make-origin (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
 ;;; (sqlgen-insert-listname $origin 3 (now-utc) "Foobar")
+
+
+(defun sqlgen-insert-columns (origin revision timestamp column-descriptions)
+  (let* ((column-id-strings (mapcar 'column-description-id column-descriptions))
+         (column-labels (mapcar 'identity->column-label column-id-strings))
+         (column-ids (mapcar 'as-keyword column-labels))
+         (column-json-objects (mapcar 'to-json column-descriptions))
+         (parameter-names (append [:|origin| :|revision| :|timestamp|] column-ids))
+         (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
+         (parameter-values (append [origin revision timestamp] column-json-objects))
+         (parameter-placeholders (format nil "~{~A~^, ~}" (mapcar (constantly "?") parameter-names)))
+         (sql (format nil "INSERT INTO `columns` (~A) VALUES (~A)"
+                      parameter-names-string parameter-placeholders)))
+    (values sql parameter-values)))
+
+
+;;; (setf $origin (make-origin (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
+;;; (sqlgen-insert-columns $origin 5 (now-utc) (list (column-description :id (make-identity-string) :name "Item")))
