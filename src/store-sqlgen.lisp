@@ -157,7 +157,6 @@
 ;;; (setf $origin (make-origin (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
 ;;; (sqlgen-insert-listname $origin 3 (now-utc) "Foobar")
 
-
 (defun sqlgen-insert-columns (origin revision timestamp column-descriptions)
   (let* ((column-id-strings (mapcar 'column-description-id column-descriptions))
          (column-labels (mapcar 'identity->column-label column-id-strings))
