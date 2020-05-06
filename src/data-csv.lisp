@@ -41,6 +41,7 @@
         (with-transaction db
           ;; first create columns for the csv data
           (let* ((column-ids (loop for val in first-line-vals collect (make-identity-string)))
+                 (column-labels (loop for cid in column-ids collect (identity->column-label cid)))
                  (column-names (if first-row-is-headers
                                    first-line-vals
                                    column-ids))
@@ -62,7 +63,17 @@
             ;; insert the columns op
             (db-insert-columns db :origin origin :timestamp (now-utc) :column-descriptions column-descriptions)
             ;; read and insert the csv rows
-            ))))))
+            (with-open-file (in csv-path)
+              ;; discard the first line if we used it for headers
+              (when first-row-is-headers
+                (fare-csv:read-csv-line in))
+              (loop for
+                 row = (fare-csv:read-csv-line in)
+                 then (fare-csv:read-csv-line in)
+                 while row
+                 do (let* ((column-values (alist->plist (mapcar 'cons column-ids row))))
+                      (db-insert-item db :origin origin :timestamp (now-utc)
+                                      :column-values column-values))))))))))
 
 ;;; (setf $csvdelectus-path "/Users/mikel/Desktop/csvtest.delectus2")
 ;;; (setf $bogus-path "/no/file/here.csv")
@@ -72,5 +83,12 @@
 
 ;;; (setf $movies-csv-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")
 ;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
-;;; (import-csv $movies-csv-path $movies-test-path "Movies")
+;;; (time (import-csv $movies-csv-path $movies-test-path "Movies"))
 ;;; (delete-file $movies-test-path)
+
+;;; (setf $zips-csv-path "/Users/mikel/Workshop/src/delectus/test-data/zipcode.csv")
+;;; (setf $zips-test-path "/Users/mikel/Desktop/Zipcodes.delectus2")
+;;; (time (import-csv $zips-csv-path $zips-test-path "Zipcodes"))
+;;; (delete-file $zips-test-path)
+
+

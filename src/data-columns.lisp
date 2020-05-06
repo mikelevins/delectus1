@@ -23,19 +23,19 @@
                      ((eq :null order) :null)
                      ((numberp order) order)
                      (t (error "Invalid column order: ~S" order)))))
-    {:|id| id
+    [:|id| id
       :|name| name 
       :|order| order
       :|sort| sort
       :|title| title
       :|subtitle| subtitle
-      :|deleted| deleted}))
+      :|deleted| deleted]))
 
-(defmethod column-description-id ((column-description wb-map))
-  (get-key column-description :|id| nil))
+(defmethod column-description-id ((column-description list))
+  (getf column-description :|id| nil))
 
-(defmethod column-description-to-json ((desc wb-map))
-  (to-json desc))
+(defmethod column-description-to-json ((desc list))
+  (jonathan:to-json desc))
 
 ;;; (column-description-to-json (column-description :id (make-identity-string) :name "Item"))
 ;;; (column-description-id (column-description :id (make-identity-string) :name "Item"))

@@ -37,6 +37,9 @@
   (loop for pair in alist
      appending (list (car pair)(cdr pair))))
 
+(defun any (seq)
+  (elt seq (random (length seq))))
+
 (defun wb-map->plist (wb-map)
   (let ((alist (fset:convert 'list wb-map)))
     (loop for (k . v) in alist
@@ -74,11 +77,23 @@
 
 ;;; (get-keys { :a 1 :b 3 :name "Fred"})
 
+;;; for plists
+(defmethod get-keys ((map list))
+  (loop for tail on map by 'cddr collect (first tail)))
+
+;;; (get-keys [:a 1 :b 3 :name "Fred"])
+
 
 (defmethod get-values ((map fset:map))
   (fset:convert 'list (fset:range map)))
 
 ;;; (get-values { :a 1 :b 3 :name "Fred"})
+
+;;; for plists
+(defmethod get-values ((map list))
+  (loop for tail on map by 'cddr collect (second tail)))
+
+;;; (get-values [:a 1 :b 3 :name "Fred"])
 
 (defmethod merge-maps ((left-map wb-map) (right-map wb-map))
   (fset:map-union left-map right-map))

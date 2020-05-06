@@ -161,7 +161,7 @@
   (let* ((column-id-strings (mapcar 'column-description-id column-descriptions))
          (column-labels (mapcar 'identity->column-label column-id-strings))
          (column-ids (mapcar 'as-keyword column-labels))
-         (column-json-objects (mapcar 'to-json column-descriptions))
+         (column-json-objects (mapcar 'jonathan:to-json column-descriptions))
          (parameter-names (append [:|origin| :|revision| :|timestamp|] column-ids))
          (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
          (parameter-values (append [origin revision timestamp] column-json-objects))

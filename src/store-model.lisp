@@ -153,7 +153,7 @@
 ;;; (sqlite-table-column-info "/Users/mikel/Desktop/testlist.delectus2" "listnames")
 
 (defmethod db-ensure-columns-exist ((db sqlite-handle) (column-descriptions list))
-  (let* ((supplied-column-labels (mapcar (lambda (desc)(identity->column-label (get-key desc :|id|)))
+  (let* ((supplied-column-labels (mapcar (lambda (desc)(identity->column-label (getf desc :|id|)))
                                          column-descriptions))
          (columns-column-labels (mapcar 'column-info-name
                                         (db-sqlite-table-column-info db *columns-table-name*)))
@@ -202,13 +202,13 @@
                                                                    :subtitle :false
                                                                    :deleted :false))
                  (default-column-descriptions (list default-column))
-                 (default-column-id (get-key default-column :|id|)))
+                 (default-column-id (getf default-column :|id|)))
             (db-ensure-columns-exist db default-column-descriptions)
             (db-insert-listname db :origin origin :timestamp (now-utc) :name listname)
             (db-insert-columns db :origin origin :timestamp (now-utc)
                                :column-descriptions default-column-descriptions)
             (db-insert-item db :origin origin :timestamp (now-utc)
-                            :column-values {default-column-id nil})
+                            :column-values [default-column-id nil])
             )))))
   db-path)
 

@@ -36,7 +36,8 @@
                                      (:file "store-model")        ; store operations on Delectus model objects
                                      (:file "data-columns")       ; utilities for working with column descriptions
                                      (:file "data-csv")           ; reading and writing CSV files
-                                     ))))
+                                     ;; making test data
+                                     (:file "test-data")))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
 
