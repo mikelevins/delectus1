@@ -226,4 +226,5 @@
 
 ;;; (setf $testlist (pathname "/Users/mikel/Desktop/testlist.delectus2"))
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string))
+;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string) :create-default-userdata nil)
 ;;; (delete-file $testlist)
