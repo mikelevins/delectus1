@@ -122,6 +122,11 @@ SELECT a.* FROM (
   FROM `items`) a  WHERE a.rank = 1 LIMIT 100 OFFSET 70000
 (689ms)
 
+Even faster is this:
+SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank FROM `items`
+
+...which uses a covering index and returns in 190ms. It may be possible to work out how to get it to return the info I need to fetch rows by rowid or something,to get even faster results.
+
 |#
 
 ;;; (Time (make-test-list "/Users/mikel/Desktop/wordtest100.delectus2" :count 100))
