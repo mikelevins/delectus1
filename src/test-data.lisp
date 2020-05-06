@@ -66,23 +66,25 @@
            then (read-line in nil nil nil)
            while (and (< i count)
                       word)
-           do (let ((item (db-get-next-item db)))
+           do (let ((item (db-get-next-item db))
+                    ;; reuse the same revision number for all 3 inserts to simulate concurrent edits
+                    (revision (db-get-next-revision db)))
                 ;; always insert from origin1 with a lowercase copy of the word
-                (db-insert-item db :origin origin1 :timestamp (now-utc) :item item
+                (db-insert-item db :origin origin1 :timestamp (now-utc) :item item :revision revision
                                 :column-values (alist->plist
                                                 (mapcar 'cons
                                                         column-ids
                                                         [(string-downcase word) origin1-string])))
                 ;; half the time insert from origin2 with an uppercase copy
                 (when (any [t nil])
-                  (db-insert-item db :origin origin2 :timestamp (now-utc) :item item
+                  (db-insert-item db :origin origin2 :timestamp (now-utc) :item item :revision revision
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
                                                           [(string-upcase word) origin2-string]))))
                 ;; half the time insert from origin3 with a capitalized copy
                 (when (any [t nil])
-                  (db-insert-item db :origin origin3 :timestamp (now-utc) :item item
+                  (db-insert-item db :origin origin3 :timestamp (now-utc) :item item :revision revision
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
@@ -92,13 +94,20 @@
 
 ;; SQL to collect latest items
 #|
+
+Using this sql:
+
 SELECT a.* FROM (
   SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank, * 
   FROM `items`) a 
 WHERE a.rank = 1
+
+yields a query time of 3/4 of a second returning 100,000 items from a
+table containing 200,000 with random duplications
+
 |#
 
-;;; (time (make-test-list "/Users/mikel/Desktop/wordtest100.delectus2" :count 100))
+;;; (Time (make-test-list "/Users/mikel/Desktop/wordtest100.delectus2" :count 100))
 ;;; (delete-file "/Users/mikel/Desktop/wordtest100.delectus2")
 
 ;;; (time (make-test-list "/Users/mikel/Desktop/wordtest1k.delectus2" :count 1000))

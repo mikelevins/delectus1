@@ -116,9 +116,10 @@
 (defmethod db-insert-listname ((db sqlite-handle)
                                &key
                                  origin
+                                 revision
                                  timestamp
                                  name)
-  (bind ((revision (db-get-next-revision db))
+  (bind ((revision (or revision (db-get-next-revision db)))
          (sql vals (sqlgen-insert-listname origin revision timestamp name)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))))
@@ -126,9 +127,10 @@
 (defmethod db-insert-columns ((db sqlite-handle)
                               &key
                                 origin
+                                revision
                                 timestamp
                                 column-descriptions)
-  (bind ((revision (db-get-next-revision db))
+  (bind ((revision (or revision (db-get-next-revision db)))
          (sql vals (sqlgen-insert-columns origin revision timestamp column-descriptions)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))))
@@ -136,11 +138,12 @@
 (defmethod db-insert-item ((db sqlite-handle)
                               &key
                                 origin
+                                revision
                                 timestamp
                                 item
                                 deleted
                                 column-values)
-  (bind ((revision (db-get-next-revision db))
+  (bind ((revision (or revision (db-get-next-revision db)))
          (item (or item (db-get-next-item db)))
          (sql vals (sqlgen-insert-item origin revision timestamp item deleted column-values)))
     (apply 'execute-non-query db sql vals)
