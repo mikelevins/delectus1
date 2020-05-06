@@ -105,6 +105,23 @@ WHERE a.rank = 1
 yields a query time of 3/4 of a second returning 100,000 items from a
 table containing 200,000 with random duplications
 
+...but only with the right index:
+
+CREATE INDEX idx_item_revision_origin on items (item, revision DESC, origin DESC)
+
+
+Better yet, a reasonable limit yields times well under a second:
+
+SELECT a.* FROM (
+  SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank, * 
+  FROM `items`) a  WHERE a.rank = 1 LIMIT 100 OFFSET 0
+(59ms)
+
+SELECT a.* FROM (
+  SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank, * 
+  FROM `items`) a  WHERE a.rank = 1 LIMIT 100 OFFSET 70000
+(689ms)
+
 |#
 
 ;;; (Time (make-test-list "/Users/mikel/Desktop/wordtest100.delectus2" :count 100))
