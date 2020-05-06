@@ -66,28 +66,47 @@
            then (read-line in nil nil nil)
            while (and (< i count)
                       word)
-           do (progn
+           do (let ((item (db-get-next-item db)))
                 ;; always insert from origin1 with a lowercase copy of the word
-                (db-insert-item db :origin origin1 :timestamp (now-utc)
+                (db-insert-item db :origin origin1 :timestamp (now-utc) :item item
                                 :column-values (alist->plist
                                                 (mapcar 'cons
                                                         column-ids
                                                         [(string-downcase word) origin1-string])))
                 ;; half the time insert from origin2 with an uppercase copy
                 (when (any [t nil])
-                  (db-insert-item db :origin origin2 :timestamp (now-utc)
+                  (db-insert-item db :origin origin2 :timestamp (now-utc) :item item
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
                                                           [(string-upcase word) origin2-string]))))
                 ;; half the time insert from origin3 with a capitalized copy
                 (when (any [t nil])
-                  (db-insert-item db :origin origin3 :timestamp (now-utc)
+                  (db-insert-item db :origin origin3 :timestamp (now-utc) :item item
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
                                                           [(string-capitalize word) origin3-string]))))))))))
 
 
+
+;; SQL to collect latest items
+#|
+SELECT a.* FROM (
+  SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank, * 
+  FROM `items`) a 
+WHERE a.rank = 1
+|#
+
 ;;; (time (make-test-list "/Users/mikel/Desktop/wordtest100.delectus2" :count 100))
 ;;; (delete-file "/Users/mikel/Desktop/wordtest100.delectus2")
+
+;;; (time (make-test-list "/Users/mikel/Desktop/wordtest1k.delectus2" :count 1000))
+;;; (delete-file "/Users/mikel/Desktop/wordtest1k.delectus2")
+
+;;; (time (make-test-list "/Users/mikel/Desktop/wordtest10k.delectus2" :count 10000))
+;;; (delete-file "/Users/mikel/Desktop/wordtest10k.delectus2")
+
+;;; 15m47s to build
+;;; (time (make-test-list "/Users/mikel/Desktop/wordtest100k.delectus2" :count 100000))
+;;; (delete-file "/Users/mikel/Desktop/wordtest100k.delectus2")

@@ -137,10 +137,11 @@
                               &key
                                 origin
                                 timestamp
+                                item
                                 deleted
                                 column-values)
   (bind ((revision (db-get-next-revision db))
-         (item (db-get-next-item db))
+         (item (or item (db-get-next-item db)))
          (sql vals (sqlgen-insert-item origin revision timestamp item deleted column-values)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))
