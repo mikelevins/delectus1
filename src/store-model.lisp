@@ -79,8 +79,8 @@
 ;;; creating the 'items' main index
 ;;; ---------------------------------------------------------------------
 
-(defmethod db-create-item-revision-origin-index ((db sqlite-handle))
-  (bind ((create-sql create-vals (sqlgen-create-item-revision-origin-index)))
+(defmethod db-create-itemid-revision-opid-index ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-itemid-revision-opid-index)))
     (apply 'execute-non-query db create-sql create-vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -115,29 +115,29 @@
 
 (defmethod db-insert-listname ((db sqlite-handle)
                                &key
-                                 origin
+                                 opid
                                  revision
                                  timestamp
                                  name)
   (bind ((revision (or revision (db-get-next-revision db)))
-         (sql vals (sqlgen-insert-listname origin revision timestamp name)))
+         (sql vals (sqlgen-insert-listname opid revision timestamp name)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))))
 
 (defmethod db-insert-columns ((db sqlite-handle)
                               &key
-                                origin
+                                opid
                                 revision
                                 timestamp
                                 column-descriptions)
   (bind ((revision (or revision (db-get-next-revision db)))
-         (sql vals (sqlgen-insert-columns origin revision timestamp column-descriptions)))
+         (sql vals (sqlgen-insert-columns opid revision timestamp column-descriptions)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))))
 
 (defmethod db-insert-item ((db sqlite-handle)
                               &key
-                                origin
+                                opid
                                 revision
                                 timestamp
                                 item
@@ -145,7 +145,7 @@
                                 column-values)
   (bind ((revision (or revision (db-get-next-revision db)))
          (item (or item (db-get-next-item db)))
-         (sql vals (sqlgen-insert-item origin revision timestamp item deleted column-values)))
+         (sql vals (sqlgen-insert-item opid revision timestamp item deleted column-values)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))
     (db-set-next-item db (1+ item))))
@@ -182,7 +182,7 @@
                                  &key
                                    (listname nil)
                                    (listid nil)
-                                   (origin nil)
+                                   (opid nil)
                                    (format +delectus-format-version+)
                                    (create-default-userdata t))
   (assert (not (probe-file db-path)) () "file exists: ~S" db-path)
@@ -195,9 +195,9 @@
         (db-create-comments-table db)
         (db-create-columns-table db)
         (db-create-items-table db)
-        (db-create-item-revision-origin-index db)
+        (db-create-itemid-revision-opid-index db)
         (when create-default-userdata
-          (let* ((origin (make-origin (process-identity) db-path))
+          (let* ((opid (makeid))
                  (default-column (column-description :id (make-identity-string)
                                                                    :name "Item"
                                                                    :order 10.0
@@ -208,10 +208,10 @@
                  (default-column-descriptions (list default-column))
                  (default-column-id (getf default-column :|id|)))
             (db-ensure-columns-exist db default-column-descriptions)
-            (db-insert-listname db :origin origin :timestamp (now-utc) :name listname)
-            (db-insert-columns db :origin origin :timestamp (now-utc)
+            (db-insert-listname db :opid opid :timestamp (now-utc) :name listname)
+            (db-insert-columns db :opid opid :timestamp (now-utc)
                                :column-descriptions default-column-descriptions)
-            (db-insert-item db :origin origin :timestamp (now-utc)
+            (db-insert-item db :opid opid :timestamp (now-utc)
                             :column-values [default-column-id nil])
             )))))
   db-path)
@@ -260,3 +260,10 @@
 ;;; (time (get-latest-items (pathname $zips-test-path)))
 ;;; (time (get-latest-items (pathname $zips-test-path) :offset 30000))
 
+;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; (time (get-latest-items (pathname $words-test-path)))
+;;; (time (get-latest-items (pathname $words-test-path) :offset 30000))
+;;; (time (setf $words (get-latest-items (pathname $words-test-path) :offset 90000)))
+;;; (length $words)
+;;; (elt $words 5)
+;;; (mapcar (lambda (w)(elt w 6)) $words)

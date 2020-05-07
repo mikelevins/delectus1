@@ -40,7 +40,8 @@
   (uuid:byte-array-to-uuid identity))
 
 (defmethod makeid ()
-  (uuid->identity (uuid:make-v4-uuid)))
+  (coerce (uuid->identity (uuid:make-v4-uuid))
+          '(simple-vector 16)))
 
 ;;; (time (makeid))
 ;;; (setf $u (uuid:make-v4-uuid))
@@ -91,7 +92,8 @@
                                           (subseq identity 16 20)
                                           (subseq identity 20))))
          (uuid (uuid:make-uuid-from-string uuid-string)))
-    (uuid:uuid-to-byte-array uuid)))
+    (coerce (uuid:uuid-to-byte-array uuid)
+            '(simple-vector 16))))
 
 ;;; (string->identity (identity->string (makeid)))
 

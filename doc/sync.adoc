@@ -1,0 +1,18 @@
+= Delectus 2 Sync
+:toc:
+
+== How to sync lists
+
+. Peer A sends a `sync` request to Peer B. A and B may be the same Delectus node. +
+The `sync` request identifies node A, the list to be synced, and the last successful sync (which may be null).
+. Peer B replies, accepting or rejecting the sync. +
+If it accepts, it supplies its identity and the latest sync it remembers (which may be null).
+. If the sync was accepted, Peer A sends the identity of latest sync that both peers remember (it may be null), and a list of opids it has accepted since then.
+. B removes from A's list of opids any that it has already seen. It calls result its *request* list. It prepares a list of opids in its log that were not in A's list. It calls this its *offer* list. B attaches the full op data to each opid in the *offer* list, then sends a message containing the *request* list and the expanded *offer* list.
+. A responds by expanding B's *request* list with all op data matching its opids. It sends back this list of ops as A's *offer*.
+. A merges B's *offer* into its log. B merges A's *offer* into its log.
+. If there were no errors, B sends a `sync-complete` message containing all the data needed to construct and insert a `sync` op.
+. A sends the same `sync-complete` back to B.
+. A and B insert the same `sync` op in both logs. Both update the revision count in their copies of the list to equal the greater of both versions' revision counts.
+
+Sync is complete.
