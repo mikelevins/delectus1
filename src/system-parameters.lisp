@@ -33,27 +33,31 @@
 (defparameter *listnames-table-name* "listnames")
 (defparameter *columns-table-name* "columns")
 (defparameter *items-table-name* "items")
-
-;;; index names
-;;; -----------
-
-(defparameter *item-opid-origin-index-name* "idx_item_opid_origin")
+(defparameter *syncs-table-name* "syncs")
 
 ;;; column names
 ;;; ------------
 
-(defparameter *listnames-metadata-columns* [:|origin| :|revision| :|timestamp| :|name|])
-(defparameter *comments-metadata-columns* [:|origin| :|revision| :|timestamp| :|comment|])
-(defparameter *columns-metadata-columns* [:|origin| :|revision| :|timestamp|])
-(defparameter *items-metadata-columns* [:|origin| :|revision| :|timestamp| :|item| :|deleted|])
+(defparameter *delectus-columns* [ :|listid| :|fileid| :|format| :|modified| :|next_revision| ])
+(defparameter *listnames-metadata-columns* [:|opid| :|revision| :|timestamp| :|name|])
+(defparameter *comments-metadata-columns* [:|opid| :|revision| :|timestamp| :|comment|])
+(defparameter *columns-metadata-columns* [:|opid| :|revision| :|timestamp|])
+(defparameter *items-metadata-columns* [:|opid| :|revision| :|timestamp| :|itemid| :|deleted|])
+(defparameter *syncs-metadata-columns* [:|opid| :|revision| :|timestamp| :|peerid| :|fileid|])
 
-(defparameter *origin-column-name* "origin")
+(defparameter *listid-column-name* "listid")
+(defparameter *fileid-column-name* "fileid")
+(defparameter *format-column-name* "format")
+(defparameter *modified-column-name* "modified")
+(defparameter *next-revision-column-name* "next_revision")
+(defparameter *opid-column-name* "opid")
+(defparameter *revision-column-name* "revision")
 (defparameter *timestamp-column-name* "timestamp")
-(defparameter *peer-column-name* "peer")
-(defparameter *file-column-name* "file")
 (defparameter *name-column-name* "name")
-(defparameter *item-column-name* "item")
+(defparameter *comment-column-name* "comment")
+(defparameter *itemid-column-name* "itemid")
 (defparameter *deleted-column-name* "deleted")
+(defparameter *peerid-column-name* "peerid")
 
 ;;; column parameters
 ;;; -----------------

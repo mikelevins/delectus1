@@ -95,6 +95,18 @@
         (itemid :type 'blob)
         (deleted :type 'integer)))))
 
+;;; 'syncs' table
+;;; ----------------
+
+(defun sqlgen-create-items-table ()
+  (yield
+   (create-table :syncs
+       ((opid :type 'blob)
+        (revision :type 'integer)
+        (timestamp :type 'integer)
+        (itemid :type 'blob)
+        (peerid :type 'blob)))))
+
 ;;; (sqlgen-create-items-table)
 
 ;;; ---------------------------------------------------------------------

@@ -96,7 +96,3 @@
             '(simple-vector 16))))
 
 ;;; (string->identity (identity->string (makeid)))
-
-;;; (setf $id (makeid))
-;;; (identity->string $id)
-;;; (setf $uid )
