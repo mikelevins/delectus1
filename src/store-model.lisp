@@ -76,11 +76,19 @@
     (apply 'execute-non-query db create-sql create-vals)))
 
 ;;; ---------------------------------------------------------------------
+;;; creating the 'syncs' table
+;;; ---------------------------------------------------------------------
+
+(defmethod db-create-syncs-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-syncs-table)))
+    (apply 'execute-non-query db create-sql create-vals)))
+
+;;; ---------------------------------------------------------------------
 ;;; creating the 'items' main index
 ;;; ---------------------------------------------------------------------
 
-(defmethod db-create-itemid-revision-opid-index ((db sqlite-handle))
-  (bind ((create-sql create-vals (sqlgen-create-itemid-revision-opid-index)))
+(defmethod db-create-items-itemid-revision-opid-index ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-items-itemid-revision-opid-index)))
     (apply 'execute-non-query db create-sql create-vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -95,18 +103,6 @@
 
 (defmethod db-set-next-revision ((db sqlite-handle)(rev integer))
   (bind ((sql vals (sqlgen-set-next-revision rev)))
-    (apply 'execute-single db sql vals)))
-
-;;; ---------------------------------------------------------------------
-;;; the next item
-;;; ---------------------------------------------------------------------
-
-(defmethod db-get-next-item ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-next-item)))
-    (apply 'execute-single db sql vals)))
-
-(defmethod db-set-next-item ((db sqlite-handle)(rev integer))
-  (bind ((sql vals (sqlgen-set-next-item rev)))
     (apply 'execute-single db sql vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -140,15 +136,14 @@
                                 opid
                                 revision
                                 timestamp
-                                item
+                                itemid
                                 deleted
                                 column-values)
   (bind ((revision (or revision (db-get-next-revision db)))
-         (item (or item (db-get-next-item db)))
-         (sql vals (sqlgen-insert-item opid revision timestamp item deleted column-values)))
+         (itemid (or itemid (makeid)))
+         (sql vals (sqlgen-insert-item opid revision timestamp itemid deleted column-values)))
     (apply 'execute-non-query db sql vals)
-    (db-set-next-revision db (1+ revision))
-    (db-set-next-item db (1+ item))))
+    (db-set-next-revision db (1+ revision))))
 
 ;;; ---------------------------------------------------------------------
 ;;; checking columns
@@ -195,7 +190,8 @@
         (db-create-comments-table db)
         (db-create-columns-table db)
         (db-create-items-table db)
-        (db-create-itemid-revision-opid-index db)
+        (db-create-syncs-table db)
+        (db-create-items-itemid-revision-opid-index db)
         (when create-default-userdata
           (let* ((opid (makeid))
                  (default-column (column-description :id (make-identity-string)
@@ -229,9 +225,9 @@
   db-path)
 
 ;;; (setf $testlist (pathname "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (delete-file $testlist)
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string))
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string) :create-default-userdata nil)
-;;; (delete-file $testlist)
 
 ;;; ---------------------------------------------------------------------
 ;;; getting the latest items
@@ -253,6 +249,7 @@
     (db-get-latest-items db :offset offset :limit limit)))
 
 ;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (delete-file $movies-test-path)
 ;;; (time (get-latest-items (pathname $movies-test-path)))
 ;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000))
 

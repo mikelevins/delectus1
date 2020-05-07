@@ -93,10 +93,12 @@
         (itemid :type 'blob)
         (deleted :type 'integer)))))
 
+;;; (sqlgen-create-items-table)
+
 ;;; 'syncs' table
 ;;; ----------------
 
-(defun sqlgen-create-items-table ()
+(defun sqlgen-create-syncs-table ()
   (yield
    (create-table :syncs
        ((opid :type 'blob)
@@ -105,7 +107,7 @@
         (itemid :type 'blob)
         (peerid :type 'blob)))))
 
-;;; (sqlgen-create-items-table)
+;;; (sqlgen-create-syncs-table)
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the main items index
