@@ -59,4 +59,4 @@
 
 ;;; (setf $lbl (make-column-label))
 ;;; (column-label->identity $lbl)
-
+;;; (identity->column-label (column-label->identity $lbl))
