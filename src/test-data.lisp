@@ -97,13 +97,13 @@
 
 Using this sql:
 
-SELECT a.* FROM (
+SELECT ranked.* FROM (
   SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank, * 
-  FROM `items`) a 
-WHERE a.rank = 1
+  FROM `items`) ranked
+WHERE ranked.rank = 1
 
-yields a query time of 3/4 of a second returning 100,000 items from a
-table containing 200,000 with random duplications
+yields a query time of about 3/4 of a second returning 100,000 items
+from a table containing 200,000 with random duplications
 
 ...but only with the right index:
 
@@ -126,6 +126,27 @@ Even faster is this:
 SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank FROM `items`
 
 ...which uses a covering index and returns in 190ms. It may be possible to work out how to get it to return the info I need to fetch rows by rowid or something,to get even faster results.
+
+This one:
+
+SELECT ranked.rowid 
+FROM (SELECT rowid,ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank FROM `items`)  as ranked
+WHERE ranked.rank=1
+
+returns the rowids of the 100,000 latest versions of all items in under 250ms
+
+This one:
+
+SELECT * FROM
+(SELECT ranked.rowid 
+FROM (SELECT rowid,ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank FROM `items`)  as ranked
+WHERE ranked.rank=1) latest
+INNER JOIN items ON items.rowid = latest.rowid LIMIT 100
+
+does the job in about the same time as the window function. According to 
+EXPLAIN QUERY PLAN, this one collects the rowids using a covering index, which is
+takes about 250ms, but then searches the table for the rows (or course)
+which takes around half a second
 
 |#
 

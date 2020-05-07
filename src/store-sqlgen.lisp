@@ -99,9 +99,10 @@
 ;;; ---------------------------------------------------------------------
 ;;; creating the main items index
 ;;; ---------------------------------------------------------------------
+;;; the index used to fetch the latest versions of each item
 
 (defun sqlgen-create-item-revision-origin-index ()
-  (values "CREATE INDEX `idx_item_revision_origin` ON `items` (`item`, `revision`, `origin`)"
+  (values "CREATE INDEX idx_item_revision_origin on `items` (`item`, `revision` DESC, `origin` DESC)"
           nil))
 
 ;;; ---------------------------------------------------------------------
@@ -192,3 +193,21 @@
 
 ;;; (setf $origin (make-origin (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
 ;;; (sqlgen-insert-item $origin 5 (now-utc) 3 nil {(make-identity-string) 101})
+
+;;; ---------------------------------------------------------------------
+;;; fetching the latest items
+;;; ---------------------------------------------------------------------
+
+(defparameter $get-latest-items-sql
+  (trim "
+SELECT ranked.* FROM (
+  SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank, * 
+  FROM `items`) ranked
+WHERE ranked.rank = 1 LIMIT ~A OFFSET ~A
+"))
+
+(defun sqlgen-get-latest-items (&key (offset 0)(limit 100))
+  (values (format nil $get-latest-items-sql limit offset)
+          nil))
+
+;;; (sqlgen-get-latest-items :limit 25 :offset 1500)

@@ -232,3 +232,31 @@
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string))
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string) :create-default-userdata nil)
 ;;; (delete-file $testlist)
+
+;;; ---------------------------------------------------------------------
+;;; getting the latest items
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-latest-items ((db sqlite-handle)
+                                &key
+                                  (offset 0)
+                                  (limit 100))
+  (bind ((sql vals (sqlgen-get-latest-items :limit limit :offset offset)))
+    (apply 'execute-to-list db sql vals)))
+
+(defmethod get-latest-items ((db-path pathname)
+                             &key
+                               (offset 0)
+                               (limit 100))
+  (assert (probe-file db-path) () "No such file: ~S" db-path)
+  (with-open-database (db db-path)
+    (db-get-latest-items db :offset offset :limit limit)))
+
+;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (time (get-latest-items (pathname $movies-test-path)))
+;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000))
+
+;;; (setf $zips-test-path "/Users/mikel/Desktop/Zipcodes.delectus2")
+;;; (time (get-latest-items (pathname $zips-test-path)))
+;;; (time (get-latest-items (pathname $zips-test-path) :offset 30000))
+
