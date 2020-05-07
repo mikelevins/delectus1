@@ -29,11 +29,9 @@
 ;;; -----------
 
 (defparameter *delectus-table-name* "delectus")
-(defparameter *syncs-table-name* "syncs")
 (defparameter *listnames-table-name* "listnames")
 (defparameter *columns-table-name* "columns")
 (defparameter *items-table-name* "items")
-(defparameter *syncs-table-name* "syncs")
 
 ;;; column names
 ;;; ------------
@@ -43,10 +41,8 @@
 (defparameter *comments-metadata-columns* [:|opid| :|revision| :|timestamp| :|comment|])
 (defparameter *columns-metadata-columns* [:|opid| :|revision| :|timestamp|])
 (defparameter *items-metadata-columns* [:|opid| :|revision| :|timestamp| :|itemid| :|deleted|])
-(defparameter *syncs-metadata-columns* [:|opid| :|revision| :|timestamp| :|peerid| :|fileid|])
 
 (defparameter *listid-column-name* "listid")
-(defparameter *fileid-column-name* "fileid")
 (defparameter *format-column-name* "format")
 (defparameter *modified-column-name* "modified")
 (defparameter *next-revision-column-name* "next_revision")
@@ -57,7 +53,6 @@
 (defparameter *comment-column-name* "comment")
 (defparameter *itemid-column-name* "itemid")
 (defparameter *deleted-column-name* "deleted")
-(defparameter *peerid-column-name* "peerid")
 
 ;;; column parameters
 ;;; -----------------

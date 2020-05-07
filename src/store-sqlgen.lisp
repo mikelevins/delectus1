@@ -95,20 +95,6 @@
 
 ;;; (sqlgen-create-items-table)
 
-;;; 'syncs' table
-;;; ----------------
-
-(defun sqlgen-create-syncs-table ()
-  (yield
-   (create-table :syncs
-       ((opid :type 'blob)
-        (revision :type 'integer)
-        (timestamp :type 'integer)
-        (itemid :type 'blob)
-        (peerid :type 'blob)))))
-
-;;; (sqlgen-create-syncs-table)
-
 ;;; ---------------------------------------------------------------------
 ;;; creating the main items index
 ;;; ---------------------------------------------------------------------

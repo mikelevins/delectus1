@@ -76,14 +76,6 @@
     (apply 'execute-non-query db create-sql create-vals)))
 
 ;;; ---------------------------------------------------------------------
-;;; creating the 'syncs' table
-;;; ---------------------------------------------------------------------
-
-(defmethod db-create-syncs-table ((db sqlite-handle))
-  (bind ((create-sql create-vals (sqlgen-create-syncs-table)))
-    (apply 'execute-non-query db create-sql create-vals)))
-
-;;; ---------------------------------------------------------------------
 ;;; creating the 'items' main index
 ;;; ---------------------------------------------------------------------
 
@@ -190,7 +182,6 @@
         (db-create-comments-table db)
         (db-create-columns-table db)
         (db-create-items-table db)
-        (db-create-syncs-table db)
         (db-create-items-itemid-revision-opid-index db)
         (when create-default-userdata
           (let* ((opid (makeid))
