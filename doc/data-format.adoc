@@ -99,7 +99,7 @@ The significance of the notation `_[label]_+` is that an `item` op may have any 
 | `opid` | `BLOB` | The `identity` of the op.
 | `revision` | `INTEGER` | The revision number of the op.
 | `timestamp` | `INTEGER` | The time that the op was created, as reported by the creating node.
-| `peer` | `TEXT` | The `identity` of the Delectus node we synced with.
-| `listid` | `TEXT` | The `identity` of the Delectus list we synced.
-| `fileid` | `TEXT` | The `identity` of the Delectus file we synced with.
+| `local_node` | `BLOB` | The `identity` of this Delectus node.
+| `remote_node` | `BLOB` | The `identity` of the Delectus node we synced with.
+| `listid` | `BLOB` | The `identity` of the Delectus list we synced.
 |===

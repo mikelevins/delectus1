@@ -1,18 +1,27 @@
 = Delectus 2 Sync
 :toc:
 
-== How to sync lists
+== How sync works
 
-. Peer A sends a `sync` request to Peer B. A and B may be the same Delectus node. +
-The `sync` request identifies node A, the list to be synced, and the last successful sync (which may be null).
-. Peer B replies, accepting or rejecting the sync. +
-If it accepts, it supplies its identity and the latest sync it remembers (which may be null).
-. If the sync was accepted, Peer A sends the identity of latest sync that both peers remember (it may be null), and a list of opids it has accepted since then.
-. B removes from A's list of opids any that it has already seen. It calls result its *request* list. It prepares a list of opids in its log that were not in A's list. It calls this its *offer* list. B attaches the full op data to each opid in the *offer* list, then sends a message containing the *request* list and the expanded *offer* list.
-. A responds by expanding B's *request* list with all op data matching its opids. It sends back this list of ops as A's *offer*.
-. A merges B's *offer* into its log. B merges A's *offer* into its log.
-. If there were no errors, B sends a `sync-complete` message containing all the data needed to construct and insert a `sync` op.
-. A sends the same `sync-complete` back to B.
-. A and B insert the same `sync` op in both logs. Both update the revision count in their copies of the list to equal the greater of both versions' revision counts.
+The basic procedure for merging two copies of a Delectus list is:
 
-Sync is complete.
+. We'll call the copies of the list *list A* and *list B*.
+. Dump the op log of each copy to an *op list*. We'll call these *op list A* and *op list B*.
+. Merge the two op lists into a single one; we'll call this list the *merge*.
+. Make two copies of the merge, *merge A* and *merge B*. Remove from merge A all the ops that are in op list A; remove from merge B all the ops that are in op list B. Merge A now contains all ops from B that are not in A; merge B now contains all ops from A that are not in B.
+. Insert the ops from merge A into list A. Insert the ops from merge B into list B.
+. List A and list B are now the same. Add a `sync` op to each one that marks the point at which they are in sync. In both lists, the sync op gets the same revision number: the greater of list A's next revision number and list B's next revision number. Whichever list's next revision number is less is increased to be equal to the other's, so that the next revision number in both lists is now the same.
+
+In a pair of lists that share a common `sync` op, the merge can be conducted with a subset of ops. Because the op logs of both lists are the same up to the common sync op, any earlier ops can be ignored. Only newer ops (that is, ops with revision numbers higher than that of the sync op) need be considered.
+
+A single Delectus node can use this procedure on two local Delectus list files to synchronize them.
+
+For synchronization between different Delectus nodes, the two Delectus nodes must first establish that they have copies of the same list (using the list's `identity`), then determine the subsets of the two oplogs to exchange. In the worst case, the nodes will not share a common previous sync, and will exchange complete copies of their logs. This happens only the first time two copies of a list are synced.
+
+In the more usual case, Delectus compiles a partial log of ops for each list: only those ops with revision numbers greater than the last sync's. It applies the log from listB to list A, and vice versa. If there's an error in applying either update, then Delectus rolls back the changes and notifies the other node to do the same (or, if merging locally, rolls back the changes to the second list itself). The failed merge is then logged in a local error log on each participating node.
+
+After a successful merge, Delectus compares the `next_revision` counter in each copy of the list. If they differ, it updates the lesser one to equal the greater. It then posts a `sync` op to both lists with the new common `next_revision` value, thus (temporarily) synchronizing revision counts between the copies of the list.
+
+The two lists are now the same.
+
+This procedure works to sync any number of lists by syncing them pairwise. A user may edit any number of lists concurrently and Delectus can always eventually sync all of them to arrive at the same state on each.
