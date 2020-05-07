@@ -219,6 +219,7 @@
 ;;; (delete-file $testlist)
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string))
 ;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string) :create-default-userdata nil)
+;;; (time (get-latest-items (pathname $testlist)))
 
 ;;; ---------------------------------------------------------------------
 ;;; getting the latest items
