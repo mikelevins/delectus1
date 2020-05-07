@@ -24,4 +24,4 @@
 (defmethod utc->timestring ((time integer))
   (local-time:format-rfc3339-timestring nil (local-time:universal-to-timestamp time)))
 
-;;; (universal->timestring (now-utc))
+;;; (utc->timestring (now-utc))

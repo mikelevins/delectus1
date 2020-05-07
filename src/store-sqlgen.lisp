@@ -42,7 +42,6 @@
              :modified timestamp
              :next_revision next-revision)))))
 
-
 ;;; 'listnames' table
 ;;; ----------------
 
@@ -68,7 +67,6 @@
         (comment :type 'text)))))
 
 ;;; (sqlgen-create-comments-table)
-
 
 ;;; 'columns' table
 ;;; ----------------
@@ -114,8 +112,8 @@
 ;;; ---------------------------------------------------------------------
 ;;; the index used to fetch the latest versions of each item
 
-(defun sqlgen-create-itemid-revision-opid-index ()
-  (values "CREATE INDEX idx_itemid_revision_opid on `items` (`itemid`, `revision` DESC, `opid`)"
+(defun sqlgen-create-items-itemid-revision-opid-index ()
+  (values "CREATE INDEX idx_items_itemid_revision_opid on `items` (`itemid`, `revision` DESC, `opid`)"
           nil))
 
 ;;; ---------------------------------------------------------------------
@@ -159,8 +157,19 @@
            :timestamp timestamp
            :name name))))
 
-;;; (setf $opid (make-opid (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
+;;; (setf $opid (makeid))
 ;;; (sqlgen-insert-listname $opid 3 (now-utc) "Foobar")
+
+(defun sqlgen-insert-comment (opid revision timestamp comment)
+  (yield
+   (insert-into :comments
+     (set= :opid opid
+           :revision revision
+           :timestamp timestamp
+           :comment comment))))
+
+;;; (setf $opid (makeid))
+;;; (sqlgen-insert-comment $opid 3 (now-utc) "foo bar baz...")
 
 (defun sqlgen-insert-columns (opid revision timestamp column-descriptions)
   (let* ((column-id-strings (mapcar 'column-description-id column-descriptions))
@@ -176,27 +185,27 @@
     (values sql parameter-values)))
 
 
-;;; (setf $opid (make-opid (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
+;;; (setf $opid (makeid))
 ;;; (sqlgen-insert-columns $opid 5 (now-utc) (list (column-description :id (make-identity-string) :name "Item")))
 
 
-(defun sqlgen-insert-item (opid revision timestamp item deleted column-values)
+(defun sqlgen-insert-item (opid revision timestamp itemid deleted column-values)
   (let* ((column-id-strings (get-keys column-values))
          (column-labels (mapcar 'identity->column-label column-id-strings))
          (column-ids (mapcar 'as-keyword column-labels))
          (column-values (get-values column-values))
-         (parameter-names (append [:|opid| :|revision| :|timestamp| :|item| :|deleted|]
+         (parameter-names (append [:|opid| :|revision| :|timestamp| :|itemid| :|deleted|]
                                   column-ids))
          (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
-         (parameter-values (append [opid revision timestamp item deleted] column-values))
+         (parameter-values (append [opid revision timestamp itemid deleted] column-values))
          (parameter-placeholders (format nil "~{~A~^, ~}" (mapcar (constantly "?") parameter-names)))
          (sql (format nil "INSERT INTO `items` (~A) VALUES (~A)"
                       parameter-names-string parameter-placeholders)))
     (values sql parameter-values)))
 
 
-;;; (setf $opid (make-opid (process-identity) (pathname "/Users/mikel/Desktop/testlist.delectus2")))
-;;; (sqlgen-insert-item $opid 5 (now-utc) 3 nil {(make-identity-string) 101})
+;;; (setf $opid (makeid))
+;;; (sqlgen-insert-item $opid 5 (now-utc) 3 nil [(make-identity-string) 101])
 
 ;;; ---------------------------------------------------------------------
 ;;; fetching the latest items

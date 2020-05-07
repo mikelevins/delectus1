@@ -42,7 +42,7 @@
 (defmethod sqlite-compile-options ((path string))
   (sqlite-compile-options (pathname path)))
 
-;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
+;;; (defparameter $zippath "/Users/mikel/Desktop/Zipcodes.delectus2")
 ;;; (sqlite-compile-options $zippath)
 
 ;;; GENERIC FUNCTION valid-sqlite-file? (path)
@@ -104,7 +104,7 @@
 (defmethod sqlite-table-column-info ((path string) (table-name string))
   (sqlite-table-column-info (pathname path) table-name))
 
-;;; (sqlite-table-column-info "/Users/mikel/Desktop/testlist.delectus2" "listnames")
+;;; (sqlite-table-column-info "/Users/mikel/Desktop/Zipcodes.delectus2" "items")
 
 ;;; GENERIC FUNCTION sqlite-list-table-column-names (path table-name)
 ;;; ---------------------------------------------------------------------
