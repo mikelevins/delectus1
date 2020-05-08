@@ -33,9 +33,9 @@
                                      (:file "data-columns")       ; utilities for working with column descriptions
                                      (:file "store-sqlgen")       ; generating SQL for interacting with the Delectus store
                                      (:file "store-model")        ; store operations on Delectus model objects
-                                     ;; (:file "data-csv")           ; reading and writing CSV files
+                                     (:file "data-csv")           ; reading and writing CSV files
                                      ;; making test data
-                                     ;; (:file "test-data")
+                                     (:file "test-data")
                                      ))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))

@@ -108,6 +108,7 @@
                                  timestamp
                                  name)
   (bind ((revision (or revision (db-get-next-revision db)))
+         (opid (or opid (makeid)))
          (sql vals (sqlgen-insert-listname opid revision timestamp name)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))))
@@ -119,6 +120,7 @@
                                 timestamp
                                 column-descriptions)
   (bind ((revision (or revision (db-get-next-revision db)))
+         (opid (or opid (makeid)))
          (sql vals (sqlgen-insert-columns opid revision timestamp column-descriptions)))
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))))
@@ -132,6 +134,7 @@
                                 deleted
                                 column-values)
   (bind ((revision (or revision (db-get-next-revision db)))
+         (opid (or opid (makeid)))
          (itemid (or itemid (makeid)))
          (sql vals (sqlgen-insert-item opid revision timestamp itemid deleted column-values)))
     (apply 'execute-non-query db sql vals)
@@ -243,7 +246,7 @@
 ;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
 ;;; (delete-file $movies-test-path)
 ;;; (time (get-latest-items (pathname $movies-test-path)))
-;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000))
+;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000 :limit 500))
 
 ;;; (setf $zips-test-path "/Users/mikel/Desktop/Zipcodes.delectus2")
 ;;; (time (get-latest-items (pathname $zips-test-path)))

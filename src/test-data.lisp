@@ -21,21 +21,15 @@
 (defparameter $test-list-id "38fee3007f2411ea984e38c9864ebde0")
 (defparameter $test-words-path "/usr/share/dict/words")
 
-(defparameter $process-id1 #(135 141 233 192 178 91 68 27 167 112 44 213 52 127 214 101))
-(defparameter $process-id2 #(86 107 17 178 168 160 67 90 155 36 255 145 157 23 32 242))
-(defparameter $process-id3 #(102 90 52 70 26 70 69 89 150 180 153 8 96 167 194 58))
+(defparameter $node1-revision -1)
+(defparameter $node2-revision -1)
+(defparameter $node3-revision -1)
 
 (defun make-test-list (list-path &key
                                    (count 100000)
                                    (list-name "Words Test"))
   (create-delectus-file list-path :listname list-name :listid $test-list-id :create-default-userdata nil)
-  (let* ((origin1 (make-origin $process-id1 (pathname list-path)))
-         (origin1-string (identity->string origin1))
-         (origin2 (make-origin $process-id2 (pathname list-path)))
-         (origin2-string (identity->string origin2))
-         (origin3 (make-origin $process-id3 (pathname list-path)))
-         (origin3-string (identity->string origin3))
-         (word-column-id (make-identity-string))
+  (let* ((word-column-id (make-identity-string))
          (word-column-description (column-description
                                    :id word-column-id
                                    :name "Word"
@@ -43,52 +37,92 @@
                                    :title t
                                    :subtitle :false
                                    :deleted :false))
-         (origin-column-id (make-identity-string))
-         (origin-column-description (column-description
-                                     :id origin-column-id
-                                     :name "Origin"
+         (node-column-id (make-identity-string))
+         (node-column-description (column-description
+                                     :id node-column-id
+                                     :name "Node"
                                      :order 20.0
                                      :title :false
                                      :subtitle :false
                                      :deleted :false))
-         (column-ids (list word-column-id origin-column-id))
-         (column-descriptions (list word-column-description origin-column-description)))
+         (rev-column-id (make-identity-string))
+         (rev-column-description (column-description
+                                     :id rev-column-id
+                                     :name "Revision"
+                                     :order 30.0
+                                     :title :false
+                                     :subtitle :false
+                                     :deleted :false))
+         (column-ids (list word-column-id node-column-id rev-column-id))
+         (column-descriptions (list word-column-description node-column-description rev-column-description)))
     (with-open-database (db list-path)
       ;; create the columns
       (db-ensure-columns-exist db column-descriptions)
       ;; insert the listname op
-      (db-insert-listname db :origin origin1 :timestamp (now-utc) :name list-name)
+      (db-insert-listname db :opid (makeid) :timestamp (now-utc) :name list-name)
       ;; insert the columns op
-      (db-insert-columns db :origin origin1 :timestamp (now-utc) :column-descriptions column-descriptions)
+      (db-insert-columns db :opid (makeid) :timestamp (now-utc) :column-descriptions column-descriptions)
       (with-open-file (in $test-words-path :direction :input)
         (loop for i from 0 and
            word = (read-line in nil nil nil)
            then (read-line in nil nil nil)
-           while (and (< i count)
-                      word)
-           do (let ((item (db-get-next-item db))
-                    ;; reuse the same revision number for all 3 inserts to simulate concurrent edits
-                    (revision (db-get-next-revision db)))
-                ;; always insert from origin1 with a lowercase copy of the word
-                (db-insert-item db :origin origin1 :timestamp (now-utc) :item item :revision revision
+           while (and word
+                      (< i count))
+           do (progn
+                ;; half the time insert from node1 with a lowercase copy
+                (when (any [t nil])
+                  (db-insert-item db :opid (makeid) :timestamp (now-utc) :itemid (makeid) :revision (incf $node1-revision)
                                 :column-values (alist->plist
                                                 (mapcar 'cons
                                                         column-ids
-                                                        [(string-downcase word) origin1-string])))
-                ;; half the time insert from origin2 with an uppercase copy
+                                                        [(string-downcase word) "Node 1" $node1-revision]))))
+                ;; half the time insert from node2 with an uppercase copy
                 (when (any [t nil])
-                  (db-insert-item db :origin origin2 :timestamp (now-utc) :item item :revision revision
+                  (db-insert-item db :opid (makeid) :timestamp (now-utc) :itemid (makeid) :revision (incf $node2-revision)
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
-                                                          [(string-upcase word) origin2-string]))))
-                ;; half the time insert from origin3 with a capitalized copy
+                                                          [(string-upcase word) "Node 2" $node2-revision]))))
+                ;; half the time insert from node3 with a capitalized copy
                 (when (any [t nil])
-                  (db-insert-item db :origin origin3 :timestamp (now-utc) :item item :revision revision
+                  (db-insert-item db :opid (makeid) :timestamp (now-utc) :itemid (makeid) :revision (incf $node3-revision)
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
-                                                          [(string-capitalize word) origin3-string]))))))))))
+                                                          [(string-upcase word) "Node 3" $node3-revision]))))))))))
+
+
+
+
+;;; (setf $wordtest100-path "/Users/mikel/Desktop/wordtest100.delectus2")
+;;; 0.3sec to build, 49k
+;;; (time (make-test-list $wordtest100-path :count 100))
+;;; (delete-file $wordtest100-path)
+;;; (time (get-latest-items (pathname $wordtest100-path)))
+;;; (time (get-latest-items (pathname $wordtest100-path) :offset 50))
+
+;;; (setf $wordtest1000-path "/Users/mikel/Desktop/wordtest1000.delectus2")
+;;; 3.8sec to build, 213k
+;;; (time (make-test-list $wordtest1000-path :count 1000))
+;;; (delete-file $wordtest1000-path)
+;;; (time (get-latest-items (pathname $wordtest1000-path)))
+;;; (time (get-latest-items (pathname $wordtest1000-path) :offset 500))
+
+;;; (setf $wordtest10k-path "/Users/mikel/Desktop/wordtest10k.delectus2")
+;;; 33sec to build, 1.9M
+;;; (time (make-test-list $wordtest10k-path :count 10000))
+;;; (delete-file $wordtest10k-path)
+;;; (time (get-latest-items (pathname $wordtest10k-path)))
+;;; (time (get-latest-items (pathname $wordtest10k-path) :offset 5000))
+
+;;; (setf $wordtest100k-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; 12m24sec to build, 19.1M
+;;; (time (make-test-list $wordtest100k-path :count 100000))
+;;; (delete-file $wordtest100k-path)
+;;; (time (get-latest-items (pathname $wordtest100k-path)))
+;;; (time (get-latest-items (pathname $wordtest100k-path) :offset 50000))
+;;; (time (get-latest-items (pathname $wordtest100k-path) :offset 90000))
+
 
 
 
@@ -149,16 +183,3 @@ takes about 250ms, but then searches the table for the rows (or course)
 which takes around half a second
 
 |#
-
-;;; (Time (make-test-list "/Users/mikel/Desktop/wordtest100.delectus2" :count 100))
-;;; (delete-file "/Users/mikel/Desktop/wordtest100.delectus2")
-
-;;; (time (make-test-list "/Users/mikel/Desktop/wordtest1k.delectus2" :count 1000))
-;;; (delete-file "/Users/mikel/Desktop/wordtest1k.delectus2")
-
-;;; (time (make-test-list "/Users/mikel/Desktop/wordtest10k.delectus2" :count 10000))
-;;; (delete-file "/Users/mikel/Desktop/wordtest10k.delectus2")
-
-;;; 15m47s to build
-;;; (time (make-test-list "/Users/mikel/Desktop/wordtest100k.delectus2" :count 100000))
-;;; (delete-file "/Users/mikel/Desktop/wordtest100k.delectus2")
