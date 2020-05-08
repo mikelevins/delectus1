@@ -21,6 +21,9 @@
       nil
       thing))
 
+(defun canonicalize (value-list)
+  (mapcar #'%sharpf->nil value-list))
+
 (defun import-csv (csv-path list-path list-name
                    &key
                      (first-row-is-headers t)
@@ -57,20 +60,20 @@
             ;; create the columns
             (db-ensure-columns-exist db column-descriptions)
             ;; insert the listname op
-            (db-insert-listname db :opid (makeid) :timestamp (now-utc) :name list-name)
+            (db-insert-listname db :opid (makeid) :timestamp (delectus-now) :name list-name)
             ;; insert the columns op
-            (db-insert-columns db :opid (makeid) :timestamp (now-utc) :column-descriptions column-descriptions)
+            (db-insert-columns db :opid (makeid) :timestamp (delectus-now) :column-descriptions column-descriptions)
             ;; read and insert the csv rows
             (with-open-file (in csv-path)
               ;; discard the first line if we used it for headers
               (when first-row-is-headers
                 (fare-csv:read-csv-line in))
               (loop for
-                 row = (fare-csv:read-csv-line in)
-                 then (fare-csv:read-csv-line in)
+                 row = (canonicalize (fare-csv:read-csv-line in))
+                 then (canonicalize (fare-csv:read-csv-line in))
                  while row
                  do (let* ((column-values (alist->plist (mapcar 'cons column-ids row))))
-                      (db-insert-item db :opid (makeid) :timestamp (now-utc)
+                      (db-insert-item db :opid (makeid) :timestamp (delectus-now)
                                       :column-values column-values))))))))))
 
 ;;; (setf $movies-csv-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")

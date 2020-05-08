@@ -32,7 +32,7 @@
                                    &key
                                      (fileid nil)
                                      (next-revision 0))
-  (let ((timestamp (now-utc))
+  (let ((timestamp (delectus-now))
         (fileid (or fileid (make-identity-string))))
     (yield
      (insert-into :delectus
@@ -146,7 +146,7 @@
            :name name))))
 
 ;;; (setf $opid (makeid))
-;;; (sqlgen-insert-listname $opid 3 (now-utc) "Foobar")
+;;; (sqlgen-insert-listname $opid 3 (delectus-now) "Foobar")
 
 (defun sqlgen-insert-comment (opid revision timestamp comment)
   (yield
@@ -157,7 +157,7 @@
            :comment comment))))
 
 ;;; (setf $opid (makeid))
-;;; (sqlgen-insert-comment $opid 3 (now-utc) "foo bar baz...")
+;;; (sqlgen-insert-comment $opid 3 (delectus-now) "foo bar baz...")
 
 (defun sqlgen-insert-columns (opid revision timestamp column-descriptions)
   (let* ((column-id-strings (mapcar 'column-description-id column-descriptions))
@@ -174,7 +174,7 @@
 
 
 ;;; (setf $opid (makeid))
-;;; (sqlgen-insert-columns $opid 5 (now-utc) (list (column-description :id (make-identity-string) :name "Item")))
+;;; (sqlgen-insert-columns $opid 5 (delectus-now) (list (column-description :id (make-identity-string) :name "Item")))
 
 
 (defun sqlgen-insert-item (opid revision timestamp itemid deleted column-values)
@@ -193,7 +193,7 @@
 
 
 ;;; (setf $opid (makeid))
-;;; (sqlgen-insert-item $opid 5 (now-utc) 3 nil [(make-identity-string) 101])
+;;; (sqlgen-insert-item $opid 5 (delectus-now) 3 nil [(make-identity-string) 101])
 
 ;;; ---------------------------------------------------------------------
 ;;; fetching the latest items

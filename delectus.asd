@@ -16,7 +16,7 @@
   :license  "Specify license here"
   :version "2.0.0"
   :serial t
-  :depends-on (:fset :fare-csv :uuid :sqlite :jonathan :local-time :sxql)
+  :depends-on (:fset :fare-csv :osicat :uuid :sqlite :jonathan :local-time :sxql)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")

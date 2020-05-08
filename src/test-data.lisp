@@ -39,57 +39,60 @@
                                    :deleted :false))
          (node-column-id (make-identity-string))
          (node-column-description (column-description
-                                     :id node-column-id
-                                     :name "Node"
-                                     :order 20.0
-                                     :title :false
-                                     :subtitle :false
-                                     :deleted :false))
+                                   :id node-column-id
+                                   :name "Node"
+                                   :order 20.0
+                                   :title :false
+                                   :subtitle :false
+                                   :deleted :false))
          (rev-column-id (make-identity-string))
          (rev-column-description (column-description
-                                     :id rev-column-id
-                                     :name "Revision"
-                                     :order 30.0
-                                     :title :false
-                                     :subtitle :false
-                                     :deleted :false))
+                                  :id rev-column-id
+                                  :name "Revision"
+                                  :order 30.0
+                                  :title :false
+                                  :subtitle :false
+                                  :deleted :false))
          (column-ids (list word-column-id node-column-id rev-column-id))
          (column-descriptions (list word-column-description node-column-description rev-column-description)))
     (with-open-database (db list-path)
       ;; create the columns
       (db-ensure-columns-exist db column-descriptions)
       ;; insert the listname op
-      (db-insert-listname db :opid (makeid) :timestamp (now-utc) :name list-name)
+      (db-insert-listname db :opid (makeid) :timestamp (delectus-now) :name list-name)
       ;; insert the columns op
-      (db-insert-columns db :opid (makeid) :timestamp (now-utc) :column-descriptions column-descriptions)
+      (db-insert-columns db :opid (makeid) :timestamp (delectus-now) :column-descriptions column-descriptions)
       (with-open-file (in $test-words-path :direction :input)
         (loop for i from 0 and
            word = (read-line in nil nil nil)
            then (read-line in nil nil nil)
            while (and word
                       (< i count))
-           do (progn
+           do (let ((itemid (makeid)))
                 ;; half the time insert from node1 with a lowercase copy
                 (when (any [t nil])
-                  (db-insert-item db :opid (makeid) :timestamp (now-utc) :itemid (makeid) :revision (incf $node1-revision)
-                                :column-values (alist->plist
-                                                (mapcar 'cons
-                                                        column-ids
-                                                        [(string-downcase word) "Node 1" $node1-revision]))))
+                  (db-insert-item db :opid (makeid) :timestamp (delectus-now) :itemid itemid
+                                  :revision (incf $node1-revision)
+                                  :column-values (alist->plist
+                                                  (mapcar 'cons
+                                                          column-ids
+                                                          [(string-downcase word) "Node 1" $node1-revision]))))
                 ;; half the time insert from node2 with an uppercase copy
                 (when (any [t nil])
-                  (db-insert-item db :opid (makeid) :timestamp (now-utc) :itemid (makeid) :revision (incf $node2-revision)
+                  (db-insert-item db :opid (makeid) :timestamp (delectus-now) :itemid itemid
+                                  :revision (incf $node2-revision)
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
                                                           [(string-upcase word) "Node 2" $node2-revision]))))
                 ;; half the time insert from node3 with a capitalized copy
                 (when (any [t nil])
-                  (db-insert-item db :opid (makeid) :timestamp (now-utc) :itemid (makeid) :revision (incf $node3-revision)
+                  (db-insert-item db :opid (makeid) :timestamp (delectus-now) :itemid itemid
+                                  :revision (incf $node3-revision)
                                   :column-values (alist->plist
                                                   (mapcar 'cons
                                                           column-ids
-                                                          [(string-upcase word) "Node 3" $node3-revision]))))))))))
+                                                          [(string-capitalize word) "Node 3" $node3-revision]))))))))))
 
 
 
@@ -116,9 +119,9 @@
 ;;; (time (get-latest-items (pathname $wordtest10k-path) :offset 5000))
 
 ;;; (setf $wordtest100k-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; (delete-file $wordtest100k-path)
 ;;; 12m24sec to build, 19.1M
 ;;; (time (make-test-list $wordtest100k-path :count 100000))
-;;; (delete-file $wordtest100k-path)
 ;;; (time (get-latest-items (pathname $wordtest100k-path)))
 ;;; (time (get-latest-items (pathname $wordtest100k-path) :offset 50000))
 ;;; (time (get-latest-items (pathname $wordtest100k-path) :offset 90000))
@@ -132,7 +135,7 @@
 Using this sql:
 
 SELECT ranked.* FROM (
-  SELECT ROW_NUMBER() OVER ( PARTITION BY item ORDER BY revision DESC, origin DESC ) rank, * 
+  SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY revision DESC, opid DESC ) rank, * 
   FROM `items`) ranked
 WHERE ranked.rank = 1
 
