@@ -212,3 +212,16 @@ WHERE ranked.rank = 1 LIMIT ~A OFFSET ~A
           nil))
 
 ;;; (sqlgen-get-latest-items :limit 25 :offset 1500)
+
+#| SQL query to pour the latest items into a new temporary table.
+   Indexing the temporary table enables extremely fast searches and sorts.
+   Creating the temp table takes between a quarter and a third of a second.
+   Creating an index on it takes around half that.
+
+CREATE TEMPORARY TABLE latest_items AS
+SELECT ranked.* FROM (
+  SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY revision DESC, opid ) rank, * 
+  FROM `items`) ranked
+WHERE ranked.rank = 1
+
+|#
