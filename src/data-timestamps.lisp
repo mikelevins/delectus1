@@ -23,7 +23,7 @@
 
 (defparameter +max-sqlite-integer+ 9223372036854775807)
 
-(defparameter +clock-sequence-multiplier+ 1000000)
+(defparameter +clock-sequence-multiplier+ 1000000000)
 
 (defparameter +delectus-epoch-string+ "2010-01-01T00:00:00+00:00")
 (defparameter +delectus-epoch+ (local-time:parse-rfc3339-timestring +delectus-epoch-string+))
