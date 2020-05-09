@@ -65,7 +65,8 @@
             ;; insert the listname op
             (db-insert-listname db :opid (makeid) :timestamp (delectus-timestamp-now) :name list-name)
             ;; insert the columns op
-            (db-insert-columns db :opid (makeid) :timestamp (delectus-timestamp-now) :column-descriptions column-descriptions)
+            (db-insert-columns db :opid (makeid) :timestamp (delectus-timestamp-now)
+                               :column-descriptions column-descriptions)
             ;; read and insert the csv rows
             (with-open-file (in csv-path)
               ;; discard the first line if we used it for headers

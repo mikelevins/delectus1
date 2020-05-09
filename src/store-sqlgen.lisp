@@ -196,6 +196,14 @@
 ;;; (sqlgen-insert-item $opid 5 (delectus-timestamp-now) 3 nil [(make-identity-string) 101])
 
 ;;; ---------------------------------------------------------------------
+;;; fetching the latest listname
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-latest-listname ()
+  (values "SELECT name FROM listnames ORDER BY timestamp DESC LIMIT 1"
+          nil))
+
+;;; ---------------------------------------------------------------------
 ;;; fetching the latest items
 ;;; ---------------------------------------------------------------------
 

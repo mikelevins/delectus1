@@ -22,7 +22,7 @@
   ;; -- slots ---------------------------------------------
   ((dbpath :accessor dbpath :initform nil :initarg :dbpath)
    (total-items :accessor total-items :initform 0 :initarg :total-items)
-   (items-per-page :accessor items-per-page :initform delectus::*default-result-items-per-page* :initarg :items-per-page)
+   (items-per-page :accessor items-per-page :initform *default-result-items-per-page* :initarg :items-per-page)
    (current-page :accessor current-page :initform 0 :initarg :current-page))
 
   ;; -- panes ---------------------------------------------
@@ -76,7 +76,7 @@
 (defmethod initialize-instance :after ((pane items-sheet) &rest initargs 
                                        &key &allow-other-keys)
   (setf (total-items pane)
-        (delectus::count-latest-items (pathname (dbpath pane))))
+        (count-latest-items (pathname (dbpath pane))))
   (update-list-display pane))
 
 ;;; ---------------------------------------------------------------------

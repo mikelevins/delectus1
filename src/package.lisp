@@ -16,8 +16,10 @@
                 #:compare #:convert #:do-map #:domain
                 #:lookup #:wb-map #:with)
   (:import-from #:local-time #:now)
-  (:export #:as-keyword
+  (:export #:*default-result-items-per-page*
+           #:as-keyword
            #:bind
+           #:count-latest-items
            #:count-latest-filtered-items
            #:from-json
            #:db-count-latest-filtered-items

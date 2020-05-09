@@ -224,6 +224,17 @@
 ;;; (time (get-latest-items (pathname $testlist)))
 
 ;;; ---------------------------------------------------------------------
+;;; getting the latest listname
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-latest-listname ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-listname)))
+    (apply 'execute-single db sql vals)))
+
+;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (with-open-database (db $movies-test-path)(db-get-latest-listname db))
+
+;;; ---------------------------------------------------------------------
 ;;; getting the latest items
 ;;; ---------------------------------------------------------------------
 
