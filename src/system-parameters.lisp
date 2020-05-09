@@ -22,6 +22,11 @@
     (setf *process-identity* (makeid)))
   *process-identity*)
 
+;;; query parameters
+;;; ---------------------------------------------------------------------
+
+(defparameter *default-result-items-per-page* 25)
+
 ;;; list-file parameters
 ;;; ---------------------------------------------------------------------
 

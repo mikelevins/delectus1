@@ -228,10 +228,36 @@
 ;;; getting the latest items
 ;;; ---------------------------------------------------------------------
 
+(defmethod db-check-latest-items-table-exists ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-check-latest-items-table-exists))
+         (found-table (apply 'execute-to-list db sql vals)))
+    (if found-table t nil)))
+
+;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; (with-open-database (db $words-test-path) (db-check-latest-items-table-exists db))
+
+(defmethod db-create-latest-items-table ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-create-latest-items-table)))
+    (apply 'execute-to-list db sql vals)))
+
+;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+
+
+;;; code to check that creating the temp table works
+;;; (time (with-open-database (db $words-test-path)
+;;;   (format t "~%check creation of latest-items-table...")
+;;;   (format t "~%latest-items-table is: ~S" (db-check-latest-items-table-exists db))
+;;;   (format t "~%creating latest-items-table...")
+;;;   (db-create-latest-items-table db)
+;;;   (format t "~%latest-items-table is: ~S" (db-check-latest-items-table-exists db))
+;;;   (format t "~%Done.~%")))
+
 (defmethod db-get-latest-items ((db sqlite-handle)
                                 &key
                                   (offset 0)
                                   (limit 100))
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
   (bind ((sql vals (sqlgen-get-latest-items :limit limit :offset offset)))
     (apply 'execute-to-list db sql vals)))
 

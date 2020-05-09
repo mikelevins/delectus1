@@ -219,22 +219,57 @@ WHERE ranked.rank = 1
 (defun sqlgen-create-latest-items-table ()
   $create-latest-items-table-sql)
 
-;;; SQL to check whether the temp table exists;
-;;; result rows contain the name 'latest_items' if the table exists, and empty otherwise
+(defun sqlgen-check-latest-items-table-exists ()
+  (values "SELECT * FROM sqlite_temp_master WHERE type='table' AND name='latest_items'"
+          nil))
+
+
+(defun sqlgen-get-latest-items (&key
+                                  (order :asc)
+                                  (offset 0)
+                                  (limit *default-result-items-per-page*))
+  (yield
+   (select :*
+     (from :latest_items)
+     (order-by (case order
+                 (:asc '(:asc :timestamp))
+                 (:desc '(:desc :timestamp))
+                 (else (error "Unrecognized order ~S" order))))
+     (offset offset)
+     (limit limit))))
+
+;;; (sqlgen-get-latest-items)
+;;; (sqlgen-get-latest-items :offset 10000)
+;;; (sqlgen-get-latest-items :order :desc)
+;;; (sqlgen-get-latest-items :order :foo)
+
+;;; does it matter if I create the temporary on disk or in memory?
+;;; below are some notes from some testing. The answer? It doesn't matter.
+;;; SQLite's page cache keeps things equally fast from disk for any file size
+;;; that we care about for Delectus.
 
 ;;; to tell SQLite to put the temp store in memory:
 ;;; PRAGMA temp_store = MEMORY
 
-;;; to create an ascending index on the timetamp field
+;;; time to create the temp table:
+;;; on disk: 360ms
+;;; in memory: 360ms
+
+;;; time to create an ascending index on the timestamp field
+;;; on disk: 158ms
+;;; in memory: 157ms
 ;;; CREATE INDEX idx_timestamp_asc on latest_items (timestamp)
 
-;;; executes in half a second with latest_items in memory:
+;;; on disk: 530ms
+;;; in memory: 520ms
 ;;; select * from latest_items order by timestamp
 
-;;; executes in 69ms
+;;; on disk: 50ms
+;;; in memory: 52ms
 ;;; select * from latest_items order by timestamp asc limit 25
 
-;;; executes in 61ms
+;;; on disk: 45ms
+;;; in memory: 60ms
 ;;; select * from latest_items order by timestamp asc limit 25 offset 80000
 
 ;;; (sqlgen-get-latest-items :limit 25 :offset 1500)
