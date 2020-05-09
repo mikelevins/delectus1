@@ -243,15 +243,6 @@
 ;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
 
 
-;;; code to check that creating the temp table works
-;;; (time (with-open-database (db $words-test-path)
-;;;   (format t "~%check creation of latest-items-table...")
-;;;   (format t "~%latest-items-table is: ~S" (db-check-latest-items-table-exists db))
-;;;   (format t "~%creating latest-items-table...")
-;;;   (db-create-latest-items-table db)
-;;;   (format t "~%latest-items-table is: ~S" (db-check-latest-items-table-exists db))
-;;;   (format t "~%Done.~%")))
-
 (defmethod db-get-latest-items ((db sqlite-handle)
                                 &key
                                   (offset 0)
@@ -281,8 +272,16 @@
 ;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
 ;;; (time (get-latest-items (pathname $words-test-path)))
 ;;; (time (get-latest-items (pathname $words-test-path) :offset 30000))
-;;; (time (setf $words (get-latest-items (pathname $words-test-path) :offset 90000)))
+;;; (time (setf $words (get-latest-items (pathname $words-test-path) :offset 70000 :limit 25)))
 ;;; (length $words)
 ;;; (elt $words 5)
 ;;; (mapcar (lambda (w)(elt w 6)) $words)
 
+(defmethod db-count-latest-items ((db sqlite-handle))
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
+  (bind ((sql vals (sqlgen-count-latest-items)))
+    (apply 'execute-single db sql vals)))
+
+;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; (time (with-open-database (db $words-test-path) (db-count-latest-items db)))

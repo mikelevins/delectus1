@@ -139,15 +139,3 @@
 (defmethod as-string ((s symbol))
   (symbol-name s))
 
-;;; ---------------------------------------------------------------------
-;;;  time utilities
-;;; ---------------------------------------------------------------------
-
-
-;;; now-timestamp
-;;; ---------------------------------------------------------------------
-
-(defun now-timestamp ()
-  (local-time:format-timestring nil (local-time:now) :timezone local-time:+utc-zone+))
-
-;;; (now-timestamp)
