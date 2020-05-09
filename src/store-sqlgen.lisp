@@ -221,6 +221,20 @@ WHERE ranked.rank = 1
 
 ;;; SQL to check whether the temp table exists;
 ;;; result rows contain the name 'latest_items' if the table exists, and empty otherwise
-;;; SELECT name FROM sqlite_temp_master WHERE type='table' AND name='latest_items'
+
+;;; to tell SQLite to put the temp store in memory:
+;;; PRAGMA temp_store = MEMORY
+
+;;; to create an ascending index on the timetamp field
+;;; CREATE INDEX idx_timestamp_asc on latest_items (timestamp)
+
+;;; executes in half a second with latest_items in memory:
+;;; select * from latest_items order by timestamp
+
+;;; executes in 69ms
+;;; select * from latest_items order by timestamp asc limit 25
+
+;;; executes in 61ms
+;;; select * from latest_items order by timestamp asc limit 25 offset 80000
 
 ;;; (sqlgen-get-latest-items :limit 25 :offset 1500)
