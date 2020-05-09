@@ -16,7 +16,8 @@
                 #:compare #:convert #:do-map #:domain
                 #:lookup #:wb-map #:with)
   (:import-from #:local-time #:now)
-  (:export #:bind
+  (:export #:as-keyword
+           #:bind
            #:count-latest-filtered-items
            #:from-json
            #:db-count-latest-filtered-items
@@ -35,7 +36,3 @@
            #:op-name
            #:op-userdata
            #:with-open-database))
-
-(defpackage #:delectus-ui
-  (:nicknames #:ui)
-  (:use #:cl #:sqlite #:delectus #:capi))

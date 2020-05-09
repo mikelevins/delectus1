@@ -21,8 +21,10 @@
       nil
       thing))
 
-(defun canonicalize (value-list)
-  (mapcar #'%sharpf->nil value-list))
+(defun canonicalize (value-list &key (sharpf-is-nil t))
+  (if sharpf-is-nil
+      (mapcar #'%sharpf->nil value-list)
+      value-list))
 
 (defun import-csv (csv-path list-path list-name
                    &key
@@ -37,12 +39,13 @@
     ;; first, make sure the source file exists; if not, we throw an error
     (when first-line-vals
       ;; create the output list
-      (create-delectus-file list-path :listname list-name :listid (make-identity-string) :create-default-userdata nil)
+      (create-delectus-file list-path :listname list-name
+                            :listid (or list-id (make-identity-string))
+                            :create-default-userdata nil)
       (with-open-database (db list-path)
         (with-transaction db
           ;; first create columns for the csv data
           (let* ((column-ids (loop for val in first-line-vals collect (make-identity-string)))
-                 (column-labels (loop for cid in column-ids collect (identity->column-label cid)))
                  (column-names (if first-row-is-headers
                                    first-line-vals
                                    column-ids))
@@ -69,8 +72,8 @@
               (when first-row-is-headers
                 (fare-csv:read-csv-line in))
               (loop for
-                 row = (canonicalize (fare-csv:read-csv-line in))
-                 then (canonicalize (fare-csv:read-csv-line in))
+                 row = (canonicalize (fare-csv:read-csv-line in) :sharpf-is-nil sharpf-is-nil)
+                 then (canonicalize (fare-csv:read-csv-line in) :sharpf-is-nil sharpf-is-nil)
                  while row
                  do (let* ((column-values (alist->plist (mapcar 'cons column-ids row))))
                       (db-insert-item db :opid (makeid) :timestamp (delectus-timestamp-now)

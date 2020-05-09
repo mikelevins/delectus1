@@ -33,15 +33,14 @@
 ;;; creating the 'delectus' table
 ;;; ---------------------------------------------------------------------
 
-(defmethod db-create-delectus-table ((db sqlite-handle) (listid string))
+(defmethod db-create-delectus-table ((db sqlite-handle) (listid string)(format string))
   (assert (identity-string? listid)()
           "Expected an identity-string for the :LISTID paramter, but found ~S"
           listid)
-  (let* ((list-identity (string->identity listid)))
-    (bind ((create-sql create-vals (sqlgen-create-delectus-table))
-           (init-sql init-vals (sqlgen-init-delectus-table listid +delectus-format-version+)))
-      (apply 'execute-non-query db create-sql create-vals)
-      (apply 'execute-non-query db init-sql init-vals))))
+  (bind ((create-sql create-vals (sqlgen-create-delectus-table))
+         (init-sql init-vals (sqlgen-init-delectus-table listid format)))
+    (apply 'execute-non-query db create-sql create-vals)
+    (apply 'execute-non-query db init-sql init-vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the 'listnames' table
@@ -180,7 +179,7 @@
   (let* ((listid (or listid (make-identity-string))))
     (with-open-database (db db-path)
       (with-transaction db
-        (db-create-delectus-table db listid)
+        (db-create-delectus-table db listid format)
         (db-create-listnames-table db)
         (db-create-comments-table db)
         (db-create-columns-table db)
