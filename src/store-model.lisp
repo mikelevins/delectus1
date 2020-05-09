@@ -198,10 +198,10 @@
                  (default-column-descriptions (list default-column))
                  (default-column-id (getf default-column :|id|)))
             (db-ensure-columns-exist db default-column-descriptions)
-            (db-insert-listname db :opid opid :timestamp (delectus-now) :name listname)
-            (db-insert-columns db :opid opid :timestamp (delectus-now)
+            (db-insert-listname db :opid opid :timestamp (delectus-timestamp-now) :name listname)
+            (db-insert-columns db :opid opid :timestamp (delectus-timestamp-now)
                                :column-descriptions default-column-descriptions)
-            (db-insert-item db :opid opid :timestamp (delectus-now)
+            (db-insert-item db :opid opid :timestamp (delectus-timestamp-now)
                             :column-values [default-column-id nil])
             )))))
   db-path)
@@ -285,3 +285,4 @@
 ;;; (length $words)
 ;;; (elt $words 5)
 ;;; (mapcar (lambda (w)(elt w 6)) $words)
+

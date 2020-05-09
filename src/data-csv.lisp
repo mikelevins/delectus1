@@ -60,9 +60,9 @@
             ;; create the columns
             (db-ensure-columns-exist db column-descriptions)
             ;; insert the listname op
-            (db-insert-listname db :opid (makeid) :timestamp (delectus-now) :name list-name)
+            (db-insert-listname db :opid (makeid) :timestamp (delectus-timestamp-now) :name list-name)
             ;; insert the columns op
-            (db-insert-columns db :opid (makeid) :timestamp (delectus-now) :column-descriptions column-descriptions)
+            (db-insert-columns db :opid (makeid) :timestamp (delectus-timestamp-now) :column-descriptions column-descriptions)
             ;; read and insert the csv rows
             (with-open-file (in csv-path)
               ;; discard the first line if we used it for headers
@@ -73,7 +73,7 @@
                  then (canonicalize (fare-csv:read-csv-line in))
                  while row
                  do (let* ((column-values (alist->plist (mapcar 'cons column-ids row))))
-                      (db-insert-item db :opid (makeid) :timestamp (delectus-now)
+                      (db-insert-item db :opid (makeid) :timestamp (delectus-timestamp-now)
                                       :column-values column-values))))))))))
 
 ;;; (setf $movies-csv-path "/Users/mikel/Workshop/src/delectus/test-data/Movies.csv")

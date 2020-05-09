@@ -59,9 +59,9 @@
       ;; create the columns
       (db-ensure-columns-exist db column-descriptions)
       ;; insert the listname op
-      (db-insert-listname db :opid (makeid) :timestamp (delectus-now) :name list-name)
+      (db-insert-listname db :opid (makeid) :timestamp (delectus-timestamp-now) :name list-name)
       ;; insert the columns op
-      (db-insert-columns db :opid (makeid) :timestamp (delectus-now) :column-descriptions column-descriptions)
+      (db-insert-columns db :opid (makeid) :timestamp (delectus-timestamp-now) :column-descriptions column-descriptions)
       (with-open-file (in $test-words-path :direction :input)
         (loop for i from 0 and
            word = (read-line in nil nil nil)
@@ -71,7 +71,7 @@
            do (let ((itemid (makeid)))
                 ;; half the time insert from node1 with a lowercase copy
                 (when (any [t nil])
-                  (db-insert-item db :opid (makeid) :timestamp (delectus-now) :itemid itemid
+                  (db-insert-item db :opid (makeid) :timestamp (delectus-timestamp-now) :itemid itemid
                                   :revision (incf $node1-revision)
                                   :column-values (alist->plist
                                                   (mapcar 'cons
@@ -79,7 +79,7 @@
                                                           [(string-downcase word) "Node 1" $node1-revision]))))
                 ;; half the time insert from node2 with an uppercase copy
                 (when (any [t nil])
-                  (db-insert-item db :opid (makeid) :timestamp (delectus-now) :itemid itemid
+                  (db-insert-item db :opid (makeid) :timestamp (delectus-timestamp-now) :itemid itemid
                                   :revision (incf $node2-revision)
                                   :column-values (alist->plist
                                                   (mapcar 'cons
@@ -87,7 +87,7 @@
                                                           [(string-upcase word) "Node 2" $node2-revision]))))
                 ;; half the time insert from node3 with a capitalized copy
                 (when (any [t nil])
-                  (db-insert-item db :opid (makeid) :timestamp (delectus-now) :itemid itemid
+                  (db-insert-item db :opid (makeid) :timestamp (delectus-timestamp-now) :itemid itemid
                                   :revision (incf $node3-revision)
                                   :column-values (alist->plist
                                                   (mapcar 'cons
@@ -122,9 +122,9 @@
 ;;; (delete-file $wordtest100k-path)
 ;;; 12m24sec to build, 19.1M
 ;;; (time (make-test-list $wordtest100k-path :count 100000))
-;;; (time (get-latest-items (pathname $wordtest100k-path)))
+;;; (time (setf $items(get-latest-items (pathname $wordtest100k-path))))
 ;;; (time (get-latest-items (pathname $wordtest100k-path) :offset 50000))
-;;; (time (get-latest-items (pathname $wordtest100k-path) :offset 90000))
+;;; (time (setf $items(get-latest-items (pathname $wordtest100k-path) :offset 70000)))
 
 
 

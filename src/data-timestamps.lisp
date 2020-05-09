@@ -14,29 +14,46 @@
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; The Delectus timestamp is an integer, the number of microseconds
-;;; since midnight of January 1, 2010, UTC. It's chosen because it's
-;;; a round date near the time when Delectus 1 was released.
+;;; The Delectus timestamp is an integer defined as the number of
+;;; seconds since the Delectus epoch plus a clock-sequence number that
+;;; rolls over at a billion. Using these values, Delectus timestamps
+;;; will roll over at (delectus-timestamp-to-string
+;;; +max-sqlite-integer+), which is 294177-01-09T04:00:54.000000Z --
+;;; January 9th, 294,177 AD at about 4 in the morning Greenwich time.
+
+(defparameter +max-sqlite-integer+ 9223372036854775807)
+
+(defparameter +clock-sequence-multiplier+ 1000000)
 
 (defparameter +delectus-epoch-string+ "2010-01-01T00:00:00+00:00")
+(defparameter +delectus-epoch+ (local-time:parse-rfc3339-timestring +delectus-epoch-string+))
+(defparameter +delectus-epoch-utc+ (local-time:timestamp-to-universal +delectus-epoch+))
 
-(defun delectus-epoch ()
-  (local-time:parse-rfc3339-timestring +delectus-epoch-string+))
+(defun seconds-since-delectus-epoch ()
+  (- (get-universal-time)
+     +delectus-epoch-utc+))
 
-(defparameter +microseconds-per-year+ (* 1000000 60 60 24 364))
-(defparameter +max-sqlite-integer+ 9223372036854775807)
-(defparameter +representable-years+ (float (/ +max-sqlite-integer+ +microseconds-per-year+)))
+(defparameter *delectus-clock-sequence-number* 0)
 
-;;; the above constants give us 293,274.7 representable years. the
-;;; Delectus epoch is 1/1/2010, so the Delectus timestamp integer will
-;;; roll over in 2010+293,274.7 or the fall of the year 295,284 AD
+;;; instead of relying on microsecond timers, which are not available
+;;; on all platforms, we use a clock-sequence number that rolls over
+;;; at a billion--so timestamps are unique per-process as long as we
+;;; don't make more than a million of them per second
 
-(defun delectus-now ()
-  (let* ((now (local-time:now))
-         (seconds (- (local-time:timestamp-to-universal now)
-                     (local-time:timestamp-to-universal (delectus-epoch))))
-         (microseconds (local-time:timestamp-microsecond now)))
-    (+ (* seconds 1000 1000)
-       microseconds)))
+(defun next-delectus-clock-sequence-number ()
+  (setf *delectus-clock-sequence-number*
+        (mod (1+ *delectus-clock-sequence-number*)
+             +clock-sequence-multiplier+)))
 
+(defun delectus-timestamp-now ()
+  (+ (* (seconds-since-delectus-epoch)
+        +clock-sequence-multiplier+)
+     (next-delectus-clock-sequence-number)))
 
+;;; (delectus-timestamp-now)
+
+(defun delectus-timestamp-to-string (ts)
+  (format nil "~A" (local-time:universal-to-timestamp (truncate ts +clock-sequence-multiplier+))))
+
+;;; (delectus-timestamp-to-string (delectus-timestamp-now))
+;;; (delectus-timestamp-to-string +max-sqlite-integer+)
