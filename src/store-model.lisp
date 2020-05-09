@@ -283,5 +283,10 @@
   (bind ((sql vals (sqlgen-count-latest-items)))
     (apply 'execute-single db sql vals)))
 
+(defmethod count-latest-items ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-count-latest-items db)))
+
 ;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
-;;; (time (with-open-database (db $words-test-path) (db-count-latest-items db)))
+;;; (time (count-latest-items (pathname $words-test-path)))
+
