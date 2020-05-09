@@ -17,9 +17,11 @@
 ;;; The Delectus timestamp is an integer defined as the number of
 ;;; seconds since the Delectus epoch plus a clock-sequence number that
 ;;; rolls over at a billion. Using these values, Delectus timestamps
-;;; will roll over at (delectus-timestamp-to-string
-;;; +max-sqlite-integer+), which is 294177-01-09T04:00:54.000000Z --
-;;; January 9th, 294,177 AD at about 4 in the morning Greenwich time.
+;;; will roll over at
+;;;
+;;; (delectus-timestamp-to-string +max-sqlite-integer+)
+;;;
+;;; which is April 12th, 2302, at about 11PM Greeniwch time
 
 (defparameter +max-sqlite-integer+ 9223372036854775807)
 
@@ -53,7 +55,9 @@
 ;;; (delectus-timestamp-now)
 
 (defun delectus-timestamp-to-string (ts)
-  (format nil "~A" (local-time:universal-to-timestamp (truncate ts +clock-sequence-multiplier+))))
+  (format nil "~A" (local-time:universal-to-timestamp
+                    (+ (truncate ts +clock-sequence-multiplier+)
+                       +delectus-epoch-utc+))))
 
 ;;; (delectus-timestamp-to-string (delectus-timestamp-now))
 ;;; (delectus-timestamp-to-string +max-sqlite-integer+)
