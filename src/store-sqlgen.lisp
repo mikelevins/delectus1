@@ -199,29 +199,28 @@
 ;;; fetching the latest items
 ;;; ---------------------------------------------------------------------
 
-(defparameter $get-latest-items-sql
+;; (defparameter $get-latest-items-sql
+;;   (trim "
+;; SELECT ranked.* FROM (
+;;   SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY revision DESC, opid ) rank, * 
+;;   FROM `items`) ranked
+;; WHERE ranked.rank = 1 LIMIT ~A OFFSET ~A
+;; "))
+
+(defparameter $create-latest-items-table-sql
   (trim "
-SELECT ranked.* FROM (
-  SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY revision DESC, opid ) rank, * 
-  FROM `items`) ranked
-WHERE ranked.rank = 1 LIMIT ~A OFFSET ~A
-"))
-
-(defun sqlgen-get-latest-items (&key (offset 0)(limit 100))
-  (values (format nil $get-latest-items-sql limit offset)
-          nil))
-
-;;; (sqlgen-get-latest-items :limit 25 :offset 1500)
-
-#| SQL query to pour the latest items into a new temporary table.
-   Indexing the temporary table enables extremely fast searches and sorts.
-   Creating the temp table takes between a quarter and a third of a second.
-   Creating an index on it takes around half that.
-
 CREATE TEMPORARY TABLE latest_items AS
 SELECT ranked.* FROM (
   SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY revision DESC, opid ) rank, * 
   FROM `items`) ranked
 WHERE ranked.rank = 1
+"))
 
-|#
+(defun sqlgen-create-latest-items-table ()
+  $create-latest-items-table-sql)
+
+;;; SQL to check whether the temp table exists;
+;;; result rows contain the name 'latest_items' if the table exists, and empty otherwise
+;;; SELECT name FROM sqlite_temp_master WHERE type='table' AND name='latest_items'
+
+;;; (sqlgen-get-latest-items :limit 25 :offset 1500)
