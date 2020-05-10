@@ -14,6 +14,17 @@
 ;;; creating Delectus tables
 ;;; ---------------------------------------------------------------------
 
+;;; 'identities' table
+;;; ----------------
+
+(defun sqlgen-create-identities-table ()
+  (yield
+   (create-table :identities
+       ((iref :type 'integer)
+        (identity :type 'blob)))))
+
+;;; (sqlgen-create-identities-table)
+
 ;;; 'delectus' table
 ;;; ----------------
 
@@ -118,6 +129,36 @@
 (defun sqlgen-set-next-revision (rev)
   (values (format nil "UPDATE `delectus` SET `next_revision` = ~A" rev)
           nil))
+
+
+;;; ---------------------------------------------------------------------
+;;; registering and finding identities
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-identity-to-iref (identity)
+  (yield
+   (select :iref
+     (from :identities)
+     (where (:= :identity identity)))))
+
+;;; (sqlgen-identity-to-iref (makeid))
+
+(defun sqlgen-iref-to-identity (iref)
+  (yield
+   (select :identity
+     (from :identities)
+     (where (:= :item iref)))))
+
+;;; (sqlgen-iref-to-identity 0)
+
+(defun sqlgen-register-identity (iref identity)
+  (values (format nil
+                  "INSERT INTO identities(iref,identity) VALUES (?,?) 
+WHERE NOT EXISTS(SELECT 1 FROM identities WHERE iref = ~A AND identity = ~A to insert')"
+                  iref identity)
+          nil))
+
+;;; (sqlgen-register-identity 1 (makeid))
 
 ;;; ---------------------------------------------------------------------
 ;;; adding columns

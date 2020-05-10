@@ -71,10 +71,9 @@
 ;;; the same mapping from iref to identity, and each reference to an
 ;;; identity in the list's other tables uses the new mapping.
 
-(defmethod db-create-listnames-table ((db sqlite-handle))
-  (bind ((create-sql create-vals (sqlgen-create-listnames-table)))
+(defmethod db-create-identities-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-identities-table)))
     (apply 'execute-non-query db create-sql create-vals)))
-
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the 'listnames' table
@@ -129,6 +128,14 @@
 (defmethod db-set-next-revision ((db sqlite-handle)(rev integer))
   (bind ((sql vals (sqlgen-set-next-revision rev)))
     (apply 'execute-single db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; registering and finding identities
+;;; ---------------------------------------------------------------------
+
+(defmethod db-identity-to-iref ((db sqlite-handle)(identity vector))
+  (bind ((already-sql already-vals (sqlgen-identity-to-iref identity)))
+    (apply 'execute-single db already-sql vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops
@@ -214,6 +221,7 @@
     (with-open-database (db db-path)
       (with-transaction db
         (db-create-delectus-table db listid format)
+        (db-create-identities-table db)
         (db-create-listnames-table db)
         (db-create-comments-table db)
         (db-create-columns-table db)

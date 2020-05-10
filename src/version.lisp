@@ -10,5 +10,7 @@
 
 (in-package #:delectus)
 
-(defparameter +delectus-version+ "2.0.4")
-(defparameter +delectus-format-version+ "2.4")
+;;; a transitional version: in the middle of adding mapping from
+;;; iref-to-identity maps to the file format
+(defparameter +delectus-version+ "2.0.5")
+(defparameter +delectus-format-version+ "2.5")
