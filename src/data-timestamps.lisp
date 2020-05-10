@@ -14,50 +14,25 @@
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; The Delectus timestamp is an integer defined as the number of
-;;; seconds since the Delectus epoch plus a clock-sequence number that
-;;; rolls over at a billion. Using these values, Delectus timestamps
-;;; will roll over at
+;;; The Delectus timestamp is an integer: the number of milliseconds
+;;; since the Delectus epoch, which is defined as January 1, 2010 at
+;;; midnight GMT--not far from the time that Delectus 1 was released.
 ;;;
-;;; (delectus-timestamp-to-string +max-sqlite-integer+)
-;;;
-;;; which is April 12th, 2302, at about 11PM Greeniwch time
+;;; SQLite stores integers as 64-bit signed, so we have 63 bits of
+;;; magnitude for future timestamps. It doesn't roll over until
+;;; 2010-01-01 plus 9223372036854775807 milliseconds. That's
+;;; 9223372036854775807 / (1000 * 60 * 60 * 24 * 365) years, or
+;;; about 292,471,208 years before the timestamp rolls over.
 
 (defparameter +max-sqlite-integer+ 9223372036854775807)
 
 (defparameter +clock-sequence-multiplier+ 1000000000)
 
-(defparameter +delectus-epoch-string+ "2010-01-01T00:00:00+00:00")
-(defparameter +delectus-epoch+ (local-time:parse-rfc3339-timestring +delectus-epoch-string+))
-(defparameter +delectus-epoch-utc+ (local-time:timestamp-to-universal +delectus-epoch+))
-
-(defun seconds-since-delectus-epoch ()
-  (- (get-universal-time)
-     +delectus-epoch-utc+))
-
-(defparameter *delectus-clock-sequence-number* 0)
-
-;;; instead of relying on microsecond timers, which are not available
-;;; on all platforms, we use a clock-sequence number that rolls over
-;;; at a billion--so timestamps are unique per-process as long as we
-;;; don't make more than a million of them per second
-
-(defun next-delectus-clock-sequence-number ()
-  (setf *delectus-clock-sequence-number*
-        (mod (1+ *delectus-clock-sequence-number*)
-             +clock-sequence-multiplier+)))
+(defparameter +delectus-epoch-utc+ (encode-universal-time 0 0 0 1 1 2010 0))
 
 (defun delectus-timestamp-now ()
-  (+ (* (seconds-since-delectus-epoch)
-        +clock-sequence-multiplier+)
-     (next-delectus-clock-sequence-number)))
-
-;;; (delectus-timestamp-now)
-
-(defun delectus-timestamp-to-string (ts)
-  (format nil "~A" (local-time:universal-to-timestamp
-                    (+ (truncate ts +clock-sequence-multiplier+)
-                       +delectus-epoch-utc+))))
-
-;;; (delectus-timestamp-to-string (delectus-timestamp-now))
-;;; (delectus-timestamp-to-string +max-sqlite-integer+)
+  (bind ((delectus-seconds (- (get-universal-time)
+                              +delectus-epoch-utc+))
+         (_ignore delectus-milliseconds (truncate (get-internal-real-time) internal-time-units-per-second)))
+    (+ (* delectus-seconds 1000)
+       delectus-milliseconds)))
