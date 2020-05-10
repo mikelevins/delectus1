@@ -42,6 +42,40 @@
     (apply 'execute-non-query db create-sql create-vals)
     (apply 'execute-non-query db init-sql init-vals)))
 
+
+;;; ---------------------------------------------------------------------
+;;; creating the 'identities' table
+;;; ---------------------------------------------------------------------
+;;; the identities table creates a mapping between integer indexes
+;;; called 'irefs' and every identity we've ever seen. That way,
+;;; instead of storing 16-byte UUIDs in identity columns, we can store
+;;; irefs, which are small integers.
+;;;
+;;; We have to ensure that every copy of the list agrees on this
+;;; mapping, so that all rows sort the same way in all copies.  But
+;;; copies of a list may be updated concurrently, which means their
+;;; mappings may diverge.
+;;;
+;;; therefore, when we sync two copies, we must first reconcile their
+;;; identity maps by doing the following:
+;;;
+;;; 1. get the identities table from each copy of the list
+;;; 2. create a new, merged, sorted list of seen identities
+;;; 3. assign new irefs to each
+;;; 4. for each list copy, compute a mapping from old iref to new
+;;; 5. store the new mapping in the identities table of each copy
+;;; 6. iterate over all opid columns in other tables, replacing
+;;;    each old iref with the new one that we just computed
+;;;
+;;; After all this is done, the identities table in each list contains
+;;; the same mapping from iref to identity, and each reference to an
+;;; identity in the list's other tables uses the new mapping.
+
+(defmethod db-create-listnames-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-listnames-table)))
+    (apply 'execute-non-query db create-sql create-vals)))
+
+
 ;;; ---------------------------------------------------------------------
 ;;; creating the 'listnames' table
 ;;; ---------------------------------------------------------------------
