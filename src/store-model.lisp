@@ -342,3 +342,11 @@
 ;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
 ;;; (time (count-latest-items (pathname $words-test-path)))
 
+#|
+
+(defparameter $sql (format nil "SELECT * FROM json_each(\"{'a': 1, 'b': 2}\")"))
+
+(with-open-database (db $words-test-path)
+  (apply 'execute-non-query db $sql nil))
+
+|#
