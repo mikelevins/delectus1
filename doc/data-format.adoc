@@ -112,7 +112,8 @@ The parameters given as `{_label_: _value_}+` are one or more objects that speci
 | `_revision_` | `integer` | The revision number of the op.
 | `_origin_` | `origin` | Where the op was created.
 | `_timestamp_` | `integer` | The time the op was created, according to the Delectus node that created it.
-| `_itemid_` | `identity` | The
+| `_itemid_` | `identity` | The identity if the item.
+| `_deleted_` | `Boolean` | Whether the item is marked deleted.
 | `{_label_: _value_}+` | `object` | One object for each column. The key is the column's label; the value is the value in that column. The value may be `null`, a `Boolean`, a `number`, or a `string`.
 |===
 
@@ -176,5 +177,62 @@ It uses timestamps to make the presentation of list data congenial for users. Fo
 A Delectus list file is a SQL database; Delectus stores ops and supporting data in a set of SQLite tables. This section describes those tables and how Delectus uses them.
 
 === Op tables
+
+Each op type is stored in its own table.
+
+==== The `listnames` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` |
+| `origin` | `INTEGER` |
+| `timestamp` | `INTEGER` |
+| `name` | `TEXT` |
+|===
+
+==== The `comments` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` |
+| `origin` | `INTEGER` |
+| `timestamp` | `INTEGER` |
+| `comment` | `TEXT` |
+|===
+
+==== The `columns` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` |
+| `origin` | `INTEGER` |
+| `timestamp` | `INTEGER` |
+| `_[label]_+` | `_[attributes]_+` |
+|===
+
+==== The `items` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` |
+| `origin` | `INTEGER` |
+| `timestamp` | `INTEGER` |
+| `itemid` | `INTEGER` |
+| `deleted` | `INTEGER` |
+| `_[label]_+` | `_[value]_+` |
+|===
+
+=== The `latest_items` table
+
+When Delectus opens a list file it executes a query that fetches the latest versions of all items in the `items` table. It stores the result in a temporary `latest_items` table. It then uses the `latest_items` table for all searches and other read operations on the list's items, enabling it to produce results more quickly than if it operated on the full `items` table.
+
+When a user edits an item or column, Delectus inserts the resulting op into the persistent `items` table and then recomputes the `latest_items` table.
+
 === The `delectus` table
 === Origin and identity maps
+==== The `identities` table
+==== The `origins` table
