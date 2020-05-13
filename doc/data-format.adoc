@@ -207,10 +207,10 @@ Each op type is stored in its own table.
 [cols="1,1,4",options="header"]
 |===
 | column | type | description
-| `revision` | `INTEGER` |
-| `origin` | `INTEGER` |
-| `timestamp` | `INTEGER` |
-| `name` | `TEXT` |
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `BLOB` | The op's origin, unique per (process,pathname).
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `name` | `TEXT` | The user-specified name of the list.
 |===
 
 ==== The `comments` table
@@ -218,10 +218,10 @@ Each op type is stored in its own table.
 [cols="1,1,4",options="header"]
 |===
 | column | type | description
-| `revision` | `INTEGER` |
-| `origin` | `INTEGER` |
-| `timestamp` | `INTEGER` |
-| `comment` | `TEXT` |
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `BLOB` | The op's origin, unique per (process,pathname).
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `comment` | `TEXT` | The user-specified comment text for the list.
 |===
 
 ==== The `columns` table
@@ -229,10 +229,10 @@ Each op type is stored in its own table.
 [cols="1,1,4",options="header"]
 |===
 | column | type | description
-| `revision` | `INTEGER` |
-| `origin` | `INTEGER` |
-| `timestamp` | `INTEGER` |
-| `_[label]_+` | `_[attributes]_+` |
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `BLOB` | The op's origin, unique per (process,pathname).
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `_[label]_+` | `_[attributes]_+` | The attributes of column `_label_`.
 |===
 
 ==== The `items` table
@@ -240,12 +240,12 @@ Each op type is stored in its own table.
 [cols="1,1,4",options="header"]
 |===
 | column | type | description
-| `revision` | `INTEGER` |
-| `origin` | `INTEGER` |
-| `timestamp` | `INTEGER` |
-| `itemid` | `INTEGER` |
-| `deleted` | `INTEGER` |
-| `_[label]_+` | `_[value]_+` |
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `BLOB` | The op's origin, unique per (process,pathname).
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `itemid` | `INTEGER` | The item's identifier, unique per distinct item.
+| `deleted` | `INTEGER` | True if the item is marked deleted; false otherwise.
+| `_[label]_+` | `_[value]_+` | The value of column `_label_`.
 |===
 
 === The `latest_items` table
@@ -256,26 +256,6 @@ When a user edits an item or column, Delectus inserts the resulting op into the 
 
 The structure of the `latest_items` table is identical to that of the `items` table.
 
-=== The `origins` table
-
-In order to avoid the need to store many copies of the same origin in the op tables, we map each origin to an integer, unique within the list file. We refer to this integer as an *origin reference*, or *oref*. We use the `origins` table to define this mapping.
-
-When merging data ops from another copy of a list, we may see new origins that we've never seen before. If we do, then we must add those origins to the local `origins` table with new orefs.
-
-We may also encounter origins that we've seen locally, but which have been mapped remotely to different orefs. We must therefore build a table that defines the local oref to be used for each remote oref, and when we insert ops from the remote data, we must replace the embedded orefs with their local equivalents.
-
-The `origins` table maintains the current list of known origins, and the local oref used for each.
-
-When adding a new origin, its assigned oref is always one greater than the maximum oref currently in the table.
-
-[cols="1,1,4",options="header"]
-.`origins` table structure
-|===
-| column | type | description
-| `origin` | `BLOB` |
-| `oref` | `INTEGER` |
-|===
-
 === The `delectus` table
 
 The `delectus` table stores the list file's identity, the current version of the file format, created and modified dates, and the current state of the revision and item counters.
@@ -284,10 +264,10 @@ The `delectus` table stores the list file's identity, the current version of the
 .`delectus` table structure
 |===
 | column | type | description
-| `listid` | `BLOB` |
-| `format` | `TEXT` |
-| `created` | `INTEGER` | A timestamp
-| `modified` | `INTEGER` | A timestamp
-| `next_revision` | `INTEGER` |
-| `next_itemid` | `INTEGER` |
+| `listid` | `BLOB` | The unique identity of the list.
+| `format` | `TEXT` | The version of the Delectus file format used in this file.
+| `created` | `INTEGER` | The time that this list was created.
+| `modified` | `INTEGER` | The time that this copy of the list was last modified.
+| `next_revision` | `INTEGER` | The revision that will be assigned to the next op.
+| `next_itemid` | `INTEGER` | The itemid that will be assigned to the next new item.
 |===
