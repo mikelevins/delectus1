@@ -40,7 +40,7 @@
     (with-open-database (db db-path)
       (with-transaction db
         (db-create-delectus-table db listid format)
-        ;; (db-create-listnames-table db)
+        (db-create-listnames-table db)
         ;; (db-create-comments-table db)
         ;; (db-create-columns-table db)
         ;; (db-create-items-table db)

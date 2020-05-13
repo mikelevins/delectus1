@@ -42,3 +42,17 @@
            :next_itemid next-itemid))))
 
 ;;; (sqlgen-init-delectus-table (makeid))
+
+
+;;; 'listnames' table
+;;; ----------------
+
+(defun sqlgen-create-listnames-table ()
+  (yield
+   (create-table :listnames
+       ((revision :type 'integer)
+        (origin :type 'blob)
+        (timestamp :type 'integer)
+        (name :type 'text)))))
+
+;;; (sqlgen-create-listnames-table)

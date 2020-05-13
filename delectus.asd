@@ -32,7 +32,8 @@
                                      (:file "store-sqlite")          ; operating on SQLite files
                                      (:file "data-columns")          ; utilities for working with column descriptions
                                      (:file "store-sqlgen")          ; SQL for interacting with the Delectus store
-                                     (:file "store-delectus-table")  ; operations on Delectus list files
+                                     (:file "store-delectus-table")  ; operations on the delectus table
+                                     (:file "store-listnames-table")  ; operations on the listnames table
                                      (:file "store-listfile")        ; operations on Delectus list files
                                      ;; (:file "data-csv")           ; reading and writing CSV files
                                      ;; ;; making test data
