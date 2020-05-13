@@ -257,6 +257,14 @@ When a user edits an item or column, Delectus inserts the resulting op into the 
 The structure of the `latest_items` table is identical to that of the `items` table.
 
 === The `delectus` table
-=== Origin and identity maps
-==== The `identities` table
-==== The `origins` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `listid` | `BLOB` |
+| `format` | `TEXT` |
+| `created` | `INTEGER` | A timestamp
+| `modified` | `INTEGER` | A timestamp
+| `next_revision` | `INTEGER` |
+| `next_itemid` | `INTEGER` |
+|===
