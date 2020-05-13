@@ -56,3 +56,44 @@
         (name :type 'text)))))
 
 ;;; (sqlgen-create-listnames-table)
+
+
+;;; 'comments' table
+;;; ----------------
+
+(defun sqlgen-create-comments-table ()
+  (yield
+   (create-table :comments
+       ((revision :type 'integer)
+        (origin :type 'blob)
+        (timestamp :type 'integer)
+        (comment :type 'text)))))
+
+;;; (sqlgen-create-comments-table)
+
+
+;;; 'columns' table
+;;; ----------------
+
+(defun sqlgen-create-columns-table ()
+  (yield
+   (create-table :columns
+       ((revision :type 'integer)
+        (origin :type 'blob)
+        (timestamp :type 'integer)))))
+
+;;; (sqlgen-create-columns-table)
+
+;;; 'items' table
+;;; ----------------
+
+(defun sqlgen-create-items-table ()
+  (yield
+   (create-table :items
+       ((revision :type 'integer)
+        (origin :type 'blob)
+        (timestamp :type 'integer)
+        (itemid :type 'blob)
+        (deleted :type 'integer)))))
+
+;;; (sqlgen-create-items-table)

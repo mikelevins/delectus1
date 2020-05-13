@@ -41,9 +41,9 @@
       (with-transaction db
         (db-create-delectus-table db listid format)
         (db-create-listnames-table db)
-        ;; (db-create-comments-table db)
-        ;; (db-create-columns-table db)
-        ;; (db-create-items-table db)
+        (db-create-comments-table db)
+        (db-create-columns-table db)
+        (db-create-items-table db)
         ;; (db-create-items-origin-itemid-revision-index db)
         ;; (when create-default-userdata
         ;;   (let* ((opid (makeid))
