@@ -19,7 +19,7 @@
           "Expected an identity-string for the :LISTID paramter, but found ~S"
           listid)
   (bind ((create-sql create-vals (sqlgen-create-delectus-table))
-         (init-sql init-vals (sqlgen-init-delectus-table listid format)))
+         (init-sql init-vals (sqlgen-init-delectus-table listid :format format)))
     (apply 'execute-non-query db create-sql create-vals)
     (apply 'execute-non-query db init-sql init-vals)))
 

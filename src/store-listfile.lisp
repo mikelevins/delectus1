@@ -70,6 +70,7 @@
                                  &key
                                    (listname nil)
                                    (listid nil)
+                                   (opid nil)
                                    (format +delectus-format-version+)
                                    (create-default-userdata t))
   (create-delectus-file (pathname db-path)
