@@ -148,29 +148,39 @@ Replacing a node identity doesn't affect the correctness of Delectus data. It si
 
 === Origins
 
-An *origin* is a 16-byte value computed by hashing a node identity with the Delectus process ID and the pathname of a list file. Delectus 2 uses the SHAKE128 hash for this purpose.
+An *origin* is a 16-byte value computed from an identity and a pathname. Delectus uses origins to compute unique identities for ops and items.
 
-Each time Delectus opens a list file, it computes an origin for it. Each time it writes an op into the file, it tags the op with the origin. If the file is moved or copied then Delectus will compute a new origin and use it in any new ops. If the file is edited by a different user or a different process, or if it's edited on a different device, the origin will be different. These properties of the origin enable Delectus to distinguish different ops and identities from each other, even when they were created concurrently by different processes or different devices.
+When Delectus starts up, it computes a v4 UUID called a *process identity*. When it opens a list file, it computes an *origin* by hashing the process identity with the pathname of the file.
 
-It's not possible to reverse the hash and recover the data that went into creating it, but Delectus doesn't need to. It only needs to guarantee that different processes, pathnames, and devices produce different origin values so that it can distinguish edits that come from different sources, and ensure that `(origin, identity)` and `(origin, revision)` pairs are globally unique.
+Because each process identity is a new, random UUID, each one uniquely identifies a different Delectus process. Within a single session, each computed origin is unique per file, because the file's pathname is an input to the hash. The only way to generate an origin that is equal to an existing one is for the same Delectus process to compute it from the same pathname.
+
+These properties ensure that each distinct origin identifies a distinct editing session on a distinct file. By combining an origin with a file's revision number, we can uniquely identify a specific edit. By combining it with an itemid, we can uniquely identify a specific list item.
+
+Delectus includes an origin in each op that it inserts.
 
 === Revisions
 
-Each op is marked with a *revision*. A *revision* is an integer attached to the op at the time it's created. Each time Delectus inserts an op, it increments the list file's revision counter and inserts the new value with the op.
+Each op is marked with a *revision*. A *revision* is an integer attached to the op at the time it's created. Each time Delectus inserts an op, it increments the list file's revision counter and adds the new number to the op before inserting it.
 
-Each list file has its own revision counter. Because revision counters are updated independently and concurrently across devices and files, Delectus can't preserve the uniqueness of revisions across copies of a list, but even though revisions are not globally unique, the combination of an origin and a revision is. Each op can therefore be uniquely identified by the coordinates `(_origin_,_revision_)`.
+Each list file has its own revision counter. Revision counters are updated independently and concurrently across devices and files, so revision numbers are not globally unique. On the other hand, each revision is given out only once per file, and each editing session on each file has a different origin, which means that the combination of a revision with an origin is globally unique.
 
-Although it's inevitable that the revision numbers from a remote copy of a list will duplicate local ones, and although we can still distinguish edits with the same revision as long as they have different origins, it's still useful to minimize duplication. For one thing, once a list has merged edits from another copy, we would prefer not to insert more ops locally with duplicate revisions. It's better for ordering ops if all newly-added ops have new revision numbers.
+The global uniqueness of an origin, revision pair is enough to ensure that we can uniquely identify any specific op, but there are still reasons to prefer not to duplicate revisions more than we have to.
 
-Therefore, any time we merge ops from a different copy of a list, we determine the highest revision number we've seen in any op--local or global--and reset the revision count to one greater than that.
+For example, Delectus sorts items by revision as part of its determination of which is the latest version of an item. It never discards any edit, so you won't ever lose data because of a difference between revision numbers, but you might be surprised if two edits that occurred at around the same time have wildly different revision numbers. That can happen if the edits happen on different devices.
+
+Delectus therefore makes an effort to keep revision numbers across copies of a list reasonably close to one another. When it merges edits from a remote file into the current local file, it determines the greatest revision number used in the ops from either file and sets the local file's revision number to that revision plus one. List copies that are kept in synch will therefore use revision numbers that are fairly close to one another.
 
 === Itemids
 
-Besides uniquely identifying ops, Delectus also needs to uniquely identify items. A user may update the same item many times, which means inserting many ops that all represent versions of the same item. Origin and revision are enough to identify an op, but not enough by themselves to distinguish one item from another. Origin and revision tell us which op we're talking about, but if it's an `item` op, how do we know whether it's adding a new item or updating an old one?
+Besides uniquely identifying ops, Delectus also needs to uniquely identify items. A user may update the same item many times, which means inserting many ops that all represent different versions of the same item. Origin and revision are enough to identify an op, but not enough by themselves to distinguish one item from another. Origin and revision tell us which op we're talking about, but if it's an `item` op, how do we know whether it's adding a new item or updating an old one?
 
-To solve that problem, we use an additional coordinate: `itemid`. The `itemid` is an integer that uniquely identifies a specific item with respect to a given origin. Like a revision, an itemid is not unique in itself, but the combination of the itemid with an origin is.
+To solve that problem, we use an additional coordinate: `itemid`. The `itemid` is an integer that uniquely identifies a specific item with respect to a given origin. Like a revision, a specific itemid is given out once per file. Also like a revision, an itemid is not unique in itself, but the combination of the itemid with an origin is.
 
-To recap, the unique identifying coordinates that Delectus uses are:
+Unlike revisions, new itemids are not assigned on every op. A new itemid is given out only for an `item` op that adds a new item to the list. If an `itemid` updates an existing item, it uses the old itemid of that existing item.
+
+=== Data coordinates
+
+To recap, the unique identifying coordinates that Delectus uses to uniquely identify data are:
 
 * For identifying an *op:* `(_origin_, _revision_)`
 * For identifying an *item:* `(_origin_, _itemid_)`
@@ -180,9 +190,9 @@ To recap, the unique identifying coordinates that Delectus uses are:
 
 Each op carries a `timestamp`, which is an integer count of the number of milliseconds since midnight, January 1, 1900 GMT. The upper bound of a Delectus 2 timestamp is given by the range of integers that SQLite can represent. The largest integers SQLite can store are 64-bit signed, so timestamps have 63 bits of precision. That means the maximum timestamp is 9,223,372,036,854,775,807, which corresponds to  August 17th, 292,278,924 AD, at 12:55 PM.
 
-Delectus assigns a timestamp to each op, but it doesn't use the timestamps to determine the current state of the list file's data. It accomplishes that using only the op and item coordinates discussed previously.
+Delectus assigns a timestamp to each op, but it doesn't use the timestamps to determine the current state of the list file's data. It accomplishes that using only the origin, revision, and item coordinates discussed previously.
 
-It uses timestamps to make the presentation of list data congenial for users. For example, Delectus determines which ops represent the current state of all the list's items using itemids, revisions, and origins, but once it has the correct `item` ops, the default view uses timestamps to present them in approximately the order that they were created.
+It uses timestamps to make the presentation of list data match what users expect. For example, Delectus determines which ops represent the current state of all the list's items using itemids, revisions, and origins, but once it has the correct items, its default view sorts the results by timestamp so that they appear in an order that the user expects to see.
 
 == SQLite tables
 
