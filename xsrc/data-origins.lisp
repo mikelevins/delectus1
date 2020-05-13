@@ -11,10 +11,10 @@
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; An origin is an identity computed as a hash from the Delectus node
-;;; and the pathname of the list file. If the origin of two ops
-;;; is different, then they were inserted in different files, and their
-;;; revision numbers are independent.
+;;; An origin is an identity computed as a hash from the Delectus
+;;; node, the process id, and the pathname of the list file. If the
+;;; origin of two ops is different, then they were inserted in
+;;; different files, and their revision numbers are independent.
 ;;;
 ;;; For a given Delectus install and pathname, the origin will always
 ;;; be the same, however, deleting the nodeid will cause Delectus to
