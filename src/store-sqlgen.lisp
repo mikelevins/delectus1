@@ -156,3 +156,39 @@
 ;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
 ;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
 ;;; (sqlgen-insert-listname 3 $origin (delectus-timestamp-now) "Foobar")
+
+(defun sqlgen-insert-columns (revision origin timestamp column-descriptions)
+  (let* ((column-labels (mapcar 'column-description-label column-descriptions))
+         (column-ids (mapcar 'as-keyword column-labels))
+         (column-json-objects (mapcar 'jonathan:to-json column-descriptions))
+         (parameter-names (append [:|revision| :|origin| :|timestamp|] column-ids))
+         (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
+         (parameter-values (append [revision origin timestamp] column-json-objects))
+         (parameter-placeholders (format nil "~{~A~^, ~}" (mapcar (constantly "?") parameter-names)))
+         (sql (format nil "INSERT INTO `columns` (~A) VALUES (~A)"
+                      parameter-names-string parameter-placeholders)))
+    (values sql parameter-values)))
+
+;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
+;;; (setf $column-descriptions (list (column-description :label (make-column-label) :name "Item")))
+;;; (sqlgen-insert-columns 5 $origin (delectus-timestamp-now) $column-descriptions)
+
+(defun sqlgen-insert-item (revision origin timestamp itemid deleted column-values)
+  (let* ((column-labels (get-keys column-values))
+         (column-ids (mapcar 'as-keyword column-labels))
+         (column-values (get-values column-values))
+         (parameter-names (append [:|revision| :|origin| :|timestamp| :|itemid| :|deleted|]
+                                  column-ids))
+         (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
+         (parameter-values (append [revision origin timestamp itemid deleted] column-values))
+         (parameter-placeholders (format nil "~{~A~^, ~}" (mapcar (constantly "?") parameter-names)))
+         (sql (format nil "INSERT INTO `items` (~A) VALUES (~A)"
+                      parameter-names-string parameter-placeholders)))
+    (values sql parameter-values)))
+
+;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
+;;; (setf $column-values [(make-column-label) "Foo"])
+;;; (sqlgen-insert-item 5 $origin (delectus-timestamp-now) 1 nil $column-values)
+

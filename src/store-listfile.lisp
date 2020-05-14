@@ -65,6 +65,37 @@
     (db-set-next-revision db (1+ revision))))
 
 
+(defmethod db-insert-columns ((db sqlite-handle)
+                              &key
+                                revision
+                                origin
+                                timestamp
+                                column-descriptions)
+  (bind ((revision (or revision (db-get-next-revision db)))
+         (origin (or origin (error "Missing :ORIGIN argument")))
+         (timestamp (or timestamp (delectus-timestamp-now)))
+         (sql vals (sqlgen-insert-columns revision origin timestamp column-descriptions)))
+    (apply 'execute-non-query db sql vals)
+    (db-set-next-revision db (1+ revision))))
+
+
+(defmethod db-insert-item ((db sqlite-handle)
+                           &key
+                             revision
+                             origin
+                             timestamp
+                             itemid
+                             deleted
+                             column-values)
+  (bind ((revision (or revision (db-get-next-revision db)))
+         (origin (or origin (error "Missing :ORIGIN argument")))
+         (timestamp (or timestamp (delectus-timestamp-now)))
+         (itemid (or itemid (db-get-next-itemid db)))
+         (sql vals (sqlgen-insert-item revision origin timestamp itemid deleted column-values)))
+    (apply 'execute-non-query db sql vals)
+    (db-set-next-revision db (1+ revision))
+    (db-set-next-itemid db (1+ itemid))))
+
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
 ;;; ---------------------------------------------------------------------
@@ -102,10 +133,10 @@
                  (default-column-label (getf default-column :|label|)))
             (db-ensure-columns-exist db default-column-descriptions)
             (db-insert-listname db :origin origin :timestamp (delectus-timestamp-now) :name listname)
-            ;; (db-insert-columns db :opid opid :timestamp (delectus-timestamp-now)
-            ;;                    :column-descriptions default-column-descriptions)
-            ;; (db-insert-item db :opid opid :timestamp (delectus-timestamp-now)
-            ;;                 :column-values [default-column-id nil])
+            (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
+                               :column-descriptions default-column-descriptions)
+            (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
+                            :column-values [default-column-label nil])
             )))))
   db-path)
 
