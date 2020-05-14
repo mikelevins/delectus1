@@ -16,7 +16,7 @@
 (defun sqlgen-create-delectus-table ()
   (yield
    (create-table :delectus
-       ((listid :type 'blob)
+       ((listid :type 'string)
         (format :type 'text)
         (created :type 'integer)
         (modified :type 'integer)
@@ -51,7 +51,7 @@
   (yield
    (create-table :listnames
        ((revision :type 'integer)
-        (origin :type 'blob)
+        (origin :type 'integer)
         (timestamp :type 'integer)
         (name :type 'text)))))
 
@@ -65,7 +65,7 @@
   (yield
    (create-table :comments
        ((revision :type 'integer)
-        (origin :type 'blob)
+        (origin :type 'integer)
         (timestamp :type 'integer)
         (comment :type 'text)))))
 
@@ -79,7 +79,7 @@
   (yield
    (create-table :columns
        ((revision :type 'integer)
-        (origin :type 'blob)
+        (origin :type 'integer)
         (timestamp :type 'integer)))))
 
 ;;; (sqlgen-create-columns-table)
@@ -91,9 +91,9 @@
   (yield
    (create-table :items
        ((revision :type 'integer)
-        (origin :type 'blob)
+        (origin :type 'integer)
         (timestamp :type 'integer)
-        (itemid :type 'blob)
+        (itemid :type 'integer)
         (deleted :type 'integer)))))
 
 ;;; (sqlgen-create-items-table)

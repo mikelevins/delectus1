@@ -12,7 +12,7 @@
 (in-package #:delectus)
 
 (defun column-description (&key
-                             (id :null)
+                             (label nil)
                              (name :null)
                              (order nil)
                              (sort :null)
@@ -23,7 +23,7 @@
                      ((eq :null order) :null)
                      ((numberp order) order)
                      (t (error "Invalid column order: ~S" order)))))
-    [:|id| id
+    [:|label| label
       :|name| name 
       :|order| order
       :|sort| sort
@@ -31,11 +31,11 @@
       :|subtitle| subtitle
       :|deleted| deleted]))
 
-(defmethod column-description-id ((column-description list))
-  (getf column-description :|id| nil))
+(defmethod column-description-label ((column-description list))
+  (getf column-description :|label| nil))
 
 (defmethod column-description-to-json ((desc list))
   (jonathan:to-json desc))
 
-;;; (column-description-to-json (column-description :id (make-identity-string) :name "Item"))
-;;; (column-description-id (column-description :id (make-identity-string) :name "Item"))
+;;; (column-description-to-json (column-description :label (make-column-label) :name "Item"))
+;;; (column-description-label (column-description :label (make-column-label) :name "Item"))
