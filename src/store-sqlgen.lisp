@@ -97,3 +97,17 @@
         (deleted :type 'integer)))))
 
 ;;; (sqlgen-create-items-table)
+
+;;; ---------------------------------------------------------------------
+;;; adding columns
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-add-columns-userdata-column (column-label)
+  (yield
+   (alter-table :columns
+     (add-column (as-keyword column-label) :type 'text))))
+
+(defun sqlgen-add-items-userdata-column (column-label)
+  (yield
+   (alter-table :items
+     (add-column (as-keyword column-label) :type 'text))))

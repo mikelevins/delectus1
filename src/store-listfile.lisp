@@ -24,7 +24,29 @@
 ;;;   protection from enclosing database forms.
 
 ;;; ---------------------------------------------------------------------
-;;; creating a list file
+;;; operations on the list-file
+;;; ---------------------------------------------------------------------
+
+(defmethod db-ensure-columns-exist ((db sqlite-handle) column-descriptions)
+  (let* ((supplied-column-labels (mapcar (lambda (desc)(getf desc :|label|))
+                                         column-descriptions))
+         (columns-column-labels (mapcar 'column-info-name
+                                        (db-sqlite-table-column-info db *columns-table-name*)))
+         (items-column-labels (mapcar 'column-info-name
+                                      (db-sqlite-table-column-info db *items-table-name*)))
+         (missing-columns-column-labels (remove-list-elements columns-column-labels supplied-column-labels))
+         (missing-items-column-labels (remove-list-elements items-column-labels supplied-column-labels)))
+    (when missing-columns-column-labels
+      (loop for label in missing-columns-column-labels
+         do (bind ((sql vals (sqlgen-add-columns-userdata-column label)))
+              (apply 'execute-non-query db sql vals))))
+    (when missing-items-column-labels
+      (loop for label in missing-items-column-labels
+         do (bind ((sql vals (sqlgen-add-items-userdata-column label)))
+              (apply 'execute-non-query db sql vals))))))
+
+;;; ---------------------------------------------------------------------
+;;; creating the list file
 ;;; ---------------------------------------------------------------------
 
 (defmethod create-delectus-file ((db-path pathname)
@@ -48,17 +70,17 @@
           (let* ((origin (make-origin (delectus-node-identity)
                                       (osicat-posix:getpid)
                                       db-path))
-                 ;; (default-column (column-description :id (make-identity-string)
-                 ;;                                     :name "Item"
-                 ;;                                     :order 10.0
-                 ;;                                     :sort :null
-                 ;;                                     :title :false
-                 ;;                                     :subtitle :false
-                 ;;                                     :deleted :false))
-                 ;; (default-column-descriptions (list default-column))
-                 ;; (default-column-id (getf default-column :|id|))
-                 )
-            ;; (db-ensure-columns-exist db default-column-descriptions)
+                 (column-label (make-column-label))
+                 (default-column (column-description :label (make-column-label)
+                                                     :name "Item"
+                                                     :order 10.0
+                                                     :sort :null
+                                                     :title :false
+                                                     :subtitle :false
+                                                     :deleted :false))
+                 (default-column-descriptions (list default-column))
+                 (default-column-label (getf default-column :|label|)))
+            (db-ensure-columns-exist db default-column-descriptions)
             ;; (db-insert-listname db :opid opid :timestamp (delectus-timestamp-now) :name listname)
             ;; (db-insert-columns db :opid opid :timestamp (delectus-timestamp-now)
             ;;                    :column-descriptions default-column-descriptions)
