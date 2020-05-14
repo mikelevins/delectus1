@@ -43,26 +43,28 @@
         (db-create-comments-table db)
         (db-create-columns-table db)
         (db-create-items-table db)
-        ;; (db-create-items-origin-itemid-revision-index db)
-        ;; (when create-default-userdata
-        ;;   (let* ((opid (makeid))
-        ;;          (default-column (column-description :id (make-identity-string)
-        ;;                                                            :name "Item"
-        ;;                                                            :order 10.0
-        ;;                                                            :sort :null
-        ;;                                                            :title :false
-        ;;                                                            :subtitle :false
-        ;;                                                            :deleted :false))
-        ;;          (default-column-descriptions (list default-column))
-        ;;          (default-column-id (getf default-column :|id|)))
-        ;;     (db-ensure-columns-exist db default-column-descriptions)
-        ;;     (db-insert-listname db :opid opid :timestamp (delectus-timestamp-now) :name listname)
-        ;;     (db-insert-columns db :opid opid :timestamp (delectus-timestamp-now)
-        ;;                        :column-descriptions default-column-descriptions)
-        ;;     (db-insert-item db :opid opid :timestamp (delectus-timestamp-now)
-        ;;                     :column-values [default-column-id nil])
-        ;;     ))
-        )))
+        ;; (db-create-items-itemid-revision-origin-index db)
+        (when create-default-userdata
+          (let* ((origin (make-origin (delectus-node-identity)
+                                      (osicat-posix:getpid)
+                                      db-path))
+                 ;; (default-column (column-description :id (make-identity-string)
+                 ;;                                     :name "Item"
+                 ;;                                     :order 10.0
+                 ;;                                     :sort :null
+                 ;;                                     :title :false
+                 ;;                                     :subtitle :false
+                 ;;                                     :deleted :false))
+                 ;; (default-column-descriptions (list default-column))
+                 ;; (default-column-id (getf default-column :|id|))
+                 )
+            ;; (db-ensure-columns-exist db default-column-descriptions)
+            ;; (db-insert-listname db :opid opid :timestamp (delectus-timestamp-now) :name listname)
+            ;; (db-insert-columns db :opid opid :timestamp (delectus-timestamp-now)
+            ;;                    :column-descriptions default-column-descriptions)
+            ;; (db-insert-item db :opid opid :timestamp (delectus-timestamp-now)
+            ;;                 :column-values [default-column-id nil])
+            )))))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)
