@@ -99,6 +99,35 @@
 ;;; (sqlgen-create-items-table)
 
 ;;; ---------------------------------------------------------------------
+;;; the next revision
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-next-revision ()
+  (yield
+   (select :next_revision
+     (from :delectus))))
+
+;;; (sqlgen-get-next-revision)
+
+(defun sqlgen-set-next-revision (rev)
+  (values (format nil "UPDATE `delectus` SET `next_revision` = ~A" rev)
+          nil))
+;;; ---------------------------------------------------------------------
+;;; the next itemid
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-next-itemid ()
+  (yield
+   (select :next_itemid
+     (from :delectus))))
+
+;;; (sqlgen-get-next-itemid)
+
+(defun sqlgen-set-next-itemid (it)
+  (values (format nil "UPDATE `delectus` SET `next_itemid` = ~A" it)
+          nil))
+
+;;; ---------------------------------------------------------------------
 ;;; adding columns
 ;;; ---------------------------------------------------------------------
 
@@ -111,3 +140,19 @@
   (yield
    (alter-table :items
      (add-column (as-keyword column-label) :type 'text))))
+
+;;; ---------------------------------------------------------------------
+;;; inserting ops
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-insert-listname (revision origin timestamp name)
+  (yield
+   (insert-into :listnames
+     (set= :revision revision
+           :origin origin
+           :timestamp timestamp
+           :name name))))
+
+;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
+;;; (sqlgen-insert-listname 3 $origin (delectus-timestamp-now) "Foobar")

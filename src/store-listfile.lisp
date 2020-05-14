@@ -24,7 +24,7 @@
 ;;;   protection from enclosing database forms.
 
 ;;; ---------------------------------------------------------------------
-;;; operations on the list-file
+;;; ensuring columns exist
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-ensure-columns-exist ((db sqlite-handle) column-descriptions)
@@ -44,6 +44,26 @@
       (loop for label in missing-items-column-labels
          do (bind ((sql vals (sqlgen-add-items-userdata-column label)))
               (apply 'execute-non-query db sql vals))))))
+
+
+;;; ---------------------------------------------------------------------
+;;; inserting ops
+;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-listname ((db sqlite-handle)
+                               &key
+                                 revision
+                                 origin
+                                 timestamp
+                                 name)
+  (bind ((revision (or revision (db-get-next-revision db)))
+         (origin (or origin (error "Missing :ORIGIN argument")))
+         (timestamp (or timestamp (delectus-timestamp-now)))
+         (name (or name (error "Missing :NAME argument")))
+         (sql vals (sqlgen-insert-listname revision origin timestamp name)))
+    (apply 'execute-non-query db sql vals)
+    (db-set-next-revision db (1+ revision))))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
@@ -81,7 +101,7 @@
                  (default-column-descriptions (list default-column))
                  (default-column-label (getf default-column :|label|)))
             (db-ensure-columns-exist db default-column-descriptions)
-            ;; (db-insert-listname db :opid opid :timestamp (delectus-timestamp-now) :name listname)
+            (db-insert-listname db :origin origin :timestamp (delectus-timestamp-now) :name listname)
             ;; (db-insert-columns db :opid opid :timestamp (delectus-timestamp-now)
             ;;                    :column-descriptions default-column-descriptions)
             ;; (db-insert-item db :opid opid :timestamp (delectus-timestamp-now)
