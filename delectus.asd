@@ -40,7 +40,7 @@
                                      (:file "store-columns-table")   
                                      (:file "store-items-table")     
                                      (:file "store-listfile")        ; operations on Delectus list files
-                                     ;; (:file "data-csv")           ; reading and writing CSV files
+                                     (:file "data-csv")           ; reading and writing CSV files
                                      ;; ;; making test data
                                      ;; (:file "test-data")
                                      ))))
