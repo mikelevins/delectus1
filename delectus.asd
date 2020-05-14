@@ -42,7 +42,7 @@
                                      (:file "store-listfile")        ; operations on Delectus list files
                                      (:file "data-csv")           ; reading and writing CSV files
                                      ;; ;; making test data
-                                     ;; (:file "test-data")
+                                     (:file "test-data")
                                      ))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
