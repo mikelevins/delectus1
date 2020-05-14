@@ -98,3 +98,9 @@
 ;;; (time (get-latest-items (pathname $zips-test-path)))
 ;;; (time (get-latest-items (pathname $zips-test-path) :offset 30000))
 
+;;; (setf $words-csv-path "/usr/share/dict/words")
+;;; (setf $words-test-path "/Users/mikel/Desktop/words.delectus2")
+;;; (delete-file $words-test-path)
+;;; 1m, 10.1MB
+;;; (time (import-csv $words-csv-path $words-test-path "Words" :first-row-is-headers nil))
+
