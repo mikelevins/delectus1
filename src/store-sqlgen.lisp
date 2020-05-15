@@ -209,11 +209,11 @@
 ;;; fetching ops
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-get-latest-listname ()
-  (values "SELECT name FROM listnames ORDER BY timestamp DESC LIMIT 1"
+(defun sqlgen-get-latest-listname-op ()
+  (values "SELECT * FROM listnames ORDER BY timestamp DESC LIMIT 1"
           nil))
 
-(defun sqlgen-get-latest-columns ()
+(defun sqlgen-get-latest-columns-op ()
   (values "SELECT * FROM columns ORDER BY timestamp DESC LIMIT 1"
           nil))
 

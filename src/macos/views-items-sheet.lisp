@@ -103,7 +103,7 @@
 
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
                                 &key  &allow-other-keys)
-  (format t "~%Called update-list-display from ~S..." pane))
+  )
 
 (defun handle-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"

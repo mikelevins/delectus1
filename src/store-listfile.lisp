@@ -111,22 +111,30 @@
 ;;; listname
 ;;; --------
 
-(defmethod db-get-latest-listname ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-latest-listname)))
-    (apply 'execute-single db sql vals)))
+(defmethod db-get-latest-listname-op ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-listname-op)))
+    (first (apply 'execute-to-list db sql vals))))
 
-;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
-;;; (with-open-database (db $movies-test-path)(db-get-latest-listname db))
+(defmethod get-latest-listname-op ((dbpath pathname))
+  (with-open-database (db dbpath)
+    (db-get-latest-listname-op db)))
+
+;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
+;;; (get-latest-listname-op $movies-test-path)
 
 ;;; columns
 ;;; -------
 
-(defmethod db-get-latest-columns ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-latest-columns)))
+(defmethod db-get-latest-columns-op ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-columns-op)))
     (first (apply 'execute-to-list db sql vals))))
 
-;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
-;;; (with-open-database (db $movies-test-path)(db-get-latest-listname db))
+(defmethod get-latest-columns-op ((dbpath pathname))
+  (with-open-database (db dbpath)
+    (db-get-latest-columns-op db)))
+
+;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
+;;; (get-latest-columns-op $movies-test-path)
 
 ;;; items
 ;;; -------
@@ -137,14 +145,12 @@
          (found-table (apply 'execute-to-list db sql vals)))
     (if found-table t nil)))
 
-;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; (setf $words-test-path (path "~/Desktop/wordtest100k.delectus2"))
 ;;; (with-open-database (db $words-test-path) (db-check-latest-items-table-exists db))
 
 (defmethod db-create-latest-items-table ((db sqlite-handle))
   (bind ((sql vals (sqlgen-create-latest-items-table)))
     (apply 'execute-to-list db sql vals)))
-
-;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
 
 (defmethod db-get-latest-items ((db sqlite-handle)
                                 &key
@@ -163,10 +169,10 @@
   (with-open-database (db db-path)
     (db-get-latest-items db :offset offset :limit limit)))
 
-;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
 ;;; (delete-file $movies-test-path)
 ;;; (time (get-latest-items (pathname $movies-test-path)))
-;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000 :limit 500))
+;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000 :limit 5))
 
 
 (defmethod db-count-latest-items ((db sqlite-handle)
@@ -181,10 +187,8 @@
   (with-open-database (db db-path)
     (db-count-latest-items db)))
 
-;;; (setf $words-test-path "/Users/mikel/Desktop/words.delectus2")
-;;; (time (count-latest-items (pathname $words-test-path)))
-;;; (setf $wordtest10k-path "/Users/mikel/Desktop/wordtest10k.delectus2")
-;;; (time (count-latest-items (pathname $wordtest10k-path)))
+;;; (setf $words-test-path (path "~/Desktop/words.delectus2"))
+;;; (time (count-latest-items $words-test-path))
 
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
