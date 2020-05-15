@@ -15,7 +15,8 @@
 (defun delectus-node-identity-path ()
   #+(or :mac :os-macosx) (pathname (uiop:native-namestring "~/Library/Application Support/Delectus/nodeid"))
   #+:linux (pathname (uiop:native-namestring "~/.config/delectus/nodeid"))
-  #-(or :mac :os-macosx :linux) nil)
+  #-(or :mac :os-macosx :linux) nil
+  )
 
 (defun create-delectus-node-identity-file ()
   (with-open-file (out (delectus-node-identity-path) :direction :output)

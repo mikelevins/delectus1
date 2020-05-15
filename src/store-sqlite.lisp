@@ -12,6 +12,7 @@
 
 ;;; check the SQLite library version
 
+#+lispworks
 (fli:define-foreign-function 
     (sqlite3-libversion "sqlite3_libversion" :source)
     ()
@@ -43,7 +44,8 @@
   (sqlite-compile-options (pathname path)))
 
 ;;; (defparameter $zippath "/Users/mikel/Desktop/Zipcodes.delectus2")
-;;; (sqlite-compile-options $zippath)
+;;; (defparameter $testpath (uiop:native-namestring "~/.emacs"))
+;;; (sqlite-compile-options $testpath)
 
 ;;; GENERIC FUNCTION valid-sqlite-file? (path)
 ;;; ---------------------------------------------------------------------
@@ -68,12 +70,10 @@
   (valid-sqlite-file? (pathname path)))
 
 ;;; tests:
-;;; should return the pathname because it's a valid sqlite file:
-;;; (valid-sqlite-file? "/Users/mikel/Workshop/data/kinder/kinder_data.sqlite3")
-;;; should return NIL because it isn't:
-;;; (valid-sqlite-file? "/Users/mikel/.emacs")
-;;; should return NIL because it doesn't exist:
-;;; (valid-sqlite-file? "/Users/brobdingnag/.emacs")
+;;; (defparameter $testpath (uiop:native-namestring "~/.emacs"))
+;;; (valid-sqlite-file? $testpath)
+;;; (defparameter $moviespath (uiop:native-namestring "~/Desktop/Movies-test.delectus2"))
+;;; (valid-sqlite-file? $moviespath)
 
 ;;; GENERIC FUNCTION sqlite-list-tables (path)
 ;;; ---------------------------------------------------------------------
