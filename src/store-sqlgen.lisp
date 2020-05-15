@@ -10,6 +10,10 @@
 
 (in-package #:delectus)
 
+;;; ---------------------------------------------------------------------
+;;; creating tables
+;;; ---------------------------------------------------------------------
+
 ;;; 'delectus' table
 ;;; ----------------
 
@@ -97,6 +101,15 @@
         (deleted :type 'integer)))))
 
 ;;; (sqlgen-create-items-table)
+
+;;; ---------------------------------------------------------------------
+;;; the main items index
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-create-items-itemid-timestamp-index ()
+  (values "CREATE INDEX idx_items_itemid_timestamp on `items` (`itemid`, `timestamp` DESC)"
+          nil))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; the next revision
@@ -192,3 +205,48 @@
 ;;; (setf $column-values [(make-column-label) "Foo"])
 ;;; (sqlgen-insert-item 5 $origin (delectus-timestamp-now) 1 nil $column-values)
 
+;;; ---------------------------------------------------------------------
+;;; fetching ops
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-latest-listname ()
+  (values "SELECT name FROM listnames ORDER BY timestamp DESC LIMIT 1"
+          nil))
+
+(defun sqlgen-get-latest-columns ()
+  (values "SELECT * FROM columns ORDER BY timestamp DESC LIMIT 1"
+          nil))
+
+(defun sqlgen-check-latest-items-table-exists ()
+  (values "SELECT * FROM sqlite_temp_master WHERE type='table' AND name='latest_items'"
+          nil))
+
+(defun sqlgen-create-latest-items-table ()
+  (values
+   (trim "
+CREATE TEMPORARY TABLE latest_items AS
+SELECT ranked.* FROM (
+  SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY timestamp DESC) rank, * 
+  FROM `items`) ranked
+where ranked.rank=1
+")
+   nil))
+
+(defun sqlgen-get-latest-items (&key
+                                  (order :asc)
+                                  (offset 0)
+                                  (limit *default-result-items-per-page*))
+  (yield
+   (select :*
+     (from :latest_items)
+     (order-by (case order
+                 (:asc '(:asc :timestamp))
+                 (:desc '(:desc :timestamp))
+                 (else (error "Unrecognized order ~S" order))))
+     (offset offset)
+     (limit limit))))
+
+(defun sqlgen-count-latest-items ()
+  (yield
+   (select ((:count :*))
+     (from :latest_items))))

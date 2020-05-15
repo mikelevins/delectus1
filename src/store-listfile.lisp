@@ -45,6 +45,13 @@
          do (bind ((sql vals (sqlgen-add-items-userdata-column label)))
               (apply 'execute-non-query db sql vals))))))
 
+;;; ---------------------------------------------------------------------
+;;; creating the main index
+;;; ---------------------------------------------------------------------
+
+(defmethod db-create-items-itemid-timestamp-index ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-create-items-itemid-timestamp-index)))
+    (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops
@@ -96,6 +103,72 @@
     (db-set-next-revision db (1+ revision))
     (db-set-next-itemid db (1+ itemid))))
 
+
+;;; ---------------------------------------------------------------------
+;;; fetching ops
+;;; ---------------------------------------------------------------------
+
+;;; listname
+;;; --------
+
+(defmethod db-get-latest-listname ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-listname)))
+    (apply 'execute-single db sql vals)))
+
+;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (with-open-database (db $movies-test-path)(db-get-latest-listname db))
+
+;;; columns
+;;; -------
+
+(defmethod db-get-latest-columns ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-columns)))
+    (first (apply 'execute-to-list db sql vals))))
+
+;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (with-open-database (db $movies-test-path)(db-get-latest-listname db))
+
+;;; items
+;;; -------
+
+
+(defmethod db-check-latest-items-table-exists ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-check-latest-items-table-exists))
+         (found-table (apply 'execute-to-list db sql vals)))
+    (if found-table t nil)))
+
+;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+;;; (with-open-database (db $words-test-path) (db-check-latest-items-table-exists db))
+
+(defmethod db-create-latest-items-table ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-create-latest-items-table)))
+    (apply 'execute-to-list db sql vals)))
+
+;;; (setf $words-test-path "/Users/mikel/Desktop/wordtest100k.delectus2")
+
+(defmethod db-get-latest-items ((db sqlite-handle)
+                                &key
+                                  (offset 0)
+                                  (limit 100))
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
+  (bind ((sql vals (sqlgen-get-latest-items :limit limit :offset offset)))
+    (apply 'execute-to-list db sql vals)))
+
+(defmethod get-latest-items ((db-path pathname)
+                             &key
+                               (offset 0)
+                               (limit 100))
+  (assert (probe-file db-path) () "No such file: ~S" db-path)
+  (with-open-database (db db-path)
+    (db-get-latest-items db :offset offset :limit limit)))
+
+;;; (setf $movies-test-path "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (delete-file $movies-test-path)
+;;; (time (get-latest-items (pathname $movies-test-path)))
+;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000 :limit 500))
+
+
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
 ;;; ---------------------------------------------------------------------
@@ -116,7 +189,7 @@
         (db-create-comments-table db)
         (db-create-columns-table db)
         (db-create-items-table db)
-        ;; (db-create-items-itemid-revision-origin-index db)
+        (db-create-items-itemid-timestamp-index db)
         (when create-default-userdata
           (let* ((origin (make-origin (delectus-node-identity)
                                       (osicat-posix:getpid)

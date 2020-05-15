@@ -145,7 +145,7 @@
 SELECT ranked.* FROM (
   SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY timestamp DESC) rank, * 
   FROM `items`) ranked
-where rank=1
+where ranked.rank=1
 
 index that speeds it up by about 20%:
 
