@@ -166,7 +166,7 @@
            :timestamp timestamp
            :name name))))
 
-;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (setf $dbpath (pathname (uiop:native-namestring "~/Desktop/testlist.delectus2")))
 ;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
 ;;; (sqlgen-insert-listname 3 $origin (delectus-timestamp-now) "Foobar")
 

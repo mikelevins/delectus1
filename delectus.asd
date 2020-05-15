@@ -32,8 +32,8 @@
                                      (:file "data-timestamps")       ; Delectus-specific timestamps
                                      (:file "store-column-info")     ; sqlite column-info utils
                                      (:file "store-sqlite")          ; operating on SQLite files
-                                     ;; (:file "data-columns")          ; utilities for working with column descriptions
-                                     ;; (:file "store-sqlgen")          ; SQL for interacting with the Delectus store
+                                     (:file "data-columns")          ; utilities for working with column descriptions
+                                     (:file "store-sqlgen")          ; SQL for interacting with the Delectus store
                                      ;; (:file "store-delectus-table")  
                                      ;; (:file "store-listnames-table") 
                                      ;; (:file "store-comments-table")  
