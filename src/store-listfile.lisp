@@ -157,8 +157,10 @@
                                   (limit 100))
   (unless (db-check-latest-items-table-exists db)
     (db-create-latest-items-table db))
-  (bind ((sql vals (sqlgen-get-latest-items :limit limit :offset offset)))
-    (apply 'execute-to-list db sql vals)))
+  (bind ((sql vals (sqlgen-get-latest-items :limit limit :offset offset))
+         (items-with-rank (apply 'execute-to-list db sql vals)))
+    ;; drop the ranks (which are always 1)
+    (mapcar #'cdr items-with-rank)))
 
 (defmethod get-latest-items ((db-path pathname)
                              &key

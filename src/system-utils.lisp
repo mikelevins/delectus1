@@ -45,6 +45,9 @@
 
 ;;; (wb-map->plist {:|a| 1 :|b| 2 :|c| {:d 4 :e 5}})
 
+(defmethod drop ((count integer)(ls list))
+  (subseq ls count))
+
 (defun remove-list-elements (remove-list from-list &key (test #'eql))
   (if (null remove-list)
       from-list
