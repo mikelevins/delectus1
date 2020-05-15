@@ -29,7 +29,8 @@
                 (not (member type '(nil :unspecific "") :test 'equal)))
         pathname))))
 
-
+(defmethod path ((path string))
+  (pathname (uiop:native-namestring path)))
 
 ;;; ---------------------------------------------------------------------
 ;;;  list utilities
