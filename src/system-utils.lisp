@@ -73,7 +73,7 @@
 
 ;;; for plists
 (defmethod get-keys ((map list))
-  (loop for tail on map by 'cddr collect (first tail)))
+  (loop for tail on map by (lambda (ls)(cddr ls)) collect (first tail)))
 
 ;;; (get-keys [:a 1 :b 3 :name "Fred"])
 
@@ -85,7 +85,7 @@
 
 ;;; for plists
 (defmethod get-values ((map list))
-  (loop for tail on map by 'cddr collect (second tail)))
+  (loop for tail on map by (lambda (ls)(cddr ls)) collect (second tail)))
 
 ;;; (get-values [:a 1 :b 3 :name "Fred"])
 

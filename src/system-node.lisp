@@ -13,7 +13,9 @@
 
 ;;; TODO: rewrite this to use proper platform-specific mechanisms instead of hardcoding it
 (defun delectus-node-identity-path ()
-  (pathname "/Users/mikel/Library/Application Support/Delectus/nodeid"))
+  #+(or :mac :os-macosx) (pathname (uiop:native-namestring "~/Library/Application Support/Delectus/nodeid"))
+  #+:linux (pathname (uiop:native-namestring "~/.config/delectus/nodeid"))
+  #-(or :mac :os-macosx :linux) nil)
 
 (defun create-delectus-node-identity-file ()
   (with-open-file (out (delectus-node-identity-path) :direction :output)
