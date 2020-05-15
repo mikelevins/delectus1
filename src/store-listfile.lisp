@@ -10,7 +10,9 @@
 
 (in-package #:delectus)
 
+;;; =====================================================================
 ;;; naming conventions:
+;;; =====================================================================
 ;;;
 ;;; - db-foo:
 ;;;   A function whose name starts with "db-" operates on a SQLite
@@ -23,9 +25,10 @@
 ;;;   operate on a database handle, and so needs no special
 ;;;   protection from enclosing database forms.
 
-;;; ---------------------------------------------------------------------
-;;; ensuring columns exist
-;;; ---------------------------------------------------------------------
+
+;;; =====================================================================
+;;; columns
+;;; =====================================================================
 
 (defmethod db-ensure-columns-exist ((db sqlite-handle) column-descriptions)
   (let* ((supplied-column-labels (mapcar (lambda (desc)(getf desc :|label|))
@@ -45,13 +48,10 @@
          do (bind ((sql vals (sqlgen-add-items-userdata-column label)))
               (apply 'execute-non-query db sql vals))))))
 
-;;; ---------------------------------------------------------------------
-;;; creating the main index
-;;; ---------------------------------------------------------------------
 
-(defmethod db-create-items-itemid-timestamp-index ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-create-items-itemid-timestamp-index)))
-    (apply 'execute-non-query db sql vals)))
+;;; =====================================================================
+;;; ops
+;;; =====================================================================
 
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops
@@ -102,7 +102,6 @@
     (apply 'execute-non-query db sql vals)
     (db-set-next-revision db (1+ revision))
     (db-set-next-itemid db (1+ itemid))))
-
 
 ;;; ---------------------------------------------------------------------
 ;;; fetching ops
@@ -190,9 +189,10 @@
 ;;; (setf $words-test-path (path "~/Desktop/words.delectus2"))
 ;;; (time (count-latest-items $words-test-path))
 
-;;; ---------------------------------------------------------------------
-;;; creating the list file
-;;; ---------------------------------------------------------------------
+
+;;; =====================================================================
+;;; the list file
+;;; =====================================================================
 
 (defmethod create-delectus-file ((db-path pathname)
                                  &key
