@@ -169,6 +169,23 @@
 ;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000 :limit 500))
 
 
+(defmethod db-count-latest-items ((db sqlite-handle)
+                                  &key)
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
+  (bind ((sql vals (sqlgen-count-latest-items)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod count-latest-items ((db-path pathname))
+  (assert (probe-file db-path) () "No such file: ~S" db-path)
+  (with-open-database (db db-path)
+    (db-count-latest-items db)))
+
+;;; (setf $words-test-path "/Users/mikel/Desktop/words.delectus2")
+;;; (time (count-latest-items (pathname $words-test-path)))
+;;; (setf $wordtest10k-path "/Users/mikel/Desktop/wordtest10k.delectus2")
+;;; (time (count-latest-items (pathname $wordtest10k-path)))
+
 ;;; ---------------------------------------------------------------------
 ;;; creating the list file
 ;;; ---------------------------------------------------------------------
