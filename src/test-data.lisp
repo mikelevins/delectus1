@@ -106,7 +106,7 @@
                     (setf $node3-revision synced-rev)))
                 (with-arbitrary-order ;; randomize the order of updates
                     ;; half the time insert from node1 with a lowercase copy
-                    (when (first (shuffle [t nil]))
+                    (when (first (alexandria:shuffle [t nil]))
                       (let ((rev (incf $node1-revision)))
                         (sleep 0.002) ; spread out timesstamps a little
                         (db-insert-item db :origin $node1-origin :timestamp (delectus-timestamp-now) :itemid itemid
@@ -116,7 +116,7 @@
                                                                 column-labels
                                                                 [(string-downcase word) "Node 1" rev])))))
                   ;; half the time insert from node2 with an uppercase copy
-                  (when (first (shuffle [t nil]))
+                  (when (first (alexandria:shuffle [t nil]))
                     (let ((rev (incf $node2-revision)))
                       (sleep 0.002) ; spread out timesstamps a little
                       (db-insert-item db :origin $node2-origin :timestamp (delectus-timestamp-now) :itemid itemid
@@ -126,7 +126,7 @@
                                                               column-labels
                                                               [(string-upcase word) "Node 2" rev])))))
                   ;; half the time insert from node3 with a capitalized copy
-                  (when (first (shuffle [t nil]))
+                  (when (first (alexandria:shuffle [t nil]))
                     (let ((rev (incf $node3-revision)))
                       (sleep 0.002) ; spread out timesstamps a little
                       (db-insert-item db :origin $node3-origin :timestamp (delectus-timestamp-now) :itemid itemid
@@ -154,9 +154,10 @@ CREATE INDEX `ix_itemid_timestamp` on `items`(`itemid`, `timestamp` DESC)
 |#
 
 
-;;; (setf $wordtest100-path "/Users/mikel/Desktop/wordtest100.delectus2")
+;;; (setf $wordtest100-path (path "~/Desktop/wordtest100.delectus2"))
 ;;; 0.8sec
 ;;; (time (make-test-list $wordtest100-path :count 100))
+;;; (time (get-latest-items $wordtest100-path))
 ;;; (delete-file $wordtest100-path)
 
 ;;; (setf $wordtest1000-path "/Users/mikel/Desktop/wordtest1000.delectus2")
