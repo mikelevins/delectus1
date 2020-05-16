@@ -103,7 +103,32 @@
 
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
                                 &key  &allow-other-keys)
-  )
+  (with-open-database (db (dbpath pane))
+    (let* ((listname (delectus::listname-op-name (delectus::db-get-latest-listname-op db)))
+           (column-data (delectus::columns-op-userdata (delectus::db-get-latest-columns-op db)))
+           (column-names (mapcar (lambda (col)(getf col :|name| nil))
+                                 column-data))
+           (column-widths (mapcar (constantly 28) column-data))
+           (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
+                                 column-names column-widths))
+           (itemdata (mapcar #'delectus::item-op-userdata
+                             (delectus::db-get-latest-items db
+                                                            :offset 0
+                                                            :limit delectus::*default-result-items-per-page*)))
+           (itemcount (delectus::db-count-latest-items db)))
+      (setf (interface-title pane) listname)
+      (setf (total-items pane) itemcount)
+      (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
+      (setf (title-pane-text (item-count-pane pane)) 
+            (format nil " ~:D items" (total-items pane)))
+      (setf (text-input-pane-text (current-page-pane pane)) 
+            (format nil "~A" (1+ (current-page pane))))
+      (setf (title-pane-text (page-range-pane pane)) 
+            (format nil " of ~D"
+                    (total-pages pane)))
+      (setf (collection-items (items-pane pane))
+            itemdata)
+      nil)))
 
 (defun handle-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"
@@ -115,7 +140,7 @@
 ;;; this may crash because it's not in apply-in-pane-process:
 ;;; (time (inc-list-page $win))
 
-;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
+;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies-test.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $moviespath))))
 
 ;;; (setf $screen (convert-to-screen))
@@ -130,9 +155,5 @@
 ;;; ~0.14sec to open, paging is instant
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words10k-path))))
 
-;;; (defparameter $words100k-path "/Users/mikel/Desktop/wordtest100k.delectus2")
-;;; ~1.0sec to open
-;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words100k-path))))
-;;; ~0.5 sec to page
 
 
