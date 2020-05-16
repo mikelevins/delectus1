@@ -85,7 +85,7 @@
                                       :column-values column-values))))))))))
 
 ;;; (setf $movies-csv-path (path "~/Workshop/src/delectus/test-data/Movies.csv"))
-;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
+;;; (setf $movies-test-path (path "~/Desktop/Movies.delectus2"))
 ;;; (delete-file $movies-test-path)
 ;;; (time (import-csv $movies-csv-path $movies-test-path "Movies"))
 ;;; (time (get-latest-items (pathname $movies-test-path)))
@@ -103,5 +103,5 @@
 ;;; (delete-file $words-test-path)
 ;;; 1m, 10.1MB
 ;;; (time (import-csv $words-csv-path $words-test-path "Words" :first-row-is-headers nil))
-;;; (time (get-latest-items (pathname $words-test-path) :offset 100000 :limit 10))
+;;; (time (get-latest-items (pathname $words-test-path) :offset 150000 :limit 10))
 
