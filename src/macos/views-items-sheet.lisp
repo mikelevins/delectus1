@@ -107,9 +107,7 @@
                                   column-data))
            (column-names (mapcar (lambda (col)(getf col :|name| nil))
                                  column-data))
-           (column-widths (mapcar (constantly 28) column-data))
-           (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
-                                 column-names column-widths))
+           
            (filter-text (text-input-pane-text (filter-pane pane)))
            (itemdata (if (delectus::empty? filter-text)
                          (mapcar #'delectus::item-op-userdata
@@ -129,7 +127,11 @@
                                                                     :column-labels column-labels
                                                                     :filter-text filter-text
                                                                     :offset 0
-                                                                    :limit nil))))
+                                                                    :limit nil)))
+           (column-widths (mapcar (lambda (txt)(+ 4 (length txt)))
+                                  (first itemdata)))
+           (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
+                                 column-names column-widths)))
       (setf (interface-title pane) listname)
       (setf (total-items pane) itemcount)
       (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
@@ -154,7 +156,6 @@
 (defun handle-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"
           item interface))
-
 
 (defun dec-list-page (items-sheet)
   (let ((next-page (1- (current-page items-sheet))))
