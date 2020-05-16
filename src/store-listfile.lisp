@@ -207,6 +207,33 @@
           (db-create-latest-items-table db))
         (apply 'execute-to-list db sql vals))))
 
+(defmethod db-count-latest-filtered-items ((db sqlite-handle)
+                                           &key
+                                             (column-labels nil)
+                                             (filter-text nil)
+                                             (offset 0)
+                                             (limit nil))
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
+  (bind ((sql vals (sqlgen-count-latest-filtered-items :column-labels column-labels
+                                                       :filter-text filter-text
+                                                       :offset offset
+                                                       :limit limit)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod count-latest-filtered-items ((db-path pathname)
+                                        &key
+                                          (column-labels nil)
+                                          (filter-text nil)
+                                          (offset 0)
+                                          (limit nil))
+  (assert (probe-file db-path) () "No such file: ~S" db-path)
+  (with-open-database (db db-path)
+    (db-count-latest-filtered-items db
+                                     :filter-text filter-text
+                                     :offset offset
+                                     :limit limit)))
+
 ;;; =====================================================================
 ;;; the list file
 ;;; =====================================================================

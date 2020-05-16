@@ -123,7 +123,14 @@
                                                                  :offset (* (items-per-page pane)
                                                                             (current-page pane))
                                                                  :limit (items-per-page pane))))
-           (itemcount (delectus::db-count-latest-items db)))
+           (itemcount (if (delectus::empty? filter-text)
+                          (delectus::db-count-latest-items db)
+                          (delectus::db-count-latest-filtered-items db
+                                                                    :column-labels column-labels
+                                                                    :filter-text filter-text
+                                                                    :offset (* (items-per-page pane)
+                                                                               (current-page pane))
+                                                                    :limit (items-per-page pane)))))
       (setf (interface-title pane) listname)
       (setf (total-items pane) itemcount)
       (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
@@ -155,6 +162,8 @@
     (when (>= next-page 0)
       (decf (current-page items-sheet))))
   (update-list-display items-sheet))
+
+;;; TODO: paging does not handle filtered items properly
 
 (defun inc-list-page (items-sheet)
   (let* ((itemcount (total-items items-sheet))
@@ -191,7 +200,7 @@
 ;;; this may crash because it's not in apply-in-pane-process:
 ;;; (time (inc-list-page $win))
 
-;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies-test.delectus2")
+;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $moviespath))))
 
 ;;; (setf $screen (convert-to-screen))
