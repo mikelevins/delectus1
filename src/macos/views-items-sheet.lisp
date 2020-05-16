@@ -163,8 +163,6 @@
       (decf (current-page items-sheet))))
   (update-list-display items-sheet))
 
-;;; TODO: paging does not handle filtered items properly
-
 (defun inc-list-page (items-sheet)
   (let* ((itemcount (total-items items-sheet))
          (next-start-index (* (items-per-page items-sheet)
