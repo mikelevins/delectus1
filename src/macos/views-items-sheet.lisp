@@ -36,18 +36,15 @@
                :selection-callback 'handle-item-selection
                :header-args `(:font ,(gp:make-font-description :size 14 :slant :italic)))
    (filter-pane text-input-pane :search-field "Filter" :reader filter-pane
-                ;; :change-callback 'update-items-sheet-for-changed-filter
-                )
+                :change-callback 'update-items-sheet-for-changed-filter)
    (previous-button push-button :reader previous-button :text ""
                     :external-min-width 28 :external-max-width 28
                     :external-min-height 32 :external-max-height 32
-                    :callback 'handle-previous-button-click
-                    )
+                    :callback 'handle-previous-button-click)
    (next-button push-button :reader next-button :text ""
                 :external-min-width 28 :external-max-width 28
                 :external-min-height 32 :external-max-height 32
-                :callback 'handle-next-button-click
-                )
+                :callback 'handle-next-button-click)
    (item-count-pane title-pane :reader item-count-pane)
    (current-page-label title-pane :reader current-page-label :text "Page ")
    (current-page-pane text-input-pane :reader current-page-pane
@@ -106,16 +103,26 @@
   (with-open-database (db (dbpath pane))
     (let* ((listname (delectus::listname-op-name (delectus::db-get-latest-listname-op db)))
            (column-data (delectus::columns-op-userdata (delectus::db-get-latest-columns-op db)))
+           (column-labels (mapcar (lambda (col)(getf col :|label| nil))
+                                  column-data))
            (column-names (mapcar (lambda (col)(getf col :|name| nil))
                                  column-data))
            (column-widths (mapcar (constantly 28) column-data))
            (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
                                  column-names column-widths))
-           (itemdata (mapcar #'delectus::item-op-userdata
-                             (delectus::db-get-latest-items db
-                                                            :offset (* (items-per-page pane)
-                                                                       (current-page pane))
-                                                            :limit (items-per-page pane))))
+           (filter-text (text-input-pane-text (filter-pane pane)))
+           (itemdata (if (delectus::empty? filter-text)
+                         (mapcar #'delectus::item-op-userdata
+                                 (delectus::db-get-latest-items db
+                                                                :offset (* (items-per-page pane)
+                                                                           (current-page pane))
+                                                                :limit (items-per-page pane)))
+                         (delectus::db-get-latest-filtered-items db
+                                                                 :column-labels column-labels
+                                                                 :filter-text filter-text
+                                                                 :offset (* (items-per-page pane)
+                                                                            (current-page pane))
+                                                                 :limit (items-per-page pane))))
            (itemcount (delectus::db-count-latest-items db)))
       (setf (interface-title pane) listname)
       (setf (total-items pane) itemcount)
@@ -130,6 +137,13 @@
       (setf (collection-items (items-pane pane))
             itemdata)
       nil)))
+
+
+(defun update-items-sheet-for-changed-filter (text filter-pane sheet-pane caret-position)
+  (declare (ignore filter-pane caret-position))
+  (setf (current-page sheet-pane) 0)
+  (update-list-display sheet-pane :filter-text text))
+
 
 (defun handle-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"

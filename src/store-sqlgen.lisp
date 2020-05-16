@@ -250,3 +250,48 @@ where ranked.rank=1
   (yield
    (select ((:count :*))
      (from :latest_items))))
+
+
+(defun sqlgen-get-latest-filtered-items (&key
+                                           (column-labels nil)
+                                           (filter-text nil)
+                                           (offset 0)
+                                           (limit nil))
+  (let* ((column-selector
+          (if (empty? column-labels)
+              "a.*"
+              (join-strings ", "
+                            (mapcar (lambda (lbl) (format nil "a.~A" lbl))
+                                    column-labels))))
+         (like-clauses
+          ;; have to have filter-text and column-labels in order to generate filtered results
+          (if (or (empty? filter-text)
+                  (empty? column-labels))
+              nil
+              (concatenate 'string "( "
+                           (join-strings " OR "
+                                         (mapcar (lambda (lbl)
+                                                   (format nil "`~A` LIKE '%~A%'"
+                                                           lbl filter-text))
+                                                 column-labels))
+                           " ) ")))
+         (where-clause (if (empty? column-labels)
+                           ""
+                           (format nil " WHERE ~A" like-clauses)))
+         (offset-clause (if (and limit offset)
+                            (format nil "OFFSET ~D " offset)
+                            ""))
+         (limit-clause (if limit
+                           (format nil "LIMIT ~D " limit)
+                           "")))
+    (values
+     (trim (format nil "
+SELECT ~A
+FROM (SELECT ROW_NUMBER() 
+      OVER ( PARTITION BY `itemid` ORDER BY `timestamp` DESC) rank, *
+      FROM `latest_items` ~A) a
+WHERE a.rank = 1 ~A ~A
+" column-selector where-clause limit-clause offset-clause))
+     nil)))
+
+;;; (sqlgen-get-latest-filtered-items :column-labels ["lbl1" "lbl2"] :filter-text "Foobie")
