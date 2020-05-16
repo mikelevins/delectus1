@@ -51,8 +51,8 @@
    (item-count-pane title-pane :reader item-count-pane)
    (current-page-label title-pane :reader current-page-label :text "Page ")
    (current-page-pane text-input-pane :reader current-page-pane
-                      ;; :callback 'handle-current-page-edit
-                      ;; :callback-type :interface-data
+                      :callback 'handle-current-page-edit
+                      :callback-type :interface-data
                       :max-characters 9
                       :external-min-width 48 :external-max-width 48)
    (page-range-pane title-pane :reader page-range-pane))
@@ -157,6 +157,19 @@
 (defun handle-next-button-click (data interface)
   (declare (ignore data))
   (inc-list-page interface))
+
+(defun handle-current-page-edit (items-sheet proposed-page-text)
+  (let ((proposed-page (parse-integer proposed-page-text :junk-allowed t))
+        (old-page (current-page items-sheet)))
+    (if proposed-page
+        (if (<= 0 (1- proposed-page)(1- (total-pages items-sheet)))
+            (progn (setf (current-page items-sheet)
+                         (1- proposed-page))
+                   (update-list-display items-sheet))
+            (setf (text-input-pane-text (current-page-pane items-sheet)) 
+                  (format nil "~A" (1+ old-page))))
+        (setf (text-input-pane-text (current-page-pane items-sheet)) 
+              (format nil "~A" (1+ old-page))))))
 
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $zippath))))
