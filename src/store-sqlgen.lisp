@@ -328,3 +328,4 @@ FROM `latest_items` ~A ~A ~A
      nil)))
 
 ;;; (sqlgen-count-latest-filtered-items :column-labels ["lbl1" "lbl2"] :filter-text "Foobie")
+;;; (sqlgen-count-latest-filtered-items :column-labels $lbls :filter-text "Springdale")

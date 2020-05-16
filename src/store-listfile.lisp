@@ -230,9 +230,12 @@
   (assert (probe-file db-path) () "No such file: ~S" db-path)
   (with-open-database (db db-path)
     (db-count-latest-filtered-items db
+                                    :column-labels column-labels
                                      :filter-text filter-text
                                      :offset offset
                                      :limit limit)))
+
+;;; (count-latest-filtered-items $zips-test-path :column-labels $lbls :filter-text "Spring")
 
 ;;; =====================================================================
 ;;; the list file
