@@ -128,9 +128,8 @@
                           (delectus::db-count-latest-filtered-items db
                                                                     :column-labels column-labels
                                                                     :filter-text filter-text
-                                                                    :offset (* (items-per-page pane)
-                                                                               (current-page pane))
-                                                                    :limit (items-per-page pane)))))
+                                                                    :offset 0
+                                                                    :limit nil))))
       (setf (interface-title pane) listname)
       (setf (total-items pane) itemcount)
       (modify-multi-column-list-panel-columns (items-pane pane) :columns column-specs)
