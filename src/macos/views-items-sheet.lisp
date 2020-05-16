@@ -41,12 +41,12 @@
    (previous-button push-button :reader previous-button :text ""
                     :external-min-width 28 :external-max-width 28
                     :external-min-height 32 :external-max-height 32
-                    ;; :callback 'handle-previous-button-click
+                    :callback 'handle-previous-button-click
                     )
    (next-button push-button :reader next-button :text ""
                 :external-min-width 28 :external-max-width 28
                 :external-min-height 32 :external-max-height 32
-                ;; :callback 'handle-next-button-click
+                :callback 'handle-next-button-click
                 )
    (item-count-pane title-pane :reader item-count-pane)
    (current-page-label title-pane :reader current-page-label :text "Page ")
@@ -113,8 +113,9 @@
                                  column-names column-widths))
            (itemdata (mapcar #'delectus::item-op-userdata
                              (delectus::db-get-latest-items db
-                                                            :offset 0
-                                                            :limit delectus::*default-result-items-per-page*)))
+                                                            :offset (* (items-per-page pane)
+                                                                       (current-page pane))
+                                                            :limit (items-per-page pane))))
            (itemcount (delectus::db-count-latest-items db)))
       (setf (interface-title pane) listname)
       (setf (total-items pane) itemcount)
@@ -133,6 +134,29 @@
 (defun handle-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"
           item interface))
+
+
+(defun dec-list-page (items-sheet)
+  (let ((next-page (1- (current-page items-sheet))))
+    (when (>= next-page 0)
+      (decf (current-page items-sheet))))
+  (update-list-display items-sheet))
+
+(defun inc-list-page (items-sheet)
+  (let* ((itemcount (total-items items-sheet))
+         (next-start-index (* (items-per-page items-sheet)
+                              (1+ (current-page items-sheet)))))
+    (when (< next-start-index itemcount)
+      (incf (current-page items-sheet))))
+  (update-list-display items-sheet))
+
+(defun handle-previous-button-click (data interface)
+  (declare (ignore data))
+  (dec-list-page interface))
+
+(defun handle-next-button-click (data interface)
+  (declare (ignore data))
+  (inc-list-page interface))
 
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $zippath))))
