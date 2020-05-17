@@ -155,7 +155,7 @@ CREATE INDEX `ix_itemid_timestamp` on `items`(`itemid`, `timestamp` DESC)
 
 
 ;;; (setf $wordtest100-path (path "~/Desktop/wordtest100.delectus2"))
-;;; 0.8sec
+;;; 0.8sec:
 ;;; (time (make-test-list $wordtest100-path :count 100))
 ;;; (time (get-latest-items $wordtest100-path))
 ;;; (delete-file $wordtest100-path)
@@ -166,7 +166,7 @@ CREATE INDEX `ix_itemid_timestamp` on `items`(`itemid`, `timestamp` DESC)
 ;;; (delete-file $wordtest1000-path)
 
 ;;; (setf $wordtest10k-path "/Users/mikel/Desktop/wordtest10k.delectus2")
-;;; 1m49sec:
+;;; 1m23sec:
 ;;; (time (make-test-list $wordtest10k-path :count 10000))
 ;;; (delete-file $wordtest10k-path)
 

@@ -101,33 +101,33 @@
 (defmethod update-list-display ((pane items-sheet) &rest initargs 
                                 &key  &allow-other-keys)
   (with-open-database (db (dbpath pane))
-    (let* ((listname (delectus::listname-op-name (delectus::db-get-latest-listname-op db)))
-           (column-data (delectus::columns-op-userdata (delectus::db-get-latest-columns-op db)))
+    (let* ((listname (listname-op-name (db-get-latest-listname-op db)))
+           (column-data (columns-op-userdata (db-get-latest-columns-op db)))
            (column-labels (mapcar (lambda (col)(getf col :|label| nil))
                                   column-data))
            (column-names (mapcar (lambda (col)(getf col :|name| nil))
                                  column-data))
            
            (filter-text (text-input-pane-text (filter-pane pane)))
-           (itemdata (if (delectus::empty? filter-text)
-                         (mapcar #'delectus::item-op-userdata
-                                 (delectus::db-get-latest-items db
-                                                                :offset (* (items-per-page pane)
-                                                                           (current-page pane))
-                                                                :limit (items-per-page pane)))
-                         (delectus::db-get-latest-filtered-items db
-                                                                 :column-labels column-labels
-                                                                 :filter-text filter-text
-                                                                 :offset (* (items-per-page pane)
-                                                                            (current-page pane))
-                                                                 :limit (items-per-page pane))))
-           (itemcount (if (delectus::empty? filter-text)
-                          (delectus::db-count-latest-items db)
-                          (delectus::db-count-latest-filtered-items db
-                                                                    :column-labels column-labels
-                                                                    :filter-text filter-text
-                                                                    :offset 0
-                                                                    :limit nil)))
+           (itemdata (if (empty? filter-text)
+                         (mapcar #'item-op-userdata
+                                 (db-get-latest-items db
+                                                      :offset (* (items-per-page pane)
+                                                                 (current-page pane))
+                                                      :limit (items-per-page pane)))
+                         (db-get-latest-filtered-items db
+                                                       :column-labels column-labels
+                                                       :filter-text filter-text
+                                                       :offset (* (items-per-page pane)
+                                                                  (current-page pane))
+                                                       :limit (items-per-page pane))))
+           (itemcount (if (empty? filter-text)
+                          (db-count-latest-items db)
+                          (db-count-latest-filtered-items db
+                                                          :column-labels column-labels
+                                                          :filter-text filter-text
+                                                          :offset 0
+                                                          :limit nil)))
            (column-widths (mapcar (lambda (txt)(+ 4 (length txt)))
                                   (first itemdata)))
            (column-specs (mapcar (lambda (name width) `(:title ,name :default-width (:character ,width)))
@@ -195,9 +195,6 @@
 ;;; (defparameter $zippath "/Users/mikel/Desktop/zipcodes.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $zippath))))
 
-;;; this may crash because it's not in apply-in-pane-process:
-;;; (time (inc-list-page $win))
-
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $moviespath))))
 
@@ -205,13 +202,29 @@
 ;;; (describe $screen)
 
 ;;; opening test data
-;;; (defparameter $words1k-path "/Users/mikel/Desktop/wordtest1k.delectus2")
-;;; ~0.07sec to open, paging is instant
-;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words1k-path))))
+;;; (setf $wordtest100-path (path "~/Desktop/wordtest100.delectus2"))
+;;; ~1sec
+;;; (time (make-test-list $wordtest100-path :count 100))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest100-path))))
+;;; (delete-file $wordtest100-path)
 
-;;; (defparameter $words10k-path "/Users/mikel/Desktop/wordtest10k.delectus2")
-;;; ~0.14sec to open, paging is instant
-;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $words10k-path))))
+;;; opening test data
+;;; (setf $wordtest1k-path (path "~/Desktop/wordtest1k.delectus2"))
+;;; ~8sec:
+;;; (time (make-test-list $wordtest1k-path :count 1000))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest1k-path))))
+;;; (delete-file $wordtest1k-path)
 
+;;; opening test data
+;;; (setf $wordtest10k-path (path "~/Desktop/wordtest10k.delectus2"))
+;;; ~7m2sec:
+;;; (time (make-test-list $wordtest10k-path :count 10000))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest10k-path))))
+;;; (delete-file $wordtest10k-path)
 
-
+;;; opening test data
+;;; (setf $wordtest100k-path (path "~/Desktop/wordtest100k.delectus2"))
+;;; ~16m4sec:
+;;; (time (make-test-list $wordtest100k-path :count 100000))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest100k-path))))
+;;; (delete-file $wordtest100k-path)

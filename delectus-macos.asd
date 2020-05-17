@@ -26,7 +26,6 @@
                                    (:file "macos-constants")   ; constants to control UI appearance
                                    (:file "macos-view-utils")  ; operations on native macOS widgets
                                    (:file "views-items-sheet") ; spreadsheet-like view
-                                   ;;(:file "views-card-list")   ; list-of-cards view
                                    ))))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))

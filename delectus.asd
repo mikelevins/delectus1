@@ -23,7 +23,7 @@
                                      (:file "version")
                                      (:file "system-syntax")         ; syntax for map literals
                                      (:file "system-parameters")     ; application globals
-                                     (:file "system-node")           ; saving and fetching the node id
+                                     (:file "system-node")           ; fetching and saving the node id
                                      (:file "system-bind")           ; more compact binding of multiple values
                                      (:file "system-utils")          ; general-purpose helpers
                                      (:file "data-identities")       ; delectus-specific UUID format
@@ -32,11 +32,13 @@
                                      (:file "data-timestamps")       ; Delectus-specific timestamps
                                      (:file "store-column-info")     ; sqlite column-info utils
                                      (:file "store-sqlite")          ; operating on SQLite files
-                                     (:file "data-columns")          ; utilities for working with column descriptions
-                                     (:file "store-sqlgen")          ; SQL for interacting with the Delectus store
-                                     (:file "store-tables")     
-                                     (:file "store-listfile")        ; operations on Delectus list files
-                                     (:file "model-lists")                 ; operations on delectus lists
+                                     (:file "data-columns")          ; working with column descriptions
+                                     (:file "store-sqlgen")          ; generating SQL to operate on list files
+                                     (:file "store-tables")          ; creating and initializing list-file tables    
+                                     (:file "store-columns")         ; working with columns in list files
+                                     (:file "store-ops")             ; reading and writing ops in list files
+                                     (:file "store-listfile")        ; creating Delectus list files
+                                     (:file "model-lists")           ; operations on delectus lists
                                      (:file "data-csv")              ; reading and writing CSV files
                                      ;; making test data
                                      (:file "test-data")
