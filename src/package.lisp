@@ -40,6 +40,7 @@
    ;; #:get-latest-listname
    ;; #:get-latest-userdata-columns-data
    ;; #:get-userdata-column-widths
+   #:import-csv
    #:item-op-userdata
    ;; #:join-strings
    #:listname-op-name

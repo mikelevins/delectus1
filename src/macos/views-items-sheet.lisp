@@ -198,33 +198,40 @@
 ;;; (defparameter $moviespath "/Users/mikel/Desktop/Movies.delectus2")
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $moviespath))))
 
+;;; (setf $dict-words-csv-path "/usr/share/dict/words")
+;;; (setf $dict-words-path (path "~/Desktop/dictwords.delectus2"))
+;;; (delete-file $dict-words-path)
+;;; 57sec, 16.2MB
+;;; (time (import-csv $dict-words-csv-path $dict-words-path "Words" :first-row-is-headers nil))
+;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $dict-words-path))))
+
+
 ;;; (setf $screen (convert-to-screen))
 ;;; (describe $screen)
 
-;;; opening test data
+;;; generated test files:
+
 ;;; (setf $wordtest100-path (path "~/Desktop/wordtest100.delectus2"))
 ;;; ~1sec
 ;;; (time (make-test-list $wordtest100-path :count 100))
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest100-path))))
 ;;; (delete-file $wordtest100-path)
 
-;;; opening test data
 ;;; (setf $wordtest1k-path (path "~/Desktop/wordtest1k.delectus2"))
 ;;; ~8sec:
 ;;; (time (make-test-list $wordtest1k-path :count 1000))
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest1k-path))))
 ;;; (delete-file $wordtest1k-path)
 
-;;; opening test data
 ;;; (setf $wordtest10k-path (path "~/Desktop/wordtest10k.delectus2"))
 ;;; ~7m2sec:
 ;;; (time (make-test-list $wordtest10k-path :count 10000))
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest10k-path))))
 ;;; (delete-file $wordtest10k-path)
 
-;;; opening test data
 ;;; (setf $wordtest100k-path (path "~/Desktop/wordtest100k.delectus2"))
 ;;; ~16m4sec:
 ;;; (time (make-test-list $wordtest100k-path :count 100000))
 ;;; (time (setf $win (contain (make-instance 'items-sheet :dbpath $wordtest100k-path))))
 ;;; (delete-file $wordtest100k-path)
+
