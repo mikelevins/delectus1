@@ -11,12 +11,8 @@
 (in-package #:delectus)
 
 ;;; =====================================================================
-;;; ops
-;;; =====================================================================
-
-;;; ---------------------------------------------------------------------
 ;;; inserting ops
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (defmethod db-insert-listname ((db sqlite-handle)
                                &key
@@ -64,12 +60,13 @@
     (db-set-next-revision db (1+ revision))
     (db-set-next-itemid db (1+ itemid))))
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; fetching ops
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
+;;; ---------------------------------------------------------------------
 ;;; listname
-;;; --------
+;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-listname-op ((db sqlite-handle))
   (bind ((sql vals (sqlgen-get-latest-listname-op)))
@@ -82,8 +79,10 @@
 ;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
 ;;; (get-latest-listname-op $movies-test-path)
 
+
+;;; ---------------------------------------------------------------------
 ;;; columns
-;;; -------
+;;; ---------------------------------------------------------------------
 
 (defmethod db-get-latest-columns-op ((db sqlite-handle))
   (bind ((sql vals (sqlgen-get-latest-columns-op)))
@@ -96,8 +95,13 @@
 ;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
 ;;; (get-latest-columns-op $movies-test-path)
 
+
+;;; ---------------------------------------------------------------------
 ;;; items
-;;; -------
+;;; ---------------------------------------------------------------------
+
+;;; the `latest-items` table
+;;; ------------------------
 
 (defmethod db-check-latest-items-table-exists ((db sqlite-handle))
   (bind ((sql vals (sqlgen-check-latest-items-table-exists))
@@ -110,6 +114,10 @@
 (defmethod db-create-latest-items-table ((db sqlite-handle))
   (bind ((sql vals (sqlgen-create-latest-items-table)))
     (apply 'execute-to-list db sql vals)))
+
+
+;;; getting the latest items
+;;; ------------------------
 
 (defmethod db-get-latest-items ((db sqlite-handle)
                                 &key
@@ -136,6 +144,9 @@
 ;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000 :limit 5))
 
 
+;;; counting the latest items
+;;; -------------------------
+
 (defmethod db-count-latest-items ((db sqlite-handle)
                                   &key)
   (unless (db-check-latest-items-table-exists db)
@@ -150,6 +161,12 @@
 
 ;;; (setf $words-test-path (path "~/Desktop/words.delectus2"))
 ;;; (time (count-latest-items $words-test-path))
+
+
+;;; getting the latest items, but filtered
+;;; --------------------------------------
+;;; - column-labels is a list of columns we want in the results
+;;; - filter-text is text we want to match against the contents of those columns
 
 (defmethod db-get-latest-filtered-items ((db sqlite-handle)
                                          &key
@@ -182,6 +199,11 @@
 
 ;;; (get-latest-filtered-items $zips-test-path :column-labels $lbls :filter-text "Springdale")
 
+
+;;; counting the latest items, but filtered
+;;; ---------------------------------------
+;;; - column-labels is a list of columns we want in the results
+;;; - filter-text is text we want to match against the contents of those columns
 
 (defmethod db-count-latest-filtered-items ((db sqlite-handle)
                                            &key
