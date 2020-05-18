@@ -40,15 +40,15 @@
    (previous-button push-button :reader previous-button :text ""
                     :external-min-width 28 :external-max-width 28
                     :external-min-height 32 :external-max-height 32
-                    :callback 'handle-previous-button-click)
+                    :callback 'handle-items-sheet-previous-button-click)
    (next-button push-button :reader next-button :text ""
                 :external-min-width 28 :external-max-width 28
                 :external-min-height 32 :external-max-height 32
-                :callback 'handle-next-button-click)
+                :callback 'handle-items-sheet-next-button-click)
    (item-count-pane title-pane :reader item-count-pane)
    (current-page-label title-pane :reader current-page-label :text "Page ")
    (current-page-pane text-input-pane :reader current-page-pane
-                      :callback 'handle-current-page-edit
+                      :callback 'handle-items-sheet-current-page-edit
                       :callback-type :interface-data
                       :max-characters 9
                       :external-min-width 48 :external-max-width 48)
@@ -165,15 +165,15 @@
       (incf (current-page items-sheet))))
   (update-items-sheet-display items-sheet))
 
-(defun handle-previous-button-click (data interface)
+(defun handle-items-sheet-previous-button-click (data interface)
   (declare (ignore data))
   (dec-items-sheet-page interface))
 
-(defun handle-next-button-click (data interface)
+(defun handle-items-sheet-next-button-click (data interface)
   (declare (ignore data))
   (inc-items-sheet-page interface))
 
-(defun handle-current-page-edit (items-sheet proposed-page-text)
+(defun handle-items-sheet-current-page-edit (items-sheet proposed-page-text)
   (let ((proposed-page (parse-integer proposed-page-text :junk-allowed t))
         (old-page (current-page items-sheet)))
     (if proposed-page
