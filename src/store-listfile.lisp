@@ -51,7 +51,6 @@
           (let* ((origin (make-origin (delectus-node-identity)
                                       (osicat-posix:getpid)
                                       db-path))
-                 (column-label (make-column-label))
                  (default-column (column-description :label (make-column-label)
                                                      :name "Item"
                                                      :order 10.0
@@ -79,11 +78,6 @@
   (create-delectus-file (pathname db-path)
                         :listname listname
                         :listid listid
+                        :format format
                         :create-default-userdata create-default-userdata)
   db-path)
-
-;;; (setf $testlist (pathname "/Users/mikel/Desktop/testlist.delectus2"))
-;;; (delete-file $testlist)
-;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string))
-;;; (create-delectus-file $testlist :listname "Test List" :listid (make-identity-string) :create-default-userdata nil)
-;;; (time (get-latest-items (pathname $testlist)))

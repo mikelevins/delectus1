@@ -49,7 +49,10 @@
           (let* ((origin (make-origin (delectus-node-identity)
                                       (osicat-posix:getpid)
                                       (pathname list-path)))
-                 (column-labels (loop for val in first-line-vals collect (make-column-label)))
+                 (column-labels (mapcar (lambda (val)
+                                          (declare (ignore val))
+                                          (make-column-label))
+                                        first-line-vals))
                  (column-names (if first-row-is-headers
                                    first-line-vals
                                    column-labels))
