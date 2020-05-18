@@ -11,10 +11,12 @@
 
 
 (load "/Users/mikel/Workshop/src/delectus/delectus.asd")
+(load "/Users/mikel/Workshop/src/delectus/delectus-macos.asd")
 
-(defvar *target-application-path* "/Users/mikel/Workshop/src/delectus/delivery/macos/Delectus2.0.0d1")
+(defvar *target-application-path* "/Users/mikel/Workshop/src/delectus/delivery/macos/Delectus2")
 
 (asdf:load-system :delectus)
+(asdf:load-system :delectus-macos)
 
 (defun cocoa-application-interface-item-title (self prefix)
   (string-append prefix " " (capi:interface-title self)))
@@ -88,11 +90,16 @@
     ;; Start the application with no windows initially.
     (capi:convert-to-screen nil)))
 
+(defun create-delectus-bundle (bundle-path)
+  (let ((created-path (create-macos-application-bundle
+                       bundle-path
+                       :template-bundle (lw:pathname-location
+                                         (lw:current-pathname "bundle-templates/Delectus2.app/")))))
+    created-path))
+
+
 (deliver 'delectus-cocoa-application
-         (create-macos-application-bundle
-          *target-application-path*
-          :template-bundle (pathname-location
-                            (current-pathname "bundle-templates/Delectus2.app/")))
+         (create-delectus-bundle *target-application-path*)
          0
          :interface :capi
          :quit-when-no-windows nil)
