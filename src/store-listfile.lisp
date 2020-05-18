@@ -48,9 +48,7 @@
         (db-create-items-table db)
         (db-create-items-itemid-timestamp-index db)
         (when create-default-userdata
-          (let* ((origin (make-origin (delectus-node-identity)
-                                      (osicat-posix:getpid)
-                                      db-path))
+          (let* ((origin (make-origin (delectus-node-identity)(getpid) db-path))
                  (default-column (column-description :label (make-column-label)
                                                      :name "Item"
                                                      :order 10.0

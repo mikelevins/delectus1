@@ -167,7 +167,7 @@
            :name name))))
 
 ;;; (setf $dbpath (pathname (uiop:native-namestring "~/Desktop/testlist.delectus2")))
-;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
+;;; (setf $origin (make-origin (delectus-node-identity) (getpid) $dbpath))
 ;;; (sqlgen-insert-listname 3 $origin (delectus-timestamp-now) "Foobar")
 
 (defun sqlgen-insert-columns (revision origin timestamp column-descriptions)
@@ -183,7 +183,7 @@
     (values sql parameter-values)))
 
 ;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
-;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
+;;; (setf $origin (make-origin (delectus-node-identity) (getpid) $dbpath))
 ;;; (setf $column-descriptions (list (column-description :label (make-column-label) :name "Item")))
 ;;; (sqlgen-insert-columns 5 $origin (delectus-timestamp-now) $column-descriptions)
 
@@ -201,7 +201,7 @@
     (values sql parameter-values)))
 
 ;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
-;;; (setf $origin (make-origin (delectus-node-identity) (osicat-posix:getpid) $dbpath))
+;;; (setf $origin (make-origin (delectus-node-identity) (getpid) $dbpath))
 ;;; (setf $column-values [(make-column-label) "Foo"])
 ;;; (sqlgen-insert-item 5 $origin (delectus-timestamp-now) 1 nil $column-values)
 

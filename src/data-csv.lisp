@@ -47,7 +47,7 @@
         (with-transaction db
           ;; first create columns for the csv data
           (let* ((origin (make-origin (delectus-node-identity)
-                                      (osicat-posix:getpid)
+                                      (getpid)
                                       (pathname list-path)))
                  (column-labels (mapcar (lambda (val)
                                           (declare (ignore val))

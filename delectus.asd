@@ -16,7 +16,7 @@
   :license  "Apache 2.0"
   :version "2.0.6"
   :serial t
-  :depends-on (:fset :fare-csv :osicat :cl-intbytes :uuid :sqlite :jonathan :local-time :sxql)
+  :depends-on (:fset :fare-csv :cl-intbytes :uuid :sqlite :jonathan :local-time :sxql)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")

@@ -61,7 +61,7 @@
                  ":"
                  (namestring list-file))))
 
-;;; (make-origin-string (delectus-node-identity) (osicat-posix:getpid) (pathname "/Users/mikel/.emacs"))
+;;; (make-origin-string (delectus-node-identity) (getpid) (pathname "/Users/mikel/.emacs"))
 
 (defmethod make-origin ((nodeid vector)(pid integer)(list-file pathname))
   (intbytes:octets->int64
@@ -70,4 +70,4 @@
                                      (babel:string-to-octets (make-origin-string nodeid pid list-file)))
            0 8)))
 
-;;; (make-origin (delectus-node-identity) (osicat-posix:getpid)(pathname "/Users/mikel/.emacs"))
+;;; (make-origin (delectus-node-identity) (getpid)(pathname "/Users/mikel/.emacs"))

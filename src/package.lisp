@@ -29,6 +29,7 @@
    #:*default-result-items-per-page*
    #:empty?
    #:get-latest-items
+   #:getpid
    #:import-csv
    #:item-op-userdata
    #:listname-op-name

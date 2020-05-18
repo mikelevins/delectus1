@@ -153,3 +153,11 @@
 (defmethod as-string ((s symbol))
   (symbol-name s))
 
+;;; ---------------------------------------------------------------------
+;;;  system utilities
+;;; ---------------------------------------------------------------------
+
+(defun getpid ()
+  #+lispworks (system::getpid)
+  #+sbcl (sb-posix:getpid)
+  )
