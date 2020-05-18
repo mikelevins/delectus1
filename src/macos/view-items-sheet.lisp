@@ -1,6 +1,6 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          views-items-sheet.lisp
+;;;; Name:          view-items-sheet.lisp
 ;;;; Project:       delectus 2
 ;;;; Purpose:       UI: a spreadsheet-like view of list items
 ;;;; Author:        mikel evins
@@ -33,7 +33,7 @@
                :items nil
                :columns '((:title "Item"))
                :callback-type :item-interface
-               :selection-callback 'handle-item-selection
+               :selection-callback 'handle-item-sheet-item-selection
                :header-args `(:font ,(gp:make-font-description :size 14 :slant :italic)))
    (filter-pane text-input-pane :search-field "Filter" :reader filter-pane
                 :change-callback 'update-items-sheet-for-changed-filter)
@@ -77,7 +77,7 @@
                                        &key &allow-other-keys)
   (setf (total-items pane)
         (count-latest-items (pathname (dbpath pane))))
-  (update-list-display pane))
+  (update-items-sheet-display pane))
 
 ;;; ---------------------------------------------------------------------
 ;;; handlers and helpers
@@ -94,11 +94,11 @@
   (set-mac-button-image (next-button pane)
                         +NSImageNameGoRightTemplate+))
 
-(defmethod total-pages ((pane items-sheet))
+(defmethod items-sheet-total-pages ((pane items-sheet))
   (ceiling (total-items pane)
            (items-per-page pane)))
 
-(defmethod update-list-display ((pane items-sheet) &rest initargs 
+(defmethod update-items-sheet-display ((pane items-sheet) &rest initargs 
                                 &key  &allow-other-keys)
   (with-open-database (db (dbpath pane))
     (let* ((listname (listname-op-name (db-get-latest-listname-op db)))
@@ -135,7 +135,7 @@
             (format nil "~A" (1+ (current-page pane))))
       (setf (title-pane-text (page-range-pane pane)) 
             (format nil " of ~D"
-                    (total-pages pane)))
+                    (items-sheet-total-pages pane)))
       (setf (collection-items (items-pane pane))
             itemdata)
       nil)))
@@ -144,10 +144,10 @@
 (defun update-items-sheet-for-changed-filter (text filter-pane sheet-pane caret-position)
   (declare (ignore filter-pane caret-position))
   (setf (current-page sheet-pane) 0)
-  (update-list-display sheet-pane :filter-text text))
+  (update-items-sheet-display sheet-pane :filter-text text))
 
 
-(defun handle-item-selection (item interface)
+(defun handle-item-sheet-item-selection (item interface)
   (format t "~%Selected item ~S from interface ~S"
           item interface))
 
@@ -155,7 +155,7 @@
   (let ((next-page (1- (current-page items-sheet))))
     (when (>= next-page 0)
       (decf (current-page items-sheet))))
-  (update-list-display items-sheet))
+  (update-items-sheet-display items-sheet))
 
 (defun inc-list-page (items-sheet)
   (let* ((itemcount (total-items items-sheet))
@@ -163,7 +163,7 @@
                               (1+ (current-page items-sheet)))))
     (when (< next-start-index itemcount)
       (incf (current-page items-sheet))))
-  (update-list-display items-sheet))
+  (update-items-sheet-display items-sheet))
 
 (defun handle-previous-button-click (data interface)
   (declare (ignore data))
@@ -177,10 +177,10 @@
   (let ((proposed-page (parse-integer proposed-page-text :junk-allowed t))
         (old-page (current-page items-sheet)))
     (if proposed-page
-        (if (<= 0 (1- proposed-page)(1- (total-pages items-sheet)))
+        (if (<= 0 (1- proposed-page)(1- (items-sheet-total-pages items-sheet)))
             (progn (setf (current-page items-sheet)
                          (1- proposed-page))
-                   (update-list-display items-sheet))
+                   (update-items-sheet-display items-sheet))
             (setf (text-input-pane-text (current-page-pane items-sheet)) 
                   (format nil "~A" (1+ old-page))))
         (setf (text-input-pane-text (current-page-pane items-sheet)) 

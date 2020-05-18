@@ -25,7 +25,7 @@
                                    (:file "package")             ; the ui package
                                    (:file "macos-constants")   ; constants to control UI appearance
                                    (:file "macos-view-utils")  ; operations on native macOS widgets
-                                   (:file "views-items-sheet") ; spreadsheet-like view
+                                   (:file "view-items-sheet") ; spreadsheet-like view
                                    ))))))
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
