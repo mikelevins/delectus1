@@ -23,7 +23,7 @@
 
 (defun cocoa-application-interface-multiple-about ()
   (capi:display-message-on-screen (capi:convert-to-screen nil)
-                                  "Delectus2 pre-alpha build"))
+                                  "Delectus2 alpha build"))
 
 (defun cocoa-application-interface-multiple-preferences ()
   )
