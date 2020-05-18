@@ -151,13 +151,13 @@
   (format t "~%Selected item ~S from interface ~S"
           item interface))
 
-(defun dec-list-page (items-sheet)
+(defun dec-items-sheet-page (items-sheet)
   (let ((next-page (1- (current-page items-sheet))))
     (when (>= next-page 0)
       (decf (current-page items-sheet))))
   (update-items-sheet-display items-sheet))
 
-(defun inc-list-page (items-sheet)
+(defun inc-items-sheet-page (items-sheet)
   (let* ((itemcount (total-items items-sheet))
          (next-start-index (* (items-per-page items-sheet)
                               (1+ (current-page items-sheet)))))
@@ -167,11 +167,11 @@
 
 (defun handle-previous-button-click (data interface)
   (declare (ignore data))
-  (dec-list-page interface))
+  (dec-items-sheet-page interface))
 
 (defun handle-next-button-click (data interface)
   (declare (ignore data))
-  (inc-list-page interface))
+  (inc-items-sheet-page interface))
 
 (defun handle-current-page-edit (items-sheet proposed-page-text)
   (let ((proposed-page (parse-integer proposed-page-text :junk-allowed t))
