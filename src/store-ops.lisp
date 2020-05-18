@@ -157,15 +157,13 @@
                                            (filter-text nil)
                                            (offset 0)
                                            (limit nil))
-  (if (empty? filter-text)
-      (db-get-latest-items db :offset offset :limit limit)
-      (bind ((sql vals (sqlgen-get-latest-filtered-items :column-labels column-labels
-                                                         :filter-text filter-text
-                                                         :offset offset
-                                                         :limit limit)))
-        (unless (db-check-latest-items-table-exists db)
-          (db-create-latest-items-table db))
-        (apply 'execute-to-list db sql vals))))
+  (bind ((sql vals (sqlgen-get-latest-filtered-items :column-labels column-labels
+                                                     :filter-text filter-text
+                                                     :offset offset
+                                                     :limit limit)))
+    (unless (db-check-latest-items-table-exists db)
+      (db-create-latest-items-table db))
+    (apply 'execute-to-list db sql vals)))
 
 
 (defmethod get-latest-filtered-items ((db-path pathname)

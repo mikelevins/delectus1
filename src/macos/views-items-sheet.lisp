@@ -109,18 +109,12 @@
                                  column-data))
            
            (filter-text (text-input-pane-text (filter-pane pane)))
-           (itemdata (if (empty? filter-text)
-                         (mapcar #'item-op-userdata
-                                 (db-get-latest-items db
-                                                      :offset (* (items-per-page pane)
-                                                                 (current-page pane))
-                                                      :limit (items-per-page pane)))
-                         (db-get-latest-filtered-items db
-                                                       :column-labels column-labels
-                                                       :filter-text filter-text
-                                                       :offset (* (items-per-page pane)
-                                                                  (current-page pane))
-                                                       :limit (items-per-page pane))))
+           (itemdata (db-get-latest-filtered-items db
+                                                   :column-labels column-labels
+                                                   :filter-text filter-text
+                                                   :offset (* (items-per-page pane)
+                                                              (current-page pane))
+                                                   :limit (items-per-page pane)))
            (itemcount (if (empty? filter-text)
                           (db-count-latest-items db)
                           (db-count-latest-filtered-items db
