@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -rf "/Users/mikel/Workshop/src/delectus/app/macos/Delectus2.app"
+rm -rf "/Users/mikel/Workshop/src/delectus/product/macos/Delectus2.app"

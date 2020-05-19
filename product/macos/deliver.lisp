@@ -14,8 +14,8 @@
 ;;(load "/Users/mikel/Workshop/src/delectus/delectus-macos.asd")
 
 (defvar *project-root-path* "/Users/mikel/Workshop/src/delectus/")
-(defvar *target-application-path* "/Users/mikel/Workshop/src/delectus/app/macos/Delectus2")
-(defvar *bundle-template-path* "/Users/mikel/Workshop/src/delectus/app/macos/bundle-templates/Delectus2.app/")
+(defvar *target-application-path* "/Users/mikel/Workshop/src/delectus/product/macos/Delectus2")
+(defvar *bundle-template-path* "/Users/mikel/Workshop/src/delectus/product/macos/bundle-templates/Delectus2.app/")
 
 ;;(asdf:load-system :delectus)
 ;;(asdf:load-system :delectus-macos)
@@ -98,9 +98,9 @@
 (defun create-delectus-bundle (bundle-path)
   (let* ((created-path (create-macos-application-bundle bundle-path
                                                         :template-bundle (lw:pathname-location *bundle-template-path*)))
-         (sqlite-source-path (merge-pathnames "app/macos/lib/libsqlite3.dylib"
+         (sqlite-source-path (merge-pathnames "product/macos/lib/libsqlite3.dylib"
                                               *project-root-path*))
-         (sqlite-dest-path (merge-pathnames "app/macos/Delectus2.app/Contents/MacOS/libsqlite3.dylib"
+         (sqlite-dest-path (merge-pathnames "product/macos/Delectus2.app/Contents/MacOS/libsqlite3.dylib"
                             *project-root-path*)))
     (copy-file sqlite-source-path sqlite-dest-path)
     created-path))
