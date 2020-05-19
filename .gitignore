@@ -8,6 +8,8 @@ api-server/target
 api-server/.lein-failures
 delectus-api/target
 
+product/macos/Delectus2.app
+
 webapp/delectus/.shadow-cljs/
 webapp/delectus/resources/public/js/compiled
 webapp/delectus/target

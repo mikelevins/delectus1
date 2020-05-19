@@ -89,6 +89,8 @@
 
 (defun delectus-cocoa-application ()
   (let ((application (make-instance 'delectus2-application)))
+    ;; debugging output on launch
+    (format t "~%Delectus delivered? ~S~%" (and (member :delectus2 cl:*features*) t))
     ;; Set the application interface before using any other CAPI
     ;; functionality.
     (capi:set-application-interface application)
@@ -105,6 +107,8 @@
     (copy-file sqlite-source-path sqlite-dest-path)
     created-path))
 
+
+(pushnew :delectus2 cl:*features*)
 
 (deliver 'delectus-cocoa-application
          (create-delectus-bundle *target-application-path*)
