@@ -27,13 +27,13 @@
 ;;; define a package and a parameter for the library path
 
 (defpackage #:delectus-libs
-  (:use #:cl))
+  (:use #:cl)
+  (:export #:*delectus-libraries-path*))
 
 (in-package :delectus-libs)
 
 (defparameter *delectus-libraries-path*
-  #+(and :lispworks :mac)
-  (asdf:system-relative-pathname :delectus-libs #p"product/macos/lib")
+  #+(and :lispworks :mac)(asdf:system-relative-pathname :delectus-libs #p"product/macos/lib")
   )
 
 ;;; now push the needed path onto CFFI's list of library search paths
