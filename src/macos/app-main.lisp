@@ -10,17 +10,17 @@
 
 (in-package #:ui)
 
-(defun cocoa-application-interface-item-title (self prefix)
+(defun delectus-interface-item-title (self prefix)
   (concatenate 'string prefix " " (capi:interface-title self)))
 
-(defun cocoa-application-interface-multiple-about ()
+(defun delectus-interface-multiple-about ()
   (capi:display-message-on-screen (capi:convert-to-screen nil)
                                   "Delectus2 alpha build"))
 
-(defun cocoa-application-interface-multiple-preferences ()
+(defun delectus-interface-multiple-preferences ()
   )
 
-(defun cocoa-application-interface-multiple-message (self message &rest args)
+(defun delectus-interface-multiple-message (self message &rest args)
   (declare (ignore self))
   )
 
@@ -35,12 +35,12 @@
    (application-menu
     (capi:interface-title capi:interface)
     ((:component
-      (((cocoa-application-interface-item-title capi:interface "About")
-        :callback 'cocoa-application-interface-multiple-about
+      (((delectus-interface-item-title capi:interface "About")
+        :callback 'delectus-interface-multiple-about
         :callback-type :none)))
      (:component
       (("Preferences..."
-        :callback 'cocoa-application-interface-multiple-preferences
+        :callback 'delectus-interface-multiple-preferences
         :callback-type :none)))
      (:component
       ()
@@ -48,7 +48,7 @@
       ;; attach the standard Services menu.
       :name :application-services)
      (:component
-      (((cocoa-application-interface-item-title capi:interface "Hide")
+      (((delectus-interface-item-title capi:interface "Hide")
         :accelerator "accelerator-h"
         :callback-data :hidden)
        ("Hide Others"
@@ -59,7 +59,7 @@
       :callback #'(setf capi:top-level-interface-display-state)
       :callback-type :data-interface)
      (:component
-      (((cocoa-application-interface-item-title capi:interface "Quit")
+      (((delectus-interface-item-title capi:interface "Quit")
         :accelerator "accelerator-q"
         :callback 'capi:destroy
         :callback-type :interface)))))
@@ -72,7 +72,7 @@
   (:default-initargs
       :title "Delectus2"
     :application-menu 'application-menu
-    :message-callback 'cocoa-application-interface-multiple-message))
+    :message-callback 'delectus-interface-multiple-message))
 
 (in-package #:cl-user)
 
