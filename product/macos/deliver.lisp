@@ -9,19 +9,13 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
-
-;;(load "/Users/mikel/Workshop/src/delectus/delectus.asd")
-;;(load "/Users/mikel/Workshop/src/delectus/delectus-macos.asd")
-
-(defvar *project-root-path* "/Users/mikel/Workshop/src/delectus/")
-(defvar *target-application-path* "/Users/mikel/Workshop/src/delectus/product/macos/Delectus2")
-(defvar *bundle-template-path* "/Users/mikel/Workshop/src/delectus/product/macos/bundle-templates/Delectus2.app/")
-
-;;(asdf:load-system :delectus)
-;;(asdf:load-system :delectus-macos)
-
 (ql:quickload :delectus)
 (ql:quickload :delectus-macos)
+
+(defvar *project-root-path* (asdf:system-relative-pathname :delectus ""))
+(defvar *target-application-path* (merge-pathnames "product/macos/Delectus2" *project-root-path*))
+(defvar *bundle-template-path* (merge-pathnames "product/macos/bundle-templates/Delectus2.app/" *project-root-path*))
+
 
 (defun cocoa-application-interface-item-title (self prefix)
   (string-append prefix " " (capi:interface-title self)))
