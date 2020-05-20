@@ -17,7 +17,7 @@
                 #:lookup #:wb-map #:with)
   (:import-from #:local-time #:now)
   (:export
-
+   #:bind
    #:columns-op-userdata
    #:count-latest-items
    #:db-count-latest-filtered-items
@@ -26,6 +26,7 @@
    #:db-get-latest-filtered-items
    #:db-get-latest-items
    #:db-get-latest-listname-op
+   #:*delectus-root-pathname*
    #:*default-result-items-per-page*
    #:empty?
    #:get-latest-items

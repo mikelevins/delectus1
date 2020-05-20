@@ -10,9 +10,10 @@
 
 (in-package #:delectus)
 
-;;; TODO: add logic for initializing parameters appropriately in a delivered app
+;;; root of the Delectus app's file tree
+;;; ---------------------------------------------------------------------
 
-(defparameter *delectus-root-pathname* (asdf:system-relative-pathname :delectus "./"))
+(defparameter *delectus-root-pathname* (asdf:system-relative-pathname :delectus ""))
 
 ;;; query parameters
 ;;; ---------------------------------------------------------------------
