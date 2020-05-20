@@ -11,7 +11,7 @@
 (in-package #:ui)
 
 ;;; ---------------------------------------------------------------------
-;;; macos utils
+;;; view utils
 ;;; ---------------------------------------------------------------------
 
 (defmethod set-mac-button-style ((button push-button)(style integer))

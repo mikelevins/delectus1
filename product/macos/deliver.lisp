@@ -27,6 +27,7 @@
     (copy-file sqlite-source-path sqlite-dest-path)
     created-path))
 
+;;; inform the built app that it has been built
 (pushnew :delectus2 cl:*features*)
 
 (deliver 'delectus-cocoa-application

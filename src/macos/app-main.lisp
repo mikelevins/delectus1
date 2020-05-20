@@ -10,6 +10,10 @@
 
 (in-package #:ui)
 
+;;; ---------------------------------------------------------------------
+;;; toplevel app UI
+;;; ---------------------------------------------------------------------
+
 (defun delectus-interface-item-title (self prefix)
   (concatenate 'string prefix " " (capi:interface-title self)))
 
@@ -74,12 +78,16 @@
     :application-menu 'application-menu
     :message-callback 'delectus-interface-multiple-message))
 
+;;; ---------------------------------------------------------------------
+;;; main entry point
+;;; ---------------------------------------------------------------------
+
 (in-package #:cl-user)
 
 (defun delectus-cocoa-application ()
   (let ((application (make-instance 'ui::delectus2-application)))
     ;; debugging output on launch
-    (format t "~%Delectus delivered? ~S~%" (and (member :delectus2 cl:*features*) t))
+    (format t "~%Delectus delivered? ~S~%" (hcl:delivered-image-p))
     ;; Set the application interface before using any other CAPI
     ;; functionality.
     (capi:set-application-interface application)
