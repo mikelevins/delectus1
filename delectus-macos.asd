@@ -34,15 +34,7 @@
 ;;; push the project lib directory onto cffi:*foreign-library-directories*
 ;;; before loading, so we get the project-specific version of SQLite
 (defun load-delectus-macos ()
-  (let ((project-libdir
-         #+(or :mac :os-macosx) (merge-pathnames "delivery/macos/lib/" $project-root)
-         #+:linux (merge-pathnames "delivery/linux/ubuntu/x86_64/lib/" $project-root)
-         #-(or :mac :os-macosx :linux) nil
-         ))
-    (pushnew project-libdir
-             cffi:*foreign-library-directories*
-             :test #'equal)
-    (asdf:load-system :delectus-macos)))
+  (asdf:load-system :delectus-macos))
 
 
 ;;; (cl-user::load-delectus-macos)

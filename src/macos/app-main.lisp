@@ -88,14 +88,16 @@
   (let ((application (make-instance 'ui::delectus2-application)))
     ;; initialize app parameters
     (if (hcl:delivered-image-p)
-        ;; development time: the delectus root path is the app bundle
+        ;; delivered app: the delectus root path is the app bundle
         (delectus:bind ((image-path (lw:lisp-image-name))
                         (flag image-directory filename maybe-filename
                               (uiop:split-unix-namestring-directory-components image-path))
                         ;; two directories up from the image is the bundle path
                         (bundle-directory (subseq image-directory 0 (- (length image-directory) 2))))
           (setf delectus:*delectus-root-pathname*
-                (make-pathname :directory (cons flag bundle-directory))))
+                (make-pathname :directory (cons flag bundle-directory)))
+          ;; find and set up the correct SQLite library
+          )
         ;; development time: the delectus root path is the project root
         (setf delectus::*delectus-root-pathname*
               (asdf:system-relative-pathname :delectus "")))
