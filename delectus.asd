@@ -14,9 +14,9 @@
   :description "Delectus 2"
   :author "mikel evins <mikel@evins.net>"
   :license  "Apache 2.0"
-  :version "2.0.6"
+  :version "2.0.7"
   :serial t
-  :depends-on (:fset :fare-csv :cl-intbytes :uuid :sqlite :jonathan :local-time :sxql)
+  :depends-on (:delectus-libs :fset :fare-csv :cl-intbytes :uuid :sqlite :jonathan :local-time :sxql)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
@@ -46,17 +46,18 @@
 
 (defparameter $project-root (make-pathname :directory (pathname-directory *load-pathname*)))
 
-;;; push the project lib directory onto cffi:*foreign-library-directories*
-;;; before loading, so we get the project-specific version of SQLite
+;; (defun load-delectus ()
+;;   (let ((project-libdir
+;;           #+(or :mac :os-macosx) (merge-pathnames "delivery/macos/lib/" $project-root)
+;;           #+:linux (merge-pathnames "delivery/linux/ubuntu/x86_64/lib/" $project-root)
+;;           #-(or :mac :os-macosx :linux) nil
+;;           ))
+;;     (pushnew project-libdir
+;;              cffi:*foreign-library-directories*
+;;              :test #'equal)
+;;     (asdf:load-system :delectus)))
+
 (defun load-delectus ()
-  (let ((project-libdir
-          #+(or :mac :os-macosx) (merge-pathnames "delivery/macos/lib/" $project-root)
-          #+:linux (merge-pathnames "delivery/linux/ubuntu/x86_64/lib/" $project-root)
-          #-(or :mac :os-macosx :linux) nil
-          ))
-    (pushnew project-libdir
-             cffi:*foreign-library-directories*
-             :test #'equal)
-    (asdf:load-system :delectus)))
+  (asdf:load-system :delectus))
 
 ;;; (cl-user::load-delectus)

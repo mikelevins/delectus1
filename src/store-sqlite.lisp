@@ -43,7 +43,6 @@
 (defmethod sqlite-compile-options ((path string))
   (sqlite-compile-options (pathname path)))
 
-;;; (defparameter $zippath "/Users/mikel/Desktop/Zipcodes.delectus2")
 ;;; (defparameter $testpath (uiop:native-namestring "~/.emacs"))
 ;;; (sqlite-compile-options $testpath)
 

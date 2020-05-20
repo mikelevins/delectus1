@@ -12,7 +12,7 @@
   :description "The macOS Delectus 2 app"
   :author "mikel evins <mikel@evins.net>"
   :license  "Apache 2.0"
-  :version "2.0.3"
+  :version "2.0.7"
   :serial t
   :depends-on (:delectus)
   :components ((:module "src"
