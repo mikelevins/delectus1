@@ -1,0 +1,271 @@
+= Delectus 2 Data
+:toc:
+
+== Concepts
+
+=== Lists
+
+Conceptually, Delectus manages documents called *lists*. A *list* is a named sequence of *items*. An *item* is a sequence of *fields* containing *values*.
+
+A Delectus list is a table: each item is a row, and each field of the row belongs to a named *column*. All items have the same columns with the same names and other attributes, but the values in the fields are unique to each item.
+
+A Delectus list starts out empty. A user builds its contents piece-by-piece, by performing *edit operations*: adding items and columns and updating fields and column attributes. Each edit changes the current state of the list.
+
+There are four types of edits. Each one is represented by a named structure called an *op*. The four ops are:
+
+. `*listname:*` Sets the name of the list.
+. `*comment:*` Sets the list's comment text.
+. `*columns:*` Sets the list's columns and their attributes.
+. `*item:*` Adds or updates a single item.
+
+At any given time, the state of a list is defined by the sequence of edits that has been performed on it. That sequence of edits is represented by a log of ops in *causal order*. Given that log, Delectus can always reproduce the state of the list at any point in its history. In fact, to Delectus, the op log _is_ the list.
+
+*Causal order* means that a new op is always inserted after all existing ops, and no future edit or merge can cause the op to be moved before its predecessors. Preserving causal order is what enables Delectus to reconstruct the state of the list from the log of ops.
+
+== Op syntax
+
+Each op is an assertion of a change in a list's data. Before the op is inserted the list contains one set of data; afterward, it contains another. The op declares the state that changes and supplies the new  data.
+
+Following is the abstract syntax of all four ops.
+
+=== listname
+===== Syntax: `listname  _revision_ _origin_ _timestamp_ _nameText_`
+
+The `listname` op sets the name of the list to a user-specified string.
+
+[cols="1,1,5",options="header"]
+.`listname` Parameters
+|===
+| parameter | type | description
+| `_revision_` | `integer` | The revision number of the op.
+| `_origin_` | `integer` | The op's origin, unique per (node,process,pathname) tuple.
+| `_timestamp_` | `integer` | The time the op was created, according to the Delectus *node* that created it.
+| `_nameText_` | `string` | The list's new name.
+|===
+
+=== comment
+=====  Syntax: `comment _revision_ _origin_ _timestamp_ _commentText_`
+
+The `comment` op sets the list's comment text to a user-specified string.
+
+[cols="1,1,5",options="header"]
+.`comment` Parameters
+|===
+| parameter | type | description
+| `_revision_` | `integer` | The revision number of the op.
+| `_origin_` | `integer` | The op's origin, unique per (node,process,pathname) tuple.
+| `_timestamp_` | `integer` | The time the op was created, according to the Delectus *node* that created it.
+| `_commentText_` | `string` | The list's new comment text.
+|===
+
+
+=== columns
+===== Syntax: `columns _revision_ _origin_ _timestamp_ {_label_: _attributes_}+`
+
+The `columns` op sets the current state of the list's columns. The parameters given as `{_label_: _attributes_}+` are one or more objects that each specify the attributes of a column. The label identifies the column; the `attributes` object defines the column's attributes. Each label may appear only once in the argument list.
+
+[cols="1,1,3",options="header"]
+.`columns` Parameters
+|===
+| parameter | type | description
+| `_revision_` | `integer` | The revision number of the op.
+| `_origin_` | `integer` | The op's origin, unique per (node,process,pathname) tuple.
+| `_timestamp_` | `integer` | The time the op was created, according to the Delectus *node* that created it.
+| `{_label_: _attributes_}+` | `object` | One object for each column. The key is the column's label; the value is an `attributes` object specifying the values of the column's attributes.
+|===
+
+===== The `attributes` object
+
+In a `columns` op, the `attributes` object gives the values of a column's attributes. Column attributes are as follows:
+
+[cols="1,2,6",options="header"]
+|===
+| attribute | type | description
+| `label` | `string` | The column's unique label.
+| `name` | `string` | The name given to the column by the user.
+| `order` | `real` | The recommended presentation order of the column.
+| `sort` | `null`, `'ASC'`, `'DESC'` | Whether to sort the list on this column, and in which direction.
+| `title` | `Boolean` | Whether this is the list's *title column*.
+| `subtitle` | `Boolean` | Whether this is the list's *subtitle column*.
+| `deleted` | `Boolean` | Whether this column has been marked deleted.
+|===
+
+==== Attributes and presentation
+
+The values of a column's attributes control how Delectus presents the column in its user interface.
+
+* `*name*` gives the text Delectus uses to label the column in the UI.
+* `*order*` tells Delectus the left-to-right order in which to present the columns.
+* `*sort*` identifies which column to use for sorting the list's items, and whether to sort ascending or descending. At most one column may be designated as the sort column. If no sort column is designated then Delectus presents the items in timestamp order, newest last.
+* `*title*` identifies the list's *title column*. In some views, the *title column* supplies text to be sued as the title of the item. At most one column may be designated the title column. If no title column is designated then Delectus arbitrarily uses the column with the lowest sort order as the title.
+* `*subtitle*` identifies the *subtitle column*. In some views, the *subtitle column* supplies text to be sued as the subtitle of the item. If no subtitle column is designated then Delectus presents the items without a subtitle.
+* `*deleted*` declares whether the user has marked the column deleted. Delectus does not present deleted columns or items unless the user specifically asks it to.
+
+=== item
+===== Syntax: `item _revision_ _origin_ _timestamp_ _itemid_ {_label_: _value_}+`
+
+The `item` op sets the current state of a specified item. The coordinates `(origin, itemid)` uniquely identify the item. If it's an existing item then the op is an update to that item. If not, it's a new item.
+
+The parameters given as `{_label_: _value_}+` are one or more objects that specify the values of the item's fields. The `_label_` identifies a column; the `_value_` gives the data for that column. Each label may appear only once in the argument list.
+
+[cols="1,1,3",options="header"]
+.`item` Parameters
+|===
+| parameter | type | description
+| `_revision_` | `integer` | The revision number of the op.
+| `_origin_` | `integer` | The op's origin, unique per (node,process,pathname) tuple.
+| `_timestamp_` | `integer` | The time the op was created, according to the Delectus *node* that created it.
+| `_itemid_` | `identity` | The identity of the item.
+| `_deleted_` | `Boolean` | Whether the item is marked deleted.
+| `{_label_: _value_}+` | `object` | One object for each column. The key is the column's label; the value is the value in that column. The value may be `null`, a `Boolean`, a `number`, or a `string`.
+|===
+
+=== Column labels
+
+A *column label* is a string constructed from a v4 UUID and used to identify user-created columns. Delectus automatically generates column labels for two reasons:
+
+. By automatically assigning a column label, and using a separate attribute to store a user-assigned name for the column, Delectus can offer users complete freedom to name their columns without being restricted by SQlite's naming rules for columns.
+
+. By using UUIDs as the basis for column labels, Delectus can ensure that column labels created concurrently in different sessions or on different devices for the same list will not collide. Delectus can always merge concurrent edits without fear of a collision between column labels.
+
+Delectus creates a column label by generating a v4 UUID, printing its bytes to a hexadecimal string, and prepending the letter "L". We prepend the letter "L" so that no column label will start with a digit. Labels that start with digits require special handling in SQLite.
+
+For example: `"L5bdb46f7f21543cda83d17b5036e07f7"` is a typical Delectus column label.
+
+=== Nodes
+
+A Delectus *node* is a specific install of the application running on a specific device in a specific user account. Delectus assigns an identity to each node and uses it in computing unique identities for ops and items. It attaches an origin to each op that it inserts.
+
+The first time Delectus runs it generates a v4 UUID to use as a node identity, and stores it in the user's filesystem. Every time it runs thereafter, it reads the identity from the file. If the file is corrupted or removed, Delectus generates a new one.
+
+Replacing a node identity doesn't affect the correctness of Delectus data. Delectus simply treats the user's copy of Delectus as a new node; all new ops inserted in a file use the new node identity.
+
+=== Origins
+
+An *origin* is a 64-bit integer computed from a node identity, a process ID, and a pathname. Delectus uses origins to ensure that ops and items can be uniquely distinguished.
+
+When Delectus opens a list file, it computes an *origin* by concatenating its node identity, its process ID, and the pathname of the file into a string, separated by colons. It hashes the resulting string using SHA256. The origin is then the first 64 bits of the resulting hash, converted to a signed integer.
+
+This method is not guaranteed to generate a globally unique integer, but the odds of collision are very low. If a user opened the same Delectus list a hundred times a day for fifty years, the odds of seeing the same origin value twice would be about one in eleven million--around the odds of winning the grand prize in a lottery.
+
+Moreover, that assumes the user opens the same list every time; origins only need to be unique per list. With normal use, the chances of seeing the same origin generated twice are vanishingly small.
+
+With that in mind, each distinct origin identifies a distinct editing session on a distinct copy of a list. By combining an origin with a file's revision number, we can uniquely identify a specific edit, no matter which copy of a list it comes from. By combining it with an itemid, we can uniquely identify a specific list item, regardless of which copy of the list it was created in.
+
+These properties enable us to concurrently edit multiple copies of a list and safely merge the edits together without losing data.
+
+=== Revisions
+
+Each op is marked with a *revision*. A *revision* is an integer attached to the op at the time it's created. Each time Delectus inserts an op, it increments the list file's revision counter and adds the new number to the op before inserting it.
+
+Each list file has its own revision counter. Revision counters are updated independently and concurrently across devices and files, so revision numbers are not globally unique. On the other hand, each revision is given out only once per file, and each editing session on each file has a different origin, which means that the combination of a revision with an origin is globally unique.
+
+The global uniqueness of an (origin, revision) pair is enough to ensure that we can uniquely identify any specific op, but there are still reasons to prefer not to duplicate revisions more than we have to. FOr one thing, a user might be disconcerted to see wildly different revision numbers on edits made near the same time.
+
+Delectus therefore makes an effort to keep revision numbers across copies of a list somewhat close to one another. When it merges edits from a remote file into the current local file, it compares all revision numbers that appear in all ops, finds the greatest one, adds one to it, and sets the local revision count to that number. The result is that the local revision count will always catch up to a remote one that has pulled ahead.
+
+=== Itemids
+
+Besides uniquely identifying ops, Delectus also needs to uniquely identify items. A user may update the same item many times, which means inserting many ops that all represent different versions of the same item. Origin and revision are enough to identify an op, but not enough by themselves to distinguish one item from another. Origin and revision tell us which op we're talking about, but if it's an `item` op, how do we know whether it's adding a new item or updating an old one?
+
+To solve that problem, we use an additional coordinate: `itemid`. The `itemid` is an integer that uniquely identifies a specific item with respect to a given origin. Like a revision, a specific itemid is given out once per file. Also like a revision, an itemid is not unique in itself, but the combination of the itemid with an origin is.
+
+Unlike revisions, new itemids are not assigned on every op. A new itemid is given out only for an `item` op that adds a new item to the list. If an `itemid` updates an existing item, it uses the old itemid of the existing item.
+
+=== Summary of data coordinates
+
+To recap, the coordinates that Delectus uses to uniquely identify data are:
+
+* For identifying an *op:* `(_revision_ ,_origin_)`
+* For identifying an *item:* `(_itemid_, _origin_)`
+* For identifying *a specific update of a specific item:* `(_itemid_, _revision_, _origin_)`
+
+=== Timestamps
+
+Each op carries a `timestamp`, which is an integer count of the number of milliseconds since midnight, January 1, 1900 GMT. The upper bound of a Delectus 2 timestamp is given by the range of integers that SQLite can represent. The largest integers SQLite can store are 64-bit signed, so timestamps have 63 bits of precision. That means the maximum timestamp is 9,223,372,036,854,775,807, which corresponds to  August 17th, 292,278,924 AD, at 12:55 PM.
+
+Delectus assigns a timestamp to each op, and uses these timestamps to determine the order of edits in a list file. The current version of an item, or of a list's name, comment, or columns, is the state of the latest op of that type.
+
+Because the clocks of different devices may not always be correct, ops may sometimes appear out of order, especially if one of the clocks is very fast or slow. If that happens, a user may be momentarily puzzled after a merge to see that some edits don't appear in the expected order.
+
+Misordered edits are never lost, though. A user can always ask Delectus to show all versions of an item or other data, and can reorder any data found in the wrong sequence. Moreover, modern devices all have functional clocks, and are almost always able to update their settings using network time servers, so clock skew is usually a minor issue.
+
+Using timestamps to determine the canonical order of edits has failure modes that are no worse than those of other methods, and has the advantage of almost always producing results that users expect to see.
+
+== SQLite tables
+
+A Delectus list file is a SQLite database; Delectus stores ops and supporting data in a set of SQLite tables. This section describes those tables and how Delectus uses them.
+
+=== Op tables
+
+Each op type is stored in its own table.
+
+==== The `listnames` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `INTEGER` | The op's origin, unique per (node,process,pathname).
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `name` | `TEXT` | The user-specified name of the list.
+|===
+
+==== The `comments` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `INTEGER` | The op's origin, unique per (node,process,pathname) tuple.
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `comment` | `TEXT` | The user-specified comment text for the list.
+|===
+
+==== The `columns` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `INTEGER` | The op's origin, unique per (node,process,pathname) tuple.
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `_[label]_+` | `_[attributes]_+` | The attributes of column `_label_`.
+|===
+
+==== The `items` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `INTEGER` | The op's origin, unique per (node,process,pathname) tuple.
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `itemid` | `INTEGER` | The item's identifier, unique per distinct item.
+| `deleted` | `INTEGER` | True if the item is marked deleted; false otherwise.
+| `_[label]_+` | `_[value]_+` | The value of column `_label_`.
+|===
+
+=== The `latest_items` table
+
+When Delectus opens a list file it executes a query that fetches the latest versions of all items in the `items` table. It stores the result in a temporary `latest_items` table. It then uses the `latest_items` table for all searches and other read operations on the list's items, enabling it to produce results more quickly than if it operated on the full `items` table.
+
+When a user edits an item or column, Delectus inserts the resulting op into the persistent `items` table and then recomputes the `latest_items` table.
+
+The structure of the `latest_items` table is identical to that of the `items` table.
+
+=== The `delectus` table
+
+The `delectus` table stores the list file's identity, the current version of the file format, created and modified dates, and the current state of the revision and item counters.
+
+[cols="1,1,4",options="header"]
+.`delectus` table structure
+|===
+| column | type | description
+| `listid` | `string` | The unique identity of the list.
+| `format` | `TEXT` | The version of the Delectus file format used in this file.
+| `created` | `INTEGER` | The time that this list was created.
+| `modified` | `INTEGER` | The time that this copy of the list was last modified.
+| `next_revision` | `INTEGER` | The revision that will be assigned to the next op.
+| `next_itemid` | `INTEGER` | The itemid that will be assigned to the next new item.
+|===
