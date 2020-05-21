@@ -27,6 +27,7 @@
    #:db-get-latest-items
    #:db-get-latest-listname-op
    #:*delectus-root-pathname*
+   #:+delectus-version+
    #:*default-result-items-per-page*
    #:delivered-application-p
    #:empty?

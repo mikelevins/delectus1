@@ -15,6 +15,7 @@
 (defvar *project-root-path* (asdf:system-relative-pathname :delectus ""))
 (defvar *target-application-path* (merge-pathnames "product/macos/Delectus2" *project-root-path*))
 (defvar *bundle-template-path* (merge-pathnames "product/macos/bundle-templates/Delectus2.app/" *project-root-path*))
+(defvar *startup-image-path* (merge-pathnames "assets/images/delectus-splash.png" *project-root-path*))
 
 
 (defun create-delectus-bundle (bundle-path)
@@ -38,4 +39,5 @@
          (create-delectus-bundle *target-application-path*)
          0
          :interface :capi
-         :quit-when-no-windows nil)
+         :quit-when-no-windows nil
+         :startup-bitmap-file *startup-image-path*)

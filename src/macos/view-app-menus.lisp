@@ -18,11 +18,13 @@
 (defun delectus-interface-item-title (self prefix)
   (concatenate 'string prefix " " (capi:interface-title self)))
 
-(defun delectus-interface-multiple-about ()
+(defun delectus-interface-about ()
   (capi:display-message-on-screen (capi:convert-to-screen nil)
-                                  "Delectus2 alpha build"))
+                                  (format nil "Delectus2 alpha build~%version ~A~%built ~A"
+                                          delectus:+delectus-version+
+                                          (local-time:to-rfc1123-timestring (local-time:now)))))
 
-(defun delectus-interface-multiple-preferences ()
+(defun delectus-interface-preferences ()
   )
 
 (defun delectus-interface-multiple-message (self message &rest args)
@@ -41,11 +43,11 @@
     (capi:interface-title capi:interface)
     ((:component
       (((delectus-interface-item-title capi:interface "About")
-        :callback 'delectus-interface-multiple-about
+        :callback 'delectus-interface-about
         :callback-type :none)))
      (:component
       (("Preferences..."
-        :callback 'delectus-interface-multiple-preferences
+        :callback 'delectus-interface-preferences
         :callback-type :none)))
      (:component
       ()
