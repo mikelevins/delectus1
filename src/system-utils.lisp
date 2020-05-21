@@ -12,6 +12,15 @@
 
 
 ;;; ---------------------------------------------------------------------
+;;;  app-delivery utilities
+;;; ---------------------------------------------------------------------
+
+;;; inform the lisp that it's a development-time image
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setf (symbol-function 'delivered-application-p)
+         (constantly nil)))
+
+;;; ---------------------------------------------------------------------
 ;;;  file utilities
 ;;; ---------------------------------------------------------------------
 

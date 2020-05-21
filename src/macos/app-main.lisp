@@ -16,10 +16,12 @@
 
 (in-package #:cl-user)
 
+
+
 (defun delectus-cocoa-application ()
   (let ((application (make-instance 'ui::delectus2-application)))
     ;; initialize app parameters
-    (if (hcl:delivered-image-p)
+    (if (delectus:delivered-application-p)
         
         ;; delivered app:
         ;;   the delectus root path is the app bundle
@@ -47,10 +49,11 @@
           ;; yay! it works!
           )
 
-        ;; development time:
-        ;;   the delectus root path is the project root
-        (setf delectus::*delectus-root-pathname*
-              (asdf:system-relative-pathname :delectus "")))
+        ;; development time; not a delivered app:
+        (progn
+          ;;   the delectus root path is the project root
+          (setf delectus::*delectus-root-pathname*
+                (asdf:system-relative-pathname :delectus ""))))
     
     ;; debugging output on launch
     (format t "~%Bundle path: ~S~%" delectus::*delectus-root-pathname*)

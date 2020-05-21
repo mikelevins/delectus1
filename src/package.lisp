@@ -28,6 +28,7 @@
    #:db-get-latest-listname-op
    #:*delectus-root-pathname*
    #:*default-result-items-per-page*
+   #:delivered-application-p
    #:empty?
    #:get-latest-items
    #:getpid

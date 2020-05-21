@@ -29,6 +29,10 @@
 
 ;;; inform the built app that it has been built
 (pushnew :delectus2 cl:*features*)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; inform the delivered image that it's not a development-time image
+  (setf (symbol-function 'delectus:delivered-application-p)
+        (constantly t)))
 
 (deliver 'delectus-cocoa-application
          (create-delectus-bundle *target-application-path*)
