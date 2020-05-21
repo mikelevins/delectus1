@@ -26,6 +26,7 @@
                                    (:file "macos-constants")   ; constants to control UI appearance
                                    (:file "macos-view-utils")  ; operations on native macOS widgets
                                    (:file "view-items-sheet")  ; spreadsheet-like view
+                                   (:file "view-app-menus")    ; the app menubar
                                    (:file "app-main")          ; toplevel macOS application
                                    ))))))
 
