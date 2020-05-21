@@ -34,6 +34,7 @@
 
 (defparameter *delectus-libraries-path*
   #+(and :lispworks :mac)(asdf:system-relative-pathname :delectus-libs #p"product/macos/lib")
+  #+:linux (asdf:system-relative-pathname :delectus-libs #p"product/linux/ubuntu/x86_64/lib")
   )
 
 ;;; now push the needed path onto CFFI's list of library search paths
