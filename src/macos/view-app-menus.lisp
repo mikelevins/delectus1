@@ -31,10 +31,19 @@
   (declare (ignore self))
   )
 
-(defun handle-open-file ()
+(defun handle-open-file (interface)
   (let ((path (capi:prompt-for-file "Open a Delectus list..." :filter "*.delectus2")))
     (when path
-      (capi:contain (make-instance 'delectus-ui::items-sheet :dbpath path)))))
+      (capi:display (make-instance 'delectus-ui::items-sheet :dbpath path)))))
+
+(defun delectus-interface-message (self message &rest args)
+  (declare (ignore self))
+  (case message
+    (:open-file
+     (let ((filename (car args)))
+       (when (equal (pathname-type filename) "delectus2")
+         (capi:display (make-instance 'delectus-ui::items-sheet :dbpath filename)))))))
+
 
 (capi:define-interface delectus2-application (capi:cocoa-default-application-interface)
   ()
@@ -73,12 +82,13 @@
    (file-menu
     "File"
     (("Open"
+      :accelerator "accelerator-o"
       :callback 'handle-open-file
-      :callback-type :none))))
+      :callback-type :interface))))
   (:menu-bar application-menu file-menu)
   (:default-initargs
       :title "Delectus2"
     :application-menu 'application-menu
-    :message-callback 'delectus-interface-multiple-message))
+    :message-callback 'delectus-interface-message))
 
 ;;;(capi:set-application-interface (make-instance 'ui::delectus2-application))
