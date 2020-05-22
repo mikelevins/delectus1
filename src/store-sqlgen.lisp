@@ -240,8 +240,8 @@ where ranked.rank=1
    (select :*
      (from :latest_items)
      (order-by (case order
-                 (:asc '(:asc :timestamp))
-                 (:desc '(:desc :timestamp))
+                 (:asc '(:asc :itemid))
+                 (:desc '(:desc :itemid))
                  (else (error "Unrecognized order ~S" order))))
      (offset offset)
      (limit limit))))

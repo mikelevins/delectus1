@@ -106,5 +106,5 @@
 ;;; (delete-file $words-test-path)
 ;;; 1m, 10.1MB
 ;;; (time (import-csv $words-csv-path $words-test-path "Words" :first-row-is-headers nil))
-;;; (time (get-latest-items (pathname $words-test-path) :offset 150000 :limit 10))
+;;; (time (get-latest-items (pathname $words-test-path) :offset 235000 :limit 10))
 
