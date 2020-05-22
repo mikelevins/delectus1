@@ -17,6 +17,9 @@
                 #:lookup #:wb-map #:with)
   (:import-from #:local-time #:now)
   (:export
+   #:*default-result-items-per-page*
+   #:*delectus-root-pathname*
+   #:+delectus-version+
    #:bind
    #:columns-op-userdata
    #:count-latest-items
@@ -26,14 +29,19 @@
    #:db-get-latest-filtered-items
    #:db-get-latest-items
    #:db-get-latest-listname-op
-   #:*delectus-root-pathname*
-   #:+delectus-version+
-   #:*default-result-items-per-page*
+   #:delectus-timestamp->local-time
    #:delivered-application-p
    #:empty?
+   #:get-latest-columns-op
    #:get-latest-items
+   #:get-specified-item
    #:getpid
    #:import-csv
+   #:item-op-deleted
+   #:item-op-itemid
+   #:item-op-origin
+   #:item-op-revision
+   #:item-op-timestamp
    #:item-op-userdata
    #:listname-op-name
    #:make-test-list

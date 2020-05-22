@@ -256,4 +256,10 @@
 ;;; (time (setf $it (get-specified-item $wordtest100k-path 11200)))
 ;;; (item-op-itemid (first $it))
 ;;; (item-op-revision (first $it))
+;;; (item-op-origin (first $it))
 ;;; (delectus-timestamp->local-time (item-op-timestamp (first $it)))
+;;; (item-op-deleted (first $it))
+;;; (item-op-userdata (first $it))
+
+;;; (time (setf $cols (get-latest-columns-op $wordtest100k-path)))
+;;; (columns-op-userdata $cols)
