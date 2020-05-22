@@ -237,36 +237,23 @@
 ;;; getting a specified item
 ;;; --------------------------------------
 
-(defmethod db-get-specified-item ((db sqlite-handle)
-                                  &key
-                                    (revision nil)
-                                    (origin nil)
-                                    (itemid 0))
-  (bind ((sql vals (sqlgen-get-specified-item :revision revision
-                                              :origin origin
-                                              :itemid itemid)))
+(defmethod db-get-specified-item ((db sqlite-handle)(itemid integer))
+  (bind ((sql vals (sqlgen-get-specified-item itemid)))
     (unless (db-check-latest-items-table-exists db)
       (db-create-latest-items-table db))
     (apply 'execute-to-list db sql vals)))
 
 
-(defmethod get-specified-item ((db-path pathname)
-                               &key
-                                 (revision nil)
-                                 (origin nil)
-                                 (itemid 0))
+(defmethod get-specified-item ((db-path pathname)(itemid integer))
   (assert (probe-file db-path) () "No such file: ~S" db-path)
   (with-open-database (db db-path)
-    (db-get-specified-item db
-                           :revision revision
-                           :origin origin
-                           :itemid itemid)))
+    (db-get-specified-item db itemid)))
 
 ;;; (setf $zips-test-path (path "~/Desktop/Zipcodes.delectus2"))
 ;;; (get-specified-item $zips-test-path :itemid 1)
 
 ;;; (setf $wordtest100k-path (path "/Users/mikel/Desktop/wordtest100k.delectus2"))
-;;; (time (setf $it (get-specified-item $wordtest100k-path :itemid 11200)))
+;;; (time (setf $it (get-specified-item $wordtest100k-path 11200)))
 ;;; (item-op-itemid (first $it))
 ;;; (item-op-revision (first $it))
 ;;; (delectus-timestamp->local-time (item-op-timestamp (first $it)))
