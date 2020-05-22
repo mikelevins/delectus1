@@ -330,3 +330,15 @@ FROM `latest_items` ~A ~A ~A
 
 ;;; (sqlgen-count-latest-filtered-items :column-labels ["lbl1" "lbl2"] :filter-text "Foobie")
 ;;; (sqlgen-count-latest-filtered-items :column-labels $lbls :filter-text "Springdale")
+
+
+(defun sqlgen-get-specified-item (&key
+                                    (revision nil)
+                                    (origin nil)
+                                    (itemid 0))
+  (yield
+   (select :*
+     (from :items)
+     (where (:and (:= :itemid itemid))))))
+
+;;; (sqlgen-get-specified-item :itemid 0)

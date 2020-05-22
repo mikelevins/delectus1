@@ -38,3 +38,10 @@
          (delectus-microseconds (local-time:timestamp-microsecond now)))
     (+ (* delectus-seconds 1000000)
        delectus-microseconds)))
+
+(defun delectus-timestamp->local-time (timestamp)
+  (bind ((secs usecs (truncate timestamp 1000000)))
+    (local-time:timestamp+ (local-time:universal-to-timestamp secs)
+                           (* usecs 1000) :nsec)))
+
+;;; (delectus-timestamp->local-time (delectus-timestamp-now))
