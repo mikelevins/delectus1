@@ -32,34 +32,6 @@
 ;;; (with-open-database (db $testlist-path) (db-create-delectus-table db $listid +delectus-format-version+))
 ;;; (delete-file $testlist-path)
 
-;;; ---------------------------------------------------------------------
-;;; operations on the 'delectus' table
-;;; ---------------------------------------------------------------------
-
-(defmethod db-get-next-revision ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-next-revision)))
-    (apply 'execute-single db sql vals)))
-
-;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-get-next-revision db))
-
-(defmethod db-set-next-revision ((db sqlite-handle)(rev integer))
-  (bind ((sql vals (sqlgen-set-next-revision rev)))
-    (apply 'execute-single db sql vals)))
-
-;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-set-next-revision db 1))
-
-
-(defmethod db-get-next-itemid ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-next-itemid)))
-    (apply 'execute-single db sql vals)))
-
-;;; (with-open-database (db "/Users/mikel/Desktop/testlist.delectus2") (db-get-next-itemid db))
-
-(defmethod db-set-next-itemid ((db sqlite-handle)(it integer))
-  (bind ((sql vals (sqlgen-set-next-itemid it)))
-    (apply 'execute-single db sql vals)))
-
-
 ;;; =====================================================================
 ;;; the 'oplog' table
 ;;; =====================================================================
@@ -68,6 +40,18 @@
 ;;; creating it 
 ;;; ---------------------------------------------------------------------
 
+(defmethod db-create-oplog-table ((db sqlite-handle))
+  (bind ((create-sql create-vals (sqlgen-create-oplog-table)))
+    (apply 'execute-non-query db create-sql create-vals)))
+
+;;; (setf $testlist-path (path "/Users/mikel/Desktop/testlist.delectus2"))
+;;; (with-open-database (db $testlist-path) (db-create-oplog-table db))
+;;; (delete-file $testlist-path)
+
 ;;; ---------------------------------------------------------------------
 ;;; operations on the 'oplog' table
 ;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-op ((db sqlite-handle)(timestamp integer)(hash string)(data string))
+  (bind ((sql vals (sqlgen-insert-op timestamp hash data)))
+    (apply 'execute-non-query db sql vals)))
