@@ -49,8 +49,8 @@
   (yield
    (create-table :oplog
        ((optype :type 'text) ; the type of op: listname, comment, columns, or item
-        (timestamp :type 'string) ; the time the op is inserted in the log
-        (hash :type 'text) ; the digest of the op data
+        (timestamp :type 'integer) ; the time the op is inserted in the log
+        (parentid :type 'text) ; the digest of the op data
         (data :type 'text) ; the op data: a JSON object
         ))))
 
@@ -61,12 +61,12 @@
 ;;; reading and writing ops
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-insert-op (optype timestamp hash data)
+(defun sqlgen-insert-op (optype timestamp parentid data)
   (yield
    (insert-into :oplog
      (set= :optype optype
            :timestamp timestamp
-           :hash hash
+           :parentid parentid 
            :data data))))
 
 ;;; (setf $listname "{'name': 'Test'}")
@@ -75,5 +75,5 @@
 ;;; (sqlgen-insert-op "comment" (delectus-timestamp-now) (make-identity-string) $comment)
 ;;; (setf $columns "{'L78791326b90446889515ce7b9f68977b': {'label': 'L78791326b90446889515ce7b9f68977b', 'name': 'Word'}}")
 ;;; (sqlgen-insert-op "columns" (delectus-timestamp-now) (make-identity-string) $columns)
-;;; (setf $item "{'deleted': false,'values': {'L78791326b90446889515ce7b9f68977b': 'Abraxas'}}")
+;;; (setf $item "{'itemid': '2d98c04febca4a2eb80e7418eae34097', 'deleted': false,'values': {'L78791326b90446889515ce7b9f68977b': 'Abraxas'}}")
 ;;; (sqlgen-insert-op "item" (delectus-timestamp-now) (make-identity-string) $item)
