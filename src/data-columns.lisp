@@ -34,6 +34,9 @@
 (defmethod column-description-label ((column-description list))
   (getf column-description :|label| nil))
 
+(defmethod column-description-name ((column-description list))
+  (getf column-description :|name| nil))
+
 (defmethod column-description-to-json ((desc list))
   (jonathan:to-json desc))
 

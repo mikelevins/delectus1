@@ -332,10 +332,12 @@ FROM `latest_items` ~A ~A ~A
 ;;; (sqlgen-count-latest-filtered-items :column-labels $lbls :filter-text "Springdale")
 
 
-(defun sqlgen-get-specified-item (itemid)
+(defun sqlgen-get-specified-item (itemid origin)
   (yield
    (select :*
      (from :items)
-     (where (:and (:= :itemid itemid))))))
+     (where (:and (:= :itemid itemid)
+                  (:= :origin origin)))
+     (order-by (:desc :timestamp)))))
 
-;;; (sqlgen-get-specified-item 0)
+;;; (sqlgen-get-specified-item 0 (delectus-timestamp-now))

@@ -237,22 +237,24 @@
 ;;; getting a specified item
 ;;; --------------------------------------
 
-(defmethod db-get-specified-item ((db sqlite-handle)(itemid integer))
-  (bind ((sql vals (sqlgen-get-specified-item itemid)))
+(defmethod db-get-specified-item ((db sqlite-handle)(itemid integer)(origin integer))
+  (bind ((sql vals (sqlgen-get-specified-item itemid origin)))
     (unless (db-check-latest-items-table-exists db)
       (db-create-latest-items-table db))
     (apply 'execute-to-list db sql vals)))
 
 
-(defmethod get-specified-item ((db-path pathname)(itemid integer))
+(defmethod get-specified-item ((db-path pathname)(itemid integer)(origin integer))
   (assert (probe-file db-path) () "No such file: ~S" db-path)
   (with-open-database (db db-path)
-    (db-get-specified-item db itemid)))
+    (db-get-specified-item db itemid origin)))
 
 ;;; (setf $zips-test-path (path "~/Desktop/Zipcodes.delectus2"))
+;;; (get-latest-items (path "~/Desktop/Zipcodes.delectus2") :limit 5)
 ;;; (get-specified-item $zips-test-path :itemid 1)
 
 ;;; (setf $wordtest100k-path (path "/Users/mikel/Desktop/wordtest100k.delectus2"))
+;;; (get-latest-items $wordtest100k-path :limit 5)
 ;;; (time (setf $it (get-specified-item $wordtest100k-path 11200)))
 ;;; (item-op-itemid (first $it))
 ;;; (item-op-revision (first $it))

@@ -21,6 +21,8 @@
    #:*delectus-root-pathname*
    #:+delectus-version+
    #:bind
+   #:column-description-label
+   #:column-description-name
    #:columns-op-userdata
    #:count-latest-items
    #:db-count-latest-filtered-items
@@ -48,3 +50,4 @@
    #:path
 
    ))
+
