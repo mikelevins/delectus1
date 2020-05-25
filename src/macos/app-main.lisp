@@ -54,7 +54,7 @@
     
     ;; debugging output on launch
     (format t "~%Bundle path: ~S~%" delectus::*delectus-root-pathname*)
-    (format t "~%Dynamic library path: ~S~%" delectus-libs::*delectus-libraries-path*)
+    (format t "~%SQLite3 loaded from: ~S~%" (CFFI:FOREIGN-LIBRARY-PATHNAME 'sqlite-ffi::sqlite3-lib))
     ;; Set the application interface before using any other CAPI
     ;; functionality.
     (capi:set-application-interface application)
