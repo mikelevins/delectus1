@@ -1,0 +1,30 @@
+= Merging Delectus 2 Edit Logs
+:toc:
+
+The single source of truth in a Delectus file is the edit log.
+
+The edit log is an ordered sequence of edits.
+
+Each edit is a record of one of four types of operation:
+
+. *listname:* sets the name of the list
+. *comment:* sets the list’s comment text
+. *columns:* defines the list’s columns and their metadata
+. *item:* defines the values and metadata of a single specific list item
+
+Items of types listname, comment, and columns are termed *metadata items*.
+The remaining category of items is termed *userdata items*. Userdata items represent items that the user has added to a Delectus list. Metadata items represent information about the list, including its name and the names and other attributes of its items and columns.
+
+The *item ID* of each metadata item is the name of its item type: “listname”,
+“comment”, or “columns”.
+
+The *item ID* of a userdata item is a v4 UUID, rendered as a 26-character base32hex string.
+
+A given Delectus node accumulates edits in a file, as documented in the
+“editlog” document. Each edit contains the new state of a list item,
+plus some metadata that enables Delectus to merge edit logs deterministically.
+
+To merge two logs, Delectus follows this procedure:
+
+1. Check that the two files have the same listid. Delectus will not merge editlogs
+whose listids are not the same.

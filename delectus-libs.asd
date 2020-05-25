@@ -37,7 +37,7 @@
   #+:linux (asdf:system-relative-pathname :delectus-libs #p"product/linux/ubuntu/x86_64/lib/")
   )
 
-;;; now push the needed path onto CFFI's list of library search paths
+;;; now push lib path onto cffi search path
 
 (in-package :cl-user)
 
