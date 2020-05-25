@@ -1,0 +1,163 @@
+= The Delectus 2 Edit Log
+:toc:
+
+The *edit log* is the single source of truth in Delectus 2. It's a causally-ordered log of *edits*, each of which asserts a change to the state of a Delectus list. The state of the list at any specific time is just the sum of changes made by its history of edits.
+
+This document describes the structure and format of the edit log.
+
+== Ops
+
+An *op* is a data structure that represents an edit to a Delectus list. There are four types of ops:
+
+[cols="1,5",options="header"]
+.Op types
+|===
+| Op type | Description
+| *listname* | Sets the name of the list.
+| *comment* | Sets the list's comment text.
+| *columns* | Defines the list's columns and their metadata.
+| *item* | Defines the field values of a single list item.
+|===
+
+Each Delectus list file contains a log of ops that represents the state and history of the list's contents. An op is a structure defined as follows:
+
+[cols="1,1,1,1,1,1",options="header"]
+.Op structure
+|===
+| `*target*` | `*origin*` | `*revision*` | `*order*` | `*timestamp*` | `*data*`
+|===
+
+[cols="1,1,1,5",options="header"]
+|===
+| Field | Meaning | Representation | Description
+| `*target*` | item identity | `string` | The op's target. Either `"listname"`, `"comment"`, `"columns"`, or the identity string of an item.
+| `*origin*` | session ID | `string` | The Delectus session that created the op.
+| `*revision*` | revision number | `integer` | The count of prior changes to the target.
+| `*order*` | order od insertion | `double` | The order in which the op was added to the list.
+| `*timestamp*` | universal time | `integer` |  The time of the edit, according to the session that created the op.
+| `*data*` | `JSON` value | `string` | The new state of the target data.
+|===
+
+=== Target
+
+The `target` is a string that identifies an element of the list: its name, comment text, columns, or a specified item. The op declares a change to the list element identified by the `target`.
+
+The possible target strings are:
+
+[cols="1,5",options="header"]
+.Valid `target` values
+|===
+| Target value | Affected list element
+| `"listname"` | the name of the list
+| `"comment"` | the list's comment text
+| `"columns"` |  the definition of the list's columns
+| an *identity* string |   the data and metadata of a specified item
+|===
+
+=== Origin
+
+The `origin` is a string that uniquely identifies the Delectus session that created the op. Because you can edit different copies of a list on different processes or devices, Delectus needs to be able to distinguish between edits from different sources. The `origin` field enables it to do that.
+
+An origin is the first 128 bits of a SHA256 hash of two inputs:
+
+. the *process identity* of the running Delectus process (an identity string computed by Delectus when it starts running).
+. the pathname of the listfile being edited.
+
+This hash uniquely identifies a particular Delectus process running on a particular device and editing a particular file on that device. Editing a file from a different process yields a different origin. Editing a different file from the same process also yields a different origin.
+
+=== Revision
+
+The `revision` is an integer count of the number of changes made to the target before this one. Each time Delectus constructs an op it retrieves the maximum revision recorded for the target, increments that number by one, and stores it in the `revision` field of the new op.
+
+Concurrent edits can create duplicate revisions, but the tuple `(target, revision, origin)` is globally unique for each op.
+
+The `revision` also serves as a causal ordering mechanism for edits. A given revision number is always causally later than a lesser one, which enables Delectus to sort edits in causal order.
+
+Duplicate revisions are concurrent edits. Delectus choose which edit wins by sorting them by timestamp and origin string. The last one becomes the final edit. It saves all edits, though, and the user can browse through them and choose a different one as the final edit.
+
+=== Order
+
+The `order` is a floating-point number that records the order in which edits were added to a given file. When Delectus inserts the first op in a file, it assigns it the order `100.0`. The next op gets order `200.0`, and so on.
+
+As with revision numbers, concurrent edits will introduce duplicate orders. If Delectus is presenting the contents of a list in default order (that is, if the user has not explicitly specified a sort column and direction), then it sorts the current values of the items by order, then timestamp, then origin.
+
+==== Limits on the order value
+
+The number of order values we can assign this way is limited by the precision offered by unsigned double floats. The double-float format offers 2^53 representable values between any two powers of two. Using double-floats, the size of the intervals between values in the range between any two powers of two x and y is (y - x)/s^53. If the interval size is larger than 100, then we can't represent any numbers between x and y.
+
+We want to have enough values between x and y to allow reasonable flexibility in insertion. Let's say we want room to insert ninety-nine intermediate ops. That means we need an interval size of one or less. It turns out that to meet this requirement, the maximum order value we can use is about 2^52, or 4,503,599,627,370,400.0. This limits the maximum number of items in a Delectus list to 45,035,996,273,704, or around 45 trillion. Actually, no Delectus list can ever reach that number of items because of limitations on memory, disk space, and SQLite tables.
+
+=== Timestamp
+
+The `timestamp` is an integer that represents the number of microseconds since the UTC epoch. Delectus assigns this timestamp to each op at the time it's created.
+
+Timestamps are not perfectly reliable. Any two devices' clocks are likely to have some skew between them. Occasionally, a specific device's clock may be stopped or reset. These kinds of issues mean that the order of timestamps in the edit log may not represent the order in which ops were asserted with perfect accuracy.
+
+Fortunately, timestamps don't have to be perfectly accurate in order to serve their purposes.
+
+Delectus uses timestamps for two purposes:
+
+. To sort ops deterministically into an order that users will find reasonable.
+. To break ties between concurrent edits in a predictable way.
+
+Neither of these uses require the timestamps to be perfectly accurate. Inaccurate timestamps will still break ties predictably, and will still yield a grossly plausible total order for edits in a file. Some edits may appear out of order, but no data will be lost, and if the user feels a given edit appears too far back in hostory, it can be brought forward simply by making another edit to it--or the user can impose some order of their choice on the list by designating a sort column.
+
+
+=== Data
+
+The `data` field contains the user-facing data associated with the op's target. The data is represented as a JSON value stored in a string. The precise format depends on the type of the op.
+
+==== Listname data
+
+The `data` field in a `listname` op contains a JSON string value that becomes the new name of the list.
+
+==== Comment data
+
+The `data` field in a `comment` op contains a JSON string value that becomes the new comment text of the list.
+
+==== Columns data
+
+The `data` field in a `comment` op contains a JSON object that defines the list's columns and their attributes. The structure of the columns object is as follows:
+
+[subs=+quotes]
+----
+{
+  _column_identity_ : _column_definition_,
+  ...
+}
+----
+
+The `_column_identity_` key is an identity string that uniquely identifies the column.
+The `_column_definition_` key is a JSON column object, defined as follows:
+
+[cols="1,1,5",options="header"]
+.JSON column object
+|===
+| Field | Representation | Description
+| `*id*` | `string` | The column's unique `identity` string.
+| `*name*` | `string` | A user-assigned string used as the name of the column.
+| `*order*` | `double` | The desired order of presentation for the column.
+| `*sort*` | `'ASC'`, `'DESC'`, or `null` | Whether this is the sort column, and if so, which direction to sort
+| `*title*` | `Boolean` | Whether this is the title column.
+| `*subtitle*` | `Boolean` | Whether this is the subtitle column.
+| `*deleted*` | `Boolean` | Whether this column is marked deleted.
+|===
+
+
+
+==== Item data
+
+The `data` field in an `item` op contains a JSON object that specifies the item's field values and whether it's been marked deleted. The deleted status appears in the `deleted` field. The value of each column of the item is given by a JSON `null`, `Boolean`, `number`, or `string' stored on the column's identity string.
+
+An example of an item-data object might look like this:
+
+----
+{
+  'deleted' : false,
+  'OABS3RP3MH5OJ1B4KSF5DJ2GI4' : 'Home Alone',
+  'CLRQDDE0452HR28C92D0JUKHLK' : 'Macaulay Culkin',
+  'QVKDNTB6MT6E9EGVAM5HBKE7GS' : 'Joe Pesci',
+}
+----
+
+The bin32hex strings are the identity strings of the item's columns.
