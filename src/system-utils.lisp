@@ -65,6 +65,10 @@
                                     from-list
                                     :test test))))
 
+
+(defmethod take ((count integer)(s sequence))
+  (subseq s 0 count))
+
 ;;; ---------------------------------------------------------------------
 ;;;  map utilities
 ;;; ---------------------------------------------------------------------
@@ -170,3 +174,10 @@
   #+lispworks (system::getpid)
   #+sbcl (sb-posix:getpid)
   )
+
+;;; computes the size of the interval between representable double
+;;; floats in the range 2^x and 2^y
+(defun double-float-interval-size (x y)
+  (/ (- (expt 2.0 y)
+        (expt 2.0 x))
+     (expt 2.0 53)))
