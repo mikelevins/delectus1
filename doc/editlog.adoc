@@ -161,6 +161,8 @@ Neither of these uses require the timestamps to be perfectly accurate. Inaccurat
 
 The `data` field contains the user-facing data associated with the op's target. The data is represented as a JSON value stored in a string. The precise format depends on the type of the op.
 
+Delectus uses JSON in `data` fields to represent user-visible data. In some values represented as JSON objects, it uses *identity labels* as keys. It uses identity labels specifically, and not identity string or plain identities, because identity labels are guaranteed to conform to SQLite's requirements on keys in JSON objects; other forms of identities are not.
+
 ===== Listname data
 
 The `data` field in a `listname` op contains a JSON string value that becomes the new name of the list.
