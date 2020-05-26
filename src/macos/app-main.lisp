@@ -49,13 +49,15 @@
           ;; yay! it works!
           )
 
-        ;; development time; not a delivered app:
+        ;; not a delivered app; development-time image:
         (progn
           ;;   the delectus root path is the project root
           (setf delectus::*delectus-root-pathname*
                 (asdf:system-relative-pathname :delectus ""))))
     
     ;; debugging output on launch
+    (format t "~%Delivered app? ~A~%"
+            (if (delectus:delivered-application-p) "Yes." "No."))
     (format t "~%Bundle path: ~S~%" delectus::*delectus-root-pathname*)
     (format t "~%SQLite3 loaded from: ~S~%" (CFFI:FOREIGN-LIBRARY-PATHNAME 'sqlite-ffi::sqlite3-lib))
     ;; Set the application interface before using any other CAPI
