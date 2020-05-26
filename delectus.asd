@@ -26,6 +26,7 @@
                                      (:file "system-utils")          ; general-purpose helpers
                                      (:file "system-parameters")     ; application globals
                                      (:file "system-node")           ; fetching and saving the node id
+                                     (:file "data-identities")       ; delectus-specific UUID format
                                      ))))
 
 (defun load-delectus ()
