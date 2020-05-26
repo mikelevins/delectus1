@@ -17,9 +17,16 @@
   :version "2.0.7"
   :serial t
   :depends-on (:delectus-libs :fset :fare-csv :cl-intbytes :binascii :uuid :sqlite :jonathan :local-time :sxql)
-  :components ((:module "src"
+  :components ((:module "xsrc"
                         :serial t
-                        :components ())))
+                        :components ((:file "package")
+                                     (:file "version")
+                                     (:file "system-syntax")         ; syntax for map literals
+                                     (:file "system-bind")           ; more compact binding of multiple values
+                                     (:file "system-utils")          ; general-purpose helpers
+                                     (:file "system-parameters")     ; application globals
+                                     (:file "system-node")           ; fetching and saving the node id
+                                     ))))
 
 (defun load-delectus ()
   (asdf:load-system :delectus))
