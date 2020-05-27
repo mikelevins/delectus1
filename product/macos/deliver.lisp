@@ -32,7 +32,7 @@
 (pushnew :delectus2 cl:*features*)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; inform the delivered image that it's not a development-time image
-  (setf (symbol-function 'delectus:delivered-application-p)
+  (setf (symbol-function 'cl-user::delivered-application-p)
         (constantly t)))
 
 (deliver 'delectus-cocoa-application

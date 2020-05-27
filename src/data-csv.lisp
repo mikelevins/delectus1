@@ -87,6 +87,9 @@
                       (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
                                       :column-values column-values))))))))))
 
+
+
+;;; (sqlite-ffi:init-sqlite-ffi #P"/Users/mikel/Workshop/src/delectus/product/macos/lib/libsqlite3.dylib")
 ;;; (setf $movies-csv-path (path "~/Workshop/src/delectus/test-data/Movies.csv"))
 ;;; (setf $movies-test-path (path "~/Desktop/Movies.delectus2"))
 ;;; (delete-file $movies-test-path)

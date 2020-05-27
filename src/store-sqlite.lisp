@@ -19,7 +19,8 @@
   :result-type (:pointer :char)
   :language :ansi-c)
 
-;;; (fli:convert-from-foreign-string (sqlite3-libversion))
+;;; (sqlite-ffi:init-sqlite-ffi #P"/Users/mikel/Workshop/src/delectus/product/macos/lib/libsqlite3.dylib")
+;;; (fli:convert-from-foreign-string (delectus::sqlite3-libversion))
 ;;; currently reports 3.28.0 for the SQLite included with macOS Catalina
 ;;; (mapcar #'cffi:foreign-library-pathname (cffi:list-foreign-libraries :loaded-only t))
 

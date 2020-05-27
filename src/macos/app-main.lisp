@@ -21,7 +21,7 @@
 (defun delectus-cocoa-application ()
   (let ((application (make-instance 'ui::delectus2-application)))
     ;; initialize app parameters
-    (if (delectus:delivered-application-p)
+    (if (cl-user::delivered-application-p)
         
         ;; delivered app:
         ;;   the delectus root path is the app bundle
@@ -55,7 +55,7 @@
     
     ;; debugging output on launch
     (format t "~%Delivered app? ~A~%"
-            (if (delectus:delivered-application-p) "Yes." "No."))
+            (if (cl-user::delivered-application-p) "Yes." "No."))
     (format t "~%Bundle path: ~S~%" delectus::*delectus-root-pathname*)
     (format t "~%SQLite3 loaded from: ~S~%" (CFFI:FOREIGN-LIBRARY-PATHNAME 'sqlite-ffi::sqlite3-lib))
     ;; Set the application interface before using any other CAPI

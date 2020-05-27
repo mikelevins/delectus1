@@ -8,7 +8,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(in-package :cl-user)
+
 (ql:quickload :cffi)
+
+;;; redefined by the app builder to return t
+(defun delivered-application-p () nil)
+
 
 (asdf:defsystem #:delectus
   :description "Delectus 2"
@@ -16,7 +22,7 @@
   :license  "Apache 2.0"
   :version "2.0.7"
   :serial t
-  :depends-on (:delectus-libs :fset :fare-csv :cl-intbytes :binascii :uuid :sqlite :jonathan :local-time :sxql)
+  :depends-on (:cffi :fset :fare-csv :cl-intbytes :binascii :uuid :jonathan :local-time :delectus-sqlite :sxql)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")

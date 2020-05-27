@@ -32,7 +32,6 @@
    #:db-get-latest-items
    #:db-get-latest-listname-op
    #:delectus-timestamp->local-time
-   #:delivered-application-p
    #:empty?
    #:get-latest-columns-op
    #:get-latest-items
