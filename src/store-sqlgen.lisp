@@ -221,16 +221,30 @@
   (values "SELECT * FROM sqlite_temp_master WHERE type='table' AND name='latest_items'"
           nil))
 
+;; (defun sqlgen-create-latest-items-table ()
+;;   (values
+;;    (trim "
+;; CREATE TEMPORARY TABLE latest_items AS
+;; SELECT ranked.* FROM (
+;;   SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY timestamp DESC) rank, * 
+;;   FROM `items`) ranked
+;; where ranked.rank=1
+;; ")
+;;    nil))
+
+;;; a version that works without window functions (doesn't require SQLite 3.28.0)
 (defun sqlgen-create-latest-items-table ()
   (values
    (trim "
-CREATE TEMPORARY TABLE latest_items AS
-SELECT ranked.* FROM (
-  SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY timestamp DESC) rank, * 
-  FROM `items`) ranked
-where ranked.rank=1
+create temporary table latest_items as
+select itemsB.*
+    from items itemsB
+    where timestamp = 
+        (select max(timestamp) from items itemsA where itemsB.itemid=itemsA.itemid)
 ")
    nil))
+
+
 
 (defun sqlgen-get-latest-items (&key
                                   (order :asc)

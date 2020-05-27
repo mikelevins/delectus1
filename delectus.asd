@@ -22,7 +22,7 @@
   :license  "Apache 2.0"
   :version "2.0.7"
   :serial t
-  :depends-on (:cffi :fset :fare-csv :cl-intbytes :binascii :uuid :jonathan :local-time :delectus-sqlite :sxql)
+  :depends-on (:cffi :fset :fare-csv :cl-intbytes :binascii :uuid :jonathan :local-time :sqlite :sxql)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")

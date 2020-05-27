@@ -25,6 +25,17 @@
 ;;; (mapcar #'cffi:foreign-library-pathname (cffi:list-foreign-libraries :loaded-only t))
 
 
+
+;;; GENERIC FUNCTION sqlite-library-version (path)
+;;; ---------------------------------------------------------------------
+;;; check the SQLite library's version
+
+(defun sqlite-library-version (path)
+  (with-open-database (db path)
+    (execute-to-list db "SELECT sqlite_version()")))
+
+;;; (sqlite-library-version "/tmp/tmp.db")
+
 ;;; GENERIC FUNCTION sqlite-compile-options (path)
 ;;; ---------------------------------------------------------------------
 ;;; check the SQLite library's compile-time options
