@@ -18,15 +18,18 @@
 (defvar *startup-image-path* (merge-pathnames "assets/images/delectus-splash.png" *project-root-path*))
 
 
+;; (defun create-delectus-bundle (bundle-path)
+;;   (let* ((created-path (create-macos-application-bundle bundle-path
+;;                                                         :template-bundle (lw:pathname-location *bundle-template-path*)))
+;;          (sqlite-source-path (merge-pathnames "product/macos/lib/libsqlite3.dylib" *project-root-path*))
+;;          (sqlite-dest-path (merge-pathnames "product/macos/Delectus2.app/Contents/MacOS/libsqlite3.dylib"
+;;                                             *project-root-path*)))
+;;     (copy-file sqlite-source-path sqlite-dest-path)
+;;     created-path))
+
 (defun create-delectus-bundle (bundle-path)
-  (let* ((created-path (create-macos-application-bundle bundle-path
-                                                        :template-bundle (lw:pathname-location *bundle-template-path*)))
-         (sqlite-source-path (merge-pathnames "product/macos/lib/libsqlite3.dylib"
-                                              *project-root-path*))
-         (sqlite-dest-path (merge-pathnames "product/macos/Delectus2.app/Contents/MacOS/libsqlite3.dylib"
-                            *project-root-path*)))
-    (copy-file sqlite-source-path sqlite-dest-path)
-    created-path))
+  (create-macos-application-bundle bundle-path
+                                   :template-bundle (lw:pathname-location *bundle-template-path*)))
 
 ;;; inform the built app that it has been built
 (pushnew :delectus2 cl:*features*)

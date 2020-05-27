@@ -20,38 +20,6 @@
 
 (defun delectus-cocoa-application ()
   (let ((application (make-instance 'ui::delectus2-application)))
-    ;; initialize app parameters
-    (if (cl-user::delivered-application-p)
-        
-        ;; delivered app:
-        ;;   the delectus root path is the app bundle
-        (delectus:bind ((image-path (lw:lisp-image-name))
-                        (flag image-directory filename maybe-filename
-                              (uiop:split-unix-namestring-directory-components image-path))
-                        ;; two directories up from the image is the bundle path
-                        (bundle-path (system::executable-application-bundle-directory))
-                        (lib-path (merge-pathnames "Contents/MacOS/" bundle-path)))
-          (setf delectus:*delectus-root-pathname* bundle-path)
-          ;; find and set up the correct SQLite library
-          (pushnew lib-path
-                   cffi:*foreign-library-directories*
-                   :test #'equal)
-          (cffi:define-foreign-library sqlite3-lib
-            (:darwin "libsqlite3.dylib")
-            (:unix "libsqlite3.so")
-            (:windows "libsqlite3.dll"))
-          (cffi:use-foreign-library sqlite3-lib)
-          ;; does the sqlite library work?
-          (format t "~%SQLite library version: ~A~%"
-                  (fli:convert-from-foreign-string (delectus::sqlite3-libversion)))
-          ;; yay! it works!
-          )
-
-        ;; not a delivered app; development-time image:
-        (progn
-          ;;   the delectus root path is the project root
-          (setf delectus::*delectus-root-pathname*
-                (asdf:system-relative-pathname :delectus ""))))
     
     ;; debugging output on launch
     (format t "~%Delivered app? ~A~%"

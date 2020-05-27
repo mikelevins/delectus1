@@ -10,8 +10,6 @@
 
 (in-package :cl-user)
 
-(ql:quickload :cffi)
-
 ;;; redefined by the app builder to return t
 (defun delivered-application-p () nil)
 

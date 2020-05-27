@@ -42,8 +42,7 @@
 
 (defmethod initialize-instance :after ((pane item-card) &rest initargs 
                                        &key &allow-other-keys)
-  (let ((column-names (mapcar ()
-                              (columns-data pane))))
+  (let ((column-names ))
     ))
 
 ;;; ---------------------------------------------------------------------
