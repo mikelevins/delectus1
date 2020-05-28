@@ -120,6 +120,7 @@
 (defmethod empty? ((s null)) t)
 (defmethod empty? ((s list)) nil)
 (defmethod empty? ((s sequence)) (<= (length s) 0))
+(defmethod empty? ((m wb-map)) (fset:empty? m))
 
 ;;; ---------------------------------------------------------------------
 ;;;  string utilities

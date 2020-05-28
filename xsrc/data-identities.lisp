@@ -82,6 +82,7 @@
   (identity->string (makeid)))
 
 ;;; (time (make-identity-string))
+;;; (identity-string? (make-identity-string))
 
 (defmethod string->identity ((identity string))
   (assert (identity-string? identity)() "Not a valid identity-string: ~S" identity)
@@ -96,3 +97,4 @@
             '(simple-vector 16))))
 
 ;;; (string->identity (identity->string (makeid)))
+;;; (string->identity (make-identity-string))

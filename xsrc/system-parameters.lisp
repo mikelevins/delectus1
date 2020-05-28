@@ -27,33 +27,21 @@
 ;;; -----------
 
 (defparameter *delectus-table-name* "delectus")
-(defparameter *listnames-table-name* "listnames")
-(defparameter *comments-table-name* "comments")
-(defparameter *columns-table-name* "columns")
-(defparameter *items-table-name* "items")
+(defparameter *editlog-table-name* "editlog")
+;; (defparameter *listnames-table-name* "listnames")
+;; (defparameter *comments-table-name* "comments")
+;; (defparameter *columns-table-name* "columns")
+;; (defparameter *items-table-name* "items")
 
 ;;; column names
 ;;; ------------
 
 (defparameter *delectus-columns* [ :|listid| :|format| :|created| :|modified| :|next_revision| :|next_itemid|])
-(defparameter *listnames-metadata-columns* [:|revision| :|origin| :|timestamp| :|name|])
-(defparameter *comments-metadata-columns* [:|revision| :|origin| :|timestamp| :|comment|])
-(defparameter *columns-metadata-columns* [:|revision| :|origin| :|timestamp|])
-(defparameter *items-metadata-columns* [:|revision| :|origin| :|timestamp| :|itemid| :|deleted|])
-
-(defparameter *listid-column-name* "listid")
-(defparameter *format-column-name* "format")
-(defparameter *created-column-name* "created")
-(defparameter *modified-column-name* "modified")
-(defparameter *next-revision-column-name* "next_revision")
-(defparameter *next-itemid-column-name* "next_itemid")
-(defparameter *revision-column-name* "revision")
-(defparameter *origin-column-name* "origin")
-(defparameter *timestamp-column-name* "timestamp")
-(defparameter *name-column-name* "name")
-(defparameter *comment-column-name* "comment")
-(defparameter *itemid-column-name* "itemid")
-(defparameter *deleted-column-name* "deleted")
+(defparameter *editlog-columns* [ :|target| :|origin| :|revision| :|order| :|timestamp| :|data| ])
+;; (defparameter *listnames-metadata-columns* [:|revision| :|origin| :|timestamp| :|name|])
+;; (defparameter *comments-metadata-columns* [:|revision| :|origin| :|timestamp| :|comment|])
+;; (defparameter *columns-metadata-columns* [:|revision| :|origin| :|timestamp|])
+;; (defparameter *items-metadata-columns* [:|revision| :|origin| :|timestamp| :|itemid| :|deleted|])
 
 ;;; column parameters
 ;;; -----------------
