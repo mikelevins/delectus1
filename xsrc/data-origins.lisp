@@ -16,13 +16,16 @@
 ;;; An origin is a 64-bit signed integer that identifies where an op
 ;;; came from. We compute one each time Delectus opens a file.
 ;;;
-;;; We compute an origin by:
+;;; We compute an origin by doing:
+;;;
 ;;; 1. concatenate:
 ;;; - the process identity
 ;;; - ":"
 ;;; - the absolute pathname of the list file
+;;;
 ;;; 2. hash the resulting string with SHA256
-;;; 3. return the first 128 bits of the hash; this is the origin value
+;;;
+;;; 3. return the first 16 bytes of the hash; this is the origin value
 
 (defmethod make-origin-string ((process-id vector)(list-file pathname))
   (assert (uiop/pathname:absolute-pathname-p list-file)()

@@ -117,5 +117,5 @@
 (defmethod sqlite-table-column-info ((path string) (table-name string))
   (sqlite-table-column-info (pathname path) table-name))
 
-;;; (sqlite-table-column-info "/Users/mikel/Desktop/testlist.delectus2" "items")
+;;; (sqlite-table-column-info "/Users/mikel/Desktop/Movies.delectus2" "items")
 

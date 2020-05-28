@@ -56,9 +56,8 @@
 (defparameter +delectus-identity-string-length+ 22)
 
 (defmethod identity->string ((id vector))
-  (assert (identity id)() "Not a valid identity: ~S" id)
-  (subseq (string-downcase
-           (binascii:encode-base64 id))
+  (assert (identity? id)() "Not a valid identity: ~S" id)
+  (subseq (binascii:encode-base64 id)
           0 +delectus-identity-string-length+))
 
 ;;; (identity->string (makeid))
@@ -68,7 +67,17 @@
 
 ;;; (time (make-identity-string))
 
+(defmethod identity-string? ((thing string))
+  (let ((result t))
+    (block checking
+      (loop for i from 0 below (length thing)
+         do (unless (find (elt thing i) binascii::*base64-encode-table*)
+              (setf result nil)
+              (return-from checking nil))))
+    result))
+
 (defmethod string->identity ((identity string))
+  (assert (identity-string? identity)() "Not a valid identity string: ~S" identity)
   (coerce (binascii:decode-base64 identity)
           '(simple-vector 16)))
 
