@@ -21,12 +21,14 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     (:file "system-syntax")         ; syntax for map literals
-                                     (:file "system-bind")           ; more compact binding of multiple values
-                                     (:file "system-utils")          ; general-purpose helpers
-                                     (:file "system-parameters")     ; application globals
-                                     (:file "data-identities")       ; delectus-specific UUID format
-                                     (:file "system-node")           ; fetching and saving the node id
+                                     (:file "system-syntax")           ; syntax for map literals
+                                     (:file "system-bind")             ; more compact binding of multiple values
+                                     (:file "system-utils")            ; general-purpose helpers
+                                     (:file "system-parameters")       ; application globals
+                                     (:file "data-identities")         ; delectus-specific UUID format
+                                     (:file "system-node")             ; fetching and saving the node id
+                                     (:file "system-process-identity") ; unique id of a running Delectus session
+                                     (:file "data-origins")            ; identifiers for Delectus ops
                                      ))))
 
 (defun load-delectus ()
