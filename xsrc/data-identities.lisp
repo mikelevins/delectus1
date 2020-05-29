@@ -21,10 +21,13 @@
 
 (in-package #:delectus)
 
+(defparameter +identity-vector-length+ 16)
+
 (defmethod identity? (thing) nil)
 
 (defmethod identity? ((thing vector))
-  (and (vectorp thing)
+  (and (= +identity-vector-length+
+          (length thing))
        (every (lambda (x)(typep x '(unsigned-byte 8)))
               thing)
        t))
@@ -51,7 +54,7 @@
 ;;; ---------------------------------------------------------------------
 ;;; identity strings
 ;;; ---------------------------------------------------------------------
-;;; an identity-string is a base64-encoded identity.
+;;; an identity-string is the first 22 characters of a base64-encoded identity.
 
 (defparameter +delectus-identity-string-length+ 22)
 
@@ -67,14 +70,19 @@
 
 ;;; (time (make-identity-string))
 
+(defmethod identity-string? (thing) nil)
+
 (defmethod identity-string? ((thing string))
-  (let ((result t))
-    (block checking
-      (loop for i from 0 below (length thing)
-         do (unless (find (elt thing i) binascii::*base64-encode-table*)
-              (setf result nil)
-              (return-from checking nil))))
-    result))
+  (if (not (equal +delectus-identity-string-length+
+                  (length thing)))
+      nil
+      (let ((result t))
+        (block checking
+          (loop for i from 0 below (length thing)
+             do (unless (find (elt thing i) binascii::*base64-encode-table*)
+                  (setf result nil)
+                  (return-from checking nil))))
+        result)))
 
 (defmethod string->identity ((identity string))
   (assert (identity-string? identity)() "Not a valid identity string: ~S" identity)

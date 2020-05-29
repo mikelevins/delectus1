@@ -27,23 +27,76 @@
 ;;;
 ;;; 3. return the first 16 bytes of the hash; this is the origin value
 
-(defmethod make-origin-string ((process-id vector)(list-file pathname))
-  (assert (uiop/pathname:absolute-pathname-p list-file)()
-          "Expected a full pathname; found ~S" list-file)
-  (let ((pid (identity->string process-id)))
-    (concatenate 'string
-                 pid
-                 ":"
-                 (namestring list-file))))
+;;; ---------------------------------------------------------------------
+;;; origins
+;;; ---------------------------------------------------------------------
 
-;;; (make-origin-string (process-identity) (pathname "/Users/mikel/.emacs"))
+(defparameter +origin-vector-length+ 16)
 
 (defmethod make-origin ((process-id vector)(list-file pathname))
-  ;; hash the origin string, then take the first 16 bytes
-  (coerce (subseq (ironclad:digest-sequence
-                   :sha256
-                   (babel:string-to-octets (make-origin-string process-id list-file)))
-                  0 16)
-          '(simple-vector 16)))
+  (let* ((pidstr (identity->string process-id))
+         (origstr (concatenate 'string
+                               pidstr
+                               ":"
+                               (namestring list-file))))
+    (coerce (subseq (ironclad:digest-sequence
+                     :sha256
+                     (babel:string-to-octets origstr))
+                    0 16)
+            '(simple-vector 16))))
 
 ;;; (make-origin (process-identity) (pathname "/Users/mikel/.emacs"))
+
+(defmethod origin? (thing) nil)
+
+(defmethod origin? ((thing vector))
+  (and (= +origin-vector-length+
+          (length thing))
+       (every (lambda (x)(typep x '(unsigned-byte 8)))
+              thing)
+       t))
+
+;;; (origin? (make-origin (process-identity) (path "~/.bashrc")))
+
+;;; ---------------------------------------------------------------------
+;;; origin strings
+;;; ---------------------------------------------------------------------
+;;; an origin-string is the first 22 characters of a base64-encoded origin.
+
+(defparameter +delectus-origin-string-length+ 22)
+
+(defmethod origin->string ((origin vector))
+  (assert (origin? origin)() "Not a valid origin: ~S" origin)
+  (subseq (binascii:encode-base64 origin)
+          0 +delectus-origin-string-length+))
+
+;;; (origin->string (make-origin (process-identity) (path "~/.bashrc")))
+
+(defmethod make-origin-string ((process-id vector)(list-file pathname))
+  (origin->string (make-origin process-id list-file)))
+
+;;; (time (make-origin-string (process-identity) (path "~/.bashrc")))
+
+(defmethod origin-string? (thing) nil)
+
+(defmethod origin-string? ((thing string))
+  (if (not (equal +delectus-origin-string-length+
+                  (length thing)))
+      nil
+      (let ((result t))
+        (block checking
+          (loop for i from 0 below (length thing)
+             do (unless (find (elt thing i) binascii::*base64-encode-table*)
+                  (setf result nil)
+                  (return-from checking nil))))
+        result)))
+
+;;; (origin-string? (make-origin-string (process-identity) (path "~/.bashrc")))
+
+(defmethod string->origin ((origin-string string))
+  (assert (origin-string? origin-string)() "Not a valid origin string: ~S" origin-string)
+  (coerce (binascii:decode-base64 origin-string)
+          '(simple-vector 16)))
+
+;;; (string->origin (origin->string (make-origin (process-identity) (path "~/.bashrc"))))
+;;; (string->origin (make-origin-string (process-identity) (path "~/.bashrc")))

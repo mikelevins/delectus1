@@ -25,9 +25,37 @@
 ;;;   operate on a database handle, and so needs no special
 ;;;   protection from enclosing database forms.
 
+;;; =====================================================================
+;;; revisions
+;;; =====================================================================
+
+;;; return the next revision number to use for the specified op target
+(defmethod db-get-next-revision ((db sqlite-handle) (target string))
+  (bind ((sql vals (sqlgen-get-next-revision target))
+         (rev (apply 'execute-single db sql vals)))
+    (if rev
+        (1+ rev)
+        0)))
+
+;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
+;;; (with-open-database (db $testfile-path) (db-get-next-revision db "listname"))
 
 ;;; =====================================================================
-;;; the list file
+;;; orders
+;;; =====================================================================
+
+(defmethod db-get-next-order ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-next-order))
+         (order (apply 'execute-single db sql vals)))
+    (if order
+        (+ order *op-order-interval*)
+        *minimum-op-order*)))
+
+;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
+;;; (with-open-database (db $testfile-path) (db-get-next-order db))
+
+;;; =====================================================================
+;;; creating the list file
 ;;; =====================================================================
 
 (defmethod create-delectus-file ((db-path pathname)
@@ -44,24 +72,23 @@
         (db-create-delectus-table db listid format)
         (db-create-editlog-table db)
 
-        ;; (when create-default-userdata
-        ;;   (let* ((origin (make-origin (delectus-node-identity)(getpid) db-path))
-        ;;          (default-column (column-description :label (make-column-label)
-        ;;                                              :name "Item"
-        ;;                                              :order 10.0
-        ;;                                              :sort :null
-        ;;                                              :title :false
-        ;;                                              :subtitle :false
-        ;;                                              :deleted :false))
-        ;;          (default-column-descriptions (list default-column))
-        ;;          (default-column-label (getf default-column :|label|)))
-        ;;     (db-ensure-columns-exist db default-column-descriptions)
-        ;;     (db-insert-listname db :origin origin :timestamp (delectus-timestamp-now) :name listname)
-        ;;     (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
-        ;;                        :column-descriptions default-column-descriptions)
-        ;;     (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
-        ;;                     :column-values [default-column-label nil])
-        ;;     ))
+        (when create-default-userdata
+          (let* ((origin (make-origin (process-identity) db-path))
+                 (default-column (column-description :label (make-column-label)
+                                                     :name "Item"
+                                                     :order 10.0
+                                                     :sort :null
+                                                     :title :false
+                                                     :subtitle :false
+                                                     :deleted :false))
+                 (default-column-descriptions (list default-column))
+                 (default-column-label (getf default-column :|label|)))
+            ;; (db-insert-listname db :origin origin :timestamp (delectus-timestamp-now) :name listname)
+            ;; (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
+            ;;                    :column-descriptions default-column-descriptions)
+            ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
+            ;;                 :column-values [default-column-label nil])
+            ))
 
         )))
   db-path)

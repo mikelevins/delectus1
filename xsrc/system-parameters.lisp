@@ -47,8 +47,13 @@
 ;;; -----------------
 
 (defparameter *maximum-column-count* 200) ; chosen to be below common database limits
-(defparameter *column-order-interval* 10.0) ; default interval between order numbers autoassigned to new columns
-(defparameter *minimum-column-order* 10.0)
+(defparameter *column-order-interval* (coerce 100.0 'double-float))
+(defparameter *minimum-column-order* (coerce 100.0 'double-float))
 (defparameter *default-initial-column-order* *minimum-column-order*)
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
 
+;;; op parameters
+;;; -----------------
+
+(defparameter *minimum-op-order* (coerce 100.0 'double-float))
+(defparameter *op-order-interval* (coerce 100.0 'double-float))

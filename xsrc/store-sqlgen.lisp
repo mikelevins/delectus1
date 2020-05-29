@@ -56,3 +56,24 @@
         (|`data`| :type 'text)))))
 
 ;;; (sqlgen-create-editlog-table)
+
+
+;;; ---------------------------------------------------------------------
+;;; getting next revision and order
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-next-order ()
+  (yield
+   (select ((:max :|`order`|))
+     (from :editlog))))
+
+;;; (sqlgen-get-next-order)
+
+(defun sqlgen-get-next-revision (target)
+  (yield
+   (select ((:max :|`revision`|))
+     (where (:= :|`target`| target))
+     (from :editlog))))
+
+;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
+;;; (sqlgen-get-next-revision "listname")

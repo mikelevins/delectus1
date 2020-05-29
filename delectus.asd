@@ -36,6 +36,7 @@
                                      (:file "data-column-descriptions") 
                                      (:file "store-sqlgen")             ; generating SQL for use with list files
                                      (:file "store-tables")             ; creating Delectus tables
+                                     (:file "store-editlog")            ; operations on the editlog
                                      (:file "store-listfile")           ; creating Delectus list files
                                      ))))
 
