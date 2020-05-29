@@ -16,5 +16,6 @@
   (assert (typep order 'double-float)() "Invalid order in ~S" order)
   (assert (stringp name)() "Invalid list name in ~S" name)
   (bind ((timestamp (or timestamp (delectus-timestamp-now)))
-         (sql vals (sqlgen-insert-listname origin revision order timestamp name)))
+         (name-json (jonathan:to-json name))
+         (sql vals (sqlgen-insert-listname origin revision order timestamp name-json)))
     (apply 'execute-non-query db sql vals)))
