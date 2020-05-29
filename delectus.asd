@@ -34,6 +34,7 @@
                                      (:file "store-column-info")        ; operating on SQLite files
                                      (:file "store-sqlite")             ; operating on SQLite files
                                      (:file "data-column-descriptions") 
+                                     (:file "store-sqlgen")             ; generating SQL for use with list files
                                      ))))
 
 (defun load-delectus ()
