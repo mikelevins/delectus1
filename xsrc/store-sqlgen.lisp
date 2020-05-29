@@ -77,3 +77,20 @@
 
 ;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
 ;;; (sqlgen-get-next-revision "listname")
+
+;;; ---------------------------------------------------------------------
+;;; inserting ops
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-insert-listname (origin revision order timestamp name)
+  (yield
+   (insert-into :editlog
+     (set= :|`target`| "listname"
+           :|`origin`| origin
+           :|`revision`| revision
+           :|`order`| order
+           :|`timestamp`| timestamp
+           :|`data`| name))))
+
+;;; (sqlgen-insert-listname (make-origin-string (process-identity) (path "~/.emacs")) 0 100.0 (delectus-timestamp-now) "Test")
+

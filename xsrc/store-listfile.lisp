@@ -73,17 +73,20 @@
         (db-create-editlog-table db)
 
         (when create-default-userdata
-          (let* ((origin (make-origin (process-identity) db-path))
+          (let* ((origin (make-origin-string (process-identity) db-path))
+                 (listname-order *minimum-op-order*)
+                 (listname-revision (db-get-next-revision db "listname"))
                  (default-column (column-description :label (make-column-label)
                                                      :name "Item"
-                                                     :order 10.0
+                                                     :order *minimum-column-order*
                                                      :sort :null
                                                      :title :false
                                                      :subtitle :false
                                                      :deleted :false))
                  (default-column-descriptions (list default-column))
                  (default-column-label (getf default-column :|label|)))
-            ;; (db-insert-listname db :origin origin :timestamp (delectus-timestamp-now) :name listname)
+            (db-insert-listname db :origin origin :revision listname-revision :order listname-order
+                                :timestamp (delectus-timestamp-now) :name listname)
             ;; (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
             ;;                    :column-descriptions default-column-descriptions)
             ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
