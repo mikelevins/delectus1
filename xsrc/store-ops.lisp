@@ -10,6 +10,10 @@
 
 (in-package #:delectus)
 
+;;; ---------------------------------------------------------------------
+;;; op input validation
+;;; ---------------------------------------------------------------------
+
 (defun db-ensure-origin-string (db thing)
   (cond
     ((null thing)
@@ -53,6 +57,16 @@
     (t (error "Invalid listname in ~S; expected a string."
               thing))))
 
+(defun db-ensure-comment-string (db thing)
+  (cond
+    ((stringp thing) thing)
+    (t (error "Invalid comment text in ~S; expected a string."
+              thing))))
+
+;;; ---------------------------------------------------------------------
+;;; listname op
+;;; ---------------------------------------------------------------------
+
 (defmethod db-insert-listname-op ((db sqlite-handle)
                                   &key
                                     origin
@@ -60,13 +74,40 @@
                                     item-order
                                     timestamp
                                     listname)
-  (db-ensure-origin-string db origin)
-  (db-ensure-revision-number db revision)
-  (db-ensure-item-order-number db item-order)
-  (db-ensure-timestamp db timestamp)
-  (db-ensure-listname-string db listname)
-  (bind ((timestamp (or timestamp (delectus-timestamp-now)))
+  (bind ((origin (db-ensure-origin-string db origin))
+         (revision (db-ensure-revision-number db revision))
+         (item-order (db-ensure-item-order-number db item-order))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (listname (db-ensure-listname-string db listname))
          (name-json (jonathan:to-json listname))
-         (sql vals (sqlgen-insert-listname origin revision item-order timestamp name-json)))
+         (sql vals (sqlgen-insert-listname-op origin revision item-order timestamp name-json)))
     (apply 'execute-non-query db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; comment op
+;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-comment-op ((db sqlite-handle)
+                                 &key
+                                   origin
+                                   revision
+                                   item-order
+                                   timestamp
+                                   comment)
+  (bind ((origin (db-ensure-origin-string db origin))
+         (revision (db-ensure-revision-number db revision))
+         (item-order (db-ensure-item-order-number db item-order))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (comment (db-ensure-comment-string db comment))
+         (comment-json (jonathan:to-json comment))
+         (sql vals (sqlgen-insert-comment-op origin revision item-order timestamp comment-json)))
+    (apply 'execute-non-query db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; columns op
+;;; ---------------------------------------------------------------------
+
+;;; ---------------------------------------------------------------------
+;;; item op
+;;; ---------------------------------------------------------------------
 

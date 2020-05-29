@@ -74,8 +74,6 @@
 
         (when create-default-userdata
           (let* ((origin (make-origin-string (process-identity) db-path))
-                 (listname-order *minimum-op-order*)
-                 (listname-revision (db-get-next-revision db "listname"))
                  (default-column (column-description :label (make-column-label)
                                                      :name "Item"
                                                      :order *minimum-column-order*
@@ -85,8 +83,17 @@
                                                      :deleted :false))
                  (default-column-descriptions (list default-column))
                  (default-column-label (getf default-column :|label|)))
-            (db-insert-listname-op db :origin origin :revision listname-revision :item-order listname-order
-                                   :timestamp (delectus-timestamp-now) :listname listname)
+            ;; insert listname op
+            (let* ((listname-order *minimum-op-order*)
+                   (listname-revision (db-get-next-revision db "listname")))
+              (db-insert-listname-op db :origin origin :revision listname-revision :item-order listname-order
+                                     :timestamp (delectus-timestamp-now) :listname listname))
+            ;; insert comment op
+            (let* ((comment-order (db-get-next-item-order db))
+                   (comment-revision (db-get-next-revision db "comment"))
+                   (comment-text "A Delectus List"))
+              (db-insert-comment-op db :origin origin :revision comment-revision :item-order comment-order
+                                    :timestamp (delectus-timestamp-now) :comment comment-text))
             ;; (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
             ;;                    :column-descriptions default-column-descriptions)
             ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)

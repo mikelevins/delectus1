@@ -82,7 +82,10 @@
 ;;; inserting ops
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-insert-listname (origin revision order timestamp name)
+;;; listname op
+;;; -----------
+
+(defun sqlgen-insert-listname-op (origin revision order timestamp name)
   (yield
    (insert-into :editlog
      (set= :|`target`| "listname"
@@ -93,4 +96,19 @@
            :|`data`| name))))
 
 ;;; (sqlgen-insert-listname (make-origin-string (process-identity) (path "~/.emacs")) 0 100.0 (delectus-timestamp-now) "Test")
+
+;;; comment op
+;;; -----------
+
+(defun sqlgen-insert-comment-op (origin revision order timestamp comment)
+  (yield
+   (insert-into :editlog
+     (set= :|`target`| "comment"
+           :|`origin`| origin
+           :|`revision`| revision
+           :|`order`| order
+           :|`timestamp`| timestamp
+           :|`data`| comment))))
+
+;;; (sqlgen-insert-comment (make-origin-string (process-identity) (path "~/.emacs")) 0 100.0 (delectus-timestamp-now) "A generic test list.")
 
