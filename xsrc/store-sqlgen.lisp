@@ -48,11 +48,11 @@
 (defun sqlgen-create-editlog-table ()
   (yield
    (create-table :editlog
-       ((target :type 'text)
-        (origin :type 'text)
-        (revision :type 'integer)
-        (order :type 'real)
-        (timestamp :type 'integer)
-        (data :type 'text)))))
+       ((|`target`| :type 'text)
+        (|`origin`| :type 'text)
+        (|`revision`| :type 'integer)
+        (|`order`| :type 'real)
+        (|`timestamp`| :type 'integer)
+        (|`data`| :type 'text)))))
 
 ;;; (sqlgen-create-editlog-table)

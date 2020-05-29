@@ -35,6 +35,8 @@
                                      (:file "store-sqlite")             ; operating on SQLite files
                                      (:file "data-column-descriptions") 
                                      (:file "store-sqlgen")             ; generating SQL for use with list files
+                                     (:file "store-tables")             ; creating Delectus tables
+                                     (:file "store-listfile")           ; creating Delectus list files
                                      ))))
 
 (defun load-delectus ()
