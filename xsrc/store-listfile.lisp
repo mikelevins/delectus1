@@ -44,15 +44,15 @@
 ;;; orders
 ;;; =====================================================================
 
-(defmethod db-get-next-order ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-next-order))
+(defmethod db-get-next-item-order ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-next-item-order))
          (order (apply 'execute-single db sql vals)))
     (if order
         (+ order *op-order-interval*)
         *minimum-op-order*)))
 
 ;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
-;;; (with-open-database (db $testfile-path) (db-get-next-order db))
+;;; (with-open-database (db $testfile-path) (db-get-next-item-order db))
 
 ;;; =====================================================================
 ;;; creating the list file
@@ -85,8 +85,8 @@
                                                      :deleted :false))
                  (default-column-descriptions (list default-column))
                  (default-column-label (getf default-column :|label|)))
-            (db-insert-listname db :origin origin :revision listname-revision :order listname-order
-                                :timestamp (delectus-timestamp-now) :name listname)
+            (db-insert-listname-op db :origin origin :revision listname-revision :item-order listname-order
+                                   :timestamp (delectus-timestamp-now) :listname listname)
             ;; (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
             ;;                    :column-descriptions default-column-descriptions)
             ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)

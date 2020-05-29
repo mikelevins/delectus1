@@ -62,12 +62,12 @@
 ;;; getting next revision and order
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-get-next-order ()
+(defun sqlgen-get-next-item-order ()
   (yield
    (select ((:max :|`order`|))
      (from :editlog))))
 
-;;; (sqlgen-get-next-order)
+;;; (sqlgen-get-next-item-order)
 
 (defun sqlgen-get-next-revision (target)
   (yield
