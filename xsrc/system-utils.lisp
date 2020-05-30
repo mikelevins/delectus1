@@ -47,6 +47,12 @@
 (defmethod drop ((count integer)(ls list))
   (subseq ls count))
 
+;;; stops at whichever input list is shorter
+(defmethod interleave ((keys list)(vals list))
+  (loop for k in keys
+     and v in vals
+     appending (list k v)))
+
 (defun remove-list-elements (remove-list from-list &key (test #'eql))
   (if (null remove-list)
       from-list

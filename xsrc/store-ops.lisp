@@ -107,6 +107,20 @@
 ;;; columns op
 ;;; ---------------------------------------------------------------------
 
+(defmethod db-insert-columns-op ((db sqlite-handle)
+                                 &key
+                                   origin
+                                   revision
+                                   timestamp
+                                   columns)
+  (bind ((origin (db-ensure-origin-string db origin))
+         (revision (db-ensure-revision-number db revision))
+         (item-order (db-ensure-item-order-number db item-order))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (columns-data (db-ensure-columns-data db columns))
+         (sql vals (sqlgen-insert-columns-op origin revision timestamp columns-data)))
+    (apply 'execute-non-query db sql vals)))
+
 ;;; ---------------------------------------------------------------------
 ;;; item op
 ;;; ---------------------------------------------------------------------

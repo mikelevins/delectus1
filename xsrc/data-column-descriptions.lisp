@@ -11,6 +11,15 @@
 
 (in-package #:delectus)
 
+(defparameter +column-description-keys+
+  [:|deleted|
+    :|label|
+    :|name| 
+    :|order|
+    :|sort|
+    :|subtitle|
+    :|title|])
+
 (defun column-description (&key
                              (label nil)
                              (name :null)
@@ -54,6 +63,15 @@
       :|subtitle| subtitle
       :|deleted| deleted]))
 
+(defmethod column-description? (thing) nil)
+
+(defmethod column-description? ((thing null)) nil)
+
+(defmethod column-description? ((thing list))
+  (and (evenp (length thing))
+       (every (lambda (k)(find k +column-description-keys+))
+              (loop for tail on thing by #'cddr collect (car tail)))))
+
 (defmethod column-description-label ((column-description list))
   (getf column-description :|label| nil))
 
@@ -80,3 +98,4 @@
 
 ;;; (column-description-to-json (column-description :label (make-column-label) :name "Item"))
 ;;; (column-description-label (column-description :label (make-column-label) :name "Item"))
+;;; (column-description? (column-description :label (make-column-label) :name "Item"))

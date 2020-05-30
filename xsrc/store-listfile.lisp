@@ -55,6 +55,22 @@
 ;;; (with-open-database (db $testfile-path) (db-get-next-item-order db))
 
 ;;; =====================================================================
+;;; columns data
+;;; =====================================================================
+
+;;; convert a list of column descriptons to JSON columns data
+
+(defun column-descriptions->data (column-descriptions)
+  (assert (every #'column-description? column-descriptions)()
+          "Invalid column description found in ~S" column-descriptions)
+  (let* ((clabels (mapcar #'column-description-label column-descriptions))
+         (ckeys (mapcar #'as-keyword clabels))
+         (cols-plist (interleave ckeys column-descriptions)))
+    (jonathan:to-json cols-plist)))
+
+;;; (column-descriptions->data [(column-description :label (make-column-label) :name "Item")])
+
+;;; =====================================================================
 ;;; creating the list file
 ;;; =====================================================================
 
@@ -94,8 +110,12 @@
                    (comment-text "A Delectus List"))
               (db-insert-comment-op db :origin origin :revision comment-revision :item-order comment-order
                                     :timestamp (delectus-timestamp-now) :comment comment-text))
-            ;; (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
-            ;;                    :column-descriptions default-column-descriptions)
+            (let* ((columns-order (db-get-next-item-order db))
+                   (columns-revision (db-get-next-revision db "columns"))
+                   (columns-data (column-descriptions->data default-column-descriptions)))
+              (db-insert-columns-op db :origin origin :revision columns-revision
+                                    :timestamp (delectus-timestamp-now)
+                                    :columns columns-data))
             ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
             ;;                 :column-values [default-column-label nil])
             ))
