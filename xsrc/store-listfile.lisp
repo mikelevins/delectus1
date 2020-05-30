@@ -119,9 +119,14 @@
                                     :columns columns-data))
             ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
             ;;                 :column-values [default-column-label nil])
-            ))
-
-        )))
+            (let* ((item-target (make-identity-string))
+                   (item-order (db-get-next-item-order db))
+                   (item-revision (db-get-next-revision db item-target))
+                   (item-data (jonathan:to-json [(as-keyword default-column-label)
+                                                 ""])))
+              (db-insert-item-op db :origin origin :revision item-revision
+                                 :timestamp (delectus-timestamp-now)
+                                 :data item-data)))))))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)

@@ -66,7 +66,13 @@
 (defun db-ensure-columns-data (db thing)
   (cond
     ((stringp thing) thing)
-    (t (error "Invalid columns data in ~S; expected a JSON string."
+    (t (error "Invalid columns data in ~S; expected a JSON object."
+              thing))))
+
+(defun db-ensure-item-data (db thing)
+  (cond
+    ((stringp thing) thing)
+    (t (error "Invalid item data in ~S; expected a JSON object."
               thing))))
 
 ;;; ---------------------------------------------------------------------
@@ -131,4 +137,19 @@
 ;;; ---------------------------------------------------------------------
 ;;; item op
 ;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-item-op ((db sqlite-handle)
+                              &key
+                                origin
+                                revision
+                                item-order
+                                timestamp
+                                data)
+  (bind ((origin (db-ensure-origin-string db origin))
+         (revision (db-ensure-revision-number db revision))
+         (item-order (db-ensure-item-order-number db item-order))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (data (db-ensure-item-data db data))
+         (sql vals (sqlgen-insert-item-op origin revision item-order timestamp data)))
+    (apply 'execute-non-query db sql vals)))
 

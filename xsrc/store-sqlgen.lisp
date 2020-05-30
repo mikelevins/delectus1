@@ -127,3 +127,18 @@
 
 ;;; (sqlgen-insert-columns-op (make-origin-string (process-identity) (path "~/.emacs")) 0 200.0 (delectus-timestamp-now) (column-descriptions->data [(column-description :label (make-column-label) :name "Item")]))
 
+;;; item op
+;;; -----------
+
+(defun sqlgen-insert-item-op (origin revision order timestamp data)
+  (yield
+   (insert-into :editlog
+     (set= :|`target`| "item"
+           :|`origin`| origin
+           :|`revision`| revision
+           :|`order`| order
+           :|`timestamp`| timestamp
+           :|`data`| data))))
+
+;;; (sqlgen-insert-item-op (make-origin-string (process-identity) (path "~/.emacs")) 0 200.0 (delectus-timestamp-now) (jonathan:to-json (jonathan:to-json [(as-keyword (make-column-label)) ""])))
+
