@@ -95,7 +95,7 @@
            :|`timestamp`| timestamp
            :|`data`| name))))
 
-;;; (sqlgen-insert-listname (make-origin-string (process-identity) (path "~/.emacs")) 0 100.0 (delectus-timestamp-now) "Test")
+;;; (sqlgen-insert-listname-op (make-origin-string (process-identity) (path "~/.emacs")) 0 100.0 (delectus-timestamp-now) "Test")
 
 ;;; comment op
 ;;; -----------
@@ -110,5 +110,20 @@
            :|`timestamp`| timestamp
            :|`data`| comment))))
 
-;;; (sqlgen-insert-comment (make-origin-string (process-identity) (path "~/.emacs")) 0 100.0 (delectus-timestamp-now) "A generic test list.")
+;;; (sqlgen-insert-comment-op (make-origin-string (process-identity) (path "~/.emacs")) 0 100.0 (delectus-timestamp-now) "A generic test list.")
+
+;;; columns op
+;;; -----------
+
+(defun sqlgen-insert-columns-op (origin revision order timestamp columns-data)
+  (yield
+   (insert-into :editlog
+     (set= :|`target`| "columns"
+           :|`origin`| origin
+           :|`revision`| revision
+           :|`order`| order
+           :|`timestamp`| timestamp
+           :|`data`| columns-data))))
+
+;;; (sqlgen-insert-columns-op (make-origin-string (process-identity) (path "~/.emacs")) 0 200.0 (delectus-timestamp-now) (column-descriptions->data [(column-description :label (make-column-label) :name "Item")]))
 

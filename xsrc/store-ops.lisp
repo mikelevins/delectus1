@@ -63,6 +63,12 @@
     (t (error "Invalid comment text in ~S; expected a string."
               thing))))
 
+(defun db-ensure-columns-data (db thing)
+  (cond
+    ((stringp thing) thing)
+    (t (error "Invalid columns data in ~S; expected a JSON string."
+              thing))))
+
 ;;; ---------------------------------------------------------------------
 ;;; listname op
 ;;; ---------------------------------------------------------------------
@@ -111,6 +117,7 @@
                                  &key
                                    origin
                                    revision
+                                   item-order
                                    timestamp
                                    columns)
   (bind ((origin (db-ensure-origin-string db origin))
@@ -118,7 +125,7 @@
          (item-order (db-ensure-item-order-number db item-order))
          (timestamp (db-ensure-timestamp db timestamp))
          (columns-data (db-ensure-columns-data db columns))
-         (sql vals (sqlgen-insert-columns-op origin revision timestamp columns-data)))
+         (sql vals (sqlgen-insert-columns-op origin revision item-order timestamp columns-data)))
     (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------

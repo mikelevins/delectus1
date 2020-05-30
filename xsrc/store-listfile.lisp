@@ -90,6 +90,7 @@
 
         (when create-default-userdata
           (let* ((origin (make-origin-string (process-identity) db-path))
+                 ;; used twice: in the columns op and in the item op
                  (default-column (column-description :label (make-column-label)
                                                      :name "Item"
                                                      :order *minimum-column-order*
