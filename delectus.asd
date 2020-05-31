@@ -39,7 +39,6 @@
                                      (:file "store-editlog")            ; operations on the editlog
                                      (:file "store-ops")                ; inserting and fetching ops
                                      (:file "store-listfile")           ; creating Delectus list files
-                                     (:file "data-csv")                 ; importing csv data
                                      ))))
 
 (defun load-delectus ()

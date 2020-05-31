@@ -5,36 +5,55 @@ This structure and format of the Delectus edit log
 
 == Overview
 
-The Delectus 2 *editlog* is a text file in *jsonl* format--that is, with a single JSON object per line--that serves as a record of all edits made to a given Delectus list. Delectus can serialize a live list file to an editlog, and can read an editlog to create a list file or merge edits from a remote copy of a list.
+The *edit log* is the single source of truth in Delectus 2. It's a causally-ordered log of *ops*, each of which asserts an *edit*--that is, a change to the state of a Delectus list. The state of the list at any specific time is just the sum of changes made by its history of edits.
 
-This document describes the format of the editlog.
+== Identities and origins
 
-== Organization
+=== Identities
 
-The editlog consists of a single *header object* followed by zero or more *op objects*.
+Delectus uses a type of value called an *identity* to uniquely identify several kinds of objects. An identity is the 16 bytes of a v4 (random) UUID.
 
-The *header object* specifies the unique identifier of the list, and its time of creation and last modification.
+Besides the raw 16 bytes, Delectus uses two string representations of identities:
 
-The *op objects* represents edits, one per object. Each one updates the state of the list. The current state of the list is the cumulative effect of all edits executed in order.
+* An *identity string* is the first 22 characters of the base64 encoding of the identity (the last two characters are always "==", so Delectus discards them).
 
-== The header object
+* An *identity label* is a string representation chosen to work well as a SQLite column label. An identity label is the letter "L" followed by the first 26 characters of the identity's base32-hex encoding. (Once again, the final six characters of the encoding will always be "=", so we discard them.)
 
-The fields of the header object are as follows:
-
-[cols="1,1,1,5",options="header"]
-.Header object
+[cols="1,5",options="header"]
+.Identity formats
 |===
-| Field | Delectus data | SQLite type | Description
-| `*listid*` | `identity` | `TEXT` | The unique ID of the list.
-| `*created*` | `timestamp` | `INTEGER`  | The time that the list was created.
-| `*modified*` | `timestamp` | `INTEGER`  | The last time that the list was modified.
+| Name | Format
+| *identity* | 16 bytes.
+| *identity string* | The first 22 characters of the base64 encoding of an *identity*.
+| *identity label* | "L" followed by the first 26 characters of the base32-hex encoding of an *identity*.
 |===
 
-== Op objects
+=== Origins
 
-An *op* is an assertion of change to some discrete aspect of the Delectus list. An *op object* is a JSON object in the editlog that represents an op.
+An *origin*, like an identity, is a 16-byte identifier, but it's computed differently. Delectus constructs an origin by hashing a *process identity* and a list file's pathname.
 
-There are four types of ops:
+A *process identity* is an *identity* computed by each Delectus process when it starts. It's used to distinguish the specific Delectus session from all others.
+
+When Delectus opens a list file, it computes an *origin* by the following method:
+
+. Convert the *process identity* to an *identity string*.
+. Append a colon to the end of the identity string, then append the list file's pathname.
+. Compute the SHA256 hash of the resulting string.
+. Return the first 16 bytes of the computed hash; this 16-byte value is the origin.
+
+Delectus attaches this origin value to each edit it makes to the open list file.
+
+[cols="1,5",options="header"]
+.Origin formats
+|===
+| Name | Format
+| *origin* | 16 bytes.
+| *origin string* | The first 22 characters of the base64 encoding of an *origin*.
+|===
+
+== Ops
+
+An *op* is a data structure that represents an edit to a Delectus list. There are four types of ops:
 
 [cols="1,5",options="header"]
 .Op types
@@ -46,44 +65,128 @@ There are four types of ops:
 | *item* | Defines the field values of a single list item.
 |===
 
-The bulk of the editlog--the file's entire contents after the initial header object, is made up of op objects, one per line. Each op object represents one of the four types of op, and each one asserts a change to the represented list--an *edit*.
+Each op in the log updates some element of the list--the name, comment, columns, or items. The state of each element is given by the latest op that targets it. The state of the list as a whole is the combined states of all list elements.
 
-All op objects share a common structure:
+The structure of an op is as follows:
+
 [cols="1,1,1,5",options="header"]
 .Op structure
 |===
 | Field | Delectus data | SQLite type | Description
-| `*target*` | `"listname"`, `"comment"`, `"columns"`, or an identity string | `TEXT` | The op's target--that is, the aspect of the list that the op changes.
+| `*target*` | `"listname"`, `"comment"`, `"columns"`, or an identity string | `TEXT` | The op's target--that is, the aspect of the list that the op updates.
 | `*origin*` | origin string | `TEXT`  | The `origin` string of the Delectus session that created the op.
 | `*revision*`  | integer  | `INTEGER` | The count of prior changes to the target.
-| `*order*`  | double float | `REAL` | The order in which the op was added to the editlog.
+| `*order*`  | double float | `REAL` | The order in which the op was added to the edit log.
 | `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred, according to the session that created the op.
 | `*data*`  | JSON object | `TEXT` | The new state of the target data.
 |===
 
-If the op's type is `"listname"`, `"comment"`,or `"columns"` then the value of the `target` field is just the name of the op type.
+=== Op fields
 
-If the op is an `"item"` op, though, then the `target` field contains an *identity string* that uniquely identifies the specific list item that it adds or changes.
+==== Target
 
-== Op data
+An op represents an edit that makes a change to a list element. `target` identifies the element to be changed.
 
-Each edit expresses its change by carrying with it the new data that replaces the previous value of its target. So, for example, a `"listname"` op carries a string in its `data` field that replaces the previous name of the list. A `"commnet"` op carries a string that becomes the new comment text.
+[cols="1,5",options="header"]
+.Valid `target` values
+|===
+| Target value | List element to update
+| `"listname"` | the name of the list
+| `"comment"` | the list's comment text
+| `"columns"` |  the definition of the list's columns
+| an *identity* string |   the data and metadata of a specified item
+|===
 
-The structures of the `data` field in the `"columns"` and `"item"` ops is slightly more complicated.
+If `target` isn't one of the strings `"listname"`, `"comment"`, or `"columns"`, then the op is an `item` op. In that case, `target` is the identity string of the affected list item.
 
-=== `columns` data
+==== Origin
 
-The `"columns"` op carries a definition of the list's columns, and of all defined attributes of each column. This definition is represented as a JSON `columns` object:
+The `origin` is a string that uniquely identifies the Delectus session that created the op. Because you can edit different copies of a list on different processes or devices, Delectus needs to be able to distinguish between edits from different sources. The `origin` field enables it to do that.
+
+An origin is the first 128 bits of a SHA256 hash of two inputs:
+
+. the *process identity* of the running Delectus process (an identity string computed by Delectus when it starts running).
+. the pathname of the listfile being edited.
+
+This hash uniquely identifies a particular Delectus process running on a particular device and editing a particular file on that device. Editing a different file from the same process or editing the same file from a different process yields a different origin.
+
+==== Revision
+
+The `revision` is an integer count of the number of changes made to the op's target before this one. Each time Delectus constructs an op it retrieves the maximum revision recorded for the op's target, increments that number by one, and stores it in the `revision` field of the new op.
+
+Concurrent edits can create duplicate revisions, but the tuple `(target, revision, origin)` is globally unique for each op.
+
+The `revision` also serves as a causal ordering mechanism for edits. A given revision number is always causally later than a lesser one, which enables Delectus to sort edits in causal order.
+
+Duplicate revisions represent concurrent edits. Delectus chooses which edit wins by sorting them by timestamp and origin string. The last edit wins. Delectus saves all edits, though, and users can browse through them and choose a different one if they prefer.
+
+==== Order
+
+The `order` is a floating-point number that records the order in which edits were added to a given file. When Delectus inserts the first op in a file, it assigns it the order `100.0`. The next op gets order `200.0`, and so on.
+
+The resulting order is (mostly) the same order that the items were added to the list. Delectus presents the list in this order if the user doesn't explicitly choose some other order by choosing a sort column.
+
+As with revision numbers, concurrent edits will introduce duplicate orders. That means that we may not be able to predict the order of two list items that were added in different processes, but the order will be deterministic and stable--it will be the same on every device.
+
+===== Limits on the order value
+
+The number of floating-point order values we can assign is limited by the precision offered by unsigned double floats. Double floats represent decimal numbers by dividing the range of numbers into chunks bounded by powers of two, and then dividing the chunks into a number of buckets. For double floats, the number of buckets is given by 2 to the 53rd power; that is, there are 9,007,199,254,740,992 possible floats between any two powers of two.
+
+Since the powers of two increase in magnitude, so do the gaps between them. Since the number of values representable in any chunk remains the same, the numbers we can represent get farther and farther apart. At some point, the gap between representable numbers becomes greater than the difference between two successive orders, and we can't represent any more orders.
+
+We want to choose round order numbers with a good number of values between them, in case we should need to insert new items or other ops between existing ones. (Delectus 2 does not presently perform such insertions, but may do so in a future version.)
+
+Supposing we use the order values given above--`100.0`, `200.0`, and so on--and supposing we would like to be able to use about a hundred positions in between each pair (that is, `101.0`, `102.0`, and so on), the greatest order value we can use and still satisfy this requirement is about 2^52, or 4,503,599,627,370,400.0. This limits the maximum number of items in a Delectus list to a hundredth of that figure, or around 45 trillion.
+
+In fact, limits on RAM, disk space, and SQLite parameters will prevent any real Delectus list from ever reaching that limit.
+
+
+==== Timestamp
+
+The `timestamp` is an integer that represents the number of microseconds since the UTC epoch. Delectus assigns this timestamp to each op at the time it's created.
+
+Timestamps are not perfectly reliable. Any two devices' clocks are likely to have some skew between them. Occasionally, a specific device's clock may be stopped or reset. These kinds of issues mean that the order of timestamps in the edit log may not represent with perfect accuracy the order in which ops were inserted.
+
+Fortunately, timestamps don't have to be perfectly accurate in order to serve the purposes for which Delectus uses them.
+
+Delectus uses timestamps for two purposes:
+
+. To sort ops deterministically into an order that users will usually find reasonable.
+. To break ties between concurrent edits in a predictable way.
+
+Neither of these uses require the timestamps to be perfectly accurate. Inaccurate timestamps will still break ties predictably (if surprisingly on occasion), and will still yield a grossly plausible total order for edits in a file. Some edits may appear out of order, but no data will be lost. The user can find any edit recorded by browsing the file's history, and can promote any historical edit to current.
+
+
+==== Data
+
+The `data` field contains the user-facing data associated with the op's target. The data is represented as a JSON value stored in a string. The precise format depends on the type of the op.
+
+Delectus uses JSON in `data` fields to represent user-visible data. In some values represented as JSON objects, it uses *identity labels* as keys. It uses identity labels specifically, and not identity string or plain identities, because identity labels are guaranteed to conform to SQLite's requirements on keys in JSON objects; other forms of identities are not.
+
+===== Listname data
+
+The `data` field in a `listname` op contains a JSON string value that becomes the new name of the list.
+
+===== Comment data
+
+The `data` field in a `comment` op contains a JSON string value that becomes the new comment text of the list.
+
+===== Columns data
+
+The `data` field in a `columns` op contains a JSON `columns` object that defines the list's columns and their attributes. When Delectus inserts a new `columns` op, it's updating the definition of the list's columns. The update may add columns, rename them, mark them deleted, change their order of presentation or the sort order of the list, and so on.
+
+If the `columns` object contains a column that isn't present in the list file, Delectus creates the missing column. If it's missing a column that that is present in the list file, Delectus interprets the missing columns as unchanged. This interpretation is necessary because Delectus merges columns ops from different files that may have different sets of columns defined at any given time. Delectus must be able to accept data from remote files that have columns that the local file doesn't have, or from remote files that don't have all of the local columns.
+
+Delectus never actually deletes a column from a list file, though it may mark a column deleted, and it may create a new list file from an old one by copying only the columns and items that are not marked deleted (this latter operation is known as *compacting* a list).
+
+The structure of the `columns` object is as follows:
 
 [subs=+quotes]
-.JSON `columns` object
 ----
 { _identity_label_ : _column_definition_, ... }
 ----
 
-The `columns` object is a map from *identity labels* to JSON `column` objects. Each identity label is the unique identifier of a column. Its value, the `column` object, is a JSON object that defines that specific column's attributes.
-
-The `column` object is defined as follows:
+The JSON object contains one entry for each defined column. The key of each entry is the column's unique *identity label*. The value is a JSON `column` object, defined as follows:
 
 [cols="1,1,5",options="header"]
 .JSON `column` object
@@ -98,23 +201,41 @@ The `column` object is defined as follows:
 | `*deleted*` | `Boolean` | Whether this column is marked deleted.
 |===
 
+Recall that an *identity* is a unique 16-byte value, and an *identity string* and *identity label* are strings that are uniquely convertible to and from the identity. The `column` object's `label` field contains the column's identity label, which can be converted to the column's unique identity.
 
-=== `item` data
+.*Why are column labels autogenerated?*
+****
 
-The `"item"` op carries the field values of the target item. Each field value belongs to a specific column, identified by the column's identity label.
+You might wonder why Delectus uses automatically-generated identities to label columns. Why not just use the names assigned by the user?
 
-The `"item"` op also carries a flag that specifies whether the target item has been marked deleted.
+There are two reasons:
 
-The `item` object is defined as follows:
+* First, if we use the user-assigned names to label the columns, then we must restrict column names to text that SQLite allows in column labels. If we don't stick to the lexical syntax that SQLite expects, then we have to handle column labels with special escapes.
 
-[cols="1,1,5",options="header"]
-.JSON `item` object
-|===
-| Field | Representation | Description
-| `*deleted*` | `Boolean` | Whether the item has been marked deleted.
-| `_identity_label_` | `JSON value` | The value of the field in the labeled column.
-|===
+* Second, if we use user-assigned names as column labels, then a user could create two different columns with the same label on different devices or processes, which would make merging different copies of the list a problem.
 
-The `item` object contains one entry for each of the list's columns. Each column is identified by its *identity label*. The value of the entry is a JSON value representing the current value of the labeled field of the item.
+To prevent such problems, Delectus automatically assigns an *identity label* to each newly-created column, and separately stores the user-assigned name in the `name` field of the `column` object that defines the column.
 
-Each identity label in the `item` object must be equal to one of the labels of the list's columns, as defined by the most recent `columns` op.
+As a bonus, this representation also means that changing the name of a column is quick and easy, and doesn't require any special work in SQLite.
+****
+
+===== Item data
+
+The `data` field in an `item` op contains a JSON object that specifies the item's field values and whether it's been marked deleted.
+
+An example of an item's `data` object might look like this:
+
+----
+{
+  'deleted' : false,
+  'LOABS3RP3MH5OJ1B4KSF5DJ2GI4' : 'Home Alone',
+  'LCLRQDDE0452HR28C92D0JUKHLK' : 'Macaulay Culkin',
+  'LQVKDNTB6MT6E9EGVAM5HBKE7GS' : 'Joe Pesci',
+}
+----
+
+The `'deleted'` field determines whether this specific item has been marked deleted.
+
+Each of the other keys is an *identity label* that identifies one of the item's columns. The corresponding value is the value of that column's field in the item.
+
+To find the current name of each column, we must look it up in the list's latest `columns` op.
