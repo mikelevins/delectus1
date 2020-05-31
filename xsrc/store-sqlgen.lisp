@@ -46,6 +46,32 @@
 ;;; getting next revision and order
 ;;; ---------------------------------------------------------------------
 
+(defun sqlgen-get-next-revision (target)
+  (cond
+    ((member target ["listnames" "comments" "columns"] :test #'equal)
+     (yield
+      (select ((:+ (:max :revision) 1))
+        (from target))))
+    ((identity? target)
+     (yield
+      (select ((:+ (:max :revision) 1))
+        (from :columns)
+        (where (:= :itemid target)))))
+    (t (error "Unrecognized target: ~S" target))))
+
+;;; (sqlgen-get-next-revision "listnames")
+;;; (sqlgen-get-next-revision "columns")
+;;; (setf $id (makeid))
+;;; (sqlgen-get-next-revision $id)
+
+
+(defun sqlgen-get-item-order ()
+  (yield
+   (select ((:+ (:max :item_order) 1))
+     (from :items))))
+
+;;; (sqlgen-get-item-order)
+
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops
 ;;; ---------------------------------------------------------------------

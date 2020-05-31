@@ -33,9 +33,7 @@
 (defmethod db-get-next-revision ((db sqlite-handle) (target string))
   (bind ((sql vals (sqlgen-get-next-revision target))
          (rev (apply 'execute-single db sql vals)))
-    (if rev
-        (1+ rev)
-        0)))
+    (or rev 0)))
 
 ;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
 ;;; (with-open-database (db $testfile-path) (db-get-next-revision db "listname"))
@@ -47,9 +45,7 @@
 (defmethod db-get-next-item-order ((db sqlite-handle))
   (bind ((sql vals (sqlgen-get-next-item-order))
          (order (apply 'execute-single db sql vals)))
-    (if order
-        (+ order *op-order-interval*)
-        *minimum-op-order*)))
+    (or order *minimum-op-order*)))
 
 ;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
 ;;; (with-open-database (db $testfile-path) (db-get-next-item-order db))

@@ -26,7 +26,7 @@
                                      (:file "system-utils")             ; general-purpose helpers
                                      (:file "system-parameters")        ; application globals
                                      (:file "data-identities")          ; delectus-specific UUID format
-                                     (:file "data-column-labels")          ; column-label strings
+                                     (:file "data-column-labels")       ; column-label strings
                                      (:file "system-process-identity")  ; unique id of a running Delectus session
                                      (:file "data-origins")             ; identifiers for Delectus ops
                                      (:file "data-timestamps")          ; Delectus-specific timestamps
@@ -35,8 +35,7 @@
                                      (:file "data-column-descriptions") 
                                      (:file "store-sqlgen")             ; generating SQL for use with list files
                                      (:file "store-tables")             ; creating Delectus tables
-                                     ;; (:file "store-editlog")            ; operations on the editlog
-                                     ;; (:file "store-ops")                ; inserting and fetching ops
+                                     ;; (:file "store-ops")             ; inserting and fetching ops
                                      (:file "store-listfile")           ; creating Delectus list files
                                      ))))
 
