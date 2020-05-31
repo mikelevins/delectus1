@@ -18,7 +18,7 @@
 ;;; query parameters
 ;;; ---------------------------------------------------------------------
 
-(defparameter *default-result-items-per-page* 25)
+(defparameter *default-result-items-per-page* 50)
 
 ;;; list-file parameters
 ;;; ---------------------------------------------------------------------
@@ -27,21 +27,19 @@
 ;;; -----------
 
 (defparameter *delectus-table-name* "delectus")
-(defparameter *editlog-table-name* "editlog")
-;; (defparameter *listnames-table-name* "listnames")
-;; (defparameter *comments-table-name* "comments")
-;; (defparameter *columns-table-name* "columns")
-;; (defparameter *items-table-name* "items")
+(defparameter *listnames-table-name* "listnames")
+(defparameter *comments-table-name* "comments")
+(defparameter *columns-table-name* "columns")
+(defparameter *items-table-name* "items")
 
 ;;; column names
 ;;; ------------
 
-(defparameter *delectus-columns* [ :|listid| :|format| :|created| :|modified| :|next_revision| :|next_itemid|])
-(defparameter *editlog-columns* [ :|target| :|origin| :|revision| :|order| :|timestamp| :|data| ])
-;; (defparameter *listnames-metadata-columns* [:|revision| :|origin| :|timestamp| :|name|])
-;; (defparameter *comments-metadata-columns* [:|revision| :|origin| :|timestamp| :|comment|])
-;; (defparameter *columns-metadata-columns* [:|revision| :|origin| :|timestamp|])
-;; (defparameter *items-metadata-columns* [:|revision| :|origin| :|timestamp| :|itemid| :|deleted|])
+(defparameter *delectus-columns* [ :|listid| :|format| :|created| :|modified| ])
+(defparameter *listnames-op-columns* [ :|origin| :|revision| :|timestamp| :|name| ])
+(defparameter *comments-op-columns* [ :|origin| :|revision| :|timestamp| :|comment| ])
+(defparameter *columns-op-columns* [ :|origin| :|revision| :|timestamp| ])
+(defparameter *items-op-columns* [ :|origin| :|revision| :|item-order| :|timestamp| :|itemid| :|deleted| ])
 
 ;;; column parameters
 ;;; -----------------
@@ -57,3 +55,5 @@
 
 (defparameter *minimum-op-order* (coerce 100.0 'double-float))
 (defparameter *op-order-interval* (coerce 100.0 'double-float))
+(defparameter *minimum-column-order* (coerce 100.0 'double-float))
+(defparameter *column-order-interval* (coerce 100.0 'double-float))

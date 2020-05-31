@@ -54,13 +54,13 @@
 ;;; ---------------------------------------------------------------------
 ;;; identity strings
 ;;; ---------------------------------------------------------------------
-;;; an identity-string is the first 22 characters of a base64-encoded identity.
+;;; an identity-string is the first 26 characters of a base43hex-encoded identity.
 
-(defparameter +delectus-identity-string-length+ 22)
+(defparameter +delectus-identity-string-length+ 26)
 
 (defmethod identity->string ((id vector))
   (assert (identity? id)() "Not a valid identity: ~S" id)
-  (subseq (binascii:encode-base64 id)
+  (subseq (binascii:encode-base32hex id)
           0 +delectus-identity-string-length+))
 
 ;;; (identity->string (makeid))
@@ -79,14 +79,14 @@
       (let ((result t))
         (block checking
           (loop for i from 0 below (length thing)
-             do (unless (find (elt thing i) binascii::*base64-encode-table*)
+             do (unless (find (elt thing i) binascii::*base32hex-encode-table*)
                   (setf result nil)
                   (return-from checking nil))))
         result)))
 
 (defmethod string->identity ((identity string))
   (assert (identity-string? identity)() "Not a valid identity string: ~S" identity)
-  (coerce (binascii:decode-base64 identity)
+  (coerce (binascii:decode-base32hex identity)
           '(simple-vector 16)))
 
 ;;; (string->identity (identity->string (makeid)))

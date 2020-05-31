@@ -13,17 +13,17 @@
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; An origin is a 64-bit signed integer that identifies where an op
-;;; came from. We compute one each time Delectus opens a file.
+;;; An origin is a 16-byte vector that identifies where an op came
+;;; from. We compute one each time Delectus opens a file.
 ;;;
 ;;; We compute an origin by doing:
 ;;;
-;;; 1. concatenate:
-;;; - the process identity
-;;; - ":"
-;;; - the absolute pathname of the list file
+;;; 1. concatenate to a string:
+;;;   - the process identity
+;;;   - ":"
+;;;   - the absolute pathname of the list file
 ;;;
-;;; 2. hash the resulting string with SHA256
+;;; 2. hash the concatenated string with SHA256
 ;;;
 ;;; 3. return the first 16 bytes of the hash; this is the origin value
 
@@ -58,45 +58,3 @@
 
 ;;; (origin? (make-origin (process-identity) (path "~/.bashrc")))
 
-;;; ---------------------------------------------------------------------
-;;; origin strings
-;;; ---------------------------------------------------------------------
-;;; an origin-string is the first 22 characters of a base64-encoded origin.
-
-(defparameter +delectus-origin-string-length+ 22)
-
-(defmethod origin->string ((origin vector))
-  (assert (origin? origin)() "Not a valid origin: ~S" origin)
-  (subseq (binascii:encode-base64 origin)
-          0 +delectus-origin-string-length+))
-
-;;; (origin->string (make-origin (process-identity) (path "~/.bashrc")))
-
-(defmethod make-origin-string ((process-id vector)(list-file pathname))
-  (origin->string (make-origin process-id list-file)))
-
-;;; (time (make-origin-string (process-identity) (path "~/.bashrc")))
-
-(defmethod origin-string? (thing) nil)
-
-(defmethod origin-string? ((thing string))
-  (if (not (equal +delectus-origin-string-length+
-                  (length thing)))
-      nil
-      (let ((result t))
-        (block checking
-          (loop for i from 0 below (length thing)
-             do (unless (find (elt thing i) binascii::*base64-encode-table*)
-                  (setf result nil)
-                  (return-from checking nil))))
-        result)))
-
-;;; (origin-string? (make-origin-string (process-identity) (path "~/.bashrc")))
-
-(defmethod string->origin ((origin-string string))
-  (assert (origin-string? origin-string)() "Not a valid origin string: ~S" origin-string)
-  (coerce (binascii:decode-base64 origin-string)
-          '(simple-vector 16)))
-
-;;; (string->origin (origin->string (make-origin (process-identity) (path "~/.bashrc"))))
-;;; (string->origin (make-origin-string (process-identity) (path "~/.bashrc")))

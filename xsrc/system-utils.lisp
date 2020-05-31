@@ -78,7 +78,6 @@
 ;;; (get-key { :a 1 :b 3} :name 'nope)
 ;;; (get-key { :a 1 :b 3 :name "Fred"} :name 'nope)
 
-
 (defmethod get-keys ((map fset:map))
   (fset:convert 'list (fset:domain map)))
 
@@ -89,7 +88,6 @@
   (loop for tail on map by (lambda (ls)(cddr ls)) collect (first tail)))
 
 ;;; (get-keys [:a 1 :b 3 :name "Fred"])
-
 
 (defmethod get-values ((map fset:map))
   (fset:convert 'list (fset:range map)))

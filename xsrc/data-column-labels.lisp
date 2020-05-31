@@ -37,12 +37,13 @@
   (assert (identity? id)() "Not a valid identity: ~S" id)
   (concatenate 'string
                "L"
-               (subseq (binascii:encode-base32hex id)
-                       0 (1- +column-label-length+))))
+               (identity->string id)))
 
 
 (defmethod identity->column-label ((id string))
-  (identity->column-label (string->identity id)))
+  (if (identity-string? id)
+      (concatenate 'string "L" id)
+      (error "Not a valid identity string: ~S" id)))
 
 (defun make-column-label ()
   (identity->column-label (makeid)))
@@ -62,7 +63,7 @@
 
 (defmethod column-label->identity-string ((lbl string))
   (assert (column-label? lbl)() "Not a valid column-label: ~S" lbl)
-  (identity->string (column-label->identity lbl)))
+  (subseq lbl 1))
 
 ;;; (setf $lbl (make-column-label))
 ;;; (column-label->identity-string $lbl)
