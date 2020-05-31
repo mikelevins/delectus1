@@ -33,11 +33,11 @@
                                      (:file "store-column-info")        ; column-info struct
                                      (:file "store-sqlite")             ; low-level SQLite operations
                                      (:file "data-column-descriptions") 
-                                     ;; (:file "store-sqlgen")             ; generating SQL for use with list files
-                                     ;; (:file "store-tables")             ; creating Delectus tables
+                                     (:file "store-sqlgen")             ; generating SQL for use with list files
+                                     (:file "store-tables")             ; creating Delectus tables
                                      ;; (:file "store-editlog")            ; operations on the editlog
                                      ;; (:file "store-ops")                ; inserting and fetching ops
-                                     ;; (:file "store-listfile")           ; creating Delectus list files
+                                     (:file "store-listfile")           ; creating Delectus list files
                                      ))))
 
 (defun load-delectus ()

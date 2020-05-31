@@ -86,47 +86,49 @@
     (with-open-database (db db-path)
       (with-transaction db
         (db-create-delectus-table db listid format)
-        (db-create-editlog-table db)
 
-        (when create-default-userdata
-          (let* ((origin (make-origin-string (process-identity) db-path))
-                 ;; used twice: in the columns op and in the item op
-                 (default-column (column-description :label (make-column-label)
-                                                     :name "Item"
-                                                     :order *minimum-column-order*
-                                                     :sort :null
-                                                     :title :false
-                                                     :subtitle :false
-                                                     :deleted :false))
-                 (default-column-descriptions (list default-column))
-                 (default-column-label (getf default-column :|label|)))
-            ;; insert listname op
-            (let* ((listname-order *minimum-op-order*)
-                   (listname-revision (db-get-next-revision db "listname")))
-              (db-insert-listname-op db :origin origin :revision listname-revision :item-order listname-order
-                                     :timestamp (delectus-timestamp-now) :listname listname))
-            ;; insert comment op
-            (let* ((comment-order (db-get-next-item-order db))
-                   (comment-revision (db-get-next-revision db "comment"))
-                   (comment-text "A Delectus List"))
-              (db-insert-comment-op db :origin origin :revision comment-revision :item-order comment-order
-                                    :timestamp (delectus-timestamp-now) :comment comment-text))
-            (let* ((columns-order (db-get-next-item-order db))
-                   (columns-revision (db-get-next-revision db "columns"))
-                   (columns-data (column-descriptions->data default-column-descriptions)))
-              (db-insert-columns-op db :origin origin :revision columns-revision
-                                    :timestamp (delectus-timestamp-now)
-                                    :columns columns-data))
-            ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
-            ;;                 :column-values [default-column-label nil])
-            (let* ((item-target (make-identity-string))
-                   (item-order (db-get-next-item-order db))
-                   (item-revision (db-get-next-revision db item-target))
-                   (item-data (jonathan:to-json [(as-keyword default-column-label)
-                                                 ""])))
-              (db-insert-item-op db :origin origin :revision item-revision
-                                 :timestamp (delectus-timestamp-now)
-                                 :data item-data)))))))
+        ;; (when create-default-userdata
+        ;;   (let* ((origin (make-origin-string (process-identity) db-path))
+        ;;          ;; used twice: in the columns op and in the item op
+        ;;          (default-column (column-description :label (make-column-label)
+        ;;                                              :name "Item"
+        ;;                                              :order *minimum-column-order*
+        ;;                                              :sort :null
+        ;;                                              :title :false
+        ;;                                              :subtitle :false
+        ;;                                              :deleted :false))
+        ;;          (default-column-descriptions (list default-column))
+        ;;          (default-column-label (getf default-column :|label|)))
+        ;;     ;; insert listname op
+        ;;     (let* ((listname-order *minimum-op-order*)
+        ;;            (listname-revision (db-get-next-revision db "listname")))
+        ;;       (db-insert-listname-op db :origin origin :revision listname-revision :item-order listname-order
+        ;;                              :timestamp (delectus-timestamp-now) :listname listname))
+        ;;     ;; insert comment op
+        ;;     (let* ((comment-order (db-get-next-item-order db))
+        ;;            (comment-revision (db-get-next-revision db "comment"))
+        ;;            (comment-text "A Delectus List"))
+        ;;       (db-insert-comment-op db :origin origin :revision comment-revision :item-order comment-order
+        ;;                             :timestamp (delectus-timestamp-now) :comment comment-text))
+        ;;     (let* ((columns-order (db-get-next-item-order db))
+        ;;            (columns-revision (db-get-next-revision db "columns"))
+        ;;            (columns-data (column-descriptions->data default-column-descriptions)))
+        ;;       (db-insert-columns-op db :origin origin :revision columns-revision
+        ;;                             :timestamp (delectus-timestamp-now)
+        ;;                             :columns columns-data))
+        ;;     ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
+        ;;     ;;                 :column-values [default-column-label nil])
+        ;;     (let* ((item-target (make-identity-string))
+        ;;            (item-order (db-get-next-item-order db))
+        ;;            (item-revision (db-get-next-revision db item-target))
+        ;;            (item-data (jonathan:to-json [(as-keyword default-column-label)
+        ;;                                          ""])))
+        ;;       (db-insert-item-op db :origin origin :revision item-revision
+        ;;                          :timestamp (delectus-timestamp-now)
+        ;;                          :data item-data))))
+
+
+        )))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)
