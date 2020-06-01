@@ -53,7 +53,7 @@
 ;;; op parameters
 ;;; -----------------
 
-(defparameter *minimum-op-order* (coerce 100.0 'double-float))
-(defparameter *op-order-interval* (coerce 100.0 'double-float))
-(defparameter *minimum-column-order* (coerce 100.0 'double-float))
-(defparameter *column-order-interval* (coerce 100.0 'double-float))
+(defparameter *minimum-item-order* (coerce 100.0 'double-float))
+(defparameter *item-order-interval* (coerce 100.0 'double-float))
+(defparameter *minimum-item-order* (coerce 100.0 'double-float))
+(defparameter *item-order-interval* (coerce 100.0 'double-float))

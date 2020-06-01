@@ -50,7 +50,6 @@
    (create-table :listnames
        ((origin :type 'blob)
         (revision :type 'integer)
-        (item_order :type 'real)
         (timestamp :type 'integer)
         (name :type 'text)))))
 
@@ -64,7 +63,6 @@
    (create-table :comments
        ((origin :type 'blob)
         (revision :type 'integer)
-        (item_order :type 'real)
         (timestamp :type 'integer)
         (comment :type 'text)))))
 
@@ -79,7 +77,6 @@
    (create-table :columns
        ((origin :type 'blob)
         (revision :type 'integer)
-        (item_order :type 'real)
         (timestamp :type 'integer)))))
 
 ;;; (sqlgen-create-columns-table)
@@ -107,13 +104,12 @@
 (defun sqlgen-get-next-revision (target)
   (cond
     ((member target ["listnames" "comments" "columns"] :test #'equal)
-     (yield
-      (select ((:+ (:max :revision) 1))
-        (from target))))
+     (values (format nil "SELECT MAX(revision)+1 FROM `~A`" target)
+             nil))
     ((identity? target)
      (yield
       (select ((:+ (:max :revision) 1))
-        (from :columns)
+        (from :items)
         (where (:= :itemid target)))))
     (t (error "Unrecognized target: ~S" target))))
 
@@ -124,7 +120,7 @@
 
 (defun sqlgen-get-next-item-order ()
   (yield
-   (select ((:+ (:max :item_order) 1))
+   (select ((:+ (:max :item_order) *item-order-interval*))
      (from :items))))
 
 ;;; (sqlgen-get-next-item-order)
@@ -133,3 +129,19 @@
 ;;; inserting ops
 ;;; ---------------------------------------------------------------------
 
+(defun sqlgen-insert-listname-op (origin revision timestamp name-json)
+  (yield
+   (insert-into :listnames
+     (set= :origin origin
+           :revision revision
+           :timestamp timestamp
+           :name name-json))))
+
+
+(defun sqlgen-insert-comment-op (origin revision timestamp comment-json)
+  (yield
+   (insert-into :comments
+     (set= :origin origin
+           :revision revision
+           :timestamp timestamp
+           :comment comment-json))))

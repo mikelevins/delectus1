@@ -35,7 +35,7 @@
                                      (:file "data-column-descriptions") 
                                      (:file "store-sqlgen")             ; generating SQL for use with list files
                                      (:file "store-tables")             ; creating Delectus tables
-                                     ;; (:file "store-ops")             ; inserting and fetching ops
+                                     (:file "store-ops")                ; inserting and fetching ops
                                      (:file "store-listfile")           ; creating Delectus list files
                                      ))))
 

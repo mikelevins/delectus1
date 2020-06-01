@@ -10,17 +10,17 @@
 
 (in-package #:delectus)
 
-;;; ---------------------------------------------------------------------
-;;; op input validation
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
+;;; input validation
+;;; =====================================================================
 
-(defun db-ensure-origin-string (db thing)
+(defun db-ensure-origin (db thing)
   (cond
     ((null thing)
-     (make-origin-string (process-identity)
-                         (sqlite::database-path db)))
-    ((origin-string? thing) thing)
-    (t (error "Invalid origin in ~S; expected an origin-string or nil."
+     (make-origin (process-identity)
+                  (sqlite::database-path db)))
+    ((origin? thing) thing)
+    (t (error "Invalid origin in ~S; expected an origin or nil."
               thing))))
 
 ;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
@@ -75,6 +75,10 @@
     (t (error "Invalid item data in ~S; expected a JSON object."
               thing))))
 
+;;; =====================================================================
+;;; inserting ops
+;;; =====================================================================
+
 ;;; ---------------------------------------------------------------------
 ;;; listname op
 ;;; ---------------------------------------------------------------------
@@ -86,13 +90,12 @@
                                     item-order
                                     timestamp
                                     listname)
-  (bind ((origin (db-ensure-origin-string db origin))
+  (bind ((origin (db-ensure-origin db origin))
          (revision (db-ensure-revision-number db revision))
-         (item-order (db-ensure-item-order-number db item-order))
          (timestamp (db-ensure-timestamp db timestamp))
          (listname (db-ensure-listname-string db listname))
          (name-json (jonathan:to-json listname))
-         (sql vals (sqlgen-insert-listname-op origin revision item-order timestamp name-json)))
+         (sql vals (sqlgen-insert-listname-op origin revision timestamp name-json)))
     (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -103,16 +106,14 @@
                                  &key
                                    origin
                                    revision
-                                   item-order
                                    timestamp
                                    comment)
-  (bind ((origin (db-ensure-origin-string db origin))
+  (bind ((origin (db-ensure-origin db origin))
          (revision (db-ensure-revision-number db revision))
-         (item-order (db-ensure-item-order-number db item-order))
          (timestamp (db-ensure-timestamp db timestamp))
          (comment (db-ensure-comment-string db comment))
          (comment-json (jonathan:to-json comment))
-         (sql vals (sqlgen-insert-comment-op origin revision item-order timestamp comment-json)))
+         (sql vals (sqlgen-insert-comment-op origin revision timestamp comment-json)))
     (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -126,12 +127,11 @@
                                    item-order
                                    timestamp
                                    columns)
-  (bind ((origin (db-ensure-origin-string db origin))
+  (bind ((origin (db-ensure-origin db origin))
          (revision (db-ensure-revision-number db revision))
-         (item-order (db-ensure-item-order-number db item-order))
          (timestamp (db-ensure-timestamp db timestamp))
          (columns-data (db-ensure-columns-data db columns))
-         (sql vals (sqlgen-insert-columns-op origin revision item-order timestamp columns-data)))
+         (sql vals (sqlgen-insert-columns-op origin revision timestamp columns-data)))
     (apply 'execute-non-query db sql vals)))
 
 ;;; ---------------------------------------------------------------------
@@ -145,7 +145,7 @@
                                 item-order
                                 timestamp
                                 data)
-  (bind ((origin (db-ensure-origin-string db origin))
+  (bind ((origin (db-ensure-origin db origin))
          (revision (db-ensure-revision-number db revision))
          (item-order (db-ensure-item-order-number db item-order))
          (timestamp (db-ensure-timestamp db timestamp))
