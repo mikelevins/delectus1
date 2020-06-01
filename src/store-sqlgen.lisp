@@ -98,6 +98,25 @@
 ;;; (sqlgen-create-items-table)
 
 ;;; ---------------------------------------------------------------------
+;;; getting and setting times
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-get-created-time ()
+  (yield
+   (select :created
+     (from :delectus))))
+
+(defun sqlgen-get-modified-time ()
+  (yield
+   (select :modified
+     (from :delectus))))
+
+(defun sqlgen-set-modified-time (timestamp)
+  (yield
+   (update :delectus
+     (set= :modified timestamp))))
+
+;;; ---------------------------------------------------------------------
 ;;; getting next revision and order
 ;;; ---------------------------------------------------------------------
 

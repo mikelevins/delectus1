@@ -25,6 +25,7 @@
 ;;;   operate on a database handle, and so needs no special
 ;;;   protection from enclosing database forms.
 
+
 ;;; =====================================================================
 ;;; revisions
 ;;; =====================================================================
@@ -45,8 +46,9 @@
 ;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
 ;;; (with-open-database (db $testfile-path) (db-get-next-revision db "listnames"))
 
+
 ;;; =====================================================================
-;;; orders
+;;; item orders
 ;;; =====================================================================
 
 (defmethod db-get-next-item-order ((db sqlite-handle))
@@ -56,6 +58,7 @@
 
 ;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
 ;;; (with-open-database (db $testfile-path) (db-get-next-item-order db))
+
 
 ;;; =====================================================================
 ;;; columns data
@@ -79,6 +82,45 @@
       (loop for label in missing-items-column-labels
          do (bind ((sql vals (sqlgen-add-items-userdata-column label)))
               (apply 'execute-non-query db sql vals))))))
+
+
+;;; =====================================================================
+;;; created and modified times
+;;; =====================================================================
+
+(defmethod db-get-created-time ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-created-time)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod get-created-time ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-created-time db)))
+
+;;; (defparameter $movies-path (path "~/Desktop/Movies.delectus2"))
+;;; (delectus-timestamp->local-time (get-created-time $movies-path))
+
+(defmethod db-get-modified-time ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-modified-time)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod get-modified-time ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-modified-time db)))
+
+;;; (defparameter $movies-path (path "~/Desktop/Movies.delectus2"))
+;;; (delectus-timestamp->local-time (get-modified-time $movies-path))
+
+(defmethod db-set-modified-time ((db sqlite-handle)(timestamp integer))
+  (bind ((sql vals (sqlgen-set-modified-time timestamp)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod set-modified-time ((db-path pathname)(timestamp integer))
+  (with-open-database (db db-path)
+    (db-set-modified-time db timestamp)))
+
+;;; (defparameter $movies-path (path "~/Desktop/Movies.delectus2"))
+;;; (delectus-timestamp->local-time (get-modified-time $movies-path))
+;;; (set-modified-time $movies-path (delectus-timestamp-now))
 
 ;;; =====================================================================
 ;;; creating the list file
@@ -158,7 +200,4 @@
 ;;; (create-delectus-file $testfile-path :listname "Test List")
 ;;; (delete-file $testfile-path)
 
-;;; (with-open-database (db $testfile-path)(db-get-next-revision db "listnames"))
-;;; (with-open-database (db $testfile-path)(db-get-next-revision db "comments"))
-;;; (with-open-database (db $testfile-path)(db-get-next-revision db "columns"))
-;;; (with-open-database (db $testfile-path)(db-get-next-revision db (makeid)))
+
