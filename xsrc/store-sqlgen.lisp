@@ -42,6 +42,64 @@
 
 ;;; (sqlgen-init-delectus-table (makeid))
 
+;;; 'listnames' table
+;;; ----------------
+
+(defun sqlgen-create-listnames-table ()
+  (yield
+   (create-table :listnames
+       ((origin :type 'blob)
+        (revision :type 'integer)
+        (item_order :type 'real)
+        (timestamp :type 'integer)
+        (name :type 'text)))))
+
+;;; (sqlgen-create-listnames-table)
+
+;;; 'comments' table
+;;; ----------------
+
+(defun sqlgen-create-comments-table ()
+  (yield
+   (create-table :comments
+       ((origin :type 'blob)
+        (revision :type 'integer)
+        (item_order :type 'real)
+        (timestamp :type 'integer)
+        (comment :type 'text)))))
+
+;;; (sqlgen-create-comments-table)
+
+
+;;; 'columns' table
+;;; ----------------
+
+(defun sqlgen-create-columns-table ()
+  (yield
+   (create-table :columns
+       ((origin :type 'blob)
+        (revision :type 'integer)
+        (item_order :type 'real)
+        (timestamp :type 'integer)))))
+
+;;; (sqlgen-create-columns-table)
+
+
+;;; 'items' table
+;;; ----------------
+
+(defun sqlgen-create-items-table ()
+  (yield
+   (create-table :items
+       ((origin :type 'blob)
+        (revision :type 'integer)
+        (item_order :type 'real)
+        (timestamp :type 'integer)
+        (itemid :type 'blob)
+        (deleted :type 'integer)))))
+
+;;; (sqlgen-create-items-table)
+
 ;;; ---------------------------------------------------------------------
 ;;; getting next revision and order
 ;;; ---------------------------------------------------------------------
@@ -64,13 +122,12 @@
 ;;; (setf $id (makeid))
 ;;; (sqlgen-get-next-revision $id)
 
-
-(defun sqlgen-get-item-order ()
+(defun sqlgen-get-next-item-order ()
   (yield
    (select ((:+ (:max :item_order) 1))
      (from :items))))
 
-;;; (sqlgen-get-item-order)
+;;; (sqlgen-get-next-item-order)
 
 ;;; ---------------------------------------------------------------------
 ;;; inserting ops

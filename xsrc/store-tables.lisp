@@ -32,25 +32,29 @@
 ;;; =====================================================================
 
 (defmethod db-create-listnames-table ((db sqlite-handle))
-  )
+  (bind ((sql vals (sqlgen-create-listnames-table)))
+    (apply 'execute-non-query db sql vals)))
 
 ;;; =====================================================================
 ;;; the 'comments' table
 ;;; =====================================================================
 
 (defmethod db-create-comments-table ((db sqlite-handle))
-  )
+  (bind ((sql vals (sqlgen-create-comments-table)))
+    (apply 'execute-non-query db sql vals)))
 
 ;;; =====================================================================
 ;;; the 'columns' table
 ;;; =====================================================================
 
 (defmethod db-create-columns-table ((db sqlite-handle))
-  )
+  (bind ((sql vals (sqlgen-create-columns-table)))
+    (apply 'execute-non-query db sql vals)))
 
 ;;; =====================================================================
 ;;; the 'items' table
 ;;; =====================================================================
 
 (defmethod db-create-items-table ((db sqlite-handle))
-  )
+  (bind ((sql vals (sqlgen-create-items-table)))
+    (apply 'execute-non-query db sql vals)))
