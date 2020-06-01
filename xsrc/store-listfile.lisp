@@ -138,12 +138,7 @@
                    (item-revision (db-get-next-revision db item-target)))
               (db-insert-item-op db :origin origin :revision item-revision :itemid item-target
                                  :timestamp (delectus-timestamp-now)
-                                 :field-values field-values-map))
-
-            ))
-
-
-        )))
+                                 :field-values field-values-map)))))))
   db-path)
 
 (defmethod create-delectus-file ((db-path string)

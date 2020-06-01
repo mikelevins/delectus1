@@ -37,6 +37,7 @@
                                      (:file "store-tables")             ; creating Delectus tables
                                      (:file "store-ops")                ; inserting and fetching ops
                                      (:file "store-listfile")           ; creating Delectus list files
+                                     (:file "data-csv")                 ; reading and writing CSV files
                                      ))))
 
 (defun load-delectus ()
