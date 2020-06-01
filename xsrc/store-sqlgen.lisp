@@ -90,9 +90,9 @@
    (create-table :items
        ((origin :type 'blob)
         (revision :type 'integer)
+        (itemid :type 'blob)
         (item_order :type 'real)
         (timestamp :type 'integer)
-        (itemid :type 'blob)
         (deleted :type 'integer)))))
 
 ;;; (sqlgen-create-items-table)
@@ -172,3 +172,15 @@
 
 ;;; (setf $cols [(make-default-column-description :name "Item")])
 ;;; (sqlgen-insert-columns-op (makeid) 1 (delectus-timestamp-now) (ensure-columns-data $cols))
+
+
+(defun sqlgen-insert-item-op (origin revision itemid item-order timestamp field-values-map)
+  ;; field-values-map is a plist of [column-label value ...]
+  (let ((userdata-column-labels (get-plist-keys field-values-map))
+        (userdata-field-values (get-plist-values field-values-map)))
+    (values (format nil "INSERT INTO `items` (origin, revision, itemid, item_order, timestamp, ~{~A~^, ~}) VALUES (?, ?, ?, ?, ?, ~{~A~^, ~})"
+                    userdata-column-labels
+                    (mapcar (constantly "?") userdata-column-labels))
+            (append [origin revision itemid item-order timestamp] userdata-field-values))))
+
+;;; (sqlgen-insert-item-op (makeid) 1 (makeid) (delectus-timestamp-now) [(make-column-label) "Foo"])

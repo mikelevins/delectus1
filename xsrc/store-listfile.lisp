@@ -106,8 +106,11 @@
           (let* ((origin (make-origin (process-identity) db-path))
                  ;; used twice: in the columns op and in the item op
                  (default-column (make-default-column-description :name "Item"))
+                 (default-column-label (column-description-label default-column))
                  (default-column-descriptions (list default-column))
-                 (default-column-label (column-description-label default-column)))
+                 ;; make a plist of [label value ...]
+                 (field-values-map (loop for desc in default-column-descriptions
+                                      appending [(column-description-label desc) ""])))
 
             ;; make sure the columns defined in column-descriptions actually
             ;; exist in the columns and items tables
@@ -131,16 +134,12 @@
                                     :columns default-column-descriptions))
 
             ;; insert default item op
-            ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
-            ;;                 :column-values [default-column-label nil])
-            ;; (let* ((item-target (make-identity-string))
-            ;;        (item-order (db-get-next-item-order db))
-            ;;        (item-revision (db-get-next-revision db item-target))
-            ;;        (item-data (jonathan:to-json [(as-keyword default-column-label)
-            ;;                                      ""])))
-            ;;   (db-insert-item-op db :origin origin :revision item-revision
-            ;;                      :timestamp (delectus-timestamp-now)
-            ;;                      :data item-data))
+            (let* ((item-target (makeid))
+                   (item-order (db-get-next-item-order db))
+                   (item-revision (db-get-next-revision db item-target)))
+              (db-insert-item-op db :origin origin :revision item-revision :itemid item-target
+                                 :timestamp (delectus-timestamp-now)
+                                 :field-values field-values-map))
 
             ))
 

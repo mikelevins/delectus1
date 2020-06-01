@@ -73,12 +73,6 @@
     (t (error "Invalid columns data in ~S; expected a list of column-descriptions."
               thing))))
 
-(defun db-ensure-item-data (db thing)
-  (cond
-    ((stringp thing) thing)
-    (t (error "Invalid item data in ~S; expected a JSON object."
-              thing))))
-
 ;;; =====================================================================
 ;;; inserting ops
 ;;; =====================================================================
@@ -144,14 +138,15 @@
                               &key
                                 origin
                                 revision
+                                itemid
                                 item-order
                                 timestamp
-                                data)
+                                field-values)
   (bind ((origin (db-ensure-origin db origin))
          (revision (db-ensure-revision-number db revision))
+         (itemid (or itemid (makeid)))
          (item-order (db-ensure-item-order-number db item-order))
          (timestamp (db-ensure-timestamp db timestamp))
-         (data (db-ensure-item-data db data))
-         (sql vals (sqlgen-insert-item-op origin revision item-order timestamp data)))
+         (sql vals (sqlgen-insert-item-op origin revision itemid item-order timestamp field-values)))
     (apply 'execute-non-query db sql vals)))
 
