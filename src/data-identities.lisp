@@ -21,10 +21,13 @@
 
 (in-package #:delectus)
 
+(defparameter +identity-vector-length+ 16)
+
 (defmethod identity? (thing) nil)
 
 (defmethod identity? ((thing vector))
-  (and (vectorp thing)
+  (and (= +identity-vector-length+
+          (length thing))
        (every (lambda (x)(typep x '(unsigned-byte 8)))
               thing)
        t))
@@ -51,48 +54,40 @@
 ;;; ---------------------------------------------------------------------
 ;;; identity strings
 ;;; ---------------------------------------------------------------------
-;;; an identity-string is an identity printed to a downcased
-;;; hexadecimal string.
+;;; an identity-string is the first 26 characters of a base43hex-encoded identity.
+
+(defparameter +delectus-identity-string-length+ 26)
 
 (defmethod identity->string ((id vector))
-  (assert (identity id)() "Not a valid identity: ~S" id)
-  (string-downcase
-   (with-output-to-string (out)
-     (loop for b across id
-        do (format out "~2,'0x" b)))))
+  (assert (identity? id)() "Not a valid identity: ~S" id)
+  (subseq (binascii:encode-base32hex id)
+          0 +delectus-identity-string-length+))
 
 ;;; (identity->string (makeid))
-
-(defparameter +delectus-identity-string-length+
-  (length (identity->string (makeid))))
-
-(defmethod identity-string? (thing) nil)
-
-(defmethod identity-string? ((thing string))
-  (and (= 32 (length thing))
-       (let ((result t))
-         (block checking
-           (loop for i from 0 below (length thing)
-              do (unless (find (elt thing i) "0123456789abcdefABCDEF")
-                   (setf result nil)
-                   (return-from checking nil))))
-         result)))
 
 (defun make-identity-string ()
   (identity->string (makeid)))
 
 ;;; (time (make-identity-string))
 
+(defmethod identity-string? (thing) nil)
+
+(defmethod identity-string? ((thing string))
+  (if (not (equal +delectus-identity-string-length+
+                  (length thing)))
+      nil
+      (let ((result t))
+        (block checking
+          (loop for i from 0 below (length thing)
+             do (unless (find (elt thing i) binascii::*base32hex-encode-table*)
+                  (setf result nil)
+                  (return-from checking nil))))
+        result)))
+
 (defmethod string->identity ((identity string))
-  (assert (identity-string? identity)() "Not a valid identity-string: ~S" identity)
-  (let* ((uuid-string (join-strings "-"
-                                    (list (subseq identity 0 8)
-                                          (subseq identity 8 12)
-                                          (subseq identity 12 16)
-                                          (subseq identity 16 20)
-                                          (subseq identity 20))))
-         (uuid (uuid:make-uuid-from-string uuid-string)))
-    (coerce (uuid:uuid-to-byte-array uuid)
-            '(simple-vector 16))))
+  (assert (identity-string? identity)() "Not a valid identity string: ~S" identity)
+  (coerce (binascii:decode-base32hex identity)
+          '(simple-vector 16)))
 
 ;;; (string->identity (identity->string (makeid)))
+;;; (string->identity (make-identity-string))

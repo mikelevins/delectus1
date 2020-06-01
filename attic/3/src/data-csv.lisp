@@ -28,7 +28,6 @@
 
 (defun import-csv (csv-path list-path list-name
                    &key
-                     (comment "")
                      (first-row-is-headers t)
                      (sharpf-is-nil t)
                      (listid nil))
@@ -47,7 +46,8 @@
       (with-open-database (db list-path)
         (with-transaction db
           ;; first create columns for the csv data
-          (let* ((origin (make-origin (process-identity)
+          (let* ((origin (make-origin (delectus-node-identity)
+                                      (getpid)
                                       (pathname list-path)))
                  (column-labels (mapcar (lambda (val)
                                           (declare (ignore val))
@@ -57,12 +57,12 @@
                                    first-line-vals
                                    column-labels))
                  (column-orders (loop for i from 1 upto (length column-labels)
-                                   collect (* i *column-order-interval*)))
+                                   collect (* i 10.0)))
                  (column-descriptions (mapcar (lambda (lbl cname corder)
                                                 (column-description
                                                  :label lbl
                                                  :name cname
-                                                 :column-order corder
+                                                 :order corder
                                                  :title :false
                                                  :subtitle :false
                                                  :deleted :false))
@@ -70,34 +70,26 @@
             ;; create the columns
             (db-ensure-columns-exist db column-descriptions)
             ;; insert the listname op
-            (db-insert-listname-op db :origin origin :revision (db-get-next-revision db "listnames")
-                                   :timestamp (delectus-timestamp-now) :listname list-name)
-            ;; insert the comment op
-            (db-insert-comment-op db :origin origin :revision (db-get-next-revision db "comments")
-                                  :timestamp (delectus-timestamp-now) :comment comment)
+            (db-insert-listname db :origin origin :timestamp (delectus-timestamp-now) :name list-name)
             ;; insert the columns op
-            (db-insert-columns-op db :origin origin :revision (db-get-next-revision db "columns")
-                                   :timestamp (delectus-timestamp-now) :columns column-descriptions)
+            (db-insert-columns db :origin origin :timestamp (delectus-timestamp-now)
+                               :column-descriptions column-descriptions)
             ;; read and insert the csv rows
             (with-open-file (in csv-path)
               ;; discard the first line if we used it for headers
               (when first-row-is-headers
                 (fare-csv:read-csv-line in))
-              (let ((item-order 0.0))
-                (loop for
-                   row = (canonicalize (fare-csv:read-csv-line in) :sharpf-is-nil sharpf-is-nil)
-                   then (canonicalize (fare-csv:read-csv-line in) :sharpf-is-nil sharpf-is-nil)
-                   while row
-                   do (let* ((field-values (alist->plist (mapcar 'cons column-labels row))))
-                        (db-insert-item-op db :origin origin
-                                           :revision (db-get-next-revision db "columns")
-                                           :itemid (makeid)
-                                           :item-order (incf item-order *item-order-interval*)
-                                           :timestamp (delectus-timestamp-now)
-                                           :field-values field-values)))))))))))
+              (loop for
+                 row = (canonicalize (fare-csv:read-csv-line in) :sharpf-is-nil sharpf-is-nil)
+                 then (canonicalize (fare-csv:read-csv-line in) :sharpf-is-nil sharpf-is-nil)
+                 while row
+                 do (let* ((column-values (alist->plist (mapcar 'cons column-labels row))))
+                      (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
+                                      :column-values column-values))))))))))
 
 
 
+;;; (sqlite-ffi:init-sqlite-ffi #P"/Users/mikel/Workshop/src/delectus/product/macos/lib/libsqlite3.dylib")
 ;;; (setf $movies-csv-path (path "~/Workshop/src/delectus/test-data/Movies.csv"))
 ;;; (setf $movies-test-path (path "~/Desktop/Movies.delectus2"))
 ;;; (delete-file $movies-test-path)

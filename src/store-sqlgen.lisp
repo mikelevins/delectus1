@@ -20,33 +20,27 @@
 (defun sqlgen-create-delectus-table ()
   (yield
    (create-table :delectus
-       ((listid :type 'string)
+       ((listid :type 'text)
         (format :type 'text)
         (created :type 'integer)
-        (modified :type 'integer)
-        (next_revision :type 'integer)
-        (next_itemid :type 'integer)))))
+        (modified :type 'integer)))))
 
 ;;; (sqlgen-create-delectus-table)
 
-(defun sqlgen-init-delectus-table (list-identity
+(defun sqlgen-init-delectus-table (listid
                                    &key
                                      (format +delectus-format-version+)
                                      (created (delectus-timestamp-now))
-                                     (modified (delectus-timestamp-now))
-                                     (next-revision 0)
-                                     (next-itemid 0))
+                                     (modified (delectus-timestamp-now)))
+  (assert (identity-string? listid)() "Not a valid list identity: ~S" listid)
   (yield
    (insert-into :delectus
-     (set= :listid list-identity
+     (set= :listid listid
            :format format
            :created created
-           :modified modified
-           :next_revision next-revision
-           :next_itemid next-itemid))))
+           :modified modified))))
 
 ;;; (sqlgen-init-delectus-table (makeid))
-
 
 ;;; 'listnames' table
 ;;; ----------------
@@ -54,13 +48,12 @@
 (defun sqlgen-create-listnames-table ()
   (yield
    (create-table :listnames
-       ((revision :type 'integer)
-        (origin :type 'integer)
+       ((origin :type 'blob)
+        (revision :type 'integer)
         (timestamp :type 'integer)
         (name :type 'text)))))
 
 ;;; (sqlgen-create-listnames-table)
-
 
 ;;; 'comments' table
 ;;; ----------------
@@ -68,8 +61,8 @@
 (defun sqlgen-create-comments-table ()
   (yield
    (create-table :comments
-       ((revision :type 'integer)
-        (origin :type 'integer)
+       ((origin :type 'blob)
+        (revision :type 'integer)
         (timestamp :type 'integer)
         (comment :type 'text)))))
 
@@ -82,11 +75,12 @@
 (defun sqlgen-create-columns-table ()
   (yield
    (create-table :columns
-       ((revision :type 'integer)
-        (origin :type 'integer)
+       ((origin :type 'blob)
+        (revision :type 'integer)
         (timestamp :type 'integer)))))
 
 ;;; (sqlgen-create-columns-table)
+
 
 ;;; 'items' table
 ;;; ----------------
@@ -94,54 +88,45 @@
 (defun sqlgen-create-items-table ()
   (yield
    (create-table :items
-       ((revision :type 'integer)
-        (origin :type 'integer)
+       ((origin :type 'blob)
+        (revision :type 'integer)
+        (itemid :type 'blob)
+        (item_order :type 'real)
         (timestamp :type 'integer)
-        (itemid :type 'integer)
         (deleted :type 'integer)))))
 
 ;;; (sqlgen-create-items-table)
 
 ;;; ---------------------------------------------------------------------
-;;; the main items index
+;;; getting next revision and order
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-create-items-itemid-timestamp-index ()
-  (values "CREATE INDEX idx_items_itemid_timestamp on `items` (`itemid`, `timestamp` DESC)"
-          nil))
+(defun sqlgen-get-next-revision (target)
+  (cond
+    ((member target ["listnames" "comments" "columns"] :test #'equal)
+     (values (format nil "SELECT MAX(revision)+1 FROM `~A`" target)
+             nil))
+    ((identity? target)
+     (yield
+      (select ((:+ (:max :revision) 1))
+        (from :items)
+        (where (:= :itemid target)))))
+    (t (error "Unrecognized target: ~S" target))))
 
+;;; (sqlgen-get-next-revision "listnames")
+;;; (sqlgen-get-next-revision "columns")
+;;; (setf $id (makeid))
+;;; (sqlgen-get-next-revision $id)
 
-;;; ---------------------------------------------------------------------
-;;; the next revision
-;;; ---------------------------------------------------------------------
-
-(defun sqlgen-get-next-revision ()
+(defun sqlgen-get-next-item-order ()
   (yield
-   (select :next_revision
-     (from :delectus))))
+   (select ((:+ (:max :item_order) *item-order-interval*))
+     (from :items))))
 
-;;; (sqlgen-get-next-revision)
-
-(defun sqlgen-set-next-revision (rev)
-  (values (format nil "UPDATE `delectus` SET `next_revision` = ~A" rev)
-          nil))
-;;; ---------------------------------------------------------------------
-;;; the next itemid
-;;; ---------------------------------------------------------------------
-
-(defun sqlgen-get-next-itemid ()
-  (yield
-   (select :next_itemid
-     (from :delectus))))
-
-;;; (sqlgen-get-next-itemid)
-
-(defun sqlgen-set-next-itemid (it)
-  (values (format nil "UPDATE `delectus` SET `next_itemid` = ~A" it)
-          nil))
+;;; (sqlgen-get-next-item-order)
 
 ;;; ---------------------------------------------------------------------
-;;; adding columns
+;;; adding userdata columns
 ;;; ---------------------------------------------------------------------
 
 (defun sqlgen-add-columns-userdata-column (column-label)
@@ -158,200 +143,44 @@
 ;;; inserting ops
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-insert-listname (revision origin timestamp name)
+(defun sqlgen-insert-listname-op (origin revision timestamp name-json)
   (yield
    (insert-into :listnames
-     (set= :revision revision
-           :origin origin
+     (set= :origin origin
+           :revision revision
            :timestamp timestamp
-           :name name))))
-
-;;; (setf $dbpath (pathname (uiop:native-namestring "~/Desktop/testlist.delectus2")))
-;;; (setf $origin (make-origin (delectus-node-identity) (getpid) $dbpath))
-;;; (sqlgen-insert-listname 3 $origin (delectus-timestamp-now) "Foobar")
-
-(defun sqlgen-insert-columns (revision origin timestamp column-descriptions)
-  (let* ((column-labels (mapcar 'column-description-label column-descriptions))
-         (column-ids (mapcar 'as-keyword column-labels))
-         (column-json-objects (mapcar 'jonathan:to-json column-descriptions))
-         (parameter-names (append [:|revision| :|origin| :|timestamp|] column-ids))
-         (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
-         (parameter-values (append [revision origin timestamp] column-json-objects))
-         (parameter-placeholders (format nil "~{~A~^, ~}" (mapcar (constantly "?") parameter-names)))
-         (sql (format nil "INSERT INTO `columns` (~A) VALUES (~A)"
-                      parameter-names-string parameter-placeholders)))
-    (values sql parameter-values)))
-
-;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
-;;; (setf $origin (make-origin (delectus-node-identity) (getpid) $dbpath))
-;;; (setf $column-descriptions (list (column-description :label (make-column-label) :name "Item")))
-;;; (sqlgen-insert-columns 5 $origin (delectus-timestamp-now) $column-descriptions)
-
-(defun sqlgen-insert-item (revision origin timestamp itemid deleted column-values)
-  (let* ((column-labels (get-keys column-values))
-         (column-ids (mapcar 'as-keyword column-labels))
-         (column-values (get-values column-values))
-         (parameter-names (append [:|revision| :|origin| :|timestamp| :|itemid| :|deleted|]
-                                  column-ids))
-         (parameter-names-string (format nil "~{`~A`~^, ~}" parameter-names))
-         (parameter-values (append [revision origin timestamp itemid deleted] column-values))
-         (parameter-placeholders (format nil "~{~A~^, ~}" (mapcar (constantly "?") parameter-names)))
-         (sql (format nil "INSERT INTO `items` (~A) VALUES (~A)"
-                      parameter-names-string parameter-placeholders)))
-    (values sql parameter-values)))
-
-;;; (setf $dbpath (pathname "/Users/mikel/Desktop/testlist.delectus2"))
-;;; (setf $origin (make-origin (delectus-node-identity) (getpid) $dbpath))
-;;; (setf $column-values [(make-column-label) "Foo"])
-;;; (sqlgen-insert-item 5 $origin (delectus-timestamp-now) 1 nil $column-values)
-
-;;; ---------------------------------------------------------------------
-;;; fetching ops
-;;; ---------------------------------------------------------------------
-
-(defun sqlgen-get-latest-listname-op ()
-  (values "SELECT * FROM listnames ORDER BY timestamp DESC LIMIT 1"
-          nil))
-
-(defun sqlgen-get-latest-columns-op ()
-  (values "SELECT * FROM columns ORDER BY timestamp DESC LIMIT 1"
-          nil))
-
-(defun sqlgen-check-latest-items-table-exists ()
-  (values "SELECT * FROM sqlite_temp_master WHERE type='table' AND name='latest_items'"
-          nil))
-
-;; (defun sqlgen-create-latest-items-table ()
-;;   (values
-;;    (trim "
-;; CREATE TEMPORARY TABLE latest_items AS
-;; SELECT ranked.* FROM (
-;;   SELECT ROW_NUMBER() OVER ( PARTITION BY itemid ORDER BY timestamp DESC) rank, * 
-;;   FROM `items`) ranked
-;; where ranked.rank=1
-;; ")
-;;    nil))
-
-;;; a version that works without window functions (doesn't require SQLite 3.28.0)
-(defun sqlgen-create-latest-items-table ()
-  (values
-   (trim "
-create temporary table latest_items as
-select itemsB.*
-    from items itemsB
-    where timestamp = 
-        (select max(timestamp) from items itemsA where itemsB.itemid=itemsA.itemid)
-")
-   nil))
+           :name name-json))))
 
 
-
-(defun sqlgen-get-latest-items (&key
-                                  (order :asc)
-                                  (offset 0)
-                                  (limit *default-result-items-per-page*))
+(defun sqlgen-insert-comment-op (origin revision timestamp comment-json)
   (yield
-   (select :*
-     (from :latest_items)
-     (order-by (case order
-                 (:asc '(:asc :itemid))
-                 (:desc '(:desc :itemid))
-                 (else (error "Unrecognized order ~S" order))))
-     (offset offset)
-     (limit limit))))
+   (insert-into :comments
+     (set= :origin origin
+           :revision revision
+           :timestamp timestamp
+           :comment comment-json))))
 
-(defun sqlgen-count-latest-items ()
-  (yield
-   (select ((:count :*))
-     (from :latest_items))))
+;;; (sqlgen-insert-comment-op (makeid) 1 (delectus-timestamp-now) "Foo")
 
+(defun sqlgen-insert-columns-op (origin revision timestamp columns-data)
+  (let ((userdata-column-labels (get-plist-keys columns-data))
+        (userdata-column-data (get-plist-values columns-data)))
+    (values (format nil "INSERT INTO `columns` (origin, revision, timestamp, ~{~A~^, ~}) VALUES (?, ?, ?, ~{~A~^, ~})"
+                    userdata-column-labels
+                    (mapcar (constantly "?") userdata-column-labels))
+            (append [origin revision timestamp] userdata-column-data))))
 
-(defun sqlgen-get-latest-filtered-items (&key
-                                           (column-labels nil)
-                                           (filter-text nil)
-                                           (offset 0)
-                                           (limit nil))
-  (let* ((column-selector
-          (if (empty? column-labels)
-              "*"
-              (join-strings ", "
-                            (mapcar (lambda (lbl) (format nil "~A" lbl))
-                                    column-labels))))
-         (like-clauses
-          ;; have to have filter-text and column-labels in order to generate filtered results
-          (if (or (empty? filter-text)
-                  (empty? column-labels))
-              ""
-              (concatenate 'string "( "
-                           (join-strings " OR "
-                                         (mapcar (lambda (lbl)
-                                                   (format nil "`~A` LIKE '%~A%'"
-                                                           lbl filter-text))
-                                                 column-labels))
-                           " ) ")))
-         (where-clause (if (empty? filter-text)
-                           ""
-                           (format nil " WHERE ~A" like-clauses)))
-         (offset-clause (if (and limit offset)
-                            (format nil "OFFSET ~D " offset)
-                            ""))
-         (limit-clause (if limit
-                           (format nil "LIMIT ~D " limit)
-                           "")))
-    (values
-     (trim (format nil "
-SELECT ~A
-FROM `latest_items` ~A ~A ~A
-" column-selector where-clause limit-clause offset-clause))
-     nil)))
-
-;;; (sqlgen-get-latest-filtered-items :column-labels ["lbl1" "lbl2"] :filter-text "Foobie")
-;;; (sqlgen-get-latest-filtered-items :column-labels ["lbl1" "lbl2"] :filter-text "")
+;;; (setf $cols [(make-default-column-description :name "Item")])
+;;; (sqlgen-insert-columns-op (makeid) 1 (delectus-timestamp-now) (ensure-columns-data $cols))
 
 
-(defun sqlgen-count-latest-filtered-items (&key
-                                             (column-labels nil)
-                                             (filter-text nil)
-                                             (offset 0)
-                                             (limit nil))
-  (let* ((like-clauses
-          ;; have to have filter-text and column-labels in order to generate filtered results
-          (if (or (empty? filter-text)
-                  (empty? column-labels))
-              nil
-              (concatenate 'string "( "
-                           (join-strings " OR "
-                                         (mapcar (lambda (lbl)
-                                                   (format nil "`~A` LIKE '%~A%'"
-                                                           lbl filter-text))
-                                                 column-labels))
-                           " ) ")))
-         (where-clause (if (empty? column-labels)
-                           ""
-                           (format nil " WHERE ~A" like-clauses)))
-         (offset-clause (if (and limit offset)
-                            (format nil "OFFSET ~D " offset)
-                            ""))
-         (limit-clause (if limit
-                           (format nil "LIMIT ~D " limit)
-                           "")))
-    (values
-     (trim (format nil "
-SELECT COUNT (*)
-FROM `latest_items` ~A ~A ~A
-" where-clause limit-clause offset-clause))
-     nil)))
+(defun sqlgen-insert-item-op (origin revision itemid item-order timestamp field-values-map)
+  ;; field-values-map is a plist of [column-label value ...]
+  (let ((userdata-column-labels (get-plist-keys field-values-map))
+        (userdata-field-values (get-plist-values field-values-map)))
+    (values (format nil "INSERT INTO `items` (origin, revision, itemid, item_order, timestamp, ~{~A~^, ~}) VALUES (?, ?, ?, ?, ?, ~{~A~^, ~})"
+                    userdata-column-labels
+                    (mapcar (constantly "?") userdata-column-labels))
+            (append [origin revision itemid item-order timestamp] userdata-field-values))))
 
-;;; (sqlgen-count-latest-filtered-items :column-labels ["lbl1" "lbl2"] :filter-text "Foobie")
-;;; (sqlgen-count-latest-filtered-items :column-labels $lbls :filter-text "Springdale")
-
-
-(defun sqlgen-get-specified-item (itemid origin)
-  (yield
-   (select :*
-     (from :items)
-     (where (:and (:= :itemid itemid)
-                  (:= :origin origin)))
-     (order-by (:desc :timestamp)))))
-
-;;; (sqlgen-get-specified-item 0 (delectus-timestamp-now))
+;;; (sqlgen-insert-item-op (makeid) 1 (makeid) (delectus-timestamp-now) [(make-column-label) "Foo"])

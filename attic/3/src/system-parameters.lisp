@@ -18,7 +18,7 @@
 ;;; query parameters
 ;;; ---------------------------------------------------------------------
 
-(defparameter *default-result-items-per-page* 50)
+(defparameter *default-result-items-per-page* 25)
 
 ;;; list-file parameters
 ;;; ---------------------------------------------------------------------
@@ -35,25 +35,32 @@
 ;;; column names
 ;;; ------------
 
-(defparameter *delectus-columns* [ :|listid| :|format| :|created| :|modified| ])
-(defparameter *listnames-op-columns* [ :|origin| :|revision| :|timestamp| :|name| ])
-(defparameter *comments-op-columns* [ :|origin| :|revision| :|timestamp| :|comment| ])
-(defparameter *columns-op-columns* [ :|origin| :|revision| :|timestamp| ])
-(defparameter *items-op-columns* [ :|origin| :|revision| :|item-order| :|timestamp| :|itemid| :|deleted| ])
+(defparameter *delectus-columns* [ :|listid| :|format| :|created| :|modified| :|next_revision| :|next_itemid|])
+(defparameter *listnames-metadata-columns* [:|revision| :|origin| :|timestamp| :|name|])
+(defparameter *comments-metadata-columns* [:|revision| :|origin| :|timestamp| :|comment|])
+(defparameter *columns-metadata-columns* [:|revision| :|origin| :|timestamp|])
+(defparameter *items-metadata-columns* [:|revision| :|origin| :|timestamp| :|itemid| :|deleted|])
+
+(defparameter *listid-column-name* "listid")
+(defparameter *format-column-name* "format")
+(defparameter *created-column-name* "created")
+(defparameter *modified-column-name* "modified")
+(defparameter *next-revision-column-name* "next_revision")
+(defparameter *next-itemid-column-name* "next_itemid")
+(defparameter *revision-column-name* "revision")
+(defparameter *origin-column-name* "origin")
+(defparameter *timestamp-column-name* "timestamp")
+(defparameter *name-column-name* "name")
+(defparameter *comment-column-name* "comment")
+(defparameter *itemid-column-name* "itemid")
+(defparameter *deleted-column-name* "deleted")
 
 ;;; column parameters
 ;;; -----------------
 
 (defparameter *maximum-column-count* 200) ; chosen to be below common database limits
-(defparameter *column-order-interval* (coerce 100.0 'double-float))
-(defparameter *minimum-column-order* (coerce 100.0 'double-float))
+(defparameter *column-order-interval* 10.0) ; default interval between order numbers autoassigned to new columns
+(defparameter *minimum-column-order* 10.0)
 (defparameter *default-initial-column-order* *minimum-column-order*)
 (defparameter *maximum-column-order* (* *maximum-column-count* *column-order-interval*))
 
-;;; op parameters
-;;; -----------------
-
-(defparameter *minimum-item-order* (coerce 100.0 'double-float))
-(defparameter *item-order-interval* (coerce 100.0 'double-float))
-(defparameter *minimum-item-order* (coerce 100.0 'double-float))
-(defparameter *item-order-interval* (coerce 100.0 'double-float))

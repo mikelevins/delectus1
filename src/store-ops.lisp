@@ -2,7 +2,7 @@
 ;;;;
 ;;;; Name:          store-ops.lisp
 ;;;; Project:       delectus 2
-;;;; Purpose:       reading and writing ops
+;;;; Purpose:       inserting and fetching ops
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2020 by mikel evins
 ;;;;
@@ -11,257 +11,142 @@
 (in-package #:delectus)
 
 ;;; =====================================================================
+;;; input validation
+;;; =====================================================================
+
+(defun db-ensure-origin (db thing)
+  (cond
+    ((null thing)
+     (make-origin (process-identity)
+                  (sqlite::database-path db)))
+    ((origin? thing) thing)
+    (t (error "Invalid origin in ~S; expected an origin or nil."
+              thing))))
+
+;;; (defparameter $testfile-path (path "~/Desktop/testfile.delectus2"))
+;;; (with-open-database (db $testfile-path)(sqlite::database-path db))
+
+(defun db-ensure-revision-number (db thing)
+  (cond
+    ((null thing)(db-get-next-revision db))
+    ((and (integerp thing)
+          (>= thing 0))
+     thing)
+    (t (error "Invalid revision number in ~S; expected a nonnegative integer or nil."
+              thing))))
+
+(defun db-ensure-item-order-number (db thing)
+  (cond
+    ((null thing)(db-get-next-item-order db))
+    ((typep thing 'double-float) thing)
+    (t (error "Invalid item-order number in ~S; expected a double-float or nil."
+              thing))))
+
+(defun db-ensure-timestamp (db thing)
+  (cond
+    ((null thing)(delectus-timestamp-now))
+    ((and (integerp thing)
+          (>= thing 0))
+     thing)
+    (t (error "Invalid timestamp in ~S; expected a nonnegative integer or nil."
+              thing))))
+
+(defun db-ensure-listname-string (db thing)
+  (cond
+    ((stringp thing) thing)
+    (t (error "Invalid listname in ~S; expected a string."
+              thing))))
+
+(defun db-ensure-comment-string (db thing)
+  (cond
+    ((stringp thing) thing)
+    (t (error "Invalid comment text in ~S; expected a string."
+              thing))))
+
+;;; converts a list of column-descriptions to a plist whose keys are
+;;; column-label strings, and whose values are JSON column objects
+(defun ensure-columns-data (thing)
+  (cond
+    ((listp thing) (loop for desc in thing
+                      appending (list (column-description-label desc)
+                                      (column-description-to-json desc))))
+    (t (error "Invalid columns data in ~S; expected a list of column-descriptions."
+              thing))))
+
+;;; =====================================================================
 ;;; inserting ops
 ;;; =====================================================================
 
-(defmethod db-insert-listname ((db sqlite-handle)
-                               &key
-                                 revision
-                                 origin
-                                 timestamp
-                                 name)
-  (bind ((revision (or revision (db-get-next-revision db)))
-         (origin (or origin (error "Missing :ORIGIN argument")))
-         (timestamp (or timestamp (delectus-timestamp-now)))
-         (name (or name (error "Missing :NAME argument")))
-         (sql vals (sqlgen-insert-listname revision origin timestamp name)))
-    (apply 'execute-non-query db sql vals)
-    (db-set-next-revision db (1+ revision))))
+;;; ---------------------------------------------------------------------
+;;; listname op
+;;; ---------------------------------------------------------------------
 
+(defmethod db-insert-listname-op ((db sqlite-handle)
+                                  &key
+                                    origin
+                                    revision
+                                    timestamp
+                                    listname)
+  (bind ((origin (db-ensure-origin db origin))
+         (revision (db-ensure-revision-number db revision))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (listname (db-ensure-listname-string db listname))
+         (name-json (jonathan:to-json listname))
+         (sql vals (sqlgen-insert-listname-op origin revision timestamp name-json)))
+    (apply 'execute-non-query db sql vals)))
 
-(defmethod db-insert-columns ((db sqlite-handle)
+;;; ---------------------------------------------------------------------
+;;; comment op
+;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-comment-op ((db sqlite-handle)
+                                 &key
+                                   origin
+                                   revision
+                                   timestamp
+                                   comment)
+  (bind ((origin (db-ensure-origin db origin))
+         (revision (db-ensure-revision-number db revision))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (comment (db-ensure-comment-string db comment))
+         (comment-json (jonathan:to-json comment))
+         (sql vals (sqlgen-insert-comment-op origin revision timestamp comment-json)))
+    (apply 'execute-non-query db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; columns op
+;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-columns-op ((db sqlite-handle)
+                                 &key
+                                   origin
+                                   revision
+                                   timestamp
+                                   columns)
+  (bind ((origin (db-ensure-origin db origin))
+         (revision (db-ensure-revision-number db revision))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (columns-data (ensure-columns-data columns))
+         (sql vals (sqlgen-insert-columns-op origin revision timestamp columns-data)))
+    (apply 'execute-non-query db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; item op
+;;; ---------------------------------------------------------------------
+
+(defmethod db-insert-item-op ((db sqlite-handle)
                               &key
-                                revision
                                 origin
+                                revision
+                                itemid
+                                item-order
                                 timestamp
-                                column-descriptions)
-  (bind ((revision (or revision (db-get-next-revision db)))
-         (origin (or origin (error "Missing :ORIGIN argument")))
-         (timestamp (or timestamp (delectus-timestamp-now)))
-         (sql vals (sqlgen-insert-columns revision origin timestamp column-descriptions)))
-    (apply 'execute-non-query db sql vals)
-    (db-set-next-revision db (1+ revision))))
+                                field-values)
+  (bind ((origin (db-ensure-origin db origin))
+         (revision (db-ensure-revision-number db revision))
+         (itemid (or itemid (makeid)))
+         (item-order (db-ensure-item-order-number db item-order))
+         (timestamp (db-ensure-timestamp db timestamp))
+         (sql vals (sqlgen-insert-item-op origin revision itemid item-order timestamp field-values)))
+    (apply 'execute-non-query db sql vals)))
 
-
-(defmethod db-insert-item ((db sqlite-handle)
-                           &key
-                             revision
-                             origin
-                             timestamp
-                             itemid
-                             deleted
-                             column-values)
-  (bind ((revision (or revision (db-get-next-revision db)))
-         (origin (or origin (error "Missing :ORIGIN argument")))
-         (timestamp (or timestamp (delectus-timestamp-now)))
-         (itemid (or itemid (db-get-next-itemid db)))
-         (sql vals (sqlgen-insert-item revision origin timestamp itemid deleted column-values)))
-    (apply 'execute-non-query db sql vals)
-    (db-set-next-revision db (1+ revision))
-    (db-set-next-itemid db (1+ itemid))))
-
-;;; =====================================================================
-;;; fetching ops
-;;; =====================================================================
-
-;;; ---------------------------------------------------------------------
-;;; listname
-;;; ---------------------------------------------------------------------
-
-(defmethod db-get-latest-listname-op ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-latest-listname-op)))
-    (first (apply 'execute-to-list db sql vals))))
-
-(defmethod get-latest-listname-op ((dbpath pathname))
-  (with-open-database (db dbpath)
-    (db-get-latest-listname-op db)))
-
-;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
-;;; (get-latest-listname-op $movies-test-path)
-
-
-;;; ---------------------------------------------------------------------
-;;; columns
-;;; ---------------------------------------------------------------------
-
-(defmethod db-get-latest-columns-op ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-get-latest-columns-op)))
-    (first (apply 'execute-to-list db sql vals))))
-
-(defmethod get-latest-columns-op ((dbpath pathname))
-  (with-open-database (db dbpath)
-    (db-get-latest-columns-op db)))
-
-;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
-;;; (get-latest-columns-op $movies-test-path)
-
-
-;;; ---------------------------------------------------------------------
-;;; items
-;;; ---------------------------------------------------------------------
-
-;;; the `latest-items` table
-;;; ------------------------
-
-(defmethod db-check-latest-items-table-exists ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-check-latest-items-table-exists))
-         (found-table (apply 'execute-to-list db sql vals)))
-    (if found-table t nil)))
-
-;;; (setf $words-test-path (path "~/Desktop/wordtest100k.delectus2"))
-;;; (with-open-database (db $words-test-path) (db-check-latest-items-table-exists db))
-
-(defmethod db-create-latest-items-table ((db sqlite-handle))
-  (bind ((sql vals (sqlgen-create-latest-items-table)))
-    (apply 'execute-to-list db sql vals)))
-
-
-;;; getting the latest items
-;;; ------------------------
-
-(defmethod db-get-latest-items ((db sqlite-handle)
-                                &key
-                                  (offset 0)
-                                  (limit 100))
-  (unless (db-check-latest-items-table-exists db)
-    (db-create-latest-items-table db))
-  (bind ((sql vals (sqlgen-get-latest-items :limit limit :offset offset))
-         (items-with-rank (apply 'execute-to-list db sql vals)))
-    ;; drop the ranks (which are always 1)
-    (mapcar #'cdr items-with-rank)))
-
-(defmethod get-latest-items ((db-path pathname)
-                             &key
-                               (offset 0)
-                               (limit 100))
-  (assert (probe-file db-path) () "No such file: ~S" db-path)
-  (with-open-database (db db-path)
-    (db-get-latest-items db :offset offset :limit limit)))
-
-;;; (setf $movies-test-path (path "~/Desktop/Movies-test.delectus2"))
-;;; (delete-file $movies-test-path)
-;;; (time (get-latest-items (pathname $movies-test-path)))
-;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000 :limit 5))
-
-
-;;; counting the latest items
-;;; -------------------------
-
-(defmethod db-count-latest-items ((db sqlite-handle)
-                                  &key)
-  (unless (db-check-latest-items-table-exists db)
-    (db-create-latest-items-table db))
-  (bind ((sql vals (sqlgen-count-latest-items)))
-    (apply 'execute-single db sql vals)))
-
-(defmethod count-latest-items ((db-path pathname))
-  (assert (probe-file db-path) () "No such file: ~S" db-path)
-  (with-open-database (db db-path)
-    (db-count-latest-items db)))
-
-;;; (setf $words-test-path (path "~/Desktop/words.delectus2"))
-;;; (time (count-latest-items $words-test-path))
-
-
-;;; getting the latest items, but filtered
-;;; --------------------------------------
-;;; - column-labels is a list of columns we want in the results
-;;; - filter-text is text we want to match against the contents of those columns
-
-(defmethod db-get-latest-filtered-items ((db sqlite-handle)
-                                         &key
-                                           (column-labels nil)
-                                           (filter-text nil)
-                                           (offset 0)
-                                           (limit nil))
-  (bind ((sql vals (sqlgen-get-latest-filtered-items :column-labels column-labels
-                                                     :filter-text filter-text
-                                                     :offset offset
-                                                     :limit limit)))
-    (unless (db-check-latest-items-table-exists db)
-      (db-create-latest-items-table db))
-    (apply 'execute-to-list db sql vals)))
-
-
-(defmethod get-latest-filtered-items ((db-path pathname)
-                                      &key
-                                        (column-labels nil)
-                                        (filter-text nil)
-                                        (offset 0)
-                                        (limit nil))
-  (assert (probe-file db-path) () "No such file: ~S" db-path)
-  (with-open-database (db db-path)
-    (db-get-latest-filtered-items db
-                                  :column-labels column-labels
-                                  :filter-text filter-text
-                                  :offset offset
-                                  :limit limit)))
-
-;;; (get-latest-filtered-items $zips-test-path :column-labels $lbls :filter-text "Springdale")
-
-
-;;; counting the latest items, but filtered
-;;; ---------------------------------------
-;;; - column-labels is a list of columns we want in the results
-;;; - filter-text is text we want to match against the contents of those columns
-
-(defmethod db-count-latest-filtered-items ((db sqlite-handle)
-                                           &key
-                                             (column-labels nil)
-                                             (filter-text nil)
-                                             (offset 0)
-                                             (limit nil))
-  (unless (db-check-latest-items-table-exists db)
-    (db-create-latest-items-table db))
-  (bind ((sql vals (sqlgen-count-latest-filtered-items :column-labels column-labels
-                                                       :filter-text filter-text
-                                                       :offset offset
-                                                       :limit limit)))
-    (apply 'execute-single db sql vals)))
-
-(defmethod count-latest-filtered-items ((db-path pathname)
-                                        &key
-                                          (column-labels nil)
-                                          (filter-text nil)
-                                          (offset 0)
-                                          (limit nil))
-  (assert (probe-file db-path) () "No such file: ~S" db-path)
-  (with-open-database (db db-path)
-    (db-count-latest-filtered-items db
-                                    :column-labels column-labels
-                                    :filter-text filter-text
-                                    :offset offset
-                                    :limit limit)))
-
-
-;;; getting a specified item
-;;; --------------------------------------
-
-(defmethod db-get-specified-item ((db sqlite-handle)(itemid integer)(origin integer))
-  (bind ((sql vals (sqlgen-get-specified-item itemid origin)))
-    (unless (db-check-latest-items-table-exists db)
-      (db-create-latest-items-table db))
-    (apply 'execute-to-list db sql vals)))
-
-
-(defmethod get-specified-item ((db-path pathname)(itemid integer)(origin integer))
-  (assert (probe-file db-path) () "No such file: ~S" db-path)
-  (with-open-database (db db-path)
-    (db-get-specified-item db itemid origin)))
-
-;;; (setf $zips-test-path (path "~/Desktop/Zipcodes.delectus2"))
-;;; (get-latest-items (path "~/Desktop/Zipcodes.delectus2") :limit 5)
-;;; (get-specified-item $zips-test-path :itemid 1)
-
-;;; (setf $wordtest100k-path (path "/Users/mikel/Desktop/wordtest100k.delectus2"))
-;;; (get-latest-items $wordtest100k-path :limit 5)
-;;; (time (setf $it (get-specified-item $wordtest100k-path 11200)))
-;;; (item-op-itemid (first $it))
-;;; (item-op-revision (first $it))
-;;; (item-op-origin (first $it))
-;;; (delectus-timestamp->local-time (item-op-timestamp (first $it)))
-;;; (item-op-deleted (first $it))
-;;; (item-op-userdata (first $it))
-
-;;; (time (setf $cols (get-latest-columns-op $wordtest100k-path)))
-;;; (columns-op-userdata $cols)

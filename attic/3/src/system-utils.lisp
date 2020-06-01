@@ -47,12 +47,6 @@
 (defmethod drop ((count integer)(ls list))
   (subseq ls count))
 
-;;; stops at whichever input list is shorter
-(defmethod interleave ((keys list)(vals list))
-  (loop for k in keys
-     and v in vals
-     appending (list k v)))
-
 (defun remove-list-elements (remove-list from-list &key (test #'eql))
   (if (null remove-list)
       from-list
@@ -78,16 +72,18 @@
 ;;; (get-key { :a 1 :b 3} :name 'nope)
 ;;; (get-key { :a 1 :b 3 :name "Fred"} :name 'nope)
 
+
 (defmethod get-keys ((map fset:map))
   (fset:convert 'list (fset:domain map)))
 
 ;;; (get-keys { :a 1 :b 3 :name "Fred"})
 
 ;;; for plists
-(defun get-plist-keys (plist)
-  (loop for tail on plist by (lambda (ls)(cddr ls)) collect (first tail)))
+(defmethod get-keys ((map list))
+  (loop for tail on map by (lambda (ls)(cddr ls)) collect (first tail)))
 
 ;;; (get-keys [:a 1 :b 3 :name "Fred"])
+
 
 (defmethod get-values ((map fset:map))
   (fset:convert 'list (fset:range map)))
@@ -95,8 +91,8 @@
 ;;; (get-values { :a 1 :b 3 :name "Fred"})
 
 ;;; for plists
-(defun get-plist-values (plist)
-  (loop for tail on plist by (lambda (ls)(cddr ls)) collect (second tail)))
+(defmethod get-values ((map list))
+  (loop for tail on map by (lambda (ls)(cddr ls)) collect (second tail)))
 
 ;;; (get-values [:a 1 :b 3 :name "Fred"])
 
@@ -124,7 +120,6 @@
 (defmethod empty? ((s null)) t)
 (defmethod empty? ((s list)) nil)
 (defmethod empty? ((s sequence)) (<= (length s) 0))
-(defmethod empty? ((m wb-map)) (fset:empty? m))
 
 ;;; ---------------------------------------------------------------------
 ;;;  string utilities
