@@ -61,17 +61,10 @@
 ;;; columns data
 ;;; =====================================================================
 
-;;; convert a list of column descriptons to JSON columns data
-
-(defun column-descriptions->data (column-descriptions)
-  (assert (every #'column-description? column-descriptions)()
-          "Invalid column description found in ~S" column-descriptions)
-  (let* ((clabels (mapcar #'column-description-label column-descriptions))
-         (ckeys (mapcar #'as-keyword clabels))
-         (cols-plist (interleave ckeys column-descriptions)))
-    (jonathan:to-json cols-plist)))
-
-;;; (column-descriptions->data [(column-description :label (make-column-label) :name "Item")])
+;;; make sure the columns defined in column-descriptions actually
+;;; exist in the columns and items tables
+(defmethod db-ensure-columns-exist ((db sqlite-handle) (column-descriptions list))
+  )
 
 ;;; =====================================================================
 ;;; creating the list file
@@ -99,29 +92,36 @@
                  ;; used twice: in the columns op and in the item op
                  (default-column (column-description :label (make-column-label)
                                                      :name "Item"
-                                                     :order *minimum-column-order*
+                                                     :column-order *minimum-column-order*
                                                      :sort :null
                                                      :title :false
                                                      :subtitle :false
                                                      :deleted :false))
                  (default-column-descriptions (list default-column))
                  (default-column-label (column-description-label default-column)))
+
+            ;; make sure the columns defined in column-descriptions actually
+            ;; exist in the columns and items tables
+            (db-ensure-columns-exist db default-column-descriptions)
+
             ;; insert listname op
-            (let* ((listname-order *minimum-item-order*)
-                   (listname-revision (db-get-next-revision db "listnames")))
-              (db-insert-listname-op db :origin origin :revision listname-revision :item-order listname-order
+            (let ((listname-revision (db-get-next-revision db "listnames")))
+              (db-insert-listname-op db :origin origin :revision listname-revision
                                      :timestamp (delectus-timestamp-now) :listname listname))
-            ;; insert comment op
+
+            ;; insert default comment op
             (let* ((comment-revision (db-get-next-revision db "comments"))
                    (comment-text "A Delectus List"))
               (db-insert-comment-op db :origin origin :revision comment-revision
                                     :timestamp (delectus-timestamp-now) :comment comment-text))
-            ;; (let* ((columns-order (db-get-next-item-order db))
-            ;;        (columns-revision (db-get-next-revision db "columns"))
-            ;;        (columns-data (column-descriptions->data default-column-descriptions)))
-            ;;   (db-insert-columns-op db :origin origin :revision columns-revision
-            ;;                         :timestamp (delectus-timestamp-now)
-            ;;                         :columns columns-data))
+
+            ;; insert default columns op
+            (let ((columns-revision (db-get-next-revision db "columns")))
+              (db-insert-columns-op db :origin origin :revision columns-revision
+                                    :timestamp (delectus-timestamp-now)
+                                    :columns default-column-descriptions))
+
+            ;; insert default item op
             ;; (db-insert-item db :origin origin :timestamp (delectus-timestamp-now)
             ;;                 :column-values [default-column-label nil])
             ;; (let* ((item-target (make-identity-string))

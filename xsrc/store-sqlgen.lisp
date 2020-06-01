@@ -145,3 +145,11 @@
            :revision revision
            :timestamp timestamp
            :comment comment-json))))
+
+(defun sqlgen-insert-columns-op (origin revision timestamp columns-data)
+  (yield
+   (insert-into :columns
+     (set= :origin origin
+           :revision revision
+           :timestamp timestamp
+           ))))

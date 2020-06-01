@@ -87,7 +87,6 @@
                                   &key
                                     origin
                                     revision
-                                    item-order
                                     timestamp
                                     listname)
   (bind ((origin (db-ensure-origin db origin))
@@ -124,7 +123,6 @@
                                  &key
                                    origin
                                    revision
-                                   item-order
                                    timestamp
                                    columns)
   (bind ((origin (db-ensure-origin db origin))

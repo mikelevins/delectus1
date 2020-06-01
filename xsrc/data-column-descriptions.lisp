@@ -15,7 +15,7 @@
   [:|deleted|
     :|label|
     :|name| 
-    :|order|
+    :|column_order|
     :|sort|
     :|subtitle|
     :|title|])
@@ -23,7 +23,7 @@
 (defun column-description (&key
                              (label nil)
                              (name :null)
-                             (order nil)
+                             (column-order nil)
                              (sort :null)
                              (title :null)
                              (subtitle :null)
@@ -33,10 +33,10 @@
                      ((eq :null name) :null)
                      ((stringp name) name)
                      (t (error "Invalid column name: ~S" name))))
-         (order (cond ((null order) *minimum-column-order*)
-                      ((eq :null order) :null)
-                      ((numberp order) order)
-                      (t (error "Invalid column order: ~S" order))))
+         (column-order (cond ((null column-order) *minimum-column-order*)
+                      ((eq :null column-order) :null)
+                      ((numberp column-order) column-order)
+                      (t (error "Invalid column order: ~S" column-order))))
          (sort (cond ((null sort) :false)
                      ((eq :null sort) :false)
                      ((eq :false sort) :false)
@@ -57,7 +57,7 @@
                         (t t))))
     [:|label| label
       :|name| name 
-      :|order| order
+      :|column_order| column-order
       :|sort| sort
       :|title| title
       :|subtitle| subtitle
@@ -78,8 +78,8 @@
 (defmethod column-description-name ((column-description list))
   (getf column-description :|name| nil))
 
-(defmethod column-description-order ((column-description list))
-  (getf column-description :|order| nil))
+(defmethod column-description-column-order ((column-description list))
+  (getf column-description :|column_order| nil))
 
 (defmethod column-description-sort ((column-description list))
   (getf column-description :|sort| nil))
