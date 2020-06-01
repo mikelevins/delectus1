@@ -72,6 +72,22 @@
        (every (lambda (k)(find k +column-description-keys+))
               (loop for tail on thing by #'cddr collect (car tail)))))
 
+(defun make-default-column-description (&key
+                                          (label (make-column-label))
+                                          (name "A")
+                                          (column-order *minimum-column-order*)
+                                          (sort :null)
+                                          (title :false)
+                                          (subtitle :false)
+                                          (deleted :false))
+  (column-description :label label
+                      :name name
+                      :column-order column-order 
+                      :sort sort
+                      :title title
+                      :subtitle subtitle
+                      :deleted deleted))
+
 (defmethod column-description-label ((column-description list))
   (getf column-description :|label| nil))
 

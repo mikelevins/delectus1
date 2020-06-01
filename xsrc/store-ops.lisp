@@ -63,10 +63,14 @@
     (t (error "Invalid comment text in ~S; expected a string."
               thing))))
 
-(defun db-ensure-columns-data (db thing)
+;;; converts a list of column-descriptions to a plist whose keys are
+;;; column-label strings, and whose values are JSON column objects
+(defun ensure-columns-data (thing)
   (cond
-    ((stringp thing) thing)
-    (t (error "Invalid columns data in ~S; expected a JSON object."
+    ((listp thing) (loop for desc in thing
+                      appending (list (column-description-label desc)
+                                      (column-description-to-json desc))))
+    (t (error "Invalid columns data in ~S; expected a list of column-descriptions."
               thing))))
 
 (defun db-ensure-item-data (db thing)
@@ -128,7 +132,7 @@
   (bind ((origin (db-ensure-origin db origin))
          (revision (db-ensure-revision-number db revision))
          (timestamp (db-ensure-timestamp db timestamp))
-         (columns-data (db-ensure-columns-data db columns))
+         (columns-data (ensure-columns-data columns))
          (sql vals (sqlgen-insert-columns-op origin revision timestamp columns-data)))
     (apply 'execute-non-query db sql vals)))
 

@@ -126,6 +126,20 @@
 ;;; (sqlgen-get-next-item-order)
 
 ;;; ---------------------------------------------------------------------
+;;; adding userdata columns
+;;; ---------------------------------------------------------------------
+
+(defun sqlgen-add-columns-userdata-column (column-label)
+  (yield
+   (alter-table :columns
+     (add-column (as-keyword column-label) :type 'text))))
+
+(defun sqlgen-add-items-userdata-column (column-label)
+  (yield
+   (alter-table :items
+     (add-column (as-keyword column-label) :type 'text))))
+
+;;; ---------------------------------------------------------------------
 ;;; inserting ops
 ;;; ---------------------------------------------------------------------
 
@@ -146,10 +160,15 @@
            :timestamp timestamp
            :comment comment-json))))
 
+;;; (sqlgen-insert-comment-op (makeid) 1 (delectus-timestamp-now) "Foo")
+
 (defun sqlgen-insert-columns-op (origin revision timestamp columns-data)
-  (yield
-   (insert-into :columns
-     (set= :origin origin
-           :revision revision
-           :timestamp timestamp
-           ))))
+  (let ((userdata-column-labels (get-plist-keys columns-data))
+        (userdata-column-data (get-plist-values columns-data)))
+    (values (format nil "INSERT INTO `columns` (origin, revision, timestamp, ~{~A~^, ~}) VALUES (?, ?, ?, ~{~A~^, ~})"
+                    userdata-column-labels
+                    (mapcar (constantly "?") userdata-column-labels))
+            (append [origin revision timestamp] userdata-column-data))))
+
+;;; (setf $cols [(make-default-column-description :name "Item")])
+;;; (sqlgen-insert-columns-op (makeid) 1 (delectus-timestamp-now) (ensure-columns-data $cols))

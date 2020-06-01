@@ -84,8 +84,8 @@
 ;;; (get-keys { :a 1 :b 3 :name "Fred"})
 
 ;;; for plists
-(defmethod get-keys ((map list))
-  (loop for tail on map by (lambda (ls)(cddr ls)) collect (first tail)))
+(defun get-plist-keys (plist)
+  (loop for tail on plist by (lambda (ls)(cddr ls)) collect (first tail)))
 
 ;;; (get-keys [:a 1 :b 3 :name "Fred"])
 
@@ -95,8 +95,8 @@
 ;;; (get-values { :a 1 :b 3 :name "Fred"})
 
 ;;; for plists
-(defmethod get-values ((map list))
-  (loop for tail on map by (lambda (ls)(cddr ls)) collect (second tail)))
+(defun get-plist-values (plist)
+  (loop for tail on plist by (lambda (ls)(cddr ls)) collect (second tail)))
 
 ;;; (get-values [:a 1 :b 3 :name "Fred"])
 
