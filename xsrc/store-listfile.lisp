@@ -63,7 +63,6 @@
 
 ;;; make sure the columns defined in column-descriptions actually
 ;;; exist in the columns and items tables
-;;; BUG: this code does not properly initialize the column_order for the created columns
 (defmethod db-ensure-columns-exist ((db sqlite-handle) column-descriptions)
   (let* ((supplied-column-labels (mapcar #'column-description-label column-descriptions))
          (columns-column-labels (mapcar 'column-info-name
