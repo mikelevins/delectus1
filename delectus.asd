@@ -26,7 +26,7 @@
                                      (:file "system-utils")             ; general-purpose helpers
                                      (:file "system-parameters")        ; application globals
                                      (:file "data-identities")          ; delectus-specific UUID format
-                                     ;; (:file "data-column-labels")       ; column-label strings
+                                     (:file "data-column-labels")       ; column-label strings
                                      ;; (:file "system-process-identity")  ; unique id of a running Delectus session
                                      ;; (:file "data-origins")             ; identifiers for Delectus ops
                                      ;; (:file "data-timestamps")          ; Delectus-specific timestamps

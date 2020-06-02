@@ -54,7 +54,7 @@
 
 (defmethod column-label->identity ((lbl string))
   (assert (column-label? lbl)() "Not a valid column-label: ~S" lbl)
-  (binascii:decode-base32hex lbl :start 1))
+  (as-identity-vector (binascii:decode-base32hex lbl :start 1)))
 
 ;;; (setf $lbl (make-column-label))
 ;;; (column-label->identity $lbl)
