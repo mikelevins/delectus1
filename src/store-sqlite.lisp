@@ -69,7 +69,7 @@
 (defmethod sqlite-list-tables ((path string))
   (sqlite-list-tables (pathname path)))
 
-;;; (sqlite-list-tables "/Users/mikel/Workshop/data/kinder/kinder_data.sqlite3")
+;;; (sqlite-list-tables $moviespath)
 
 ;;; GENERIC FUNCTION sqlite-list-table-column-info (path table-name)
 ;;; ---------------------------------------------------------------------
@@ -87,5 +87,5 @@
 (defmethod sqlite-table-column-info ((path string) (table-name string))
   (sqlite-table-column-info (pathname path) table-name))
 
-;;; (sqlite-table-column-info "/Users/mikel/Desktop/Movies.delectus2" "items")
+;;; (sqlite-table-column-info $moviespath "items")
 
