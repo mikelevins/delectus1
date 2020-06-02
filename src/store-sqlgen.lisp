@@ -10,12 +10,13 @@
 
 (in-package #:delectus)
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; creating tables
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
+;;; ---------------------------------------------------------------------
 ;;; 'delectus' table
-;;; ----------------
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-create-delectus-table ()
   (yield
@@ -42,8 +43,9 @@
 
 ;;; (sqlgen-init-delectus-table (makeid))
 
+;;; ---------------------------------------------------------------------
 ;;; 'listnames' table
-;;; ----------------
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-create-listnames-table ()
   (yield
@@ -55,8 +57,9 @@
 
 ;;; (sqlgen-create-listnames-table)
 
+;;; ---------------------------------------------------------------------
 ;;; 'comments' table
-;;; ----------------
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-create-comments-table ()
   (yield
@@ -69,8 +72,9 @@
 ;;; (sqlgen-create-comments-table)
 
 
+;;; ---------------------------------------------------------------------
 ;;; 'columns' table
-;;; ----------------
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-create-columns-table ()
   (yield
@@ -82,8 +86,9 @@
 ;;; (sqlgen-create-columns-table)
 
 
+;;; ---------------------------------------------------------------------
 ;;; 'items' table
-;;; ----------------
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-create-items-table ()
   (yield
@@ -98,8 +103,16 @@
 ;;; (sqlgen-create-items-table)
 
 ;;; ---------------------------------------------------------------------
-;;; getting and setting times
+;;; the main items index
 ;;; ---------------------------------------------------------------------
+
+(defun sqlgen-create-items-itemid-timestamp-index ()
+  (values "CREATE INDEX idx_items_itemid_timestamp on `items` (`itemid`, `timestamp` DESC)"
+          nil))
+
+;;; =====================================================================
+;;; getting and setting times
+;;; =====================================================================
 
 (defun sqlgen-get-created-time ()
   (yield
@@ -116,9 +129,9 @@
    (update :delectus
      (set= :modified timestamp))))
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; getting next revision and order
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (defun sqlgen-get-next-revision (target)
   (cond
@@ -144,9 +157,9 @@
 
 ;;; (sqlgen-get-next-item-order)
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; adding userdata columns
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (defun sqlgen-add-columns-userdata-column (column-label)
   (yield
@@ -158,8 +171,12 @@
    (alter-table :items
      (add-column (as-keyword column-label) :type 'text))))
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; inserting ops
+;;; =====================================================================
+
+;;; ---------------------------------------------------------------------
+;;; 'listname' op
 ;;; ---------------------------------------------------------------------
 
 (defun sqlgen-insert-listname-op (origin revision timestamp name-json)
@@ -170,6 +187,9 @@
            :timestamp timestamp
            :name name-json))))
 
+;;; ---------------------------------------------------------------------
+;;; 'comment' op
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-insert-comment-op (origin revision timestamp comment-json)
   (yield
@@ -180,6 +200,10 @@
            :comment comment-json))))
 
 ;;; (sqlgen-insert-comment-op (makeid) 1 (delectus-timestamp-now) "Foo")
+
+;;; ---------------------------------------------------------------------
+;;; 'columns' op
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-insert-columns-op (origin revision timestamp columns-data)
   (let ((userdata-column-labels (get-plist-keys columns-data))
@@ -192,6 +216,9 @@
 ;;; (setf $cols [(make-default-column-description :name "Item")])
 ;;; (sqlgen-insert-columns-op (makeid) 1 (delectus-timestamp-now) (ensure-columns-data $cols))
 
+;;; ---------------------------------------------------------------------
+;;; 'item' op
+;;; ---------------------------------------------------------------------
 
 (defun sqlgen-insert-item-op (origin revision itemid item-order timestamp field-values-map)
   ;; field-values-map is a plist of [column-label value ...]
@@ -203,3 +230,45 @@
             (append [origin revision itemid item-order timestamp] userdata-field-values))))
 
 ;;; (sqlgen-insert-item-op (makeid) 1 (makeid) (delectus-timestamp-now) [(make-column-label) "Foo"])
+
+
+;;; =====================================================================
+;;; getting the latest data
+;;; =====================================================================
+
+(defun sqlgen-check-latest-items-table-exists ()
+  (values "SELECT * FROM sqlite_temp_master WHERE type='table' AND name='latest_items'"
+          nil))
+
+(defun sqlgen-create-latest-items-table ()
+  (values
+   (trim "
+create temporary table latest_items as
+select itemsB.*
+    from items itemsB
+    where timestamp = 
+        (select max(timestamp) from items itemsA where itemsB.itemid=itemsA.itemid)
+")
+   nil))
+
+(defun sqlgen-count-latest-items ()
+  (yield
+   (select ((:count :*))
+     (from :|`latest_items`|))))
+
+;;; (sqlgen-count-latest-items)
+
+
+(defun sqlgen-get-latest-items (&key
+                                  (order :asc)
+                                  (offset 0)
+                                  (limit *default-result-items-per-page*))
+  (yield
+   (select :*
+     (from :latest_items)
+     (order-by (case order
+                 (:asc '(:asc :itemid))
+                 (:desc '(:desc :itemid))
+                 (else (error "Unrecognized order ~S" order))))
+     (offset offset)
+     (limit limit))))

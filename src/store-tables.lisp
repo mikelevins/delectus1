@@ -55,6 +55,11 @@
 ;;; the 'items' table
 ;;; =====================================================================
 
+(defmethod db-create-items-itemid-timestamp-index ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-create-items-itemid-timestamp-index)))
+    (apply 'execute-non-query db sql vals)))
+
 (defmethod db-create-items-table ((db sqlite-handle))
   (bind ((sql vals (sqlgen-create-items-table)))
-    (apply 'execute-non-query db sql vals)))
+    (apply 'execute-non-query db sql vals))
+  (db-create-items-itemid-timestamp-index db))

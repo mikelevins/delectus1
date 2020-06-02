@@ -38,6 +38,7 @@
                                      (:file "store-ops")                ; inserting and fetching ops
                                      (:file "store-listfile")           ; creating Delectus list files
                                      (:file "data-csv")                 ; reading and writing CSV files
+                                     (:file "engine-api")               ; common engine API for use by UI components
                                      ))))
 
 (defun load-delectus ()
