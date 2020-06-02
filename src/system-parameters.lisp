@@ -36,10 +36,10 @@
 ;;; ------------
 
 (defparameter *delectus-columns* [ :|listid| :|format| :|created| :|modified| ])
-(defparameter *listnames-op-columns* [ :|origin| :|revision| :|timestamp| :|name| ])
-(defparameter *comments-op-columns* [ :|origin| :|revision| :|timestamp| :|comment| ])
+(defparameter *listname-op-columns* [ :|origin| :|revision| :|timestamp| :|name| ])
+(defparameter *comment-op-columns* [ :|origin| :|revision| :|timestamp| :|comment| ])
 (defparameter *columns-op-columns* [ :|origin| :|revision| :|timestamp| ])
-(defparameter *items-op-columns* [ :|origin| :|revision| :|item-order| :|timestamp| :|itemid| :|deleted| ])
+(defparameter *item-op-columns* [ :|origin| :|revision| :|itemid| :|item-order| :|timestamp| :|deleted| ])
 
 ;;; column parameters
 ;;; -----------------

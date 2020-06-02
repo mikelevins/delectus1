@@ -23,6 +23,9 @@
 
 (defparameter +identity-vector-length+ 16)
 
+(defmethod as-identity-vector ((thing vector))
+  (coerce thing '(SIMPLE-ARRAY (UNSIGNED-BYTE 8) (16))))
+
 (defmethod identity? (thing) nil)
 
 (defmethod identity? ((thing vector))
@@ -36,15 +39,17 @@
 ;;; (identity? "foo")
 
 (defmethod uuid->identity ((u uuid:uuid))
-  (uuid:uuid-to-byte-array u))
+  ;; (uuid:uuid-to-byte-array u)
+  (as-identity-vector (uuid:uuid-to-byte-array u)))
 
 (defmethod identity->uuid ((identity vector))
   (assert (identity identity)() "Not a valid identity: ~S" identity)
   (uuid:byte-array-to-uuid identity))
 
 (defmethod makeid ()
-  (coerce (uuid->identity (uuid:make-v4-uuid))
-          '(simple-vector 16)))
+  ;; (coerce (uuid->identity (uuid:make-v4-uuid))
+  ;;         '(simple-vector 16))
+  (as-identity-vector (uuid->identity (uuid:make-v4-uuid))))
 
 ;;; (time (makeid))
 ;;; (setf $u (uuid:make-v4-uuid))
@@ -54,7 +59,8 @@
 ;;; ---------------------------------------------------------------------
 ;;; identity strings
 ;;; ---------------------------------------------------------------------
-;;; an identity-string is the first 26 characters of a base43hex-encoded identity.
+;;; an identity-string is the first 26 characters of a
+;;; base32hex-encoded identity.
 
 (defparameter +delectus-identity-string-length+ 26)
 
@@ -86,8 +92,9 @@
 
 (defmethod string->identity ((identity string))
   (assert (identity-string? identity)() "Not a valid identity string: ~S" identity)
-  (coerce (binascii:decode-base32hex identity)
-          '(simple-vector 16)))
+  ;; (coerce (binascii:decode-base32hex identity)
+  ;;         '(simple-vector 16))
+  (as-identity-vector (binascii:decode-base32hex identity)))
 
 ;;; (string->identity (identity->string (makeid)))
 ;;; (string->identity (make-identity-string))
