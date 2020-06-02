@@ -40,19 +40,25 @@
 ;;; (setf $zips-test-path (path "~/Desktop/Zipcodes.delectus2"))
 ;;; (time (count-latest-items $zips-test-path))
 
-(defmethod db-get-latest-items ((db sqlite-handle))
+(defmethod db-get-latest-items ((db sqlite-handle)
+                                &key
+                                  (offset 0)
+                                  (limit *default-result-items-per-page*))
   (unless (db-check-latest-items-table-exists db)
     (db-create-latest-items-table db))
-  (bind ((sql vals (sqlgen-get-latest-items)))
+  (bind ((sql vals (sqlgen-get-latest-items :offset offset :limit limit)))
     (apply 'execute-to-list db sql vals)))
 
-(defmethod get-latest-items ((dbpath pathname))
+(defmethod get-latest-items ((dbpath pathname)
+                             &key
+                               (offset 0)
+                               (limit *default-result-items-per-page*))
   (assert (probe-file dbpath) () "No such file: ~S" dbpath)
   (with-open-database (db dbpath)
-    (db-get-latest-items db)))
+    (db-get-latest-items db  :offset offset :limit limit)))
 
 ;;; (setf $movies-test-path (path "~/Desktop/Movies.delectus2"))
 ;;; (time (get-latest-items $movies-test-path))
 
 ;;; (setf $zips-test-path (path "~/Desktop/Zipcodes.delectus2"))
-;;; (time (get-latest-items $zips-test-path))
+;;; (time (get-latest-items $zips-test-path :offset 40000))
