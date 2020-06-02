@@ -24,7 +24,8 @@
 (defparameter +identity-vector-length+ 16)
 
 (defmethod as-identity-vector ((thing vector))
-  (coerce thing '(SIMPLE-ARRAY (UNSIGNED-BYTE 8) (16))))
+  #+lispworks (coerce thing '(simple-vector 16))
+  #+sbcl (coerce thing '(SIMPLE-ARRAY (UNSIGNED-BYTE 8) (16))))
 
 (defmethod identity? (thing) nil)
 
@@ -39,22 +40,21 @@
 ;;; (identity? "foo")
 
 (defmethod uuid->identity ((u uuid:uuid))
-  ;; (uuid:uuid-to-byte-array u)
   (as-identity-vector (uuid:uuid-to-byte-array u)))
 
 (defmethod identity->uuid ((identity vector))
   (assert (identity identity)() "Not a valid identity: ~S" identity)
-  (uuid:byte-array-to-uuid identity))
+  (uuid:byte-array-to-uuid (coerce identity
+                                   '(simple-array (unsigned-byte 8) (16)))))
 
 (defmethod makeid ()
-  ;; (coerce (uuid->identity (uuid:make-v4-uuid))
-  ;;         '(simple-vector 16))
   (as-identity-vector (uuid->identity (uuid:make-v4-uuid))))
 
 ;;; (time (makeid))
 ;;; (setf $u (uuid:make-v4-uuid))
 ;;; (setf $id (uuid->identity $u))
 ;;; (setf $u2 (identity->uuid $id))
+;;; (uuid:uuid= $u $u2)
 
 ;;; ---------------------------------------------------------------------
 ;;; identity strings
@@ -92,8 +92,6 @@
 
 (defmethod string->identity ((identity string))
   (assert (identity-string? identity)() "Not a valid identity string: ~S" identity)
-  ;; (coerce (binascii:decode-base32hex identity)
-  ;;         '(simple-vector 16))
   (as-identity-vector (binascii:decode-base32hex identity)))
 
 ;;; (string->identity (identity->string (makeid)))
