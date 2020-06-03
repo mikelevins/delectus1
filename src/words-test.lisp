@@ -113,7 +113,7 @@
                                         :field-values field-values))))))))))
 
 ;;; (setf $wordtest100-path (path "~/Desktop/wordtest100.delectus2"))
-;;; 0.8sec:
+;;; 0.18sec:
 ;;; (time (make-test-list $wordtest100-path :count 100))
 ;;; (time (count-latest-items $wordtest100-path))
 ;;; (time (get-latest-items $wordtest100-path))

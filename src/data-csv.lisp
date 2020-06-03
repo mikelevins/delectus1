@@ -101,6 +101,7 @@
 ;;; (setf $movies-csv-path (path "~/Workshop/src/delectus/test-data/Movies.csv"))
 ;;; (setf $movies-test-path (path "~/Desktop/Movies.delectus2"))
 ;;; (delete-file $movies-test-path)
+;;; 0.157sec:
 ;;; (time (import-csv $movies-csv-path $movies-test-path "Movies"))
 ;;; (time (get-latest-items (pathname $movies-test-path)))
 ;;; (time (get-latest-items (pathname $movies-test-path) :offset 1000))
@@ -108,14 +109,9 @@
 ;;; (setf $zips-csv-path (path "~/Workshop/src/delectus/test-data/zipcode.csv"))
 ;;; (setf $zips-test-path (path "~/Desktop/Zipcodes.delectus2"))
 ;;; (delete-file $zips-test-path)
+;;; 5.5sec:
 ;;; (time (import-csv $zips-csv-path $zips-test-path "Zipcodes"))
 ;;; (time (get-latest-items (pathname $zips-test-path)))
 ;;; (time (get-latest-items (pathname $zips-test-path) :offset 30000 :limit 10))
 
-;;; (setf $words-csv-path "/usr/share/dict/words")
-;;; (setf $words-test-path (path "~/Desktop/words.delectus2"))
-;;; (delete-file $words-test-path)
-;;; 1m, 10.1MB
-;;; (time (import-csv $words-csv-path $words-test-path "Words" :first-row-is-headers nil))
-;;; (time (get-latest-items (pathname $words-test-path) :offset 235000 :limit 10))
 

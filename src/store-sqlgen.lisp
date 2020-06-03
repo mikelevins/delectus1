@@ -106,8 +106,12 @@
 ;;; the main items index
 ;;; ---------------------------------------------------------------------
 
-(defun sqlgen-create-items-itemid-timestamp-index ()
-  (values "CREATE INDEX idx_items_itemid_timestamp on `items` (`itemid`, `timestamp` DESC)"
+;; (defun sqlgen-create-items-itemid-timestamp-index ()
+;;   (values "CREATE INDEX idx_items_itemid_timestamp on `items` (`itemid`, `timestamp` DESC)"
+;;           nil))
+
+(defun sqlgen-create-items-itemid-revision-timestamp-index ()
+  (values "CREATE INDEX idx_main_items on `items` (`itemid`, `revision` DESC, `timestamp` DESC, `origin`)"
           nil))
 
 ;;; =====================================================================
@@ -240,16 +244,30 @@
   (values "SELECT * FROM sqlite_temp_master WHERE type='table' AND name='latest_items'"
           nil))
 
+;; (defun sqlgen-create-latest-items-table ()
+;;   (values
+;;    (trim "
+;; create temporary table latest_items as
+;; select itemsB.*
+;;     from items itemsB
+;;     where timestamp = 
+;;         (select max(timestamp) from items itemsA where itemsB.itemid=itemsA.itemid)
+;; ")
+;;    nil))
+
 (defun sqlgen-create-latest-items-table ()
   (values
    (trim "
 create temporary table latest_items as
-select itemsB.*
-    from items itemsB
-    where timestamp = 
-        (select max(timestamp) from items itemsA where itemsB.itemid=itemsA.itemid)
+SELECT latest.*
+  FROM (SELECT *,
+               ROW_NUMBER() OVER (PARTITION BY itemid ORDER BY revision DESC, timestamp DESC, origin) rank
+        FROM items) latest
+ WHERE latest.rank = 1 ORDER BY item_order ASC
 ")
    nil))
+
+
 
 (defun sqlgen-count-latest-items ()
   (yield
@@ -267,8 +285,8 @@ select itemsB.*
    (select :*
      (from :latest_items)
      (order-by (case order
-                 (:asc '(:asc :itemid))
-                 (:desc '(:desc :itemid))
+                 (:asc '(:asc :item_order))
+                 (:desc '(:desc :item_order))
                  (else (error "Unrecognized order ~S" order))))
      (offset offset)
      (limit limit))))
