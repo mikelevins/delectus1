@@ -120,21 +120,21 @@
 ;;; (delete-file $wordtest100-path)
 
 ;;; (setf $wordtest1k-path (path "~/Desktop/wordtest1k.delectus2"))
-;;; 1.7sec:
+;;; 3.5sec:
 ;;; (time (make-test-list $wordtest1k-path :count 1000))
 ;;; (time (count-latest-items $wordtest1k-path))
 ;;; (time (get-latest-items $wordtest1k-path))
 ;;; (delete-file $wordtest1k-path)
 
 ;;; (setf $wordtest10k-path (path "~/Desktop/wordtest10k.delectus2"))
-;;; 12sec:
+;;; 58sec:
 ;;; (time (make-test-list $wordtest10k-path :count 10000))
 ;;; (time (count-latest-items $wordtest10k-path))
 ;;; (time (get-latest-items $wordtest10k-path :offset 9000))
 ;;; (delete-file $wordtest10k-path)
 
 ;;; (setf $wordtest100k-path (path "~/Desktop/wordtest100k.delectus2"))
-;;; 2m45sec:
+;;; 5m:
 ;;; (time (make-test-list $wordtest100k-path :count 100000))
 ;;; (time (count-latest-items $wordtest100k-path))
 ;;; (time (get-latest-items $wordtest100k-path :offset 98000))
