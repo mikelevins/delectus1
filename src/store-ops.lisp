@@ -2,7 +2,7 @@
 ;;;;
 ;;;; Name:          store-ops.lisp
 ;;;; Project:       delectus 2
-;;;; Purpose:       inserting and fetching ops
+;;;; Purpose:       fetching and inserting ops
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2020 by mikel evins
 ;;;;
@@ -149,4 +149,133 @@
          (timestamp (db-ensure-timestamp db timestamp))
          (sql vals (sqlgen-insert-item-op origin revision itemid item-order timestamp field-values)))
     (apply 'execute-non-query db sql vals)))
+
+;;; =====================================================================
+;;; fetching ops
+;;; =====================================================================
+
+;;; ---------------------------------------------------------------------
+;;; listname op
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-latest-listname-op ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-listname-op)))
+    (first (apply 'execute-to-list db sql vals))))
+
+
+(defmethod get-latest-listname-op ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-latest-listname-op db)))
+
+;;; ---------------------------------------------------------------------
+;;; comment op
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-latest-comment-op ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-comment-op)))
+    (first (apply 'execute-to-list db sql vals))))
+
+
+(defmethod get-latest-comment-op ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-latest-comment-op db)))
+
+;;; ---------------------------------------------------------------------
+;;; columns op
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-latest-columns-op ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-get-latest-columns-op)))
+    (first (apply 'execute-to-list db sql vals))))
+
+(defmethod get-latest-columns-op ((db-path pathname))
+  (with-open-database (db db-path)
+    (db-get-latest-columns-op db)))
+
+;;; =====================================================================
+;;; item ops
+;;; =====================================================================
+
+;;; ---------------------------------------------------------------------
+;;; creating the temporary "latest_items" table
+;;; ---------------------------------------------------------------------
+
+(defmethod db-check-latest-items-table-exists ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-check-latest-items-table-exists))
+         (found-table (apply 'execute-to-list db sql vals)))
+    (if found-table t nil)))
+
+(defmethod db-create-latest-items-table ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-create-latest-items-table)))
+    (apply 'execute-to-list db sql vals)))
+
+;;; ---------------------------------------------------------------------
+;;; counting the latest items
+;;; ---------------------------------------------------------------------
+
+(defmethod db-count-latest-items ((db sqlite-handle))
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
+  (bind ((sql vals (sqlgen-count-latest-items)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod count-latest-items ((dbpath pathname))
+  (assert (probe-file dbpath) () "No such file: ~S" dbpath)
+  (with-open-database (db dbpath)
+    (db-count-latest-items db)))
+
+;;; ---------------------------------------------------------------------
+;;; fetching the latest items
+;;; ---------------------------------------------------------------------
+
+(defmethod db-get-latest-items ((db sqlite-handle)
+                                &key
+                                  (offset 0)
+                                  (limit *default-result-items-per-page*))
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
+  (bind ((sql vals (sqlgen-get-latest-items :offset offset :limit limit)))
+    (apply 'execute-to-list db sql vals)))
+
+(defmethod get-latest-items ((dbpath pathname)
+                             &key
+                               (offset 0)
+                               (limit *default-result-items-per-page*))
+  (assert (probe-file dbpath) () "No such file: ~S" dbpath)
+  (with-open-database (db dbpath)
+    (db-get-latest-items db  :offset offset :limit limit)))
+
+
+;;; ---------------------------------------------------------------------
+;;; tests
+;;; ---------------------------------------------------------------------
+
+;;; (setf $movies-test-path (path "~/Desktop/Movies.delectus2"))
+;;; (setf $zips-test-path (path "~/Desktop/Zipcodes.delectus2"))
+;;; (setf $wordtest100-path (path "~/Desktop/wordtest100.delectus2"))
+;;; (setf $wordtest1k-path (path "~/Desktop/wordtest1k.delectus2"))
+;;; (setf $wordtest10k-path (path "~/Desktop/wordtest10k.delectus2"))
+;;; (setf $wordtest100k-path (path "~/Desktop/wordtest100k.delectus2"))
+
+;;; (time (get-latest-listname-op $movies-test-path))
+;;; (time (get-latest-listname-op $wordtest100k-path))
+
+;;; (time (get-latest-comment-op $movies-test-path))
+;;; (time (get-latest-comment-op $wordtest100k-path))
+
+;;; (time (get-latest-columns-op $movies-test-path))
+;;; (time (get-latest-columns-op $wordtest100k-path))
+
+;;; (time (count-latest-items $movies-test-path))
+;;; (time (count-latest-items $zips-test-path))
+;;; (time (count-latest-items $wordtest100-path))
+;;; (time (count-latest-items $wordtest1k-path))
+;;; (time (count-latest-items $wordtest10k-path))
+;;; (time (count-latest-items $wordtest100k-path))
+
+;;; (time (get-latest-items $movies-test-path))
+;;; (time (get-latest-items $zips-test-path))
+;;; (time (get-latest-items $wordtest100-path))
+;;; (time (get-latest-items $wordtest10k-path))
+;;; (time (get-latest-items $wordtest100k-path))
 

@@ -240,6 +240,18 @@
 ;;; getting the latest data
 ;;; =====================================================================
 
+(defun sqlgen-get-latest-listname-op ()
+  (values "SELECT * FROM listnames ORDER BY revision DESC, timestamp DESC LIMIT 1"
+          nil))
+
+(defun sqlgen-get-latest-comment-op ()
+  (values "SELECT * FROM comments ORDER BY revision DESC, timestamp DESC LIMIT 1"
+          nil))
+
+(defun sqlgen-get-latest-columns-op ()
+  (values "SELECT * FROM columns ORDER BY revision DESC, timestamp DESC LIMIT 1"
+          nil))
+
 (defun sqlgen-check-latest-items-table-exists ()
   (values "SELECT * FROM sqlite_temp_master WHERE type='table' AND name='latest_items'"
           nil))
