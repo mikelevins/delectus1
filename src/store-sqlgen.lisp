@@ -111,7 +111,7 @@
 ;;           nil))
 
 (defun sqlgen-create-items-itemid-revision-timestamp-index ()
-  (values "CREATE INDEX idx_main_items on `items` (`itemid`, `revision` DESC, `timestamp` DESC, `origin`)"
+  (values "CREATE INDEX idx_main_items on `items` (`itemid`, `revision` DESC, `timestamp` DESC, item_order)"
           nil))
 
 ;;; =====================================================================
@@ -259,14 +259,14 @@
   (values
    (trim "
 create temporary table latest_items as
-SELECT latest.*
-  FROM (SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY itemid ORDER BY revision DESC, timestamp DESC, origin) rank
-        FROM items) latest
- WHERE latest.rank = 1 ORDER BY item_order ASC
+select * 
+from (select *
+      from items
+      order by revision DESC, timestamp DESC) 
+group by itemid 
+order by item_order
 ")
    nil))
-
 
 
 (defun sqlgen-count-latest-items ()
