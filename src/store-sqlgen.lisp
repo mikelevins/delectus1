@@ -302,3 +302,19 @@ order by item_order
                  (else (error "Unrecognized order ~S" order))))
      (offset offset)
      (limit limit))))
+
+(defun sqlgen-get-latest-filtered-items (&key filter-text column-labels offset limit)
+  (let* ((filters (remove nil
+                          (mapcar (lambda (lbl)
+                                    (if (empty? filter-text)
+                                        nil
+                                        (format nil "`~A` LIKE '%~A%'" lbl filter-text)))
+                                  column-labels)))
+         (filter-expression (if filters
+                                (str "WHERE (" (join-strings " OR " filters) ")")
+                                ""))
+         (offset-expression (if (and limit offset) (format nil "OFFSET ~A" offset) ""))
+         (limit-expression (if limit (format nil "LIMIT ~A" limit) "")))
+    (values  (format nil "SELECT * FROM `latest_items` ~A ~A ~A"
+                     filter-expression limit-expression offset-expression)
+             nil)))
