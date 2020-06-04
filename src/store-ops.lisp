@@ -275,6 +275,7 @@
 
 ;;; (time (count-latest-filtered-items $movies-test-path :filter-text "East" :limit 1 :offset 2))
 ;;; (time (count-latest-filtered-items $zips-test-path :filter-text "Spring" :limit -1 :offset 0))
+;;; (time (count-latest-filtered-items $wordtest100k-path :filter-text "" :limit -1 :offset 0))
 
 ;;; fetching filtered items
 ;;; ---------------------------------------------------------------------
