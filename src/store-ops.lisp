@@ -245,6 +245,37 @@
   (with-open-database (db dbpath)
     (db-get-latest-items db  :offset offset :limit limit)))
 
+;;; counting filtered items
+;;; ---------------------------------------------------------------------
+
+(defmethod db-count-latest-filtered-items ((db sqlite-handle)
+                                           &key
+                                             (filter-text nil)
+                                             (offset 0)
+                                             (limit *default-result-items-per-page*))
+  (unless (db-check-latest-items-table-exists db)
+    (db-create-latest-items-table db))
+  (bind ((item-columns (db-get-latest-columns-op db))
+         (item-userdata-columns (mapcar #'jonathan:parse
+                                        (drop (length *columns-op-columns*)
+                                              item-columns)))
+         (column-labels (mapcar #'column-description-label
+                                item-userdata-columns))
+         (sql vals (sqlgen-count-latest-filtered-items :filter-text filter-text :column-labels column-labels
+                                                       :offset offset :limit limit)))
+    (apply 'execute-single db sql vals)))
+
+(defmethod count-latest-filtered-items ((db-path pathname)
+                                        &key
+                                          (filter-text nil)
+                                          (offset 0)
+                                          (limit *default-result-items-per-page*))
+  (with-open-database (db db-path)
+    (db-count-latest-filtered-items db :filter-text filter-text :offset offset :limit limit)))
+
+;;; (time (count-latest-filtered-items $movies-test-path :filter-text "East" :limit 1 :offset 2))
+;;; (time (count-latest-filtered-items $zips-test-path :filter-text "Spring" :limit -1 :offset 0))
+
 ;;; fetching filtered items
 ;;; ---------------------------------------------------------------------
 
