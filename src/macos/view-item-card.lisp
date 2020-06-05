@@ -10,10 +10,39 @@
 
 (in-package #:ui)
 
-(defun item-card-field-layout (label value)
-  (make-instance 'row-layout
-                 :description [(make-instance 'title-pane :text label)
-                               (make-instance 'title-pane :text value)]))
+
+
+(define-interface item-card-field ()
+  ;; -- slots ---------------------------------------------
+  ((field-label :accessor field-label :initform nil :initarg :field-label)
+   (field-value :accessor field-value :initform nil :initarg :field-value))
+
+  ;; -- panes ---------------------------------------------
+  (:panes
+   (label-pane title-pane :reader label-pane)
+   (value-pane title-pane :reader value-pane))
+  
+  ;; -- layouts ---------------------------------------------
+  (:layouts
+   (main-layout row-layout '(label-pane value-pane)
+                :reader main-layout :border 4))
+  
+  ;; -- defaults ---------------------------------------------
+  (:default-initargs :layout 'main-layout))
+
+(defmethod initialize-instance :after ((field item-card-field) &rest initargs 
+                                       &key &allow-other-keys)
+  (when (field-label field)
+    (setf (title-pane-text (label-pane field))
+          (field-label field)))
+  (when (field-value field)
+    (setf (title-pane-text (value-pane field))
+          (format nil "~A" (field-value field)))))
+
+;;; (setf $win (contain (make-instance 'item-card-field :field-label "Title" :field-value "Home Alone")))
+
+(defun item-card-field (label value)
+  (make-instance 'item-card-field :field-label label :field-value value))
 
 (define-interface item-card ()
   ;; -- slots ---------------------------------------------
@@ -50,7 +79,7 @@
            (userdata-field-values (mapcar (lambda (val)(format nil "~A" val))
                                           (delectus::drop (length delectus::*item-op-columns*)
                                                           (item-data card))))
-           (field-layouts (mapcar #'item-card-field-layout userdata-column-names userdata-field-values)))
+           (field-layouts (mapcar #'item-card-field userdata-column-names userdata-field-values)))
       (setf (layout-description (main-layout card))
             field-layouts))))
 
