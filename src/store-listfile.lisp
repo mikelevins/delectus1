@@ -18,13 +18,36 @@
 ;;;   A function whose name starts with "db-" operates on a SQLite
 ;;;   database handle. Thatmeans it must be called within a
 ;;;   WITH-OPEN-DATABASE form, and within WITH-TRANSACTION if
-;;;   transaction preotection is needed.
+;;;   transaction protection is needed.
 ;;;
 ;;; - foo:
 ;;;   A function whose name does not start with "db-"  does not
 ;;;   operate on a database handle, and so needs no special
 ;;;   protection from enclosing database forms.
 
+
+;;; =====================================================================
+;;; list file format
+;;; =====================================================================
+
+(defmethod db-valid-delectus-file? ((db sqlite-handle))
+  (bind ((sql vals (sqlgen-delectus-table-exists))
+         (found (apply 'execute-single db sql vals)))
+    found))
+
+(defmethod valid-delectus-file? ((db-path pathname))
+  (assert (probe-file db-path)() "No such file: ~S" db-path)
+  (assert (file-pathname-p db-path)() "Not a file: ~S" db-path)
+  (with-open-database (db db-path)
+    (handler-case (db-valid-delectus-file? db)
+      (sqlite-error (err) nil))))
+
+(defmethod valid-delectus-file? ((db-path string))
+  (valid-delectus-file? (pathname db-path)))
+
+;;; (defparameter $movies-path (path "~/Desktop/Movies.delectus2"))
+;;; (valid-delectus-file? $movies-path)
+;;; (valid-delectus-file? (path "~/.emacs"))
 
 ;;; =====================================================================
 ;;; revisions

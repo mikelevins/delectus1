@@ -43,6 +43,15 @@
 
 ;;; (sqlgen-init-delectus-table (makeid))
 
+(defun sqlgen-delectus-table-exists ()
+  (yield
+   (select :name
+     (from :sqlite_master)
+     (where (:and (:= :type "table")
+                  (:= :name "delectus"))))))
+
+;;; (sqlgen-delectus-table-exists)
+
 ;;; ---------------------------------------------------------------------
 ;;; 'listnames' table
 ;;; ---------------------------------------------------------------------

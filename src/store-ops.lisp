@@ -151,7 +151,7 @@
     (apply 'execute-non-query db sql vals)))
 
 ;;; =====================================================================
-;;; fetching ops
+;;; retrieving ops
 ;;; =====================================================================
 
 ;;; ---------------------------------------------------------------------
@@ -200,7 +200,7 @@
 ;;; creating the temporary "latest_items" table
 ;;; ---------------------------------------------------------------------
 
-(defmethod db-check-latest-items-table-exists ((db sqlite-handle))
+(defmethod db-latest-items-table-exists? ((db sqlite-handle))
   (bind ((sql vals (sqlgen-check-latest-items-table-exists))
          (found-table (apply 'execute-to-list db sql vals)))
     (if found-table t nil)))
@@ -214,7 +214,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defmethod db-count-latest-items ((db sqlite-handle))
-  (unless (db-check-latest-items-table-exists db)
+  (unless (db-latest-items-table-exists? db)
     (db-create-latest-items-table db))
   (bind ((sql vals (sqlgen-count-latest-items)))
     (apply 'execute-single db sql vals)))
@@ -232,7 +232,7 @@
                                 &key
                                   (offset 0)
                                   (limit *default-result-items-per-page*))
-  (unless (db-check-latest-items-table-exists db)
+  (unless (db-latest-items-table-exists? db)
     (db-create-latest-items-table db))
   (bind ((sql vals (sqlgen-get-latest-items :offset offset :limit limit)))
     (apply 'execute-to-list db sql vals)))
@@ -253,7 +253,7 @@
                                              (filter-text nil)
                                              (offset 0)
                                              (limit *default-result-items-per-page*))
-  (unless (db-check-latest-items-table-exists db)
+  (unless (db-latest-items-table-exists? db)
     (db-create-latest-items-table db))
   (bind ((item-columns (db-get-latest-columns-op db))
          (item-userdata-columns (mapcar #'jonathan:parse
@@ -285,7 +285,7 @@
                                            (filter-text nil)
                                            (offset 0)
                                            (limit *default-result-items-per-page*))
-  (unless (db-check-latest-items-table-exists db)
+  (unless (db-latest-items-table-exists? db)
     (db-create-latest-items-table db))
   (bind ((item-columns (db-get-latest-columns-op db))
          (item-userdata-columns (mapcar #'jonathan:parse
