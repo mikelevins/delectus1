@@ -24,10 +24,10 @@
                                   (;; CAPI UI
                                    (:file "package")           ; the ui package
                                    (:file "macos-constants")   ; constants to control UI appearance
-                                   ;; (:file "macos-view-utils")  ; operations on native macOS widgets
-                                   ;; (:file "view-items-sheet")  ; spreadsheet-like view
-                                   ;; (:file "view-item-card")    ; a single-item pane
+                                   (:file "macos-view-utils")  ; operations on native macOS widgets
+                                   (:file "view-item-card")    ; a single-item pane
                                    ;; (:file "view-app-menus")    ; the app menubar
+                                   ;; (:file "view-items-sheet")  ; spreadsheet-like view
                                    ;; (:file "app-main")          ; toplevel macOS application
                                    ))))))
 
