@@ -21,8 +21,22 @@
 
   ;; -- panes ---------------------------------------------
   (:panes
-   (label-pane title-pane :reader label-pane)
-   (value-pane title-pane :reader value-pane))
+   (label-pane title-pane
+               :font
+               (gp:make-font-description
+                :family "Helvetica" 
+                :size 16
+                :weight :bold                         
+                :slant :roman)
+               :reader label-pane)
+   (value-pane title-pane
+               :font
+               (gp:make-font-description
+                :family "Helvetica" 
+                :size 16 
+                :weight :medium                         
+                :slant :roman)
+               :reader value-pane))
   
   ;; -- layouts ---------------------------------------------
   (:layouts
