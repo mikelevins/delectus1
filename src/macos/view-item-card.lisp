@@ -25,7 +25,7 @@
                :font
                (gp:make-font-description
                 :family "Helvetica" 
-                :size 16
+                :size 14
                 :weight :bold                         
                 :slant :roman)
                :reader label-pane)
@@ -33,7 +33,7 @@
                :font
                (gp:make-font-description
                 :family "Helvetica" 
-                :size 16 
+                :size 14
                 :weight :medium                         
                 :slant :roman)
                :reader value-pane))
@@ -94,10 +94,7 @@
                                            userdata-columns-data))
            (userdata-column-names (mapcar #'delectus::column-description-name
                                           userdata-columns-data))
-           ;; BUG: csv import constructed the field values as literals, not as JSON strings
-           ;;      need to fix import code to store values as JSON
-           ;;      temporary workaround: do not parse the values
-           (userdata-field-values (mapcar (lambda (val)(format nil "~A" val))
+           (userdata-field-values (mapcar (lambda (val)(format nil "~A" (jonathan:parse val)))
                                           (delectus::drop (length delectus::*item-op-columns*)
                                                           (item-data card))))
            (field-layouts (mapcar #'item-card-field userdata-column-names userdata-field-values)))

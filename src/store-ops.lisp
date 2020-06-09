@@ -343,7 +343,7 @@
 ;;; (time (count-latest-items $wordtest10k-path))
 ;;; (time (count-latest-items $wordtest100k-path))
 
-;;; (time (get-latest-items $movies-test-path))
+;;; (time (setf $items (get-latest-items $movies-test-path)))
 ;;; (time (get-latest-items $zips-test-path))
 ;;; (time (get-latest-items $wordtest100-path))
 ;;; (time (get-latest-items $wordtest10k-path))

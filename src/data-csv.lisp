@@ -14,17 +14,20 @@
 ;;; importing csv data into a Delectus list
 ;;; ---------------------------------------------------------------------
 
-;;; convert for a misfeature of Delectus 1 CSV export:
+(defun %val->JSON-string (val)
+  (if (equal val "#f") ; correct a misfeature of Delectus 1 CSV export
+      (jonathan:to-json :false)
+      (jonathan:to-json val)))
 
-(defun %sharpf->nil (thing)
-  (if (equal thing "#f")
-      nil
-      thing))
-
+;;; convert a row of values to the corresponding JSON strings
 (defun canonicalize (value-list &key (sharpf-is-nil t))
-  (if sharpf-is-nil
-      (mapcar #'%sharpf->nil value-list)
-      value-list))
+  (mapcar #'%val->JSON-string
+          value-list))
+
+;;; (setf $movies-csv-path (path "~/Workshop/src/delectus/test-data/Movies.csv"))
+;;; (setf $csv-vals (with-open-file (in $movies-csv-path)(fare-csv:read-csv-line in)(fare-csv:read-csv-line in)))
+;;; (canonicalize $csv-vals)
+;;; (mapcar #'jonathan:parse (canonicalize $csv-vals))
 
 (defun import-csv (csv-path list-path list-name
                    &key
