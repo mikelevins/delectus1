@@ -67,39 +67,40 @@
 
 (define-interface item-card ()
   ;; -- slots ---------------------------------------------
-  ((columns-data :accessor columns-data :initform nil :initarg :columns-data)
-   (item-data :accessor item-data :initform nil :initarg :item-data))
+  ((columns-data :accessor columns-data :initform nil)
+   (item-data :accessor item-data :initform nil))
 
   ;; -- panes ---------------------------------------------
   (:panes)
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (main-layout column-layout '()
+   (main-layout grid-layout '()
+                :columns 2
                 :reader main-layout :border 4))
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout
     :width 800 :height 600))
 
+(defmethod value->presentation (value)(format nil "~A" value))
+(defmethod value->presentation ((value null)) "")
 
 (defmethod initialize-instance :after ((card item-card) &rest initargs 
-                                       &key &allow-other-keys)
-  (when (columns-data card)
-    (let* ((metadata-column-labels (mapcar #'symbol-name delectus::*item-op-columns*))
-           (userdata-columns-data (mapcar #'jonathan:parse
-                                          (delectus::drop (length delectus::*columns-op-columns*)
-                                                          (columns-data card))))
-           (userdata-column-labels (mapcar #'delectus::column-description-label
-                                           userdata-columns-data))
-           (userdata-column-names (mapcar #'delectus::column-description-name
-                                          userdata-columns-data))
-           (userdata-field-values (mapcar (lambda (val)(format nil "~A" (jonathan:parse val)))
-                                          (delectus::drop (length delectus::*item-op-columns*)
-                                                          (item-data card))))
-           (field-layouts (mapcar #'item-card-field userdata-column-names userdata-field-values)))
-      (setf (layout-description (main-layout card))
-            field-layouts))))
+                                       &key
+                                         (columns-data nil)
+                                         (item-data nil)
+                                         &allow-other-keys)
+  (setf (columns-data card)(delectus::columns-op-userdata columns-data))
+  (setf (item-data card)(delectus::item-op-userdata item-data))
+  (setf (layout-description (main-layout card))
+        (make-item-card-description (columns-data card)
+                                    (item-data card))))
+
+(defun make-item-card-description (columns-data item-data)
+  (let ((lbls (mapcar #'delectus::column-description-name columns-data))
+        (vals (mapcar #'value->presentation item-data)))
+    (delectus::interleave lbls vals)))
 
 ;;; (setf $movies (delectus::path "~/Desktop/Movies.delectus2"))
 ;;; (setf $items (delectus::get-latest-items $movies))

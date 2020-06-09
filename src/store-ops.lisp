@@ -313,7 +313,13 @@
 ;;; op accessors
 ;;; =====================================================================
 
+(defun columns-op-userdata (op)
+  (mapcar #'jonathan:parse
+          (drop (length *columns-op-columns*) op)))
 
+(defun item-op-userdata (op)
+  (mapcar #'jonathan:parse
+          (drop (length *item-op-columns*) op)))
 
 ;;; ---------------------------------------------------------------------
 ;;; tests
