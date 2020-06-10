@@ -18,9 +18,9 @@
 (defparameter $test-words-path "/usr/share/dict/words")
 
 ;;; three simulated processes
-(defparameter $processid-1 #(82 105 143 117 23 188 75 91 172 25 23 13 150 103 56 162))
-(defparameter $processid-2 #(127 122 180 42 98 5 72 151 132 131 244 32 228 72 191 248))
-(defparameter $processid-3 #(180 244 225 2 56 135 64 81 129 214 65 199 171 98 224 245))
+(defparameter $processid-1 (as-identity-vector #(82 105 143 117 23 188 75 91 172 25 23 13 150 103 56 162)))
+(defparameter $processid-2 (as-identity-vector #(127 122 180 42 98 5 72 151 132 131 244 32 228 72 191 248)))
+(defparameter $processid-3 (as-identity-vector #(180 244 225 2 56 135 64 81 129 214 65 199 171 98 224 245)))
 
 ;;; three arbitrary but different origins
 (defparameter $origin1 (make-origin $processid-1 (pathname "/tmp/testpath1")))
