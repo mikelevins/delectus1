@@ -113,28 +113,32 @@
                                         :field-values field-values))))))))))
 
 ;;; (setf $wordtest100-path (path "~/Desktop/wordtest100.delectus2"))
-;;; 0.22sec:
+;;; 0.22sec in Lispworks on macos:
+;;; 0.157sec in SBCL on macos:
 ;;; (time (make-test-list $wordtest100-path :count 100))
 ;;; (time (count-latest-items $wordtest100-path))
 ;;; (time (get-latest-items $wordtest100-path))
 ;;; (delete-file $wordtest100-path)
 
 ;;; (setf $wordtest1k-path (path "~/Desktop/wordtest1k.delectus2"))
-;;; 1.78sec:
+;;; 1.78sec in Lispworks on macos:
+;;; 1.3sec in SBCL on macos:
 ;;; (time (make-test-list $wordtest1k-path :count 1000))
 ;;; (time (count-latest-items $wordtest1k-path))
 ;;; (time (get-latest-items $wordtest1k-path))
 ;;; (delete-file $wordtest1k-path)
 
 ;;; (setf $wordtest10k-path (path "~/Desktop/wordtest10k.delectus2"))
-;;; 19.5sec:
+;;; 19.5sec in Lispworks on macos:
+;;; 13.6sec in SBCL on macos:
 ;;; (time (make-test-list $wordtest10k-path :count 10000))
 ;;; (time (count-latest-items $wordtest10k-path))
 ;;; (time (get-latest-items $wordtest10k-path :offset 9000))
 ;;; (delete-file $wordtest10k-path)
 
 ;;; (setf $wordtest100k-path (path "~/Desktop/wordtest100k.delectus2"))
-;;; 5m7sec:
+;;; 5m7sec in Lispworks on macos:
+;;; 2m32sec in SBCL on macos:
 ;;; (time (make-test-list $wordtest100k-path :count 100000))
 ;;; (time (count-latest-items $wordtest100k-path))
 ;;; (time (get-latest-items $wordtest100k-path :offset 98000))
