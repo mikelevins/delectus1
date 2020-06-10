@@ -26,6 +26,7 @@
                                    (:file "macos-constants")      ; constants to control UI appearance
                                    (:file "view-utils")           ; general view helpers
                                    #+:mac (:file "macos-view-utils") ; tweaks for native macOS widgets
+                                   (:file "view-value-pane")       ; a single-item card-style pane
                                    (:file "view-item-card")       ; a single-item card-style pane
                                    (:file "view-item-row")        ; a single-item row-style pane
                                    ;; (:file "view-app-menus")    ; the app menubar

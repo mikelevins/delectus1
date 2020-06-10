@@ -16,6 +16,8 @@
 
 ;;; panes for item labels and values
 
+
+
 (defun make-item-label-pane (label)
   (make-instance 'title-pane
                  :text label
