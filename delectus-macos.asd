@@ -22,10 +22,12 @@
                                   :serial t
                                   :components
                                   (;; CAPI UI
-                                   (:file "package")           ; the ui package
-                                   (:file "macos-constants")   ; constants to control UI appearance
-                                   (:file "macos-view-utils")  ; operations on native macOS widgets
-                                   (:file "view-item-card")    ; a single-item pane
+                                   (:file "package")              ; the ui package
+                                   (:file "macos-constants")      ; constants to control UI appearance
+                                   (:file "view-utils")           ; general view helpers
+                                   #+:mac (:file "macos-view-utils") ; tweaks for native macOS widgets
+                                   (:file "view-item-card")       ; a single-item card-style pane
+                                   (:file "view-item-row")        ; a single-item row-style pane
                                    ;; (:file "view-app-menus")    ; the app menubar
                                    ;; (:file "view-items-sheet")  ; spreadsheet-like view
                                    ;; (:file "app-main")          ; toplevel macOS application

@@ -30,30 +30,7 @@
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout
-    :width 800 :height 600))
-
-(defmethod value->presentation (value)(format nil "~A" value))
-(defmethod value->presentation ((value null)) "")
-
-(defun make-item-label-pane (label)
-  (make-instance 'title-pane
-                 :text label
-                 :font
-                 (gp:make-font-description
-                  :family "Helvetica" 
-                  :size 14
-                  :weight :bold                         
-                  :slant :roman)))
-
-(defun make-item-value-pane (value)
-  (make-instance 'title-pane
-                 :text value
-                 :font
-                 (gp:make-font-description
-                  :family "Helvetica" 
-                  :size 14
-                  :weight :normal                         
-                  :slant :roman)))
+    :internal-border 8))
 
 (defmethod initialize-instance :after ((card item-card) &rest initargs 
                                        &key
@@ -79,5 +56,3 @@
 ;;; (setf $it (elt $items 0))
 
 ;;; (setf $win (contain (make-instance 'item-card :columns-data $cols :item-data $it)))
-
-
