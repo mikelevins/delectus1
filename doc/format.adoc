@@ -67,6 +67,33 @@ The `"comments"` table records the user-assigned comment text describing the lis
 |===
 
 === The `"columns"` table
+
+[cols="1,1,4",options="header"]
+|===
+| column | type | description
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `INTEGER` | The op's origin, unique per (node,process,pathname) tuple.
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the creating device.
+| `_[label]_+` | `_[ColumnDefinition]_+` | The attributes of column `_label_`.
+|===
+
+The field `_[label]_+` stands for one or more *userdata columns* of the list. The `"columns"` table stores one SQLite column for each userdata column. The SQLite column's label is `_label_`, and its attributes are given by a `*ColumnDefinition*` object.
+
+A `*ColumnDefinition*` object is a JSON object of the following form:
+
+[cols="1,2,6",options="header"]
+|===
+| attribute | type | description
+| `label` | `string` | The column's unique label.
+| `name` | `string` | The column's user-assigned name.
+| `order` | `real` | The recommended presentation order of the column.
+| `sort` | `null`, `'ASC'`, `'DESC'` | Whether to sort the list on this column, and in which direction. Only one column at a time may have a non-null value for this attribute.
+| `title` | `Boolean` | Whether this is the list's *title column*. At most one column at a time may have a non-null value for this attribute.
+| `subtitle` | `Boolean` | Whether this is the list's *subtitle column*. At most one column at a time may have a non-null value for this attribute.
+| `deleted` | `Boolean` | Whether this column has been marked deleted.
+|===
+
+
 === The `"items"` and `"latest_items"` tables
 ==== `"items"`
 ==== `"latest_items"`
