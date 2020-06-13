@@ -16,32 +16,35 @@
 
 (define-interface value-pane ()
   ;; -- slots ---------------------------------------------
-  ()
+  ((value :accessor value :initform nil :initarg :value))
 
   ;; -- panes ---------------------------------------------
   (:panes)
   
   ;; -- layouts ---------------------------------------------
   (:layouts
-   (main-layout simple-layout '() :reader main-layout))
+   (display-layout simple-pinboard-layout () :reader display-layout
+                   :child (make-instance 'item-pinboard-object
+                                         :text (value interface)
+                                         :graphics-args
+                                         (list :font
+                                               (gp:find-best-font (convert-to-screen)
+                                                                  (gp:make-font-description
+                                                                   :size 14
+                                                                   :slant :roman)))))
+   (edit-layout simple-pinboard-layout () :reader edit-layout
+                :child (make-instance 'item-pinboard-object
+                                      :text (value interface)))
+   (main-layout switchable-layout '(display-layout edit-layout) :reader main-layout))
   
   ;; -- defaults ---------------------------------------------
   (:default-initargs :layout 'main-layout :visible-border t))
-
-(defmethod initialize-instance :after ((pane value-pane) &rest initargs 
-                                       &key
-                                         (data-pane nil)
-                                         &allow-other-keys)
-  (setf (layout-description (main-layout pane))
-        (list data-pane)))
 
 ;;; (setf $movies (delectus::path "~/Desktop/Movies.delectus2"))
 ;;; (setf $items (delectus::get-latest-items $movies))
 ;;; (setf $it (elt $items 0))
 
-;;; (setf $win (contain (make-instance 'value-pane :data-pane (make-instance 'title-pane :text "Foo"))))
-
-;;; (setf $win (contain (make-instance 'simple-pinboard-layout :visible-border t :description (list (make-instance 'title-pane :text "Foo")))))
+;;; (setf $win (contain (make-instance 'value-pane :value "Foo")))
 
 
-;;; (setf $win (contain (make-instance 'title-pane :text "Foobar Baz..." :title-position :frame :title "Foo" :visible-border t)))
+;;; :font (gp:make-font-description :size 14 :slant :roman)

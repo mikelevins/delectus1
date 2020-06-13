@@ -1,0 +1,164 @@
+= Delectus 2 Data Format
+:toc:name: value
+
+An optionally-concurrent file format
+
+== Introduction
+
+Delectus 2 defines a list-file format that can optionally support concurrent edits of multiple copies of the same list artifact.
+
+== Strategy
+
+Delectus 2 stores *list objects* in *listfiles*. A *list object* is a named sequence of *items*, each of which contains a set of *fields* arranged in labeled *columns*. Delectus stores one list object in each listfile.
+
+A listfile may be *concurrency enabled* or *concurrency disabled*. If enabled, the file support concurrent edits of the list data in multiple copies of the listfile from different processes or devices. If disabled, the file does not support concurrent edits, but also does not pay any cost in size or speed for concurrency support.
+
+Delectus can convert a file from disabled to enabled by adding a few data structures to the listfile. The conversion is transparent from the user's perspective: Delectus simply adds the additional needed structures to the listfile in-place.
+
+== Edits
+
+Delectus stores a list as a time-ordered log of *edits*. Each edit is a tuple of values that asserts an update to the list.
+
+There are four types of edit:
+
+. A *listname* edit updates the user-assigned name of the list.
+. A *comment* edit updates a comment string that describes the list.
+. A *columns* edit defines the named columns shared by all items in the list.
+. An *item* edit adds or updates a specific item belonging to the list.
+
+A listfile stores edits in an SQlite 3 file in four tables, named "listnames", "comments", "columns", and "items", one for each type of edit. Each edit is inserted with a timestamp and certain other metadata, in addition to the data that represents the new state of the list.
+
+A fifth table, the "delectus" table, stores metadata describing the listfile itself, including the list's unique ID and whether concurrent edits are enabled on the listfile.
+
+== Table formats
+
+=== With concurrent edits disabled
+
+The following tables describe the format of each table:
+
+[cols="1,1,1,5",options="header"]
+."listnames" table format
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the listname.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*data*`  | JSON string | `TEXT` | The new listname.
+|===
+
+[cols="1,1,1,5",options="header"]
+."comments" table format
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the comment.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*data*`  | JSON string | `TEXT` | The new comment text.
+|===
+
+[cols="1,1,1,5",options="header"]
+."columns" table format
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the columns.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*_label_**`  | JSON object* | `TEXT*` | A *column-definition* object specifying a *userdata column*.
+|===
+
+* The `*_label_**` field stands for a variable number of columns in the Columns table, one for each *userdata column* in the list. Each column has its own automatically-generated label, and its own attributes, given by the JSON *column* object stored in the column of the edit.
+
+[cols="1,1,1,5",options="header"]
+."items" table format
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the item.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*itemid*`  | *identity*  | `BLOB` |  The unique identifier of the item.
+| `*deleted*`  | Boolean  | `INTEGER` |  Whether the user has marked the item deleted.
+| `*_label_**`  | JSON value* | `TEXT*` | A JSON value (one of `null`, a `Boolean`, a `number`, or a `string`) giving the new value of the column of this particular item of the list.
+|===
+
+* The `*_label_**` field again stands for a variable number of columns, this time in the Items table. Each column has its own label, and a field value given by the JSON value in the corresponding column of the edit.
+
+The *itemid* uniquely identifies a specific item in the list. If the itemid appears nowhere else in the listfile when the edit is made then it's adding a new item to the list. If the itemid already appears in the listfile, then the edit updates the existing item in-place.
+
+=== Enabling concurrent edits
+
+To enable concurrent edits of a listfile, Delectus makes the following changes to the listfile:
+
+. Change the `"concurrent_edits_enabled"` field of the "delectus" table from `false` to `true`.
+. Add an `origin` field to each of the four other tables: "listnames", "comments", "columns", and "items". The `origin` field stores a 16-byte BLOB that distinguishes the Delectus process that inserted the edit into the table.
+
+With these changes made, the "listnames", "comments", "columns", and "items" tables look like this:
+
+[cols="1,1,1,5",options="header"]
+."listnames" table format, concurrent edits enabled
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the listname.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*origin*`  | *identity*  | `BLOB` |  The unique identifier of the Delectus process that inserted the edit.
+| `*data*`  | JSON string | `TEXT` | The new listname.
+|===
+
+[cols="1,1,1,5",options="header"]
+."comments" table format, concurrent edits enabled
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the comment.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*origin*`  | *identity*  | `BLOB` |  The unique identifier of the Delectus process that inserted the edit.
+| `*data*`  | JSON string | `TEXT` | The new comment text.
+|===
+
+[cols="1,1,1,5",options="header"]
+."columns" table format, concurrent edits enabled
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the columns.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*origin*`  | *identity*  | `BLOB` |  The unique identifier of the Delectus process that inserted the edit.
+| `*_label_**`  | JSON object* | `TEXT*` | A *column-definition* object specifying a *userdata column*.
+|===
+
+[cols="1,1,1,5",options="header"]
+."items" table format, concurrent edits enabled
+|===
+| Field | Delectus data | SQLite type | Description
+| `*revision*`  | integer  | `INTEGER` | The count of prior changes to the item.
+| `*timestamp*`  | integer  | `INTEGER` |  The time the edit occurred.
+| `*origin*`  | *identity*  | `BLOB` |  The unique identifier of the Delectus process that inserted the edit.
+| `*itemid*`  | *identity*  | `BLOB` |  The unique identifier of the item.
+| `*deleted*`  | Boolean  | `INTEGER` |  Whether the user has marked the item deleted.
+| `*_label_**`  | JSON value* | `TEXT*` | A JSON value (one of `null`, a `Boolean`, a `number`, or a `string`) giving the new value of the column of this particular item of the list.
+|===
+
+== Reading and writing list data
+
+When a listfile's concurrent-edits support is disabled, each edit is uniquely identified by its `revision` number or, in the case of `item` edits, by the `revision` and the `itemid`.
+
+When concurrent edits are enabled, Delectus also needs an additional datum, the `origin`, to correctly distinguish edits.
+
+When concurrent edits are disabled, the state of a listfile is just the time-sorted contents of the `"items"` table, together with the latest data from the `"listnames"`, `"comments"`, and `"columns"` tables.
+
+When concurrent edits are enabled, the state of the items is slightly more complicated. The `"listnames"`, `"comments"`, and `"columns"` tables each represent a logically-singular value, and determining the correct value is a simple matter of choosing the latest one, according to the revision and timestamp. (If concurrent edits are enabled, then it's possible for more than one value to have the same revision, in which case the tie is broken by consulting the timestamp. In the extremely unlikely event that the timestamps are the same, then the tie is broken arbitrarily by sorting on the `origin` field.)
+
+The `"items"` field, though, stores multiple versions of multiple items. The correct state is then the set of all of the latest versions of each distinct item. Delectus collects this set by grouping items by `itemid`, ordered by revision number, timestamp, and, if needed, origin, then taking the latest version of each item by that standard.
+
+Building this collection, the latest versions of all items, may take a noticeable amount of time in a large list. SQLite is fast, and even a list of  hundreds of thousands of items can be processed this way in less than a second, but that's still long enough to be noticeable for some operations (such as type-to-search with incremental search).
+
+Delectus therefore confines this time-consuming operation to times when the user expects the app to take anoticeable amount of time to do something. It builds a temporary `"latest_items"` table when it first opens a concurrency-enabled listfile, and then all read operations are performed on the `"latest_items"` table, which means it can skip the process of filtering the latest items.
+
+Similarly, when the user saves an edit, Delectus writes the edit to the appropriate table or tables and, if the change altered the `"items"` table, triggers a reconstruction of the `"latest_items"` table.
+
+None of this extra `"items"` processing is needed when interacting with a concurrency-disabled listfile. Delectus simply reads and writes the `"items"` table directly. It uses the `"latest_items"` table and related processing only when interacting with a concurrency-enabled listfile.
+
+== Turning off concurrent edits
+
+Technically, Delectus cannot turn off concurrent-editing support once it's turned on. This rule ensures that no data can be lost by changing the concurrency status of a listfile.
+
+What you can do instead is ask Delectus to make a new concurrency-disabled copy of the listfile. The new file gets a new unique ID, and is built without the `"origin"` columns in its tables, but is otherwise identical to the existing listfile.
+
+== Compaction
+
+Users may mark columns and items deleted, but Delectus never actually deletes any data. It simply hides deleted items and columns, unless the user explicitly asks for them to be shown.
+
+You can actually remove the deleted items from a list only by making a new copy of the list without the deleted items included. We call this process *compaction*. *Compaction* simply means creating a new, concurrency-disabled copy of a listfile, copying over all the latest data except for any columns and items that are marked deleted. The *compacted* list is a new list; Delectus does not consider it a copy of the old list, and cannot sync it with the old list. You can enable concurrent edits on it, though, and create new syncable copies.
