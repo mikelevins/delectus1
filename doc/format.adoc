@@ -80,6 +80,25 @@ The following tables describe the format of each table:
 
 The *itemid* uniquely identifies a specific item in the list. If the itemid appears nowhere else in the listfile when the edit is made then it's adding a new item to the list. If the itemid already appears in the listfile, then the edit updates the existing item in-place.
 
+==== The *column definition* object
+
+The contents of each `*_label_*` field in the `"columns"` table is a JSON *column definition* object with the following format:
+
+[cols="1,1,5",options="header"]
+.JSON `column` object
+|===
+| Field | Representation | Description
+| `*label*` | `string` | The column's unique *identity label*.
+| `*name*` | `string` | A user-assigned string used in the Delectus UI as the name of the column.
+| `*order*` | `double` | A decimal number giving the desired order of presentation for the column. By default, columns are numbered 100.0, 200.0, and so on.
+| `*sort*` | `'ASC'`, `'DESC'`, or `null` | Whether this is the sort column, and if so, which direction to sort the list. At most one column at a time may be the sort column. If no sort column is designated then Delectus displays list items in order of their `order` fields.
+| `*title*` | `Boolean` | Whether this is the title column. Delectus displays title columns more prominently in the user interface. Exactly one column at a time is the title column of a list. If the user does not designate a title column then Delectus chooses an arbitrary one (generally the column with the least `order` value).
+| `*subtitle*` | `Boolean` | Whether this is the subtitle column. Delectus displays the subtitle column less prominently than the title column, but more prominently than other columns in the UI. At most one column at a time is the subtitle column of a list. If no subtitle column is designated then no column is displayed in subtitle style.
+| `*deleted*` | `Boolean` | Whether this column is marked deleted.
+|===
+
+
+
 === Enabling concurrent edits
 
 To enable concurrent edits of a listfile, Delectus makes the following changes to the listfile:
@@ -155,7 +174,9 @@ None of this extra `"items"` processing is needed when interacting with a concur
 
 Technically, Delectus cannot turn off concurrent-editing support once it's turned on. This rule ensures that no data can be lost by changing the concurrency status of a listfile.
 
-What you can do instead is ask Delectus to make a new concurrency-disabled copy of the listfile. The new file gets a new unique ID, and is built without the `"origin"` columns in its tables, but is otherwise identical to the existing listfile.
+What you can do instead is ask Delectus to make a new concurrency-disabled copy of the listfile. The new file gets a new unique ID. The contents of its `"items"` table are taken from the old file's temporary `"latest_items"` table. Because the new file's support for concurrent edits is off by default, the `"origin"` column is not copied, and is therefore lost from the new file.
+
+You can then enable concurrent edits for the new file if you like. Delectus treats the new file and any concurrent copies as entirely separate from the original file. When it adds the `"origin"` columns to the tables, it fills them with the unique origin of the current Delectus process.
 
 == Compaction
 
