@@ -22,10 +22,12 @@ Delectus 2 stores lists in *listfiles*. A Delectus 2 listfile is a SQLite 3 data
 | `*"comments"*` | persistent | A user-assigned comment describing the list.
 | `*"columns"*` | persistent | The currently-defined columns and their attributes.
 | `*"items"*` | persistent | The currently-defined list items and their contents.
-| `*"latest_items"*` | transient | The latest versions of all defined list items.
+| `*"latest_items"*` | temporary | The latest versions of all defined list items.
 |===
 
 Each table stores a log of *edits*. An edit is a tuple that asserts a change to the list--either to its name, its comment text, its columns and their attributes, or its items. The current state of the list at any given time is just the state recorded in the latest edits to all of these aspects of the list.
+
+The `"latest_items"` table is temporary, created each time a listfile is opened, and discarded when it's closed. It contains only the latest versions of all items. Delectus reconstructs it any time the user saves a change to the list.
 
 === The `"delectus"` table
 
@@ -79,6 +81,8 @@ The `"comments"` table records the user-assigned comment text describing the lis
 
 The field `_[label]_+` stands for one or more *userdata columns* of the list. The `"columns"` table stores one SQLite column for each userdata column. The SQLite column's label is `_label_`, and its attributes are given by a `*ColumnDefinition*` object.
 
+==== `ColumnDefinition`
+
 A `*ColumnDefinition*` object is a JSON object of the following form:
 
 [cols="1,2,6",options="header"]
@@ -87,13 +91,29 @@ A `*ColumnDefinition*` object is a JSON object of the following form:
 | `label` | `string` | The column's unique label.
 | `name` | `string` | The column's user-assigned name.
 | `order` | `real` | The recommended presentation order of the column.
-| `sort` | `null`, `'ASC'`, `'DESC'` | Whether to sort the list on this column, and in which direction. Only one column at a time may have a non-null value for this attribute.
-| `title` | `Boolean` | Whether this is the list's *title column*. At most one column at a time may have a non-null value for this attribute.
-| `subtitle` | `Boolean` | Whether this is the list's *subtitle column*. At most one column at a time may have a non-null value for this attribute.
+| `sort` | `null`, `'ASC'`, `'DESC'` | Whether to sort the list on this column, and in which direction. Only one column at a time may have a true value for this attribute.
+| `title` | `Boolean` | Whether this is the list's *title column*. At most one column at a time may have a true value for this attribute.
+| `subtitle` | `Boolean` | Whether this is the list's *subtitle column*. At most one column at a time may have a true value for this attribute.
 | `deleted` | `Boolean` | Whether this column has been marked deleted.
 |===
 
 
 === The `"items"` and `"latest_items"` tables
-==== `"items"`
-==== `"latest_items"`
+
+Delectus stores the list's items in the `"items"` table. The `"items"` table contains every version of every item in the list, including  the original version of each item when it was first added and every updated version created by subsequent edits. It even stores versions of items that have been marked deleted.
+
+Only the latest version of each item is considered current. In order to speed up interactions with the list's items, Delectus constructs a temporary `"latest_items"` when it opens a list, and updates the `"latest_items"` table any time an edit is saved to the listfile.
+
+The `"latest_items"` table is identical in structure to the `"items"` table, differing only in its contents.
+
+[cols="1,1,4",options="header"]
+.Structure of the `"items"` and `"latest_items"` tables
+|===
+| column | type | description
+| `revision` | `INTEGER` | The op's revision number, unique per origin.
+| `origin` | `BLOB` | The op's origin. The origin is unique per process/pathname pair.
+| `timestamp` | `INTEGER` | The time of the op's creation, according to the device running the Delectus process whenit's created.
+| `itemid` | `BLOB` | The item's identity, unique per distinct item.
+| `deleted` | `INTEGER` | True if the item is marked deleted; false otherwise.
+| `_[label]_+` | `null`, `Boolean`, `number`, or `string` | The value of the field in column `_label_`.
+|===
