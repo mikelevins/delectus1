@@ -115,6 +115,7 @@
 ;;; (delete-file $zips-test-path)
 ;;; 5.1sec in Lispworks on macos:
 ;;; 1.2sec in SBCL on macos:
+;;; 6.87sec to run in CCL on Ubuntu x8664
 ;;; (time (import-csv $zips-csv-path $zips-test-path "Zipcodes"))
 ;;; (time (get-latest-items (pathname $zips-test-path)))
 ;;; (time (get-latest-items (pathname $zips-test-path) :offset 30000 :limit 10))
