@@ -25,7 +25,8 @@
 
 (defmethod as-identity-vector ((thing vector))
   #+lispworks (coerce thing '(simple-vector 16))
-  #+sbcl (coerce thing '(SIMPLE-ARRAY (UNSIGNED-BYTE 8) (16))))
+  #+sbcl (coerce thing '(SIMPLE-ARRAY (UNSIGNED-BYTE 8) (16)))
+  #+ccl (coerce thing '(SIMPLE-ARRAY (UNSIGNED-BYTE 8) (16))))
 
 (defmethod identity? (thing) nil)
 
