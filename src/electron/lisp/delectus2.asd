@@ -1,4 +1,4 @@
-;;;; electron-lisp-boilerplate.asd
+;;;; delectus2.asd
 
 #-quicklisp
 (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
@@ -9,8 +9,8 @@
 (ql:quickload :hunchentoot)
 (ql:quickload :cl-who)
 
-(asdf:defsystem #:electron-lisp-boilerplate
-  :description "Describe electron-lisp-boilerplate here"
+(asdf:defsystem #:delectus2
+  :description "Describe Delectus2 here"
   :author "Your Name <your.name@example.com>"
   :license  "Specify license here"
   :version "0.0.1"
@@ -19,12 +19,12 @@
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
-                                     (:file "electron-lisp-boilerplate")))))
+                                     (:file "delectus2")))))
 
-;;; (asdf:load-system :electron-lisp-boilerplate)
+;;; (asdf:load-system :delectus2)
 
 (defun buildapp ()
-  (asdf:load-system :electron-lisp-boilerplate)
+  (asdf:load-system :delectus2)
   (save-lisp-and-die "lispapp"
                      :toplevel 'cl-user::main
                      :executable t))

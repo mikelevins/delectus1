@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sbcl --no-userinit --load lisp/electron-lisp-boilerplate.asd --eval "(cl-user::buildapp)"
+sbcl --no-userinit --load lisp/Delectus2.asd --eval "(cl-user::buildapp)"
 
 # Package
 mv ./lispapp ./lispapp.exe

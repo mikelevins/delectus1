@@ -1,6 +1,6 @@
 {
-    "name": "electron-lisp-boilerplate",
-    "version": "0.0.1",
+    "name": "delectus2",
+    "version": "0.0.2",
     "description": "",
     "main": "main.js",
     "scripts": {

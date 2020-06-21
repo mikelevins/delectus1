@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sbcl --no-userinit --load lisp/electron-lisp-boilerplate.asd --eval "(cl-user::buildapp)"
+sbcl --no-userinit --load lisp/delectus2.asd --eval "(cl-user::buildapp)"

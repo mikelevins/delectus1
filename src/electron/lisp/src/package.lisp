@@ -1,4 +1,4 @@
 ;;;; package.lisp
 
-(defpackage #:electron-lisp-boilerplate
+(defpackage #:delectus-ui
   (:use #:cl #:cl-who))

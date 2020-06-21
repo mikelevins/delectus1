@@ -3,7 +3,7 @@ const { app, BrowserWindow, dialog } = require('electron');
 const execFile = require('child_process').execFile;
 const path = require('path');
 
-const MAIN_URL = 'http://localhost:8000';
+const MAIN_URL = 'http://localhost:9876';
 
 function createWindow () {
   // Create the browser window.

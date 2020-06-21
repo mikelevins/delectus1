@@ -1,6 +1,6 @@
-;;;; electron-lisp-boilerplate.lisp
+;;;; delectus2.lisp
 
-(in-package #:electron-lisp-boilerplate)
+(in-package #:delectus-ui)
 
 (defparameter *server* nil)
 
@@ -14,11 +14,12 @@
   (with-html-output-to-string (out nil :prologue t)
     (:html
      (:head
+      (:title "Delectus 2")
       (:link :rel "preconnect" :href "https://cdn.jsdelivr.net")
       (:link :rel "stylesheet" :href "https://cdn.jsdelivr.net/npm/@native-elements/core@1/dist/native-elements.css"))
-     (:body
+     (:body :style "background-color: #F0EBCB"
       (:script :src "https://unpkg.com/htmx.org@0.0.4")
-      (:h1 "Hello from lisp!")
+      (:h1 "Delectus 2")
       (:div
        (:form
         (:input :type "text" :name "msg")
@@ -39,12 +40,12 @@
   (hunchentoot:stop *server*)
   (setf *server* nil))
 
-;;; (start-server 8000)
+;;; (start-server 9876)
 ;;; (stop-server)
 
 (in-package #:cl-user)
 
-(defun main (&optional (port 8000))
-  (electron-lisp-boilerplate::start-server port)
+(defun main (&optional (port 9876))
+  (delectus-ui::start-server port)
   (sb-impl::toplevel-repl nil))
 
