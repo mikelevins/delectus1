@@ -13,7 +13,7 @@
 ;;; root of the Delectus app's file tree
 ;;; ---------------------------------------------------------------------
 
-(defparameter *delectus-root-pathname* (asdf:system-relative-pathname :delectus ""))
+(defparameter *delectus-root-pathname* (asdf:system-relative-pathname :delectus-engine ""))
 
 ;;; query parameters
 ;;; ---------------------------------------------------------------------
