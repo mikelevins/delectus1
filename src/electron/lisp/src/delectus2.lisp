@@ -12,12 +12,12 @@
 (hunchentoot:define-easy-handler (landing :uri "/") ()
   (setf (hunchentoot:content-type*) "text/html")
   (with-html-output-to-string (out nil :prologue t)
-    (:html
+    (:html :style "background-color: #F0EBCB"
      (:head
       (:title "Delectus 2")
       (:link :rel "preconnect" :href "https://cdn.jsdelivr.net")
       (:link :rel "stylesheet" :href "https://cdn.jsdelivr.net/npm/@native-elements/core@1/dist/native-elements.css"))
-     (:body :style "background-color: #F0EBCB"
+     (:body 
       (:script :src "https://unpkg.com/htmx.org@0.0.4")
       (:h1 "Delectus 2")
       (:div
