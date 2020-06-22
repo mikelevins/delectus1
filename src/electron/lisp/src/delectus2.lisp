@@ -24,17 +24,12 @@
       (:script :src "https://unpkg.com/htmx.org@0.0.4")
       (:nav :class "navbar navbar-light bg-light"
             (:a :class "navbar-brand" :href "#" "Delectus")
+            (:div :class "navbar-nav" (:button :class "btn" "New"))
+            (:div :class "navbar-nav mr-auto" (:button :id "openBtn" :class "btn" "Open"))
             (:span :class "navbar-text" (:small (:em (str (format nil "Version ~A" delectus::+delectus-version+))))))
-      (:div :class "container m-3"
-            (:div  :class "my-2"
-             (:form
-              (:input :class "my-2" :type "text" :name "msg")
-              (:br)
-              (:button :class "btn btn-primary my-2"
-                       :hx-post "/btnclick"
-                       :hx-target "#response"
-                       "Send message")))
-            (:div :class "my-2" :id "response"))))
+      (:div :id "contents"
+            :class "container m-3"
+            (:div  :class "my-2"))))
     (values)))
 
 
@@ -54,4 +49,6 @@
 (defun main (&optional (port 9876))
   (delectus-ui::start-server port)
   (sb-impl::toplevel-repl nil))
+
+
 
