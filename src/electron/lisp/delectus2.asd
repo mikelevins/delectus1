@@ -25,7 +25,7 @@
 
 (defun buildapp ()
   (asdf:load-system :delectus2)
-  (save-lisp-and-die "lispapp"
+  (save-lisp-and-die "delectus_engine.exe"
                      :toplevel 'cl-user::main
                      :executable t))
 

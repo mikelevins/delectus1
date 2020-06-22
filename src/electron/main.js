@@ -22,7 +22,7 @@ function createWindow () {
 var lispProcess = null;
 
 function runapp () {
-    lispExePath = path.resolve(__dirname, "lispapp.exe");
+    lispExePath = path.resolve(__dirname, "delectus_engine.exe");
     console.log(lispExePath);
     //    lispProcess = spawn(lispExePath, [], { cwd: __dirname, shell: true});
     lispProcess = execFile(lispExePath, function(err, data) {

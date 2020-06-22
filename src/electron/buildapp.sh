@@ -3,6 +3,5 @@
 sbcl --no-userinit --load lisp/Delectus2.asd --eval "(cl-user::buildapp)"
 
 # Package
-mv ./lispapp ./lispapp.exe
 npm i
-electron-packager --overwrite . $APP_NAME
+electron-packager . $APP_NAME --overwrite --icon=./../../assets/images/app.icns 
