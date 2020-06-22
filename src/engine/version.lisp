@@ -10,5 +10,5 @@
 
 (in-package #:delectus)
 
-(defparameter +delectus-version+ "2.0.9a14")
-(defparameter +delectus-format-version+ "2.9")
+(defparameter +delectus-version+ "2.0.10a15")
+(defparameter +delectus-format-version+ "2.10")

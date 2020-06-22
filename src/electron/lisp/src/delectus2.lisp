@@ -20,6 +20,7 @@
      (:body 
       (:script :src "https://unpkg.com/htmx.org@0.0.4")
       (:h1 "Delectus 2")
+      (:p (:em (str (format nil "Version ~A" delectus::+delectus-version+))))
       (:div
        (:form
         (:input :type "text" :name "msg")
