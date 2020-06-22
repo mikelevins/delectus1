@@ -12,24 +12,29 @@
 (hunchentoot:define-easy-handler (landing :uri "/") ()
   (setf (hunchentoot:content-type*) "text/html")
   (with-html-output-to-string (out nil :prologue t)
-    (:html :style "background-color: #F0EBCB"
+    (:html 
      (:head
       (:title "Delectus 2")
-      (:link :rel "preconnect" :href "https://cdn.jsdelivr.net")
-      (:link :rel "stylesheet" :href "https://cdn.jsdelivr.net/npm/@native-elements/core@1/dist/native-elements.css"))
+      (:link :rel "stylesheet" :href "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+             :integrity "sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+             :crossorigin "anonymous")
+      (:style :type "text/css"
+              "body { background: #F0EBCB"))
      (:body 
       (:script :src "https://unpkg.com/htmx.org@0.0.4")
-      (:h1 "Delectus 2")
-      (:p (:em (str (format nil "Version ~A" delectus::+delectus-version+))))
-      (:div
-       (:form
-        (:input :type "text" :name "msg")
-        (:br)
-        (:button :class "btn"
-                 :hx-post "/btnclick"
-                 :hx-target "#response"
-                 "Send message")))
-      (:div :id "response")))
+      (:nav :class "navbar navbar-light bg-light"
+            (:a :class "navbar-brand" :href "#" "Delectus")
+            (:span :class "navbar-text" (:small (:em (str (format nil "Version ~A" delectus::+delectus-version+))))))
+      (:div :class "container m-3"
+            (:div  :class "my-2"
+             (:form
+              (:input :class "my-2" :type "text" :name "msg")
+              (:br)
+              (:button :class "btn btn-primary my-2"
+                       :hx-post "/btnclick"
+                       :hx-target "#response"
+                       "Send message")))
+            (:div :class "my-2" :id "response"))))
     (values)))
 
 

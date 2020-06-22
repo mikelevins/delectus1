@@ -14,3 +14,5 @@ webapp/delectus/.shadow-cljs/
 webapp/delectus/resources/public/js/compiled
 webapp/delectus/target
 
+src/electron/delectus2-darwin-x64
+delectus_engine.exe
