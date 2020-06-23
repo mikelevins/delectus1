@@ -15,7 +15,7 @@
   :license  "Specify license here"
   :version "0.0.1"
   :serial t
-  :depends-on (:hunchentoot :cl-who :delectus-engine)
+  :depends-on (:hunchentoot :cl-who :parenscript :delectus-engine)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")

@@ -22,10 +22,21 @@
               "body { background: #F0EBCB"))
      (:body 
       (:script :src "https://unpkg.com/htmx.org@0.0.4")
+      (:script :type "text/javascript" (str (ps
+                                              (var electron (require "electron"))
+                                              (var remote (@ electron remote))
+                                              (var dialog (@ remote dialog)))))
+      (:script :type "text/javascript"
+               (str (ps
+                      (defun handle-open ()
+                        (let ((chosen-path ((@ dialog |showOpenDialogSync|))))
+                          (alert chosen-path))))))
       (:nav :class "navbar navbar-light bg-light"
             (:a :class "navbar-brand" :href "#" "Delectus")
             (:div :class "navbar-nav" (:button :class "btn" "New"))
-            (:div :class "navbar-nav mr-auto" (:button :id "openBtn" :class "btn" "Open"))
+            (:div :class "navbar-nav mr-auto" (:button :id "openBtn" :class "btn"
+                                                       :onclick (ps (handle-open))
+                                                       "Open"))
             (:span :class "navbar-text" (:small (:em (str (format nil "Version ~A" delectus::+delectus-version+))))))
       (:div :id "contents"
             :class "container m-3"

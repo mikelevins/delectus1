@@ -1,4 +1,4 @@
 ;;;; package.lisp
 
 (defpackage #:delectus-ui
-  (:use #:cl #:cl-who))
+  (:use #:cl #:cl-who #:parenscript))
