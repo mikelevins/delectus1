@@ -28,12 +28,21 @@
                                               (var dialog (@ remote dialog)))))
       (:script :type "text/javascript"
                (str (ps
+                      (defun handle-new ()
+                        (let* ((chosen-path ((@ dialog |showSaveDialogSync|))))
+                          (alert (concatenate 'string "Creating new file: "
+                                              chosen-path)))))))
+      (:script :type "text/javascript"
+               (str (ps
                       (defun handle-open ()
-                        (let ((chosen-path ((@ dialog |showOpenDialogSync|))))
-                          (alert chosen-path))))))
+                        (let* ((chosen-path ((@ dialog |showOpenDialogSync|))))
+                          (alert (concatenate 'string "Opening file: "
+                                              chosen-path)))))))
       (:nav :class "navbar navbar-light bg-light"
             (:a :class "navbar-brand" :href "#" "Delectus")
-            (:div :class "navbar-nav" (:button :class "btn" "New"))
+            (:div :class "navbar-nav" (:button :class "btn"
+                                               :onclick (ps (handle-new))
+                                               "New"))
             (:div :class "navbar-nav mr-auto" (:button :id "openBtn" :class "btn"
                                                        :onclick (ps (handle-open))
                                                        "Open"))
