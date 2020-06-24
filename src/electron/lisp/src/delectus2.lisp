@@ -56,8 +56,13 @@
 
 (hunchentoot:define-easy-handler (listdata :uri "/listdata") (pathname)
   (setf (hunchentoot:content-type*) "text/html")
-  (with-html-output-to-string (out nil :prologue nil)
-    (:p (str pathname))))
+  (let* ((initial-items (delectus::get-latest-items (pathname pathname)))
+         (initial-items-count (length initial-items))
+         (message (format nil "Found ~A items at path ~A"
+                          initial-items-count pathname))
+         )
+    (with-html-output-to-string (out nil :prologue nil)
+      (:p (str message)))))
 
 (defun stop-server ()
   (hunchentoot:stop *server*)
