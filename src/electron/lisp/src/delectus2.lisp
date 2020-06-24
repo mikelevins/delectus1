@@ -38,18 +38,17 @@
                         (let* ((chosen-path ((@ dialog |showOpenDialogSync|))))
                           (alert (concatenate 'string "Opening file: "
                                               chosen-path)))))))
-      (:nav :class "navbar navbar-light bg-light"
+      (:nav :class "navbar navbar-dark"
+            :style "background-color: #173558;"
             (:a :class "navbar-brand" :href "#" "Delectus")
-            (:div :class "navbar-nav" (:button :class "btn"
+            (:div :class "navbar-nav" (:button :class "btn" :style "color: white;"
                                                :onclick (ps (handle-new))
                                                "New"))
-            (:div :class "navbar-nav mr-auto" (:button :id "openBtn" :class "btn"
+            (:div :class "navbar-nav mr-auto" (:button :id "openBtn" :class "btn" :style "color: white;"
                                                        :onclick (ps (handle-open))
                                                        "Open"))
             (:span :class "navbar-text" (:small (:em (str (format nil "Version ~A" delectus::+delectus-version+))))))
-      (:div :id "contents"
-            :class "container m-3"
-            (:div  :class "my-2"))))
+      (:div :id "contents" :class "container m-3")))
     (values)))
 
 
