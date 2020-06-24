@@ -35,9 +35,12 @@
       (:script :type "text/javascript"
                (str (ps
                       (defun handle-open ()
-                        (let* ((chosen-path ((@ dialog |showOpenDialogSync|))))
-                          (alert (concatenate 'string "Opening file: "
-                                              chosen-path)))))))
+                        (let* ((chosen-path ((@ dialog |showOpenDialogSync|)))
+                               (contents-element ((@ document |getElementById|) "contents")))
+                          (chain
+                           (fetch (concatenate 'string "listdata?pathname=" chosen-path))
+                           (then (lambda (response) (chain response (text))))
+                           (then (lambda (html) (setf (inner-html contents-element) html)))))))))
       (:nav :class "navbar navbar-dark"
             :style "background-color: #173558;"
             (:a :class "navbar-brand" :href "#" "Delectus")
@@ -51,10 +54,10 @@
       (:div :id "contents" :class "container m-3")))
     (values)))
 
-
-(hunchentoot:define-easy-handler (btnclick :uri "/btnclick") (msg)
-  (setf (hunchentoot:content-type*) "text/plain")
-  (format nil "Received: ~A" msg))
+(hunchentoot:define-easy-handler (listdata :uri "/listdata") (pathname)
+  (setf (hunchentoot:content-type*) "text/html")
+  (with-html-output-to-string (out nil :prologue nil)
+    (:p (str pathname))))
 
 (defun stop-server ()
   (hunchentoot:stop *server*)
