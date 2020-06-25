@@ -12,7 +12,8 @@
 (hunchentoot:define-easy-handler (landing :uri "/") ()
   (setf (hunchentoot:content-type*) "text/html")
   (with-html-output-to-string (out nil :prologue t)
-    (:html 
+    (:html
+     
      (:head
       (:title "Delectus 2")
       (:link :rel "stylesheet" :href "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -20,27 +21,26 @@
              :crossorigin "anonymous")
       (:style :type "text/css"
               "body { background: #F0EBCB"))
+
      (:body 
       (:script :src "https://unpkg.com/htmx.org@0.0.4")
-      (:script :type "text/javascript" (str (ps
-                                              (var electron (require "electron"))
-                                              (var remote (@ electron remote))
-                                              (var dialog (@ remote dialog)))))
       (:script :type "text/javascript"
-               (str (ps
-                      (defun handle-new ()
-                        (let* ((chosen-path ((@ dialog |showSaveDialogSync|))))
-                          (alert (concatenate 'string "Creating new file: "
-                                              chosen-path)))))))
+               (str (ps (var electron (require "electron"))
+                        (var remote (@ electron remote))
+                        (var dialog (@ remote dialog)))))
       (:script :type "text/javascript"
-               (str (ps
-                      (defun handle-open ()
-                        (let* ((chosen-path ((@ dialog |showOpenDialogSync|)))
-                               (contents-element ((@ document |getElementById|) "contents")))
-                          (chain
-                           (fetch (concatenate 'string "listdata?pathname=" chosen-path))
-                           (then (lambda (response) (chain response (text))))
-                           (then (lambda (html) (setf (inner-html contents-element) html)))))))))
+               (str (ps (defun handle-new ()
+                          (let* ((chosen-path ((@ dialog |showSaveDialogSync|))))
+                            (alert (concatenate 'string "Creating new file: "
+                                                chosen-path)))))))
+      (:script :type "text/javascript"
+               (str (ps (defun handle-open ()
+                          (let* ((chosen-path ((@ dialog |showOpenDialogSync|)))
+                                 (contents-element ((@ document |getElementById|) "contents")))
+                            (chain
+                             (fetch (concatenate 'string "listdata?pathname=" chosen-path))
+                             (then (lambda (response) (chain response (text))))
+                             (then (lambda (html) (setf (inner-html contents-element) html)))))))))
       (:nav :class "navbar navbar-dark"
             :style "background-color: #173558;"
             (:a :class "navbar-brand" :href "#" "Delectus")
@@ -56,10 +56,15 @@
 
 (hunchentoot:define-easy-handler (listdata :uri "/listdata") (pathname)
   (setf (hunchentoot:content-type*) "text/html")
-  (let* ((initial-items (delectus::get-latest-items (pathname pathname)))
+  (let* ((latest-columns (delectus::get-latest-columns-op (pathname pathname)))
+         (cols-userdata (delectus::columns-op-userdata latest-columns))
+         (initial-items (delectus::get-latest-items (pathname pathname)))
          (initial-items-count (length initial-items)))
     (with-html-output-to-string (out nil :prologue nil)
-      (:table
+      (:table :class "table table-striped table-sm" :style "background-color: white;"
+       (:tr (loop for col in cols-userdata
+               do (let ((lbl (delectus::column-description-name col)))
+                    (htm (:th (str lbl))))))
        (loop for item in initial-items
           do (let* ((userdata (delectus::item-op-userdata item)))
                (htm (:tr (loop for field in userdata
