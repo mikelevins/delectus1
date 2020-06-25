@@ -1,5 +1,4 @@
 const { app, BrowserWindow, dialog } = require('electron');
-//const { spawn } = require('child_process');
 const execFile = require('child_process').execFile;
 const path = require('path');
 
@@ -11,7 +10,8 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
+        nodeIntegration: true,
+        enableRemoteModule: true
     }
   });
 
