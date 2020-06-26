@@ -4,11 +4,6 @@
 
 (defparameter *server* nil)
 
-(defun start-server (port)
-  (setf *server*
-        (make-instance 'hunchentoot:easy-acceptor :port port))
-  (hunchentoot:start *server*))
-
 (hunchentoot:define-easy-handler (landing :uri "/") ()
   (setf (hunchentoot:content-type*) "text/html")
   (with-html-output-to-string (out nil :prologue t)
@@ -69,6 +64,12 @@
           do (let* ((userdata (delectus::item-op-userdata item)))
                (htm (:tr (loop for field in userdata
                             do (htm (:td (str field))))))))))))
+
+
+(defun start-server (port)
+  (setf *server*
+        (make-instance 'hunchentoot:easy-acceptor :port port))
+  (hunchentoot:start *server*))
 
 (defun stop-server ()
   (hunchentoot:stop *server*)

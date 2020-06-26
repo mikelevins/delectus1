@@ -23,11 +23,12 @@ var lispProcess = null;
 
 function runapp () {
     lispExePath = path.resolve(__dirname, "delectus_engine.exe");
-    console.log(lispExePath);
-    lispProcess = execFile(lispExePath, function(err, data) {
+    lispProcess = execFile(lispExePath, function(err, stdout, stderr) {
         if(err) {
             console.error(err);
             return;
+        } else {
+            console.log(stdout);
         }
     });
     createWindow();
