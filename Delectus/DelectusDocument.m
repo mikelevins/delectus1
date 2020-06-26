@@ -14,7 +14,6 @@
 #define ___VERSION 409003
 #include "gambit.h"
 #include "Delectus.h"
-#include <CouchbaseLite/CouchbaseLite.h>
 
 @implementation DelectusDocument
 
@@ -535,26 +534,7 @@
             [self updateChangeCount: NSChangeDone];
             return YES;
         }
-    } else if ([typeName isEqualToString: @"delectus2"]) {
-        NSString *path = [absoluteURL path];
-        NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
-        NSString *dbdir = [dirs objectAtIndex:0];
-        NSString *dbname = [dbdir stringByDeletingPathExtension];
-        CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
-        NSString *dbpath = [path stringByAppendingPathComponent:dbname];
-        [conf setDirectory:path];
-        NSError *error;
-        CBLDatabase *database = [[CBLDatabase alloc]
-                                 initWithName:dbname
-                                 config:conf
-                                 error:&error];
-        NSLog(@"opened CouchBase Lite Database at %@", path);
-        CBLDocument *foundDoc = [database documentWithID:dbname];
-        NSLog(@"found the document at %@", path);
-        NSLog(@"found id = %@", [foundDoc id]);
-        NSLog(@"found revision = %@", [foundDoc revisionID]);
-        return YES;
-    } else {
+    }  else {
         errStr=@"FileFormatError";
         errMsg=@"Unrecognized file type";
         errDict = [NSDictionary dictionaryWithObjectsAndKeys:errMsg, NSLocalizedDescriptionKey,[absoluteURL path], NSFilePathErrorKey, nil];
@@ -585,34 +565,6 @@
         *outError = [[NSError errorWithDomain:@"DelectusSaveError" code:result userInfo:errDict] autorelease];
         return NO;
     }
-}
-
-- (CBLMutableDocument*) newCBLDocumentWithID: (NSString *)docid {
-    CBLMutableDocument* doc = [CBLMutableDocument documentWithID:docid];
-    return doc;
-}
-
-- (BOOL)writeCBLToURL:(NSURL *)absoluteURL error:(NSError **)outError{
-    NSString *path = [absoluteURL path];
-    NSUUID *uuid = [NSUUID UUID];
-    NSString *idString = [uuid UUIDString];
-    CBLDatabaseConfiguration *conf = [[CBLDatabaseConfiguration alloc] init];
-    [conf setDirectory:path];
-    NSError *error;
-    CBLDatabase *database = [[CBLDatabase alloc]
-                             initWithName:idString
-                             config:conf
-                             error:&error];
-    CBLMutableDocument* doc = [self newCBLDocumentWithID:idString];
-    NSError *saveError;
-    [database saveDocument:doc error:&saveError];
-    if (saveError) {
-        NSLog(@"error saving the document: %@", saveError);
-    } else {
-        NSLog(@"saved the new document at %@", path);
-    }
-
-    return YES;
 }
 
 - (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError{

@@ -17,8 +17,6 @@
 		975F0011222AE55700A4F673 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 975F0010222AE55700A4F673 /* libgambit.a */; };
 		97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 97814B611330C1D5008BD174 /* DelectusDataSource.m */; };
 		97D44A58132B7B780048ADA8 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97D44A57132B7B780048ADA8 /* libDelectus.a */; };
-		97E493CB2333ADA4003F52B7 /* CouchbaseLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; };
-		97E493CC2333ADA4003F52B7 /* CouchbaseLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */; };
 		97EA5C01133FCEE900BD41F9 /* Delectus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5BFF133FCEE900BD41F9 /* Delectus.icns */; };
 		97EA5C04133FD3D700BD41F9 /* DelectusDoc.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5C02133FD3D700BD41F9 /* DelectusDoc.icns */; };
@@ -36,7 +34,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				97E493CC2333ADA4003F52B7 /* CouchbaseLite.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -66,7 +63,6 @@
 		97BF48312335019E00484058 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		97D44A56132B7B6D0048ADA8 /* Delectus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delectus.h; path = ../engine/include/Delectus.h; sourceTree = SOURCE_ROOT; };
 		97D44A57132B7B780048ADA8 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../engine/libDelectus.a; sourceTree = SOURCE_ROOT; };
-		97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLite.framework; sourceTree = "<group>"; };
 		97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusPrintView.h; sourceTree = "<group>"; };
 		97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusPrintView.m; sourceTree = "<group>"; };
 		97EA5C6213457F8800BD41F9 /* DelectusDataCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataCell.h; sourceTree = "<group>"; };
@@ -82,7 +78,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97E493CB2333ADA4003F52B7 /* CouchbaseLite.framework in Frameworks */,
 				975F0011222AE55700A4F673 /* libgambit.a in Frameworks */,
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				97D44A58132B7B780048ADA8 /* libDelectus.a in Frameworks */,
@@ -177,7 +172,6 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				97E493C92333AD7D003F52B7 /* CouchbaseLite.framework */,
 				975F0010222AE55700A4F673 /* libgambit.a */,
 				97D44A57132B7B780048ADA8 /* libDelectus.a */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
