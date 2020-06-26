@@ -24,14 +24,11 @@ var lispProcess = null;
 function runapp () {
     lispExePath = path.resolve(__dirname, "delectus_engine.exe");
     console.log(lispExePath);
-    //    lispProcess = spawn(lispExePath, [], { cwd: __dirname, shell: true});
     lispProcess = execFile(lispExePath, function(err, data) {
         if(err) {
             console.error(err);
             return;
         }
-        console.log("\n");
-        console.log(data.toString());
     });
     createWindow();
 }
@@ -43,6 +40,10 @@ function quit() {
     }
     app.exit(0);
 }
+
+process.on('uncaughtException', function (err) {
+  console.log(err);
+});
 
 app.on("ready", runapp);
 app.on("quit", quit);
