@@ -16,8 +16,6 @@
 
 (in-package #:cl-user)
 
-
-
 (defun delectus-cocoa-application ()
   (let ((application (make-instance 'ui::delectus2-application)))
     

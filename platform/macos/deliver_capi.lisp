@@ -9,23 +9,14 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
-(ql:quickload :delectus)
-(ql:quickload :delectus-macos)
+(ql:quickload :delectus-engine)
+(ql:quickload :delectus-capi-macos)
 
-(defvar *project-root-path* (asdf:system-relative-pathname :delectus ""))
-(defvar *target-application-path* (merge-pathnames "product/macos/Delectus2" *project-root-path*))
-(defvar *bundle-template-path* (merge-pathnames "product/macos/bundle-templates/Delectus2.app/" *project-root-path*))
+(defvar *project-root-path* (asdf:system-relative-pathname :delectus-engine ""))
+(defvar *target-application-path* (merge-pathnames "platform/macos/Delectus2" *project-root-path*))
+(defvar *bundle-template-path* (merge-pathnames "platform/macos/bundle-templates/Delectus2.app/" *project-root-path*))
 (defvar *startup-image-path* (merge-pathnames "assets/images/delectus-splash.png" *project-root-path*))
 
-
-;; (defun create-delectus-bundle (bundle-path)
-;;   (let* ((created-path (create-macos-application-bundle bundle-path
-;;                                                         :template-bundle (lw:pathname-location *bundle-template-path*)))
-;;          (sqlite-source-path (merge-pathnames "product/macos/lib/libsqlite3.dylib" *project-root-path*))
-;;          (sqlite-dest-path (merge-pathnames "product/macos/Delectus2.app/Contents/MacOS/libsqlite3.dylib"
-;;                                             *project-root-path*)))
-;;     (copy-file sqlite-source-path sqlite-dest-path)
-;;     created-path))
 
 (defun create-delectus-bundle (bundle-path)
   (create-macos-application-bundle bundle-path

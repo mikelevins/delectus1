@@ -14,7 +14,7 @@
     :license  "Apache 2.0"
     :version "2.0.7"
     :serial t
-    :depends-on (:delectus)
+    :depends-on (:delectus-engine)
     :components
     ((:module "src"
               :serial t
@@ -33,9 +33,9 @@
                                    (:file "view-value-pane")       ; a single-item card-style pane
                                    (:file "view-item-card")       ; a single-item card-style pane
                                    (:file "view-item-row")        ; a single-item row-style pane
-                                   ;; (:file "view-app-menus")    ; the app menubar
-                                   ;; (:file "view-items-sheet")  ; spreadsheet-like view
-                                   ;; (:file "app-main")          ; toplevel macOS application
+                                   (:file "view-items-sheet")     ; a spreadhseet view
+                                   (:file "view-app-menus")    ; the app menubar
+                                   (:file "app-main")          ; toplevel macOS application
                                    ))))))))
 
 

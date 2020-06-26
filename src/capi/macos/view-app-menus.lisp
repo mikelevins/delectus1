@@ -21,7 +21,7 @@
 (defun delectus-interface-about ()
   (capi:display-message-on-screen (capi:convert-to-screen nil)
                                   (format nil "Delectus2 alpha build~%version ~A~%built ~A"
-                                          delectus:+delectus-version+
+                                          delectus::+delectus-version+
                                           (local-time:to-rfc1123-timestring (local-time:now)))))
 
 (defun delectus-interface-preferences ()
