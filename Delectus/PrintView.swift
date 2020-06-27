@@ -22,4 +22,8 @@ import Cocoa
         self.documentName = ""
         super.init(coder: aDecoder)
     }
+
+    @objc func setDataSource (aSource: DelectusDataSource) {
+        self.dataSource = aSource
+    }
 }
