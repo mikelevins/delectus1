@@ -83,7 +83,7 @@
 }
 
 - (void)recordColumnInfo{
-    int colcount = [tableView numberOfColumns];
+    NSInteger colcount = [tableView numberOfColumns];
     NSMutableDictionary* newWidthInfo=[NSMutableDictionary dictionaryWithCapacity:colcount];
     NSMutableArray* newOrderInfo=[NSMutableArray array];
     if(colcount>0){
@@ -133,7 +133,7 @@
 }
 
 - (void)setupColumns{
-    int colcount = [tableView numberOfColumns];
+    NSInteger colcount = [tableView numberOfColumns];
     if(colcount>0){
         NSArray* cols = [NSArray arrayWithArray:[tableView tableColumns]];
         for(int i=0;i<colcount;i++){
@@ -288,13 +288,13 @@
         if (err == ERR_NO_ERROR){
             [self updateChangeCount: NSChangeDone];
             [tableView reloadData];
-            int rowCount = [tableView numberOfRows];
+            NSInteger rowCount = [tableView numberOfRows];
             if(rowCount>0){
                 [tableView scrollRowToVisible:(rowCount-1)];
                 [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: (rowCount-1)] byExtendingSelection:NO];
                 [tableView editColumn:0 row:(rowCount-1) withEvent:nil select:YES];
             }
-            [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+            [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
             [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
             [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
         }else{
@@ -308,21 +308,21 @@
 }
 
 - (IBAction)toggleRowDeleted:(id)sender{
-    int rowIndex=[tableView selectedRow];
+    NSInteger rowIndex=[tableView selectedRow];
     if(rowIndex>=0){
         // first make the window take over FirstResponder status, to force 
         // any active cells to end editing
         [documentWindow makeFirstResponder: nil];
         // Then mark the row
-        if([dataSource isRowDeleted: rowIndex]){
-            [dataSource markRow:rowIndex deleted:NO];
+        if([dataSource isRowDeleted:(int)rowIndex]){
+            [dataSource markRow:(int)rowIndex deleted:NO];
         }else{
-            [dataSource markRow:rowIndex deleted:YES];
+            [dataSource markRow:(int)rowIndex deleted:YES];
         }
         [self updateChangeCount: NSChangeDone];
         [tableView reloadData];
         [tableView deselectAll: self];
-        [itemCountField setStringValue:[NSString stringWithFormat:@"%d items",[tableView numberOfRows]]];
+        [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
         [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
         [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
     }
@@ -337,7 +337,7 @@
 }
 
 - (IBAction)toggleColumnDeleted:(id)sender{
-    int colIndex=[tableView selectedColumn];
+    NSInteger colIndex=[tableView selectedColumn];
     if(colIndex>=0){
         [documentWindow makeFirstResponder: nil];
         NSTableColumn* col = (NSTableColumn*)[[tableView tableColumns] objectAtIndex: colIndex];
@@ -602,7 +602,7 @@
 - (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex{
     NSString* label = [aTableColumn identifier];
     BOOL isColDeleted = [dataSource isColumnDeleted:label];
-    BOOL isRowDeleted = [dataSource isRowDeleted:rowIndex];
+    BOOL isRowDeleted = [dataSource isRowDeleted:(int)rowIndex];
     BOOL isCellDeleted = (isColDeleted||isRowDeleted);
     BOOL isRowEven = ((rowIndex%2)==0);
     if(isCellDeleted){
@@ -636,7 +636,7 @@
         BOOL isDup = [dataSource isDuplicateLabel: lbl];
         if (isDup){
             NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",lbl];
-            NSRunAlertPanel(@"Adding a Column",msg,@"Okay", nil, nil);
+            NSRunAlertPanel(@"Adding a Column",@"%@", msg,@"Okay", nil, nil);
         } else {
             int err = [dataSource addColumn:lbl];
             if (err == ERR_NO_ERROR){
@@ -644,7 +644,7 @@
                 [self setupColumns];
                 [tableView reloadData];
                 [self recordColumnInfo];
-                int colCount = [tableView numberOfColumns];
+                NSInteger colCount = [tableView numberOfColumns];
                 if(colCount>0){
                     [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];
                     [tableView scrollColumnToVisible:(colCount-1)];

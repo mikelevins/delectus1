@@ -25,7 +25,7 @@
         [self insertText:documentName];
         [self insertText:newline];
         NSArray* cols = [dataSource collectColumns];
-        int colcount = [cols count];
+        NSUInteger colcount = [cols count];
         if(colcount>0){
             int rowcount = [dataSource countRows];
             if(rowcount>0){
