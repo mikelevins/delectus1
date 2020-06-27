@@ -11,9 +11,12 @@
 #import "DelectusDataSource.h"
 #import "DelectusDataCell.h"
 #import "DelectusPrintView.h"
+#import "Delectus-Swift.h"
 #define ___VERSION 409003
 #include "gambit.h"
 #include "Delectus.h"
+
+@class ListFieldCell;
 
 @implementation DelectusDocument
 
@@ -188,7 +191,8 @@
         [col retain];
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
-        [col setDataCell:[[DelectusDataCell alloc] init]];
+//        [col setDataCell:[[DelectusDataCell alloc] init]];
+        [col setDataCell:[[ListFieldCell alloc] init]];
         [[col dataCell] setFont:contentFont];
         [[col dataCell] setLineBreakMode:NSLineBreakByCharWrapping];
         [[col dataCell] setTruncatesLastVisibleLine:YES];
@@ -572,9 +576,6 @@
     if([typeName isEqualToString: @"delectus"]){
         BOOL result = [self writeDelectusToURL:absoluteURL error:outError];
         return result;
-    }else if ([typeName isEqualToString: @"delectus2"]){
-        BOOL result = [self writeCBLToURL:absoluteURL error:outError];
-        return result;
     }else if ([typeName isEqualToString: @"csv"]){
         BOOL result = [self writeCSVToURL:absoluteURL error:outError];
         return result;
@@ -607,7 +608,7 @@
     BOOL isCellDeleted = (isColDeleted||isRowDeleted);
     BOOL isRowEven = ((rowIndex%2)==0);
     if(isCellDeleted){
-        [[aTableColumn dataCell] setIsRenderingDeleted:YES];
+        [[aTableColumn dataCell] setIsRenderingDeletedWithYesOrNo:YES];
         NSColor* cellColor;
         if(isRowEven){
             cellColor=[NSColor colorWithCalibratedHue:0.0 saturation:0.25 brightness:1.0 alpha:1.0];
@@ -619,7 +620,7 @@
         [aCell setEditable:NO];
         [aCell setSelectable:NO];
     } else {
-        [[aTableColumn dataCell] setIsRenderingDeleted:NO];
+        [[aTableColumn dataCell] setIsRenderingDeletedWithYesOrNo:NO];
         [aCell setDrawsBackground: NO];
         [aCell setEditable:YES];
         [aCell setSelectable:YES];

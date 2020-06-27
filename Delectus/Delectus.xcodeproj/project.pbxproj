@@ -15,6 +15,7 @@
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		975F0011222AE55700A4F673 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 975F0010222AE55700A4F673 /* libgambit.a */; };
+		97704B3F24A6BDEB0095FFEF /* ListFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97704B3E24A6BDEB0095FFEF /* ListFieldCell.swift */; };
 		97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 97814B611330C1D5008BD174 /* DelectusDataSource.m */; };
 		97D44A58132B7B780048ADA8 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97D44A57132B7B780048ADA8 /* libDelectus.a */; };
 		97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */; };
@@ -52,6 +53,8 @@
 		8D15AC360486D014006FF6A4 /* Delectus-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Delectus-Info.plist"; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Delectus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Delectus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		975F0010222AE55700A4F673 /* libgambit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambit.a; path = ../../../../../../../../Library/Gambit/v4.8.9/lib/libgambit.a; sourceTree = "<group>"; };
+		97704B3D24A6BDEA0095FFEF /* Delectus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus-Bridging-Header.h"; sourceTree = "<group>"; };
+		97704B3E24A6BDEB0095FFEF /* ListFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFieldCell.swift; sourceTree = "<group>"; };
 		97814B601330C1D5008BD174 /* DelectusDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataSource.h; sourceTree = "<group>"; };
 		97814B611330C1D5008BD174 /* DelectusDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDataSource.m; sourceTree = "<group>"; };
 		97BF48292335019500484058 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
@@ -128,6 +131,7 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				97704B3D24A6BDEA0095FFEF /* Delectus-Bridging-Header.h */,
 				97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */,
 				97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */,
 				2A37F4AEFDCFA73011CA2CEA /* DelectusDocument.h */,
@@ -138,6 +142,7 @@
 				97814B611330C1D5008BD174 /* DelectusDataSource.m */,
 				97EA5C6213457F8800BD41F9 /* DelectusDataCell.h */,
 				97EA5C6313457F8800BD41F9 /* DelectusDataCell.m */,
+				97704B3E24A6BDEB0095FFEF /* ListFieldCell.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -209,6 +214,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1030;
+				TargetAttributes = {
+					8D15AC270486D014006FF6A4 = {
+						LastSwiftMigration = 1150;
+					};
+				};
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Delectus" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -255,6 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC310486D014006FF6A4 /* DelectusDocument.m in Sources */,
+				97704B3F24A6BDEB0095FFEF /* ListFieldCell.swift in Sources */,
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				97EB7F1A132BF8F600F99745 /* DelectusDelegate.m in Sources */,
 				97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */,
@@ -329,6 +340,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
@@ -355,6 +367,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -362,6 +377,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -386,6 +402,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mikelevins.delectus;
 				PRODUCT_NAME = Delectus;
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Delectus-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
