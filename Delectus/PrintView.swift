@@ -15,6 +15,11 @@ import Cocoa
     init(frame aRect: NSRect, dataSource: DelectusDataSource, documentName: NSString) {
         self.documentName = documentName
         super.init(frame: aRect)
+        self.setDataSource(aSource: dataSource)
+
+        let cols: [String] = dataSource.collectColumns() as? [String] ?? []
+        
+        let colcount = cols.count
     }
 
     required init?(coder aDecoder: NSCoder) {
