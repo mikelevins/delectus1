@@ -20,6 +20,17 @@ import Cocoa
         let cols: [String] = dataSource.collectColumns() as? [String] ?? []
         
         let colcount = cols.count
+        let rowcount = dataSource.countRows()
+        
+        for j in 0..<rowcount {
+            let colhead = cols[0]
+            let indexStr = "\(j+1)"
+            let val = dataSource.value(atColumn: colhead, andRow: j)
+            print("\n",indexStr,". ", val ?? "<nil>")
+            for i in 0..<colcount {
+                
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
