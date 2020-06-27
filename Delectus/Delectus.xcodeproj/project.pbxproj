@@ -22,7 +22,6 @@
 		97EA5C01133FCEE900BD41F9 /* Delectus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5BFF133FCEE900BD41F9 /* Delectus.icns */; };
 		97EA5C04133FD3D700BD41F9 /* DelectusDoc.icns in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5C02133FD3D700BD41F9 /* DelectusDoc.icns */; };
 		97EA5C4B133FDFAE00BD41F9 /* Delectus.help in Resources */ = {isa = PBXBuildFile; fileRef = 97EA5C49133FDFAE00BD41F9 /* Delectus.help */; };
-		97EA5C6413457F8800BD41F9 /* DelectusDataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EA5C6313457F8800BD41F9 /* DelectusDataCell.m */; };
 		97EB7F17132BF7AE00F99745 /* deleted.png in Resources */ = {isa = PBXBuildFile; fileRef = 97EB7F16132BF7AE00F99745 /* deleted.png */; };
 		97EB7F1A132BF8F600F99745 /* DelectusDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EB7F19132BF8F600F99745 /* DelectusDelegate.m */; };
 		97EB7F1C132FB6D900F99745 /* nodeleted.png in Resources */ = {isa = PBXBuildFile; fileRef = 97EB7F1B132FB6D900F99745 /* nodeleted.png */; };
@@ -68,8 +67,6 @@
 		97D44A57132B7B780048ADA8 /* libDelectus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDelectus.a; path = ../engine/libDelectus.a; sourceTree = SOURCE_ROOT; };
 		97EA5BFC133EB29100BD41F9 /* DelectusPrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusPrintView.h; sourceTree = "<group>"; };
 		97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusPrintView.m; sourceTree = "<group>"; };
-		97EA5C6213457F8800BD41F9 /* DelectusDataCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataCell.h; sourceTree = "<group>"; };
-		97EA5C6313457F8800BD41F9 /* DelectusDataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDataCell.m; sourceTree = "<group>"; };
 		97EB7F16132BF7AE00F99745 /* deleted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = deleted.png; path = assets/deleted.png; sourceTree = "<group>"; };
 		97EB7F18132BF8F600F99745 /* DelectusDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDelegate.h; sourceTree = "<group>"; };
 		97EB7F19132BF8F600F99745 /* DelectusDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDelegate.m; sourceTree = "<group>"; };
@@ -140,8 +137,6 @@
 				97EB7F19132BF8F600F99745 /* DelectusDelegate.m */,
 				97814B601330C1D5008BD174 /* DelectusDataSource.h */,
 				97814B611330C1D5008BD174 /* DelectusDataSource.m */,
-				97EA5C6213457F8800BD41F9 /* DelectusDataCell.h */,
-				97EA5C6313457F8800BD41F9 /* DelectusDataCell.m */,
 				97704B3E24A6BDEB0095FFEF /* ListFieldCell.swift */,
 			);
 			name = Classes;
@@ -270,7 +265,6 @@
 				97EB7F1A132BF8F600F99745 /* DelectusDelegate.m in Sources */,
 				97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */,
 				97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */,
-				97EA5C6413457F8800BD41F9 /* DelectusDataCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

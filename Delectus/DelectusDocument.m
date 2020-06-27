@@ -9,7 +9,6 @@
 #import "DelectusDocument.h"
 #import "DelectusDelegate.h"
 #import "DelectusDataSource.h"
-#import "DelectusDataCell.h"
 #import "DelectusPrintView.h"
 #import "Delectus-Swift.h"
 #define ___VERSION 409003
@@ -191,7 +190,6 @@
         [col retain];
         [[col headerCell] setStringValue: label];
         [[col headerCell] setFont:headerFont];
-//        [col setDataCell:[[DelectusDataCell alloc] init]];
         [col setDataCell:[[ListFieldCell alloc] init]];
         [[col dataCell] setFont:contentFont];
         [[col dataCell] setLineBreakMode:NSLineBreakByCharWrapping];
