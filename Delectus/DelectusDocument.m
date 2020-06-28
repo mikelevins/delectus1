@@ -255,18 +255,6 @@
     }    
 }
 
-- (NSPrintOperation *)printOperationWithSettings:(NSDictionary *)ps error:(NSError **)e;
-{
-    NSPrintInfo *printInfo = [self printInfo];
-    NSSize paperSize = [printInfo paperSize];
-    NSRect boundsRect = NSMakeRect(0,0,(3*paperSize.width/4),1);
-    NSView *printView = [[DelectusPrintView alloc] initWithFrame:boundsRect withDataSource:dataSource andDocumentName:[self displayName]];
-    NSPrintOperation *printOp = [NSPrintOperation printOperationWithView:printView
-                                                               printInfo:printInfo];
-    return printOp;
-}
-
-
 #pragma mark - IBActions
 // --------------------------------------------------------------------------------
 // IBActions
@@ -650,6 +638,19 @@
     }
     return NO; // default--should never be reached
 }
+
+- (NSPrintOperation *)printOperationWithSettings:(NSDictionary *)ps error:(NSError **)e;
+{
+    NSPrintInfo *printInfo = [self printInfo];
+    NSSize paperSize = [printInfo paperSize];
+    NSRect boundsRect = NSMakeRect(0,0,(3*paperSize.width/4),1);
+    NSView *printView = [[DelectusPrintView alloc] initWithFrame:boundsRect withDataSource:dataSource andDocumentName:[self displayName]];
+    NSPrintOperation *printOp = [NSPrintOperation printOperationWithView:printView
+                                                               printInfo:printInfo];
+    return printOp;
+}
+
+
 
 - (void)close
 {
