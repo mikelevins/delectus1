@@ -18,12 +18,12 @@
 - (id)initWithFrame:(NSRect)frame withDataSource:(DelectusDataSource*)aSource andDocumentName:(NSString*)docName{
     self = [super initWithFrame:frame];
     if (self) {
-        NSString* newline = [NSString stringWithFormat:@"\n"];
-        NSString* tab = [NSString stringWithFormat:@"\t"];
+        NSMutableString* contentsString = [NSMutableString string];
         documentName = docName;
         [self setDataSource:aSource];
-        [self insertText:documentName];
-        [self insertText:newline];
+        [contentsString appendString:documentName];
+        [contentsString appendString:@"\n"];
+
         NSArray* cols = [dataSource collectColumns];
         NSUInteger colcount = [cols count];
         if(colcount>0){
@@ -31,38 +31,40 @@
             if(rowcount>0){
                 for(int j=0;j<rowcount;j++){
                     NSString* colhead = [cols objectAtIndex:0];
-                    [self insertText:newline];
-                    [self insertText:newline];
+                    [contentsString appendString:@"\n\n"];
+
                     NSString* index = [NSString stringWithFormat:@"%d. ",(j+1)];
                     NSString* val = [dataSource valueAtColumn:colhead andRow:j];
-                    [self insertText:index];
-                    [self insertText:val];
+                    [contentsString appendString:index];
+                    [contentsString appendString:val];
+
                    if(colcount>1){
                         for(int i=1;i<colcount;i++){
                             colhead = [cols objectAtIndex:i];
                             val = [dataSource valueAtColumn:colhead andRow:j];
                             if((val!=NULL)&&(![val isEqualTo:@""])){
-                                [self insertText:newline];
-                                [self insertText:tab];
-                                [self insertText:colhead];
-                                [self insertText:@": "];
-                                [self insertText:val];
+                                [contentsString appendString:@"\n\t"];
+                                [contentsString appendString:colhead];
+                                [contentsString appendString:@": "];
+                                [contentsString appendString:val];
                             }
                         }
                     }
                 }
             }else{
                 NSString* col = [cols objectAtIndex:0];
-                [self insertText:col];
+                [contentsString appendString:col];
+                
                 if(colcount>1){
                     for(int i=1;i<colcount;i++){
-                        [self insertText:@", "];
                         NSString* col = [cols objectAtIndex:i];
-                        [self insertText:col];
+                        [contentsString appendString:@", "];
+                        [contentsString appendString:col];
                     }
                 }
             }
         }
+        [self setString:contentsString];
         return self;
     } else {
         return nil;

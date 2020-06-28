@@ -585,9 +585,9 @@
 - (void)close
 {
     int docID = [dataSource documentID];
-    NSLog(@"Releasing Delectus document %d",docID);
+    //NSLog(@"Releasing Delectus document %d",docID);
     release_delectus(docID);
-    NSLog(@"Delectus document %d released",docID);
+    //NSLog(@"Delectus document %d released",docID);
     [super close];
 }
 
