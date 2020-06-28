@@ -290,11 +290,17 @@
             [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
         }else{
             NSString* msg = [NSString stringWithFormat: @"There was an error adding a row"];
-            NSRunAlertPanel(@"Adding a Row",@"%@", msg,@"Okay", nil, nil);
+            NSAlert *alert = [[NSAlert alloc]init];
+            [alert addButtonWithTitle:@"Okay"];
+            [alert setMessageText:msg];
+            [alert runModal];
         }
     }else{
         NSString* msg = [NSString stringWithFormat: @"Can't add a row with no columns!"];
-        NSRunAlertPanel(@"Adding a Row",@"%@", msg,@"Okay", nil, nil);
+        NSAlert *alert = [[NSAlert alloc]init];
+        [alert addButtonWithTitle:@"Okay"];
+        [alert setMessageText:msg];
+        [alert runModal];
     }
 }
 
@@ -627,7 +633,10 @@
         BOOL isDup = [dataSource isDuplicateLabel: lbl];
         if (isDup){
             NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",lbl];
-            NSRunAlertPanel(@"Adding a Column",@"%@", msg,@"Okay", nil, nil);
+            NSAlert *alert = [[NSAlert alloc]init];
+            [alert addButtonWithTitle:@"Okay"];
+            [alert setMessageText:msg];
+            [alert runModal];
         } else {
             int err = [dataSource addColumn:lbl];
             if (err == ERR_NO_ERROR){
@@ -645,7 +654,10 @@
                 [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
             }else{
                 NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
-                NSRunAlertPanel(@"Adding a Column",@"%@", msg,@"Okay", nil, nil);
+                NSAlert *alert = [[NSAlert alloc]init];
+                [alert addButtonWithTitle:@"Okay"];
+                [alert setMessageText:msg];
+                [alert runModal];
             }
         }
     } else if([commandStr isEqualTo: @"RenameColumn"]){
@@ -657,7 +669,10 @@
             BOOL isDup = [dataSource isDuplicateLabel: newlbl];
             if(isDup && (![newlbl isEqualTo: oldlbl])){
                 NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",newlbl];
-                NSRunAlertPanel(@"Renaming a Column",@"%@", msg,@"Okay", nil, nil);
+                NSAlert *alert = [[NSAlert alloc]init];
+                [alert addButtonWithTitle:@"Okay"];
+                [alert setMessageText:msg];
+                [alert runModal];
             }else{
                 int err = [dataSource renameColumn:oldlbl to:newlbl];
                 if (err == ERR_NO_ERROR){
@@ -670,12 +685,18 @@
                     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
                 }else{
                     NSString* msg = [NSString stringWithFormat: @"There was an error changing the column name to '%@'",newlbl];
-                    NSRunAlertPanel(@"Renaming a Column",@"%@", msg,@"Okay", nil, nil);
+                    NSAlert *alert = [[NSAlert alloc]init];
+                    [alert addButtonWithTitle:@"Okay"];
+                    [alert setMessageText:msg];
+                    [alert runModal];
                 }
             }
         }else{
             NSString* msg = [NSString stringWithFormat: @"Error: no column selected"];
-            NSRunAlertPanel(@"Renaming a Column",@"%@", msg,@"Okay", nil, nil);
+            NSAlert *alert = [[NSAlert alloc]init];
+            [alert addButtonWithTitle:@"Okay"];
+            [alert setMessageText:msg];
+            [alert runModal];
         }
     }
 }
