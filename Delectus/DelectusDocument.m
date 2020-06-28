@@ -255,26 +255,17 @@
     }    
 }
 
-- (void)printShowingPrintPanel:(BOOL)showPanels {
-    NSSize paperSize = [[self printInfo] paperSize];
+- (NSPrintOperation *)printOperationWithSettings:(NSDictionary *)ps error:(NSError **)e;
+{
+    NSPrintInfo *printInfo = [self printInfo];
+    NSSize paperSize = [printInfo paperSize];
     NSRect boundsRect = NSMakeRect(0,0,(3*paperSize.width/4),1);
     NSView *printView = [[DelectusPrintView alloc] initWithFrame:boundsRect withDataSource:dataSource andDocumentName:[self displayName]];
-    // enable pagination
-    [[self printInfo] setHorizontalPagination: NSAutoPagination];
-    [[self printInfo] setVerticalPagination: NSAutoPagination];
-    // Construct the print operation and setup Print panel
-    NSPrintOperation *op = [NSPrintOperation
-                            printOperationWithView:printView
-                            printInfo:[self printInfo]];
-    //    [op setShowPanels:showPanels];
-    [op setShowsPrintPanel:YES];
-    
-    // Run operation, which shows the Print panel if showPanels was YES
-    [self runModalPrintOperation:op
-                        delegate:nil
-                  didRunSelector:NULL
-                     contextInfo:NULL];
+    NSPrintOperation *printOp = [NSPrintOperation printOperationWithView:printView
+                                                               printInfo:printInfo];
+    return printOp;
 }
+
 
 #pragma mark - IBActions
 // --------------------------------------------------------------------------------
