@@ -53,10 +53,6 @@
 - (IBAction)acceptNewColumn:(id)sender;
 - (IBAction)performShowDeletedClick:(id)sender;
 
-// handle sheets
-
-- (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
-
 // track selection changes
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification;

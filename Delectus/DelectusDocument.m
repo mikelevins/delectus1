@@ -326,11 +326,42 @@
 }
 
 - (IBAction)addColumn:(id)sender{
-    [NSApp beginSheet: addColumnSheet 
-       modalForWindow: documentWindow 
-        modalDelegate: self 
-       didEndSelector: @selector(sheetDidEnd:returnCode:contextInfo:) 
-          contextInfo: @"AddColumn"];
+    NSWindow* myWindow = [self.windowControllers.lastObject window];
+    [myWindow beginSheet: addColumnSheet
+       completionHandler:
+     ^(NSModalResponse returnCode){
+        NSString* lbl = [addColumnLabelField stringValue];
+        BOOL isDup = [dataSource isDuplicateLabel: lbl];
+        if (isDup){
+            NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",lbl];
+            NSAlert *alert = [[NSAlert alloc]init];
+            [alert addButtonWithTitle:@"Okay"];
+            [alert setMessageText:msg];
+            [alert runModal];
+        } else {
+            int err = [dataSource addColumn:lbl];
+            if (err == ERR_NO_ERROR){
+                [self updateChangeCount: NSChangeDone];
+                [self setupColumns];
+                [tableView reloadData];
+                [self recordColumnInfo];
+                NSInteger colCount = [tableView numberOfColumns];
+                if(colCount>0){
+                    [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];
+                    [tableView scrollColumnToVisible:(colCount-1)];
+                }
+                [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
+                [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+                [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
+            }else{
+                NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
+                NSAlert *alert = [[NSAlert alloc]init];
+                [alert addButtonWithTitle:@"Okay"];
+                [alert setMessageText:msg];
+                [alert runModal];
+            }
+        }
+    }];
 }
 
 - (IBAction)toggleColumnDeleted:(id)sender{
@@ -398,12 +429,50 @@
 }
 
 - (IBAction)renameColumn:(id)sender{
-    [NSApp beginSheet: addColumnSheet 
-       modalForWindow: documentWindow 
-        modalDelegate: self 
-       didEndSelector: @selector(sheetDidEnd:returnCode:contextInfo:) 
-          contextInfo: @"RenameColumn"];
+    NSWindow* myWindow = [self.windowControllers.lastObject window];
+    [myWindow beginSheet: addColumnSheet
+       completionHandler:
+     ^(NSModalResponse returnCode){
+         NSInteger colIndex = [tableView selectedColumn];
+         if (colIndex>(-1)){
+             NSTableColumn* col = [[tableView tableColumns] objectAtIndex:colIndex];
+             NSString* oldlbl = [col identifier];
+             NSString* newlbl = [addColumnLabelField stringValue];
+             BOOL isDup = [dataSource isDuplicateLabel: newlbl];
+             if(isDup && (![newlbl isEqualTo: oldlbl])){
+                 NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",newlbl];
+                 NSAlert *alert = [[NSAlert alloc]init];
+                 [alert addButtonWithTitle:@"Okay"];
+                 [alert setMessageText:msg];
+                 [alert runModal];
+             }else{
+                 int err = [dataSource renameColumn:oldlbl to:newlbl];
+                 if (err == ERR_NO_ERROR){
+                     [self updateChangeCount: NSChangeDone];
+                     [self setupColumns];
+                     [tableView reloadData];
+                     [self recordColumnInfo];
+                     [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
+                     [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
+                     [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
+                 }else{
+                     NSString* msg = [NSString stringWithFormat: @"There was an error changing the column name to '%@'",newlbl];
+                     NSAlert *alert = [[NSAlert alloc]init];
+                     [alert addButtonWithTitle:@"Okay"];
+                     [alert setMessageText:msg];
+                     [alert runModal];
+                 }
+             }
+         }else{
+             NSString* msg = [NSString stringWithFormat: @"Error: no column selected"];
+             NSAlert *alert = [[NSAlert alloc]init];
+             [alert addButtonWithTitle:@"Okay"];
+             [alert setMessageText:msg];
+             [alert runModal];
+         }
+     }];
 }
+
 
 - (IBAction)setFilter:(id)sender{
     NSString* sortColumn = [dataSource sortColumn];
@@ -619,85 +688,6 @@
         [aCell setDrawsBackground: NO];
         [aCell setEditable:YES];
         [aCell setSelectable:YES];
-    }
-}
-
-// handle sheets
-
-- (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo{
-    [sheet orderOut:self];
-    
-    NSString* commandStr = (NSString*)contextInfo;
-    if([commandStr isEqualTo: @"AddColumn"]){
-        NSString* lbl = [addColumnLabelField stringValue];
-        BOOL isDup = [dataSource isDuplicateLabel: lbl];
-        if (isDup){
-            NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",lbl];
-            NSAlert *alert = [[NSAlert alloc]init];
-            [alert addButtonWithTitle:@"Okay"];
-            [alert setMessageText:msg];
-            [alert runModal];
-        } else {
-            int err = [dataSource addColumn:lbl];
-            if (err == ERR_NO_ERROR){
-                [self updateChangeCount: NSChangeDone];
-                [self setupColumns];
-                [tableView reloadData];
-                [self recordColumnInfo];
-                NSInteger colCount = [tableView numberOfColumns];
-                if(colCount>0){
-                    [tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: (colCount-1)] byExtendingSelection:NO];
-                    [tableView scrollColumnToVisible:(colCount-1)];
-                }
-                [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
-                [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
-                [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
-            }else{
-                NSString* msg = [NSString stringWithFormat: @"There was an error adding the column named '%@'",lbl];
-                NSAlert *alert = [[NSAlert alloc]init];
-                [alert addButtonWithTitle:@"Okay"];
-                [alert setMessageText:msg];
-                [alert runModal];
-            }
-        }
-    } else if([commandStr isEqualTo: @"RenameColumn"]){
-        NSInteger colIndex = [tableView selectedColumn];
-        if (colIndex>(-1)){
-            NSTableColumn* col = [[tableView tableColumns] objectAtIndex:colIndex];
-            NSString* oldlbl = [col identifier];
-            NSString* newlbl = [addColumnLabelField stringValue];
-            BOOL isDup = [dataSource isDuplicateLabel: newlbl];
-            if(isDup && (![newlbl isEqualTo: oldlbl])){
-                NSString* msg = [NSString stringWithFormat: @"The label '%@' is already in use",newlbl];
-                NSAlert *alert = [[NSAlert alloc]init];
-                [alert addButtonWithTitle:@"Okay"];
-                [alert setMessageText:msg];
-                [alert runModal];
-            }else{
-                int err = [dataSource renameColumn:oldlbl to:newlbl];
-                if (err == ERR_NO_ERROR){
-                    [self updateChangeCount: NSChangeDone];
-                    [self setupColumns];
-                    [tableView reloadData];
-                    [self recordColumnInfo];
-                    [itemCountField setStringValue:[NSString stringWithFormat:@"%ld items",(long)[tableView numberOfRows]]];
-                    [deletedColsField setStringValue:[NSString stringWithFormat:@"%d columns",[dataSource countDeletedColumns]]];
-                    [deletedRowsField setStringValue:[NSString stringWithFormat:@"%d rows",[dataSource countDeletedRows]]];
-                }else{
-                    NSString* msg = [NSString stringWithFormat: @"There was an error changing the column name to '%@'",newlbl];
-                    NSAlert *alert = [[NSAlert alloc]init];
-                    [alert addButtonWithTitle:@"Okay"];
-                    [alert setMessageText:msg];
-                    [alert runModal];
-                }
-            }
-        }else{
-            NSString* msg = [NSString stringWithFormat: @"Error: no column selected"];
-            NSAlert *alert = [[NSAlert alloc]init];
-            [alert addButtonWithTitle:@"Okay"];
-            [alert setMessageText:msg];
-            [alert runModal];
-        }
     }
 }
 
