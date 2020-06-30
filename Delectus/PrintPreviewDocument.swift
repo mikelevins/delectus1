@@ -33,7 +33,19 @@ import Cocoa
     
     // font changes
     
-    func setFont(newFont: NSFont) {}
+    func setFont(newFont: NSFont) {
+        let delegate = NSApp.delegate as? DelectusDelegate
+        delegate?.setContentFont(newFont)
+        let cols = self.tableView.tableColumns
+        let colcount = cols.count
+        for i in 0..<colcount {
+            let col = cols[i]
+            let cell = col.dataCell as? NSCell
+            cell?.font = newFont
+        }
+        self.tableView.rowHeight = newFont.pointSize * 1.8
+        self.tableView.setNeedsDisplay()
+    }
 
     // IBActions
     @IBAction func changeFont(sender: Any) {}
