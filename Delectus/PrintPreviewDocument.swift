@@ -20,6 +20,8 @@ import Cocoa
     @IBOutlet weak var showDeletedButton: NSButton!
     var columnInfo: NSMutableDictionary!
     
+    // Accessors
+    
     func deletedItemsAreShown () -> Bool {
         let state = self.showDeletedButton.state
         if (state == NSControl.StateValue.off) {
@@ -28,4 +30,15 @@ import Cocoa
             return true
         }
     }
+    
+    // font changes
+    
+    func setFont(newFont: NSFont) {}
+
+    // IBActions
+    @IBAction func changeFont(sender: Any) {}
+    @IBAction func setFilter(sender: Any) {}
+    @IBAction func toggleShowDeleted(sender: Any) {}
+    @IBAction func performShowDeletedClick(sender: Any) {}
+
 }
