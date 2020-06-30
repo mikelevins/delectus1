@@ -16,4 +16,16 @@ import Cocoa
     @IBOutlet weak var tableScrollView: NSScrollView!
     @IBOutlet weak var itemCountField: NSTextField!
     @IBOutlet weak var filterField: NSSearchField!
+    @IBOutlet weak var dataSource: DelectusDataSource!
+    @IBOutlet weak var showDeletedButton: NSButton!
+    var columnInfo: NSMutableDictionary!
+    
+    func deletedItemsAreShown () -> Bool {
+        let state = self.showDeletedButton.state
+        if (state == NSControl.StateValue.off) {
+            return false
+        } else {
+            return true
+        }
+    }
 }
