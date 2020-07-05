@@ -1,0 +1,6 @@
+= Delectus 1 Plus
+:toc:
+
+EXPERIMENTAL!
+
+This branch is an experimental extension of Delectus 1.x that explores adding features from the Lisp implementation of the Delectus 2 data engine to the application code for Delectus 1. If successful, the result will be an implementation of Delectus 2 features that relies purely on code that can be compiled using Apple's development tools, and therefore frees Delectus 2 from reliance on third-party compilers that may not support Apple silicon in a timely fashion.
