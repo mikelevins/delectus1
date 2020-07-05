@@ -6,3 +6,5 @@
 The Delectus 1.5 printing branch extends the Delectus 1.x code with Swift support and work on a new printing infrastructure that can produce more flexible and attractive printing from Delectus documents.
 
 The Engine infrastructure continues to be based on the Delectus 1.x Lecter engine, built in Gambit Scheme.
+
+The 1.5 printing branch includes updates to the 1.x code that enables it to build without errors or warnings with Xcode 11.5, and that enables Gambit 4.9 to build the engine. It adds support for Swift-language source code, and the intention is that new code added to it be written in Swift.
