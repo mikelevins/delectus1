@@ -1,0 +1,8 @@
+= Delectus 1.5 (Printing branch)
+:toc:
+
+== Overview
+
+The Delectus 1.5 printing branch extends the Delectus 1.x code with Swift support and work on a new printing infrastructure that can produce more flexible and attractive printing from Delectus documents.
+
+The Engine infrastructure continues to be based on the Delectus 1.x Lecter engine, built in Gambit Scheme.
