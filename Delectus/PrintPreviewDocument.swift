@@ -48,8 +48,23 @@ import Cocoa
     }
 
     // IBActions
-    @IBAction func changeFont(sender: Any) {}
-    @IBAction func setFilter(sender: Any) {}
+    @IBAction func changeFont(sender: NSFontManager) {
+        let delegate = NSApp.delegate as? DelectusDelegate
+        let oldFont = delegate!.contentFont()!
+        let newFont = sender.convert(oldFont)
+        self.setFont(newFont: newFont)
+    }
+    
+    @IBAction func setFilter(sender: Any) {
+        let sortColumn = self.dataSource.sortColumn()
+        let sortOrder = self.dataSource.sortOrder()
+        let includeDeleted = self.dataSource.includeDeleted()
+        let filterText = self.filterField.stringValue
+        self.dataSource.getViewIncludingDeleted(includeDeleted, withSortColumn: sortColumn!, andSortOrder: sortOrder, andFilterText: filterText)
+        self.tableView.reloadData()
+        self.itemCountField.stringValue = String(format: "%@%ld items", self.tableView.numberOfRows)
+    }
+    
     @IBAction func toggleShowDeleted(sender: Any) {}
     @IBAction func performShowDeletedClick(sender: Any) {}
 
