@@ -17,7 +17,6 @@
 		975F0011222AE55700A4F673 /* libgambit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 975F0010222AE55700A4F673 /* libgambit.a */; };
 		97704B3F24A6BDEB0095FFEF /* ListFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97704B3E24A6BDEB0095FFEF /* ListFieldCell.swift */; };
 		97704B4424AA20550095FFEF /* PrintPreview.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97704B4224AA20550095FFEF /* PrintPreview.xib */; };
-		97704B4624AA3A1D0095FFEF /* PrintPreviewDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97704B4524AA3A1D0095FFEF /* PrintPreviewDocument.swift */; };
 		97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 97814B611330C1D5008BD174 /* DelectusDataSource.m */; };
 		97D44A58132B7B780048ADA8 /* libDelectus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97D44A57132B7B780048ADA8 /* libDelectus.a */; };
 		97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97EA5BFD133EB29100BD41F9 /* DelectusPrintView.m */; };
@@ -57,7 +56,6 @@
 		97704B3D24A6BDEA0095FFEF /* Delectus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Delectus-Bridging-Header.h"; sourceTree = "<group>"; };
 		97704B3E24A6BDEB0095FFEF /* ListFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFieldCell.swift; sourceTree = "<group>"; };
 		97704B4324AA20550095FFEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PrintPreview.xib; sourceTree = "<group>"; };
-		97704B4524AA3A1D0095FFEF /* PrintPreviewDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintPreviewDocument.swift; sourceTree = "<group>"; };
 		97814B601330C1D5008BD174 /* DelectusDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelectusDataSource.h; sourceTree = "<group>"; };
 		97814B611330C1D5008BD174 /* DelectusDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelectusDataSource.m; sourceTree = "<group>"; };
 		97BF48292335019500484058 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
@@ -142,7 +140,6 @@
 				97814B601330C1D5008BD174 /* DelectusDataSource.h */,
 				97814B611330C1D5008BD174 /* DelectusDataSource.m */,
 				97704B3E24A6BDEB0095FFEF /* ListFieldCell.swift */,
-				97704B4524AA3A1D0095FFEF /* PrintPreviewDocument.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -271,7 +268,6 @@
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				97EB7F1A132BF8F600F99745 /* DelectusDelegate.m in Sources */,
 				97814B621330C1D5008BD174 /* DelectusDataSource.m in Sources */,
-				97704B4624AA3A1D0095FFEF /* PrintPreviewDocument.swift in Sources */,
 				97EA5BFE133EB29100BD41F9 /* DelectusPrintView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
