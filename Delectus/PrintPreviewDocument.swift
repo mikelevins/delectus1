@@ -14,7 +14,6 @@ import Cocoa
     @IBOutlet weak var chooseColumnsLabel: NSTextField!
     @IBOutlet weak var showDeletedLabel: NSTextField!
     @IBOutlet weak var tableScrollView: NSScrollView!
-    @IBOutlet weak var itemCountField: NSTextField!
     @IBOutlet weak var filterField: NSSearchField!
     @IBOutlet weak var dataSource: DelectusDataSource!
     @IBOutlet weak var showDeletedButton: NSButton!

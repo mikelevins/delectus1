@@ -8,9 +8,11 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PrintPreviewDocument" customModule="Delectus" customModuleProvider="target">
             <connections>
+                <outlet property="chooseColumnsLabel" destination="11p-sS-SyA" id="3Ub-sQ-BW0"/>
                 <outlet property="documentWindow" destination="5" id="100340"/>
                 <outlet property="filterField" destination="100383" id="100424"/>
                 <outlet property="showDeletedButton" destination="100331" id="100429"/>
+                <outlet property="showDeletedLabel" destination="l52-Gr-Os4" id="WJ8-aZ-5Qo"/>
                 <outlet property="tableScrollView" destination="100115" id="100365"/>
                 <outlet property="tableView" destination="100118" id="100366"/>
                 <outlet property="window" destination="5" id="100341"/>
