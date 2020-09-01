@@ -1,0 +1,3 @@
+[submodule "lecter"]
+	path = lecter
+	url = git@github.com:mikelevins/lecter.git
